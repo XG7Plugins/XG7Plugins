@@ -1,0 +1,31 @@
+
+prefix: "&8[&bXG&37P&9lu&1gins&8]&r"
+
+log-enabled: true
+
+main-lang: en-us
+lang-cache-expires: 30m
+auto-chose-lang: true
+cooldown-to-toggle-lang: 15s
+
+enable-geyser-forms: true
+
+task-threads: 4
+
+menu-cache-expires: 10m
+
+holograms-update-delay: 1s
+
+sql:
+
+  cache-expires: 30m
+
+  type: "sqlite"
+
+  host: ""
+  port: ""
+
+  database: ""
+
+  username: ""
+  password: ""
