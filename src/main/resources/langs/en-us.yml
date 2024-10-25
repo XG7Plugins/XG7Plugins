@@ -1,0 +1,84 @@
+
+locale: english
+formated-name: "English"
+icon: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2QxNWQ1NjYyMDJhYzBlNzZjZDg5Nzc1OWRmNWQwMWMxMWY5OTFiZDQ2YzVjOWEwNDM1N2VhODllZTc1In19fQ=="
+bedrock-icon: "URL, https://cdn.britannica.com/33/4833-050-F6E415FE/Flag-United-States-of-America.jpg"
+
+commands:
+  syntax-error: "You are using the command incorrectly! The right way is [SYNTAX]"
+  never-played: "This player has never played before!"
+  no-permission: "You don't have permission to use this command!"
+  disabled-world: "You cannot execute this command in a disabled world!"
+  not-a-player: "You cannot execute this command in console!"
+
+reload-message:
+  config: "Configs of [PLUGIN] reloaded!"
+  database: "Database of [PLUGIN] reloaded!"
+  all: "[PLUGIN] reloaded!"
+  lang: "Languages of [PLUGIN] reloaded!"
+  events: "Events of [PLUGIN] reloaded!"
+
+
+#Plugin defaults
+
+go-back-item: "Back"
+go-next-item: "Next"
+close-item: "Close"
+
+lang-menu:
+  title: "Languages"
+
+  content: "Choose a language for the server!"
+
+  item-click:
+    - "Click here to change the language for English"
+
+  already-selected: "You're already using this language!"
+
+  toggle-success: "You toggle the language to english!"
+
+  cooldown-to-toggle: "You need to wait [SECONDS] seconds to toggle the language again"
+
+tasks-menu:
+  title: "Tasks"
+
+  item-click:
+    - "&fTask id: &b[ID]"
+    - "&fTask plugin: &e[PLUGIN]"
+    - " "
+    - "&fLeft click -> &aCopy id"
+    - "&fRight click -> &cDelete Task"
+
+  copy-to-clipboard: "Click [CLICK action=%COPY_TO_CLICKBOARD% value=%[ID]%]&bhere&r[/CLICK] to copy the task id!"
+
+  notes:
+    - "&f&oTo return a task to execution,"
+    - "&f&oyou need to restart the plugin"
+    - "&f&oof the task."
+
+task-command:
+  not-found: "Task not found!"
+  deleted: "Task deleted!"
+
+commands-menu:
+
+  title: "Commands"
+
+  if-subcommand: "&aClick to see the subcommands!"
+
+  command-item:
+    usage: "&fUsage: &a[SYNTAX]"
+    desc: "&fDescription: &e[DESCRIPTION]"
+    perm: "&fPermission: &c[PERMISSION]"
+    player-only: "&fOnly players can use: &b[PLAYER_ONLY]"
+
+subcommands-menu:
+
+  if-subcommand: "&aClick to see the subcommands!"
+
+  command-item:
+    usage: "&fUsage: &a[SYNTAX]"
+    desc: "&fDescription: &e[DESCRIPTION]"
+    perm: "&fPermission: &c[PERMISSION]"
+    player-only: "&fOnly players can use: &b[PLAYER_ONLY]"
+    type: "&fType: &b[TYPE]"
