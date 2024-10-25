@@ -32,12 +32,12 @@ public abstract class Plugin extends JavaPlugin {
             //Baixar
         }
 
+        this.configsManager = new ConfigManager(this, configs);
         this.prefix = ChatColor.translateAlternateColorCodes('&', prefix);
         this.customPrefix = this.prefix;
         this.log = new Log(this);
 
         log.loading("Loading " + prefix + "...");
-        this.configsManager = new ConfigManager(this, configs);
         this.langManager = new LangManager(this, defLangs);
         this.commandManager = new CommandManager(this);
     }

@@ -14,6 +14,12 @@ public class Location {
     private double x;
     private double y;
     private double z;
+    private float yaw;
+    private float pitch;
+
+    public Location(String world, double x, double y, double z) {
+        this(world, x, y, z, 0, 0);
+    }
 
     public World getWorld() {
         return Bukkit.getWorld(world);
@@ -22,7 +28,7 @@ public class Location {
         return new Location(world, this.x + x, this.y + y, this.z + z);
     }
     public static Location fromBukkit(org.bukkit.Location location) {
-        return new Location(location.getWorld().getName(), location.getX(), location.getY(), location.getZ());
+        return new Location(location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
     public static Location fromPlayer(Player player) {
         return fromBukkit(player.getLocation());
@@ -35,6 +41,8 @@ public class Location {
                 ", x=" + x +
                 ", y=" + y +
                 ", z=" + z +
+                ", yaw=" + yaw +
+                ", pitch=" + pitch +
                 '}';
     }
 

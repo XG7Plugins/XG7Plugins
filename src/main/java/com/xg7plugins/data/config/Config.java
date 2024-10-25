@@ -21,7 +21,7 @@ public class Config {
         this.plugin = plugin;
         this.name = name;
 
-        plugin.getLog().loading("Loading " + name + ".yml...");
+        plugin.getLogger().info("Loading " + name + ".yml...");
 
         File configFile = new File(plugin.getDataFolder(), name + ".yml");
 
@@ -29,7 +29,7 @@ public class Config {
 
         this.config = YamlConfiguration.loadConfiguration(configFile);
 
-        plugin.getLog().loading("Loaded!");
+        plugin.getLogger().info("Loaded!");
     }
 
     public <T> T get(String path) {

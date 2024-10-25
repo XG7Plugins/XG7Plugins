@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com'
-version = '2.0'
+version = '1.0'
 
 repositories {
     mavenCentral()
@@ -37,7 +37,11 @@ dependencies {
     implementation 'org.reflections:reflections:0.9.12'
     implementation 'org.javassist:javassist:3.28.0-GA'
 
-    compileOnly 'org.projectlombok:lombok:1.18.32'
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 
     compileOnly 'org.jetbrains:annotations:24.1.0'
 
@@ -61,6 +65,14 @@ tasks.withType(JavaCompile).configureEach {
         options.release.set(targetJavaVersion)
     }
 }
+
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 
 processResources {
     def props = [version: version]

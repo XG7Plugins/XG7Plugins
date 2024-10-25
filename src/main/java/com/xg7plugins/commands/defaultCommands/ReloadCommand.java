@@ -199,7 +199,7 @@ public class ReloadCommand implements ICommand {
 
                 if (args[0].equals("XG7Plugins")) {
 
-                    xg7Plugins.getConfigs().forEach(Config::reload);
+                    xg7Plugins.getConfigsManager().getConfigs().values().forEach(Config::reload);
                     xg7Plugins.getDatabaseManager().disconnectPlugin(xg7Plugins);
                     xg7Plugins.getDatabaseManager().connectPlugin(xg7Plugins);
                     xg7Plugins.getLangManager().loadAllLangs();

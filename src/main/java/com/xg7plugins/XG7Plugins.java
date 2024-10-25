@@ -1,9 +1,5 @@
 package com.xg7plugins;
 
-import com.xg7plugins.commands.defaultCommands.LangCommand;
-import com.xg7plugins.commands.defaultCommands.ReloadCommand;
-import com.xg7plugins.commands.defaultCommands.TaskCommands;
-import com.xg7plugins.commands.defaultCommands.TesteCommand;
 import com.xg7plugins.data.database.EntityProcessor;
 import com.xg7plugins.data.lang.PlayerLanguage;
 import com.xg7plugins.events.packetevents.PacketManagerBase;
@@ -12,12 +8,9 @@ import com.xg7plugins.libs.xg7holograms.HologramsManager;
 import com.xg7plugins.libs.xg7menus.MenuManager;
 import com.xg7plugins.libs.xg7scores.ScoreManager;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.DBManager;
-import com.xg7plugins.events.Event;
 import com.xg7plugins.events.bukkitevents.EventManager;
-import com.xg7plugins.events.defaultevents.JoinAndQuit;
 import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager1_7;
 import com.xg7plugins.tasks.TaskManager;

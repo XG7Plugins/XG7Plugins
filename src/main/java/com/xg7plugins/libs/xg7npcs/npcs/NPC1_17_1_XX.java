@@ -7,11 +7,15 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.Location;
 import com.xg7plugins.utils.reflection.EntityDataWatcher1_17_1_XX;
 import com.xg7plugins.utils.reflection.PlayerNMS;
+import com.xg7plugins.utils.reflection.ReflectionObject;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityMetadata;
 import net.minecraft.network.protocol.game.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.network.protocol.game.PacketPlayOutPlayerInfo;
+import net.minecraft.network.protocol.game.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.level.EntityPlayer;
 import net.minecraft.world.entity.EntityPose;
+import net.minecraft.world.scores.ScoreboardTeam;
+import net.minecraft.world.scores.ScoreboardTeamBase;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -20,7 +24,7 @@ import java.util.UUID;
 
 public class NPC1_17_1_XX extends NPC {
     public NPC1_17_1_XX(Plugin plugin, List<String> name, Location location) {
-        super(plugin, name, new GameProfile(UUID.randomUUID(), "dummy"), location);
+        super(plugin, name, location);
     }
 
     @Override
@@ -31,37 +35,37 @@ public class NPC1_17_1_XX extends NPC {
                 PlayerNMS playerNMS = PlayerNMS.cast(player);
                 System.out.println("Creating npc\n");
 
-                GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "dummy");
-                gameProfile.getProperties().put("textures", new Property("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvM2NjNzg3ZDJlMWJkOWI4ZjI3NWYyMGY4ZjY5ZWMxZDFmMDhjZmZiNjcwZmUzYWQ4ZDk0YjlkMDEwZGViMGMyYSJ9fX0="));
-
                 EntityPlayer npc = new EntityPlayer(
                         playerNMS.getCraftPlayerHandle().getMethod("getMinecraftServer").invoke(),
                         playerNMS.getCraftPlayerHandle().getMethod("getWorld").invoke(),
-                        gameProfile);
+                        skin);
+
                 System.out.println("Setting npc position\n");
                 npc.setPosition(location.getX(), location.getY(), location.getZ());
+                npc.setYawPitch(-location.getYaw(), -location.getPitch());
                 npc.setPose(EntityPose.c);
-
 
                 System.out.println("Creating datawatcher\n");
                 EntityDataWatcher1_17_1_XX dataWatcher = new EntityDataWatcher1_17_1_XX();
-                dataWatcher.watch(2, "I'm a npc");
                 dataWatcher.watch(3, false);
                 dataWatcher.watch(5, true);
 
                 System.out.println("Packet player info\n");
                 PacketPlayOutPlayerInfo packetPlayOutPlayerInfo = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.a, npc);
-                playerNMS.sendPacket(packetPlayOutPlayerInfo);
 
                 PacketPlayOutNamedEntitySpawn entitySpawn = new PacketPlayOutNamedEntitySpawn(npc);
-                playerNMS.sendPacket(entitySpawn);
 
                 System.out.println("Packet metadata\n");
                 PacketPlayOutEntityMetadata metadata = new PacketPlayOutEntityMetadata(npc.getId(), dataWatcher.getWatcher(), true);
+
+                playerNMS.sendPacket(packetPlayOutPlayerInfo);
+                playerNMS.sendPacket(entitySpawn);
                 playerNMS.sendPacket(metadata);
                 Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> {
                     playerNMS.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.e, npc));
                 },20L);
+
+                entityIDS.add(npc.getId());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -82,7 +86,9 @@ public class NPC1_17_1_XX extends NPC {
     }
 
     @Override
-    public void setSkin(GameProfile skin) {
+    public void setSkin(String value) {
+
+
 
     }
 }
