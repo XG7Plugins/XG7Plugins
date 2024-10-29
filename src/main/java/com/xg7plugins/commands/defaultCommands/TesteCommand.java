@@ -5,12 +5,16 @@ import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.libs.xg7holograms.HologramBuilder;
 import com.xg7plugins.libs.xg7menus.builders.item.ItemBuilder;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC1_17_1_XX;
-import com.xg7plugins.utils.Conversation;
+import com.xg7plugins.libs.xg7npcs.npcs.NPC1_8_1_16;
 import com.xg7plugins.utils.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 @Command(
         name = "teste",
@@ -21,6 +25,8 @@ import java.util.Arrays;
         isOnlyPlayer = true
 )
 public class TesteCommand implements ICommand {
+
+    private static NPC1_17_1_XX npc;
 
 
     @Override
@@ -85,10 +91,10 @@ public class TesteCommand implements ICommand {
         public void onSubCommand(CommandSender sender, String[] args, String label) {
             XG7Plugins.getInstance().getHologramsManager().initTask();
             HologramBuilder
-                    .creator(XG7Plugins.getInstance())
+                    .creator(XG7Plugins.getInstance(), "teste")
                     .setLocation(Location.fromPlayer((Player) sender))
                     .addLine("§aTeste")
-                    .addLine("lang:[formated-name]")
+                    .addLine("lang:[example]")
                     .addLine("§cTeste")
                     .build();
         }
@@ -109,8 +115,53 @@ public class TesteCommand implements ICommand {
         }
 
         public void onSubCommand(CommandSender sender, String[] args, String label) {
-            NPC1_17_1_XX npc = new NPC1_17_1_XX(XG7Plugins.getInstance(), Arrays.asList("§aTeste"), Location.fromPlayer((Player) sender));
-            npc.spawn((Player) sender);
+
+            if (args.length == 0) {
+                sender.sendMessage("§cUse /teste npc <skin | tp | create | destroy | equip>");
+                return;
+            }
+
+            switch (args[1]) {
+                case "create":
+                    XG7Plugins.getInstance().getNpcManager().initTask();
+                    npc = new NPC1_17_1_XX(XG7Plugins.getInstance(), "testenpc", Arrays.asList("§aTeste", "Tenho 3 linhas no nome :D", "lang:[formated-name]"), Location.fromPlayer((Player) sender));
+                    break;
+                case "destroy":
+                    npc.destroy((Player) sender);
+                    break;
+                case "remove":
+                    npc.remove();
+                    break;
+                case "tp":
+                    npc.teleport(Location.fromPlayer((Player) sender));
+                    break;
+                case "skin":
+                    try {
+                        npc.setSkin(args[2]);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        sender.sendMessage("Não foi possível setar a skin");
+                    }
+                    break;
+                case "equip":
+                    try {
+                        Player player = (Player) sender;
+                        player.sendMessage("AAAAAAAAAAAAAAAAAAAAAAAA");
+                        npc.setEquipment(player.getItemInHand(), null, player.getInventory().getHelmet(), player.getInventory().getChestplate(), player.getInventory().getLeggings(), player.getInventory().getBoots());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+
+
+
+
         }
+    }
+
+    @Override
+    public List<String> onTabComplete(org.bukkit.command.Command command, CommandSender sender, String label, String[] args) {
+        return args.length == 1 ? Arrays.asList("conversation", "hologram", "npc") : Arrays.asList("skin", "tp", "create", "destroy", "equip");
     }
 }

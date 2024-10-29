@@ -24,10 +24,6 @@ public class LangCommand implements ICommand {
 
 
     public void onCommand(org.bukkit.command.Command command, Player player, String label) {
-        try {
-            LangMenu.create(player);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        LangMenu.create(player);
     }
 }

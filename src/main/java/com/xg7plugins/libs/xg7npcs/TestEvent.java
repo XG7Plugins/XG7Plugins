@@ -13,7 +13,7 @@ public class TestEvent implements Event {
 
 
     @EventHandler
-    public void onHologramClick(NPCClickEvent event) {
+    public void onNPCClick(NPCClickEvent event) {
         try {
             event.getPlayer().sendMessage("You clicked on a npc!");
             event.getPlayer().sendMessage(event.getClickType().name());

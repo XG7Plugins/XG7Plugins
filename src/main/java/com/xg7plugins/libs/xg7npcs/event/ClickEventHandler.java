@@ -3,10 +3,9 @@ package com.xg7plugins.libs.xg7npcs.event;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.PacketEvent;
 import com.xg7plugins.events.packetevents.PacketEventHandler;
-import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
+import com.xg7plugins.libs.xg7npcs.npcs.NPC;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 
 public class ClickEventHandler implements PacketEvent {
@@ -20,7 +19,7 @@ public class ClickEventHandler implements PacketEvent {
     @PacketEventHandler(packet = "PacketPlayInUseEntity")
     public Object onClick(Player player, ReflectionObject packet) {
         try {
-            NPC hologram = XG7Plugins.getInstance().getHologramsManager().getHologramById(player, packet.getField(XG7Plugins.getMinecraftVersion() > 20 ? "b" : "a"));
+            NPC hologram = XG7Plugins.getInstance().getNpcManager().getNPCByID(player, packet.getField(XG7Plugins.getMinecraftVersion() > 20 ? "b" : "a"));
 
             if (hologram == null) return packet.getObject();
 

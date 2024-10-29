@@ -34,6 +34,15 @@ public class ReflectionClass {
         }
     }
 
+    public Class<?> getArrayClass() {
+        try {
+            return Class.forName("[L" + aClass.getName() + ";");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public ReflectionClass getConstructor(Class<?>... parameterTypes) {
         try {
             constructor = aClass.getDeclaredConstructor(parameterTypes);
@@ -55,6 +64,10 @@ public class ReflectionClass {
         }
     }
 
+    public <T extends Enum<T>> T getEnumField(String name) {
+        return Enum.valueOf((Class<T>) aClass, name);
+    }
+
     @Contract("_ -> new")
     public static @NotNull ReflectionClass of(String name) {
         try {
@@ -64,6 +77,8 @@ public class ReflectionClass {
             throw new RuntimeException(e);
         }
     }
+
+
     @Contract("_ -> new")
     public static @NotNull ReflectionClass of(Class<?> clazz) {
         return new ReflectionClass(clazz);

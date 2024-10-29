@@ -86,7 +86,13 @@ public class Text {
         while (matcher.find()) {
             String lang = matcher.group(1);
             if (entity.getString(lang) == null) {
-                textToTraslate = textToTraslate.replace(textToTraslate.substring(matcher.start(), matcher.end()), plugin.getLangManager().getLang(plugin.getLangManager().getMainLang()).getString(lang));
+                String translation = plugin.getLangManager().getLang(plugin.getLangManager().getMainLang()).getString(lang);
+                if (translation == null) {
+                    textToTraslate = "Not found path \"" + lang + "\" in langs";
+                    continue;
+                }
+                textToTraslate = textToTraslate.replace(textToTraslate.substring(matcher.start(), matcher.end()), translation);
+
                 continue;
             }
             textToTraslate = textToTraslate.replace(textToTraslate.substring(matcher.start(), matcher.end()), entity.getString(lang));

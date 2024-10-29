@@ -4,11 +4,8 @@ import com.xg7plugins.XG7Plugins;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.server.network.PlayerConnection;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
 
 @Getter
 @AllArgsConstructor
@@ -27,9 +24,9 @@ public class PlayerNMS {
         ReflectionObject handle = craftPlayer.getMethod("getHandle").invokeToRObject();
 
         if (XG7Plugins.getMinecraftVersion() >= 21) {
-            PlayerConnection connection = NMSUtil.getValueByFieldName(handle.getObject(), "PlayerConnection");
-            ReflectionObject networkManager = NMSUtil.getValueByFieldNameRObject(Class.forName("net.minecraft.server.network.ServerCommonPacketListenerImpl"), connection, "NetworkManager");
-            return new PlayerNMS(player, handle, ReflectionObject.of(connection), networkManager);
+            ReflectionObject connection = NMSUtil.getValueByFieldName(handle.getObject(), "PlayerConnection");
+            ReflectionObject networkManager = NMSUtil.getValueByFieldNameRObject(Class.forName("net.minecraft.server.network.ServerCommonPacketListenerImpl"), connection.getObject(), "NetworkManager");
+            return new PlayerNMS(player, handle, connection, networkManager);
         }
 
         Object playerConnection = NMSUtil.getValueByFieldName(handle.getObject(), "PlayerConnection");

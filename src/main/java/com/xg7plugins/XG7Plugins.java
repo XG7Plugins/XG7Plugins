@@ -6,6 +6,7 @@ import com.xg7plugins.events.packetevents.PacketManagerBase;
 import com.xg7plugins.libs.xg7geyserforms.FormManager;
 import com.xg7plugins.libs.xg7holograms.HologramsManager;
 import com.xg7plugins.libs.xg7menus.MenuManager;
+import com.xg7plugins.libs.xg7npcs.NPCManager;
 import com.xg7plugins.libs.xg7scores.ScoreManager;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
@@ -54,6 +55,7 @@ public final class XG7Plugins extends Plugin {
     private MenuManager menuManager;
     private FormManager formManager;
     private HologramsManager hologramsManager;
+    private NPCManager npcManager;
 
     private final HashMap<String, Plugin> plugins = new HashMap<>();
 
@@ -69,6 +71,7 @@ public final class XG7Plugins extends Plugin {
         this.databaseManager = new DBManager(this);
         this.databaseManager.connectPlugin(this);
         this.hologramsManager = minecraftVersion < 8 ? null : new HologramsManager(this);
+        this.npcManager = new NPCManager(this);
         this.menuManager = new MenuManager(this);
         this.eventManager = new EventManager();
         this.packetEventManager = minecraftVersion < 8 ? new PacketEventManager1_7() : new PacketEventManager();

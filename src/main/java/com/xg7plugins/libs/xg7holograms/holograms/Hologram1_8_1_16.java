@@ -10,9 +10,12 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hologram1_8_1_16 extends Hologram{
-    public Hologram1_8_1_16(Plugin plugin, List<String> lines, Location location) {
-        super(plugin, lines, location);
+public class Hologram1_8_1_16 extends Hologram {
+
+
+
+    public Hologram1_8_1_16(Plugin plugin, String id, List<String> lines, Location location) {
+        super(plugin, id, lines, location);
     }
 
     @Override
@@ -60,6 +63,9 @@ public class Hologram1_8_1_16 extends Hologram{
 
     @Override
     public void destroy(Player player) {
+
+        if (!ids.containsKey(player.getUniqueId())) return;
+
         ReflectionObject packet = NMSUtil.getNMSClass("PacketPlayOutEntityDestroy")
                 .getConstructor(int[].class)
                 .newInstance(ids.get(player.getUniqueId()).stream().mapToInt(i -> i).toArray());

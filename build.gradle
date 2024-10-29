@@ -27,7 +27,7 @@ dependencies {
     compileOnly 'io.netty:netty-all:4.1.111.Final'
     compileOnly 'com.mojang:authlib:1.5.25'
     compileOnly files("D:/Spigot/Spigot 1.7.10/server.jar")
-    compileOnly files("D:/Spigot/Spigot 1.17.1/cache/patched_1.17.1.jar")
+
 
     implementation 'com.github.ben-manes.caffeine:caffeine:2.8.0'
 
@@ -46,9 +46,12 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:24.1.0'
 
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
+
+
 }
 
-def targetJavaVersion = 17
+
+def targetJavaVersion = 8
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
@@ -72,6 +75,7 @@ jar {
     }
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
 
 
 processResources {

@@ -22,14 +22,18 @@ public class HologramsManager {
         this.delay = plugin.getConfigsManager().getConfig("config").getTime("holograms-update-delay");
     }
 
-    private HashMap<UUID, Hologram> holograms = new HashMap<>();
+    private HashMap<String, Hologram> holograms = new HashMap<>();
 
     public Hologram getHologramById(Player player, int id) {
-        return holograms.values().stream().filter(hologram -> hologram.getIds().get(player.getUniqueId()).contains(id)).findFirst().orElse(null);
+
+        return holograms.values().stream().filter(hologram -> !hologram.getIds().containsKey(player.getUniqueId()) ? null : hologram.getIds().get(player.getUniqueId()).contains(id)).findFirst().orElse(null);
     }
 
     public void addHologram(Hologram hologram) {
         holograms.put(hologram.getId(), hologram);
+    }
+    public void removeHologram(Hologram hologram) {
+        holograms.remove(hologram.getId());
     }
     public void addPlayer(Player player) {
         holograms.values().forEach(hologram -> hologram.create(player));

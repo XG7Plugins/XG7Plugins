@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
 public class NMSUtil {
 
@@ -17,6 +16,10 @@ public class NMSUtil {
 
     public static ReflectionClass getNMSClass(String className) {
         String fullName = "net.minecraft.server." + version + "." + className;
+        return ReflectionClass.of(fullName);
+    }
+    public static ReflectionClass getNewerNMSClass(String className) {
+        String fullName = "net.minecraft." + className;
         return ReflectionClass.of(fullName);
     }
 

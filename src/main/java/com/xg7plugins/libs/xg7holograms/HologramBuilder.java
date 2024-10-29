@@ -15,9 +15,11 @@ public class HologramBuilder {
     private List<String> lines;
     private Plugin plugin;
     private Location location;
+    private String  id;
 
-    public HologramBuilder(Plugin plugin) {
+    public HologramBuilder(Plugin plugin, String id) {
         this.plugin = plugin;
+        this.id = id;
         lines = new ArrayList<>();
     }
 
@@ -34,15 +36,15 @@ public class HologramBuilder {
         return this;
     }
 
-    public Hologram build() {
+    public <T extends Hologram> T build() {
         if (location == null) {
             throw new IllegalArgumentException("Location cannot be null");
         }
-        return XG7Plugins.getMinecraftVersion() < 17 ? new Hologram1_8_1_16(plugin, lines, location) : new Hologram1_17_1_XX(plugin, lines, location);
+        return XG7Plugins.getMinecraftVersion() < 17 ? (T) new Hologram1_8_1_16(plugin, id,lines, location) : (T) new Hologram1_17_1_XX(plugin,id, lines, location);
     }
 
-    public static HologramBuilder creator(Plugin plugin) {
-        return new HologramBuilder(plugin);
+    public static HologramBuilder creator(Plugin plugin, String id) {
+        return new HologramBuilder(plugin,id);
     }
 
 

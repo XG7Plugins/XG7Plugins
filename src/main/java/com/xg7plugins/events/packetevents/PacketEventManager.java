@@ -9,7 +9,6 @@ import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 
 public class PacketEventManager extends PacketManagerBase {
