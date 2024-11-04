@@ -8,6 +8,7 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.reflections.Reflections;
 
 import java.io.File;
 import java.sql.*;
@@ -79,7 +80,16 @@ public class DBManager {
                 break;
         }
 
-        plugin.getLog().loading("Sucessfully connected to database!");
+        plugin.getLog().loading("Successfully connected to database!");
+
+        plugin.getLog().loading("Checking tables...");
+        Reflections reflections = new Reflections(plugin.getClass().getPackage().getName());
+
+        reflections.getSubTypesOf(Entity.class).forEach((entity) ->  {
+            EntityProcessor.createTableOf(plugin, entity);
+        });
+
+        plugin.getLog().loading("Successfully checked tables!");
 
     }
 

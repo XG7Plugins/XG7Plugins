@@ -22,6 +22,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly files("D:/buildTools/1.20.1/spigot-1.20.1-R0.1-SNAPSHOT.jar")
     compileOnly files("D:/buildTools/spigot-1.16.1.jar")
 
     compileOnly 'io.netty:netty-all:4.1.111.Final'
@@ -51,7 +52,7 @@ dependencies {
 }
 
 
-def targetJavaVersion = 8
+def targetJavaVersion = 17
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion

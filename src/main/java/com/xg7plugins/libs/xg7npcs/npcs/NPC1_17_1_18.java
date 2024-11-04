@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
-public class NPC1_17_1_XX extends NPC {
+public class NPC1_17_1_18 extends NPC {
 
     private static final ReflectionClass entityPlayerClass = NMSUtil.getNewerNMSClass("server.level.EntityPlayer");
     private static final ReflectionClass minecraftServerClass = NMSUtil.getNewerNMSClass("server.MinecraftServer");
@@ -32,14 +32,13 @@ public class NPC1_17_1_XX extends NPC {
     private static final ReflectionClass packetPlayOutEntityDestroyClass = NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutEntityDestroy");
     private static final ReflectionClass enumItemSlotClass = NMSUtil.getNewerNMSClass("world.entity.EnumItemSlot");
 
-    public NPC1_17_1_XX(Plugin plugin, String id, List<String> name, Location location) {
+    public NPC1_17_1_18(Plugin plugin, String id, List<String> name, Location location) {
         super(plugin, id,name, location);
     }
 
     @Override
     public void spawn(Player player) {
         Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> {
-            try {
                 PlayerNMS playerNMS = PlayerNMS.cast(player);
 
                 ReflectionObject nmsWorld = NMSUtil.getCraftBukkitClass("CraftWorld").castToRObject(location.getWorld()).getMethod("getHandle").invokeToRObject();
@@ -139,9 +138,6 @@ public class NPC1_17_1_XX extends NPC {
                 Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> playerNMS.sendPacket(packetPlayOutPlayerInfo2.getObject()),20L);
 
                 npcIDS.put(player.getUniqueId(), npc.getMethod("getId").invoke());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
         });
 

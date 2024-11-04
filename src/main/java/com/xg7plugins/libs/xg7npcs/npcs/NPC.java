@@ -11,6 +11,7 @@ import com.xg7plugins.libs.xg7holograms.HologramBuilder;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.utils.Location;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,6 +31,8 @@ public abstract class NPC {
     protected Map<UUID, Integer> npcIDS;
     protected String id;
     protected List<?> equipments;
+    @Setter
+    protected boolean lookAtPlayer = false;
 
     public NPC(Plugin plugin, String id, List<String> name, Location location) {
         this.name = HologramBuilder.creator(plugin,id + ":name").setLines(name).setLocation(location.add(0,-0.2,0)).build();
