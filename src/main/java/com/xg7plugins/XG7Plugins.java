@@ -96,6 +96,7 @@ public final class XG7Plugins extends Plugin {
         });
         scoreManager.removePlayers();
         hologramsManager.cancelTask();
+        npcManager.cancelTask();
         taskManager.getExecutor().shutdown();
     }
 

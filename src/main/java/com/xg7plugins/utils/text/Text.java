@@ -88,7 +88,7 @@ public class Text {
             if (entity.getString(lang) == null) {
                 String translation = plugin.getLangManager().getLang(plugin.getLangManager().getMainLang()).getString(lang);
                 if (translation == null) {
-                    textToTraslate = "Not found path \"" + lang + "\" in langs";
+                    textToTraslate = "Cannot found path \"" + lang + "\" in langs";
                     continue;
                 }
                 textToTraslate = textToTraslate.replace(textToTraslate.substring(matcher.start(), matcher.end()), translation);
@@ -343,7 +343,7 @@ public class Text {
 
     public static long convertToMilliseconds(Plugin plugin, String timeStr) {
         long milliseconds = 0;
-        Pattern pattern = Pattern.compile("(\\d+)([SMHD])");
+        Pattern pattern = Pattern.compile("(\\d+)(ms|[SMHD])", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(timeStr.toUpperCase());
 
         while (matcher.find()) {
@@ -362,6 +362,9 @@ public class Text {
                     break;
                 case "D":
                     milliseconds += value * 86400000;
+                    break;
+                case "MS":
+                    milliseconds += value;
                     break;
                 default:
                     plugin.getLog().severe("Invalid time unit: " + unit);

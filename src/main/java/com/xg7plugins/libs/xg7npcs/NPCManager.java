@@ -3,6 +3,7 @@ package com.xg7plugins.libs.xg7npcs;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -11,7 +12,10 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public class NPCManager {
+    @Getter
     private HashMap<String, NPC> npcs = new HashMap<>();
+    @Getter
+    private HashMap<Integer, Object> lookingNPCS = null;
     private XG7Plugins plugin;
     private String taskId;
     private long delay;
@@ -34,11 +38,24 @@ public class NPCManager {
     public void removeNPC(NPC npc) {
         npcs.remove(npc.getId());
     }
-    public void addPlayer(Player player) {
-        npcs.values().forEach(npcs -> npcs.spawn(player));
+
+
+
+    public void registerLookingNPC(int id, Object entity) {
+        if (!(boolean)plugin.getConfigsManager().getConfig("config").get("npcs-look-at-player")) return;
+
+        if (lookingNPCS == null) {
+            lookingNPCS = new HashMap<>();
+        }
+        lookingNPCS.put(id, entity);
     }
-    public void removePlayer(Player player) {
-        npcs.values().forEach(npcs -> npcs.destroy(player));
+    public void unregisterLookingNPC(int id) {
+        if (!(boolean)plugin.getConfigsManager().getConfig("config").get("npcs-look-at-player")) return;
+
+        lookingNPCS.remove(id);
+        if (lookingNPCS.isEmpty()) {
+            lookingNPCS = null;
+        }
     }
 
     public void initTask() {

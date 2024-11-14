@@ -2,40 +2,28 @@ package com.xg7plugins.utils.reflection;
 
 import com.xg7plugins.XG7Plugins;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class EntityDataWatcher1_17_1_XX {
 
-    private static final ReflectionClass dataWatcherObjectClass;
-    private static final ReflectionClass dataWatcherItemClass;
-    private static final ReflectionClass dataWatcherItemArrayClass;
-    private static final ReflectionClass dataWatcherRegistryClass;
-    private static final ReflectionClass dataWatcherSerializerClass;
-    private static final ReflectionClass dataWatcherClass;
-    private static final ReflectionClass synchedDataHolderClass;
-    private static final ReflectionClass iChatBaseComponentClass;
-    private static final ReflectionClass entityClass;
+    private static final ReflectionClass iChatBaseComponentClass = NMSUtil.getNewerNMSClass("network.chat.IChatBaseComponent");
 
-    static {
-        dataWatcherObjectClass = NMSUtil.getNewerNMSClass("network.syncher.DataWatcherObject");
-        dataWatcherItemClass = NMSUtil.getNewerNMSClass("network.syncher.DataWatcher$Item");
-        dataWatcherItemArrayClass = ReflectionClass.of("[Lnet.minecraft.network.syncher.DataWatcher$Item;");
-        dataWatcherRegistryClass = NMSUtil.getNewerNMSClass("network.syncher.DataWatcherRegistry");
-        dataWatcherSerializerClass = NMSUtil.getNewerNMSClass("network.syncher.DataWatcherSerializer");
-        dataWatcherClass = NMSUtil.getNewerNMSClass("network.syncher.DataWatcher");
-        iChatBaseComponentClass = NMSUtil.getNewerNMSClass("network.chat.IChatBaseComponent");
-        entityClass = NMSUtil.getNewerNMSClass("world.entity.Entity");
-        synchedDataHolderClass = XG7Plugins.getMinecraftVersion() >=21 ? NMSUtil.getNewerNMSClass("network.syncher.SyncedDataHolder") : null;
-    }
+    private static final ReflectionClass dataWatcherObjectClass = NMSUtil.getNewerNMSClass("network.syncher.DataWatcherObject");
+    private static final ReflectionClass dataWatcherRegistryClass = NMSUtil.getNewerNMSClass("network.syncher.DataWatcherRegistry");
+    private static final ReflectionClass dataWatcherSerializerClass = NMSUtil.getNewerNMSClass("network.syncher.DataWatcherSerializer");
+    private static final ReflectionClass dataWatcherItemClass = NMSUtil.getNewerNMSClass("network.syncher.DataWatcher$Item");
+    private static final ReflectionClass dataWatcherClass = NMSUtil.getNewerNMSClass("network.syncher.DataWatcher");
+    private static final ReflectionClass entityClass = NMSUtil.getNewerNMSClass("world.entity.Entity");
+
 
     private final List<Object> watchers;
 
     public EntityDataWatcher1_17_1_XX() {
         watchers = new ArrayList<>();
     }
-
     private static String getFieldByType(Class<?> clazz) {
         if (clazz == String.class) {
             return XG7Plugins.getMinecraftVersion() < 19 ? "f" : "g";
@@ -51,55 +39,57 @@ public class EntityDataWatcher1_17_1_XX {
             return null;
         }
     }
-
     public <T> void watch(int index, T value) {
+        String fieldType = getFieldByType(value.getClass());
+        if (fieldType.equals("f") || fieldType.equals("g")) {
+            value = (T) Optional.of(iChatBaseComponentClass.getMethod("a", String.class).invoke(value.toString()));
+        }
 
-            String fieldType = getFieldByType(value.getClass());
+        ReflectionObject dataObject = dataWatcherObjectClass
+                .getConstructor(int.class, dataWatcherSerializerClass.getAClass())
+                .newInstance(index, dataWatcherRegistryClass.getStaticField(fieldType));
 
-            if (fieldType.equals("f") || fieldType.equals("g")) {
-               value = (T) Optional.of(iChatBaseComponentClass.getMethod("a", String.class).invoke(value.toString()));
-            }
-            ReflectionObject object = dataWatcherObjectClass
-                    .getConstructor(int.class, dataWatcherSerializerClass.getAClass())
-                    .newInstance(index, dataWatcherRegistryClass.getStaticField(fieldType));
+        ReflectionObject item = dataWatcherItemClass
+                .getConstructor(dataWatcherObjectClass.getAClass(), Object.class)
+                .newInstance(dataObject.getObject(), value);
 
-            ReflectionObject watcher = dataWatcherItemClass
-                    .getConstructor(dataWatcherObjectClass.getAClass(), Object.class)
-                    .newInstance(object.getObject(), value);
+        item.getMethod("a", boolean.class).invoke(true);
 
-
-            watcher.getMethod("a", boolean.class).invoke(true);
-
-            watchers.add(watcher.getObject());
-
+        watchers.add(item.getObject());
     }
-
     public ReflectionObject getWatcher() {
-
         if (XG7Plugins.getMinecraftVersion() < 21) {
 
-            ReflectionObject watcher = dataWatcherClass.getConstructor(entityClass.getAClass()).newInstance(entityClass.cast(null));
+            ReflectionObject dataWatcher = dataWatcherClass
+                    .getConstructor(entityClass.getAClass())
+                    .newInstance(entityClass.cast(null));
 
             watchers.forEach(w -> {
 
                 ReflectionObject wi = ReflectionObject.of(w);
+                Object dataWatcherObject = wi.getMethod("a").invoke();
 
-                if (XG7Plugins.getMinecraftVersion() < 19) watcher.getMethod("register", dataWatcherObjectClass.getAClass(), Object.class).invoke(wi.getMethod("a").invoke(), wi.getMethod("b").invoke());
-                else watcher.getMethod("a", dataWatcherObjectClass.getAClass(), Object.class).invoke(wi.getMethod("a").invoke(), wi.getMethod("b").invoke());
+                dataWatcher.getMethod(XG7Plugins.getMinecraftVersion() < 19 ? "register" : "a", dataWatcherObjectClass.getAClass(), Object.class).invoke(dataWatcherObject, wi.getMethod("b").invoke());
+
+                dataWatcher.getMethod("markDirty", dataWatcherObjectClass.getAClass()).invoke(dataWatcherObject);
+
             });
 
-            return watcher;
+            return dataWatcher;
+        }
+
+        Object watchersArray = Array.newInstance(dataWatcherItemClass.getAClass(), watchers.size());
+        for (int i = 0; i < watchers.size(); i++) {
+            Array.set(watchersArray, i, watchers.get(i));
         }
 
         ReflectionObject dataWatcher1_21 = dataWatcherClass
-                .getConstructor(synchedDataHolderClass
-                        .getAClass(), dataWatcherItemArrayClass.getAClass()
-                ).newInstance(null, watchers.toArray());
+                .getConstructor(ReflectionClass.of("net.minecraft.network.syncher.SyncedDataHolder")
+                        .getAClass(), dataWatcherItemClass.getArrayClass()
+                ).newInstance(null, watchersArray);
 
         dataWatcher1_21.setField("f", true);
 
         return dataWatcher1_21;
-
     }
-
 }

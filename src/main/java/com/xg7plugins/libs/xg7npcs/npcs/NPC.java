@@ -4,12 +4,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.mojang.datafixers.util.Pair;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7holograms.HologramBuilder;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.utils.Location;
+import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.reflection.NMSUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -30,9 +31,9 @@ public abstract class NPC {
     protected Location location;
     protected Map<UUID, Integer> npcIDS;
     protected String id;
-    protected List<?> equipments;
-    @Setter
+    protected List<Pair<?,?>> equipments;
     protected boolean lookAtPlayer = false;
+    protected boolean playerSkin = false;
 
     public NPC(Plugin plugin, String id, List<String> name, Location location) {
         this.name = HologramBuilder.creator(plugin,id + ":name").setLines(name).setLocation(location.add(0,-0.2,0)).build();
@@ -57,8 +58,14 @@ public abstract class NPC {
 
     }
 
+    public void setLookAtPlayer(boolean lookAtPlayer) {
+        this.lookAtPlayer = lookAtPlayer;
+        Bukkit.getOnlinePlayers().forEach(this::destroy);
+    }
+
     public abstract void spawn(Player player);
     public abstract void destroy(Player player);
+    public abstract void lookAtPlayer(Player player, int id, Object entity);
     public abstract void setEquipment(ItemStack mainHand, ItemStack offHand, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots);
     public void teleport(Location location) {
         this.location = location;
@@ -69,8 +76,6 @@ public abstract class NPC {
         });
     };
     public void setSkin(String username) throws IOException {
-
-
         URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + username);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
@@ -93,6 +98,33 @@ public abstract class NPC {
         this.skin = gameProfile;
 
         Bukkit.getOnlinePlayers().forEach(this::destroy);
-    };
+    }
+    public void setSkin(String value, String signature){
+
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "dummyNPC");
+
+        gameProfile.getProperties().put("textures", new Property("textures", value, signature));
+
+        this.skin = gameProfile;
+
+        Bukkit.getOnlinePlayers().forEach(this::destroy);
+    }
+    public void setSkin(Player player) {
+
+        GameProfile playerGameProfile = NMSUtil.getCraftBukkitClass("entity.CraftPlayer").castToRObject(player).getMethod("getProfile").invoke();
+
+        GameProfile npcProfile = new GameProfile(UUID.randomUUID(), "dummyNPC");
+
+        npcProfile.getProperties().putAll(playerGameProfile.getProperties());
+
+        this.skin = npcProfile;
+
+        Bukkit.getOnlinePlayers().forEach(this::destroy);
+    }
+
+    public void setPlayerSkin(boolean playerSkin) {
+        this.playerSkin = playerSkin;
+        Bukkit.getOnlinePlayers().forEach(this::destroy);
+    }
 
 }

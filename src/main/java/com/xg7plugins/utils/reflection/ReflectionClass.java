@@ -100,5 +100,9 @@ public class ReflectionClass {
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
         return aClass.getAnnotation(annotationClass);
     }
+    @SneakyThrows
+    public Class<?> getClassInside(String name) {
+        return Class.forName(aClass.getName() + "$" + name);
+    }
 
 }

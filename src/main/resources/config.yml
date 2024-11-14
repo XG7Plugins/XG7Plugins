@@ -16,6 +16,7 @@ menu-cache-expires: 10m
 
 holograms-update-delay: 1s
 npcs-update-delay: 5s
+npcs-look-at-player: true
 
 sql:
 

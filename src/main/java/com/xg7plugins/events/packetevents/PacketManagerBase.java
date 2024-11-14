@@ -5,7 +5,6 @@ import com.xg7plugins.events.Event;
 import com.xg7plugins.events.PacketEvent;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.reflections.Reflections;
 
 import java.util.ArrayList;
