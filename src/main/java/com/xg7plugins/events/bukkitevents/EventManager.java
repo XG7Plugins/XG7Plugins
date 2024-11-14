@@ -1,6 +1,6 @@
 package com.xg7plugins.events.bukkitevents;
 
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.events.Event;
 import com.xg7plugins.events.PacketEvent;

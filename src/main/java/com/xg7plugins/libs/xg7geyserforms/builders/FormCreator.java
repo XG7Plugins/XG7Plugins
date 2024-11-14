@@ -1,15 +1,12 @@
 package com.xg7plugins.libs.xg7geyserforms.builders;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.Form;
-import org.geysermc.cumulus.form.ModalForm;
 import org.geysermc.cumulus.response.FormResponse;
-import org.geysermc.cumulus.response.ModalFormResponse;
 import org.geysermc.cumulus.response.result.InvalidFormResponseResult;
-import org.geysermc.cumulus.response.result.ValidFormResponseResult;
 
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;

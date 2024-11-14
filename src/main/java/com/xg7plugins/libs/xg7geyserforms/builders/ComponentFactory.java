@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.xg7geyserforms.builders;
 
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

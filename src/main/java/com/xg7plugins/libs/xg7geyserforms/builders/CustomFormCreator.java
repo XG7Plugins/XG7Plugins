@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.xg7geyserforms.builders;
 
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.CustomForm;
 

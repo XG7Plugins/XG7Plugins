@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.xg7menus.builders.item;
 
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.commands.setup.ISubCommand;

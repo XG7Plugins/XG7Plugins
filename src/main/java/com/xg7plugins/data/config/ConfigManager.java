@@ -1,6 +1,6 @@
 package com.xg7plugins.data.config;
 
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import lombok.Getter;
 
 import java.util.Arrays;

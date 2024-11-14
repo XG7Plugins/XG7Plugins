@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
 import com.xg7plugins.libs.xg7menus.builders.item.ItemBuilder;
 import com.xg7plugins.libs.xg7menus.builders.item.SkullItemBuilder;

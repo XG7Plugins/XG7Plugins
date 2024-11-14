@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.xg7menus.builders.menu;
 
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.libs.xg7menus.builders.BaseItemBuilder;
 import com.xg7plugins.libs.xg7menus.builders.BaseMenuBuilder;
 import com.xg7plugins.libs.xg7menus.builders.item.SkullItemBuilder;

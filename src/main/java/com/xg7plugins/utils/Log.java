@@ -1,6 +1,6 @@
 package com.xg7plugins.utils;
 
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.data.config.Config;
 import lombok.AllArgsConstructor;
 import lombok.Setter;

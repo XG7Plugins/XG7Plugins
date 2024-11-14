@@ -1,7 +1,7 @@
 package com.xg7plugins.utils.text;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.utils.reflection.NMSUtil;
 import com.xg7plugins.utils.reflection.PlayerNMS;
 import com.xg7plugins.utils.reflection.ReflectionObject;

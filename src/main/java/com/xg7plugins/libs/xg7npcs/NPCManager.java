@@ -1,7 +1,6 @@
 package com.xg7plugins.libs.xg7npcs;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC;
 import lombok.Getter;
 import org.bukkit.Bukkit;

@@ -1,11 +1,10 @@
-package com.xg7plugins.boot;
+package com.xg7plugins;
 
 import com.xg7plugins.commands.CommandManager;
 import com.xg7plugins.data.config.ConfigManager;
 import com.xg7plugins.data.lang.LangManager;
 import com.xg7plugins.utils.Log;
 import lombok.*;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 

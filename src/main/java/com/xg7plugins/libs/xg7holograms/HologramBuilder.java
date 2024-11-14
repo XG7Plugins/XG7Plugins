@@ -1,7 +1,7 @@
 package com.xg7plugins.libs.xg7holograms;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram1_17_1_XX;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram1_8_1_16;

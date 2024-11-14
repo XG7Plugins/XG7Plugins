@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.xg7scores.builder;
 
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.libs.xg7scores.scores.Tablist;
 
 import java.util.ArrayList;

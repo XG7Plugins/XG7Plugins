@@ -2,7 +2,7 @@ package com.xg7plugins.data.database;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.utils.text.Text;

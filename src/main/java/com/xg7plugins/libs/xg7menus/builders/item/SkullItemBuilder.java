@@ -7,7 +7,7 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.libs.xg7menus.builders.BaseItemBuilder;
 import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
 import org.bukkit.Bukkit;

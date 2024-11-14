@@ -2,7 +2,7 @@ package com.xg7plugins.libs.xg7npcs.npcs;
 
 import com.mojang.authlib.GameProfile;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.utils.Location;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.reflection.*;

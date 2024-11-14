@@ -1,7 +1,7 @@
 package com.xg7plugins.tasks;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.data.config.Config;
 import lombok.Getter;
 import org.bukkit.Bukkit;

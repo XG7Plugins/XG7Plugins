@@ -1,7 +1,7 @@
 package com.xg7plugins.data.database;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

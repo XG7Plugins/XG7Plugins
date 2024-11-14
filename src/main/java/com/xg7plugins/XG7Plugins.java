@@ -8,7 +8,6 @@ import com.xg7plugins.libs.xg7holograms.HologramsManager;
 import com.xg7plugins.libs.xg7menus.MenuManager;
 import com.xg7plugins.libs.xg7npcs.NPCManager;
 import com.xg7plugins.libs.xg7scores.ScoreManager;
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.DBManager;
 import com.xg7plugins.events.bukkitevents.EventManager;

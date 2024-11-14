@@ -1,6 +1,6 @@
 package com.xg7plugins.events.packetevents;
 
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.events.Event;
 import com.xg7plugins.events.PacketEvent;
 import com.xg7plugins.utils.reflection.ReflectionClass;

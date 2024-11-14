@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.xg7menus.builders.menu;
 
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.Plugin;
 import com.xg7plugins.libs.xg7menus.MenuException;
 import com.xg7plugins.libs.xg7menus.Slot;
 import com.xg7plugins.libs.xg7menus.builders.BaseItemBuilder;
