@@ -27,11 +27,6 @@ public abstract class Plugin extends JavaPlugin {
     private List<String> enabledWorlds = Collections.emptyList();
 
     public Plugin(String prefix, String[] defLangs, String[] configs) {
-
-        if (Bukkit.getPluginManager().getPlugin("XG7Plugins") == null) {
-            //Baixar
-        }
-
         this.configsManager = new ConfigManager(this, configs);
         this.prefix = ChatColor.translateAlternateColorCodes('&', prefix);
         this.customPrefix = this.prefix;
