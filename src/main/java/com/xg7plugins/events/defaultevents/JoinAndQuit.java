@@ -17,8 +17,12 @@ public class JoinAndQuit implements Event {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        XG7Plugins.getInstance().getPacketEventManager().create(event.getPlayer());
-        if (XG7Plugins.getMinecraftVersion() > 7) XG7Plugins.getInstance().getHologramsManager().addPlayer(event.getPlayer());
+
+        XG7Plugins plugin = XG7Plugins.getInstance();
+
+        plugin.getPacketEventManager().create(event.getPlayer());
+        if (XG7Plugins.getMinecraftVersion() > 7) plugin.getHologramsManager().addPlayer(event.getPlayer());
+        plugin.getNpcManager().addPlayer(event.getPlayer());
     }
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
@@ -26,7 +30,8 @@ public class JoinAndQuit implements Event {
         XG7Plugins plugin = XG7Plugins.getInstance();
         plugin.getPacketEventManager().stopEvent(event.getPlayer());
         plugin.getMenuManager().removePlayerFromAll(event.getPlayer());
-        plugin.getHologramsManager().removePlayer(event.getPlayer());
+        if (XG7Plugins.getMinecraftVersion() > 7) plugin.getHologramsManager().removePlayer(event.getPlayer());
+        plugin.getNpcManager().removePlayer(event.getPlayer());
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> plugin.getScoreManager().removePlayer(event.getPlayer()), 2L);
 

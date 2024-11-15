@@ -42,6 +42,9 @@ public class SkullItemBuilder extends BaseItemBuilder<SkullItemBuilder> {
      * @return This InventoryItem
      */
     public SkullItemBuilder setValue(String value) {
+        if (XG7Plugins.getMinecraftVersion() < 8) {
+            return this;
+        }
         if (cachedSkulls.asMap().containsKey(value)) {
             this.itemStack.setItemMeta(cachedSkulls.getIfPresent(value));
             return this;
@@ -69,6 +72,9 @@ public class SkullItemBuilder extends BaseItemBuilder<SkullItemBuilder> {
      * @return This InventoryItem
      */
     public SkullItemBuilder setOwner(String owner) {
+        if (XG7Plugins.getMinecraftVersion() < 8) {
+            return this;
+        }
         if (Bukkit.getOnlineMode() && Bukkit.getPlayer(owner) != null) {
             setPlayerSkinValue(Bukkit.getPlayer(owner).getUniqueId());
             return this;
@@ -90,6 +96,9 @@ public class SkullItemBuilder extends BaseItemBuilder<SkullItemBuilder> {
      * @return This InventoryItem
      */
     public SkullItemBuilder setPlayerSkinValue(UUID player) {
+        if (XG7Plugins.getMinecraftVersion() < 8) {
+            return this;
+        }
         if (cachedSkulls.asMap().containsKey(player.toString())) {
             this.itemStack.setItemMeta(cachedSkulls.getIfPresent(player.toString()));
             return this;

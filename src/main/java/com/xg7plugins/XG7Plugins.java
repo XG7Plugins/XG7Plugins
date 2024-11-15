@@ -77,6 +77,7 @@ public final class XG7Plugins extends Plugin {
         Bukkit.getOnlinePlayers().forEach(player -> {
             packetEventManager.create(player);
             if (minecraftVersion > 7) hologramsManager.addPlayer(player);
+            npcManager.addPlayer(player);
         });
         this.taskManager = new TaskManager(this);
         this.scoreManager = new ScoreManager(this);
@@ -92,9 +93,10 @@ public final class XG7Plugins extends Plugin {
         Bukkit.getOnlinePlayers().forEach(player -> {
             packetEventManager.stopEvent(player);
             if (minecraftVersion > 7) hologramsManager.removePlayer(player);
+            npcManager.removePlayer(player);
         });
         scoreManager.removePlayers();
-        hologramsManager.cancelTask();
+        if (minecraftVersion > 7) hologramsManager.cancelTask();
         npcManager.cancelTask();
         taskManager.getExecutor().shutdown();
     }

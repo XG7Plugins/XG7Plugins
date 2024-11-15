@@ -38,6 +38,12 @@ public class NPCManager {
         npcs.remove(npc.getId());
     }
 
+    public void addPlayer(Player player) {
+        npcs.values().forEach(hologram -> hologram.spawn(player));
+    }
+    public void removePlayer(Player player) {
+        npcs.values().forEach(hologram -> hologram.destroy(player));
+    }
 
 
     public void registerLookingNPC(int id, Object entity) {
@@ -59,7 +65,6 @@ public class NPCManager {
 
     public void initTask() {
         if (taskId != null) return;
-        try {
             this.taskId = plugin.getTaskManager().addRepeatingTask(plugin, "npcs", () -> npcs.values().forEach(npc -> Bukkit.getOnlinePlayers().forEach(player -> {
                 World world = npc.getLocation().getWorld();
                 if (!player.getWorld().equals(world) && npc.getNpcIDS().containsKey(player.getUniqueId())) {
@@ -70,9 +75,6 @@ public class NPCManager {
                     npc.spawn(player);
                 }
             })),delay);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
     }
     public void cancelTask() {

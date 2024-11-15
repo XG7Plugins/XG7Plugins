@@ -32,28 +32,24 @@ public abstract class NPC {
     protected Map<UUID, Integer> npcIDS;
     protected String id;
     protected List<Pair<?,?>> equipments;
+    protected Plugin plugin;
     protected boolean lookAtPlayer = false;
     protected boolean playerSkin = false;
 
     public NPC(Plugin plugin, String id, List<String> name, Location location) {
         this.name = XG7Plugins.getMinecraftVersion() < 8 ? name.get(0) : HologramBuilder.creator(plugin,id + ":name").setLines(name).setLocation(location.add(0,-0.2,0)).build();
 
-        Object gameProfile;
+        if (XG7Plugins.getMinecraftVersion() > 7) XG7Plugins.getInstance().getHologramsManager().initTask();
 
-        if (XG7Plugins.getMinecraftVersion() > 7) {
-            gameProfile = new GameProfile(UUID.randomUUID(), "dummyNPC");
-            ((GameProfile) gameProfile).getProperties().put("textures", new Property("textures", "ewogICJ0aW1lc3RhbXAiIDogMTczMDEzMjM2NjY3OCwKICAicHJvZmlsZUlkIiA6ICI3MGQzMzg2YzU5NzA0NmU1YWM4OTNhYmZlYTQ5N2IxMCIsCiAgInByb2ZpbGVOYW1lIiA6ICJST1lMRUU1NDYwIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2MyNjZlZTZiY2MyNjY1ZTBhODQ3N2Q0OTUzN2RkZjZiMjk4YjVjNGE1NDU2MWIyZjNjNDQ4MmI3N2IzNzA2MSIKICAgIH0KICB9Cn0=", "wOX7HhZ9VNtfNJi3GJFT3LnbXUCaFtpcyQDldoWvmrbA5RjrQ8H2jVcBXpMxnlk9U43KvNgFNxy/d3KklSNg9EfOBmo5H2GYICIx9iJOTCnOZC8GLhZWuia8jC7lqB6CfT7TdZWZAT2CXM2b8pteGWjoPg+OWUuXyg6Jg0k7uUrqzjMYjfh6y7hJXZIl38hMgISymrdQPGQVGTdBKeDmrQDveYn49ZYKdAbeb3pEHM5/QZIlvZVdvEHoLS4U5QRiw5V3/ERvd36RlKaydZVveqSMAoWvak/etVTiT3gLA5VbJN/qWYjz3rkmNboouYDC6eWy75b8TZSkPtk02JZ/ILDgpvYPyrAXwpZQNtWLXF99zun+aSZFPaSgW6/28yItmeJ0i+HpYbtOEGF6lJnEtI/jWNc0qb8/daE+HiahcKndpwi2zlErjlFfry08P3u5R7iX/KbGsgn96pVt+G9SXBRLX84ymWaqsg70xA+wgSov0xTc6AMHG15aHSrryw+RAikDbMU4ooNazDmeMWsitQNa8c120TPUQM/h+/ysNdksjnxDkyjOekzpyJmalGorfBe/KbRVqd2fK5VwIh4wJqWvPP2Gofh0C1sawQf2fu0KHHHg8XQhT+MivvrYzs0rccHnRiYcbDX3IPUGqoedaD3Q+Gkqo33XRqq+IJKlAFM="));
-        } else {
-            gameProfile = new net.minecraft.util.com.mojang.authlib.GameProfile(UUID.randomUUID(), name.get(0));
-            ((net.minecraft.util.com.mojang.authlib.GameProfile) gameProfile).getProperties().put("textures", new net.minecraft.util.com.mojang.authlib.properties.Property("textures", "ewogICJ0aW1lc3RhbXAiIDogMTczMDEzMjM2NjY3OCwKICAicHJvZmlsZUlkIiA6ICI3MGQzMzg2YzU5NzA0NmU1YWM4OTNhYmZlYTQ5N2IxMCIsCiAgInByb2ZpbGVOYW1lIiA6ICJST1lMRUU1NDYwIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2MyNjZlZTZiY2MyNjY1ZTBhODQ3N2Q0OTUzN2RkZjZiMjk4YjVjNGE1NDU2MWIyZjNjNDQ4MmI3N2IzNzA2MSIKICAgIH0KICB9Cn0=", "wOX7HhZ9VNtfNJi3GJFT3LnbXUCaFtpcyQDldoWvmrbA5RjrQ8H2jVcBXpMxnlk9U43KvNgFNxy/d3KklSNg9EfOBmo5H2GYICIx9iJOTCnOZC8GLhZWuia8jC7lqB6CfT7TdZWZAT2CXM2b8pteGWjoPg+OWUuXyg6Jg0k7uUrqzjMYjfh6y7hJXZIl38hMgISymrdQPGQVGTdBKeDmrQDveYn49ZYKdAbeb3pEHM5/QZIlvZVdvEHoLS4U5QRiw5V3/ERvd36RlKaydZVveqSMAoWvak/etVTiT3gLA5VbJN/qWYjz3rkmNboouYDC6eWy75b8TZSkPtk02JZ/ILDgpvYPyrAXwpZQNtWLXF99zun+aSZFPaSgW6/28yItmeJ0i+HpYbtOEGF6lJnEtI/jWNc0qb8/daE+HiahcKndpwi2zlErjlFfry08P3u5R7iX/KbGsgn96pVt+G9SXBRLX84ymWaqsg70xA+wgSov0xTc6AMHG15aHSrryw+RAikDbMU4ooNazDmeMWsitQNa8c120TPUQM/h+/ysNdksjnxDkyjOekzpyJmalGorfBe/KbRVqd2fK5VwIh4wJqWvPP2Gofh0C1sawQf2fu0KHHHg8XQhT+MivvrYzs0rccHnRiYcbDX3IPUGqoedaD3Q+Gkqo33XRqq+IJKlAFM="));
-        }
+        initSkin();
 
-        this.skin = gameProfile;
         this.npcIDS = new HashMap<>();
         this.location = location;
         this.equipments = new ArrayList<>();
 
         this.id = id;
+
+        this.plugin = plugin;
 
         XG7Plugins.getInstance().getNpcManager().addNPC(this);
     }
@@ -70,6 +66,10 @@ public abstract class NPC {
         Bukkit.getOnlinePlayers().forEach(this::destroy);
     }
 
+    protected void initSkin() {
+        this.skin = new GameProfile(UUID.randomUUID(), "dummyNPC");
+        ((GameProfile) skin).getProperties().put("textures", new Property("textures", "ewogICJ0aW1lc3RhbXAiIDogMTczMDEzMjM2NjY3OCwKICAicHJvZmlsZUlkIiA6ICI3MGQzMzg2YzU5NzA0NmU1YWM4OTNhYmZlYTQ5N2IxMCIsCiAgInByb2ZpbGVOYW1lIiA6ICJST1lMRUU1NDYwIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2MyNjZlZTZiY2MyNjY1ZTBhODQ3N2Q0OTUzN2RkZjZiMjk4YjVjNGE1NDU2MWIyZjNjNDQ4MmI3N2IzNzA2MSIKICAgIH0KICB9Cn0=", "wOX7HhZ9VNtfNJi3GJFT3LnbXUCaFtpcyQDldoWvmrbA5RjrQ8H2jVcBXpMxnlk9U43KvNgFNxy/d3KklSNg9EfOBmo5H2GYICIx9iJOTCnOZC8GLhZWuia8jC7lqB6CfT7TdZWZAT2CXM2b8pteGWjoPg+OWUuXyg6Jg0k7uUrqzjMYjfh6y7hJXZIl38hMgISymrdQPGQVGTdBKeDmrQDveYn49ZYKdAbeb3pEHM5/QZIlvZVdvEHoLS4U5QRiw5V3/ERvd36RlKaydZVveqSMAoWvak/etVTiT3gLA5VbJN/qWYjz3rkmNboouYDC6eWy75b8TZSkPtk02JZ/ILDgpvYPyrAXwpZQNtWLXF99zun+aSZFPaSgW6/28yItmeJ0i+HpYbtOEGF6lJnEtI/jWNc0qb8/daE+HiahcKndpwi2zlErjlFfry08P3u5R7iX/KbGsgn96pVt+G9SXBRLX84ymWaqsg70xA+wgSov0xTc6AMHG15aHSrryw+RAikDbMU4ooNazDmeMWsitQNa8c120TPUQM/h+/ysNdksjnxDkyjOekzpyJmalGorfBe/KbRVqd2fK5VwIh4wJqWvPP2Gofh0C1sawQf2fu0KHHHg8XQhT+MivvrYzs0rccHnRiYcbDX3IPUGqoedaD3Q+Gkqo33XRqq+IJKlAFM="));
+    }
     public abstract void spawn(Player player);
     public abstract void destroy(Player player);
     public abstract void lookAtPlayer(Player player, int id, Object entity);
@@ -98,15 +98,9 @@ public abstract class NPC {
 
         JsonObject properties = skinProprieties.getAsJsonArray("properties").get(0).getAsJsonObject();
 
-        Object gameProfile;
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "dummyNPC");
+        gameProfile.getProperties().put("textures", new Property("textures", properties.get("value").getAsString(), properties.get("signature").getAsString()));
 
-        if (XG7Plugins.getMinecraftVersion() > 7) {
-            gameProfile = new GameProfile(UUID.randomUUID(), "dummyNPC");
-            ((GameProfile) gameProfile).getProperties().put("textures", new Property("textures", properties.get("value").getAsString(), properties.get("signature").getAsString()));
-        } else {
-            gameProfile = new net.minecraft.util.com.mojang.authlib.GameProfile(UUID.randomUUID(), (String) name);
-            ((net.minecraft.util.com.mojang.authlib.GameProfile) gameProfile).getProperties().put("textures", new net.minecraft.util.com.mojang.authlib.properties.Property("textures", properties.get("value").getAsString(), properties.get("signature").getAsString()));
-        }
 
         this.skin = gameProfile;
 
@@ -114,15 +108,9 @@ public abstract class NPC {
     }
     public void setSkin(String value, String signature){
 
-        Object gameProfile;
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "dummyNPC");
+        gameProfile.getProperties().put("textures", new Property("textures", value, signature));
 
-        if (XG7Plugins.getMinecraftVersion() > 7) {
-            gameProfile = new GameProfile(UUID.randomUUID(), "dummyNPC");
-            ((GameProfile) gameProfile).getProperties().put("textures", new Property("textures", value, signature));
-        } else {
-            gameProfile = new net.minecraft.util.com.mojang.authlib.GameProfile(UUID.randomUUID(), (String) name);
-            ((net.minecraft.util.com.mojang.authlib.GameProfile) gameProfile).getProperties().put("textures", new net.minecraft.util.com.mojang.authlib.properties.Property("textures", value, signature));
-        }
 
         this.skin = gameProfile;
 
@@ -132,15 +120,9 @@ public abstract class NPC {
 
         ReflectionObject playerGameProfile = NMSUtil.getCraftBukkitClass("entity.CraftPlayer").castToRObject(player).getMethod("getProfile").invokeToRObject();
 
-        Object npcProfile;
+        GameProfile npcProfile = new GameProfile(UUID.randomUUID(), "dummyNPC");
+        npcProfile.getProperties().putAll(playerGameProfile.getMethod("getProperties").invoke());
 
-        if (XG7Plugins.getMinecraftVersion() > 7) {
-            npcProfile = new GameProfile(UUID.randomUUID(), "dummyNPC");
-            ((GameProfile) npcProfile).getProperties().putAll(playerGameProfile.getMethod("getProperties").invoke());
-        } else {
-            npcProfile = new net.minecraft.util.com.mojang.authlib.GameProfile(UUID.randomUUID(), (String) name);
-            ((net.minecraft.util.com.mojang.authlib.GameProfile) npcProfile).getProperties().putAll(playerGameProfile.getMethod("getProperties").invoke());
-        }
 
 
         this.skin = npcProfile;
@@ -152,5 +134,6 @@ public abstract class NPC {
         this.playerSkin = playerSkin;
         Bukkit.getOnlinePlayers().forEach(this::destroy);
     }
+
 
 }
