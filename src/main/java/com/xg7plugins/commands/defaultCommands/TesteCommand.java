@@ -5,7 +5,7 @@ import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.libs.xg7holograms.HologramBuilder;
 import com.xg7plugins.libs.xg7menus.builders.item.ItemBuilder;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC1_17_1_XX;
-import com.xg7plugins.libs.xg7npcs.npcs.NPC1_8_1_16;
+import com.xg7plugins.libs.xg7npcs.npcs.NPC1_7_1_16;
 import com.xg7plugins.utils.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -24,7 +24,7 @@ import java.util.List;
 )
 public class TesteCommand implements ICommand {
 
-    private static NPC1_17_1_XX npc;
+    private static NPC1_7_1_16 npc;
 
 
     @Override
@@ -121,8 +121,11 @@ public class TesteCommand implements ICommand {
 
             switch (args[1]) {
                 case "create":
+                    System.out.println("Oxi");
+                    System.out.println(XG7Plugins.getInstance().getNpcManager());
                     XG7Plugins.getInstance().getNpcManager().initTask();
-                    npc = new NPC1_17_1_XX(XG7Plugins.getInstance(), "testenpc", Arrays.asList("§aTeste", "Tenho 3 linhas no nome :D", "lang:[formated-name]"), Location.fromPlayer((Player) sender));
+                    System.out.println("Criando npc??");
+                    npc = new NPC1_7_1_16(XG7Plugins.getInstance(), "testenpc", Arrays.asList("§aTeste", "Tenho 3 linhas no nome :D", "lang:[formated-name]"), Location.fromPlayer((Player) sender));
                     npc.setLookAtPlayer(true);
                     npc.setSkin((Player) sender);
                     break;

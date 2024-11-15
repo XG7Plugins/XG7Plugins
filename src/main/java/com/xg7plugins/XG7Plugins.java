@@ -76,7 +76,7 @@ public final class XG7Plugins extends Plugin {
         this.packetEventManager = minecraftVersion < 8 ? new PacketEventManager1_7() : new PacketEventManager();
         Bukkit.getOnlinePlayers().forEach(player -> {
             packetEventManager.create(player);
-            hologramsManager.addPlayer(player);
+            if (minecraftVersion > 7) hologramsManager.addPlayer(player);
         });
         this.taskManager = new TaskManager(this);
         this.scoreManager = new ScoreManager(this);
@@ -91,7 +91,7 @@ public final class XG7Plugins extends Plugin {
     public void onDisable() {
         Bukkit.getOnlinePlayers().forEach(player -> {
             packetEventManager.stopEvent(player);
-            hologramsManager.removePlayer(player);
+            if (minecraftVersion > 7) hologramsManager.removePlayer(player);
         });
         scoreManager.removePlayers();
         hologramsManager.cancelTask();

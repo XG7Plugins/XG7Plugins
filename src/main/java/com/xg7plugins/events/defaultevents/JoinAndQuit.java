@@ -18,7 +18,7 @@ public class JoinAndQuit implements Event {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         XG7Plugins.getInstance().getPacketEventManager().create(event.getPlayer());
-        XG7Plugins.getInstance().getHologramsManager().addPlayer(event.getPlayer());
+        if (XG7Plugins.getMinecraftVersion() > 7) XG7Plugins.getInstance().getHologramsManager().addPlayer(event.getPlayer());
     }
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {

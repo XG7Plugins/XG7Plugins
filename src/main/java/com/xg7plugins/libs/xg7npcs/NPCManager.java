@@ -59,16 +59,21 @@ public class NPCManager {
 
     public void initTask() {
         if (taskId != null) return;
-        this.taskId = plugin.getTaskManager().addRepeatingTask(plugin, "npcs", () -> npcs.values().forEach(npc -> Bukkit.getOnlinePlayers().forEach(player -> {
-            World world = npc.getLocation().getWorld();
-            if (!player.getWorld().equals(world) && npc.getNpcIDS().containsKey(player.getUniqueId())) {
-                npc.destroy(player);
-                return;
-            }
-            if (player.getWorld().equals(world) && !npc.getNpcIDS().containsKey(player.getUniqueId())) {
-                npc.spawn(player);
-            }
-        })),delay);
+        try {
+            this.taskId = plugin.getTaskManager().addRepeatingTask(plugin, "npcs", () -> npcs.values().forEach(npc -> Bukkit.getOnlinePlayers().forEach(player -> {
+                World world = npc.getLocation().getWorld();
+                if (!player.getWorld().equals(world) && npc.getNpcIDS().containsKey(player.getUniqueId())) {
+                    npc.destroy(player);
+                    return;
+                }
+                if (player.getWorld().equals(world) && !npc.getNpcIDS().containsKey(player.getUniqueId())) {
+                    npc.spawn(player);
+                }
+            })),delay);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
     public void cancelTask() {
         plugin.getTaskManager().cancelTask(this.taskId);

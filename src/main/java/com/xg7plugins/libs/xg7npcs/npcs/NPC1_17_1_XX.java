@@ -4,6 +4,7 @@ package com.xg7plugins.libs.xg7npcs.npcs;
 import com.mojang.authlib.GameProfile;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.Plugin;
+import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.utils.Location;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.reflection.*;
@@ -54,7 +55,7 @@ public class NPC1_17_1_XX extends NPC {
 
                 ReflectionObject npc;
 
-            GameProfile npcSkin = skin;
+            GameProfile npcSkin = (GameProfile) skin;
 
             if (playerSkin) {
                 GameProfile playerGameProfile = NMSUtil.getCraftBukkitClass("entity.CraftPlayer").castToRObject(player).getMethod("getProfile").invoke();
@@ -238,7 +239,7 @@ public class NPC1_17_1_XX extends NPC {
         npcIDS.remove(player.getUniqueId());
         if (lookAtPlayer) XG7Plugins.getInstance().getNpcManager().unregisterLookingNPC(npcIDS.get(player.getUniqueId()));
 
-        name.destroy(player);
+        if (name instanceof Hologram) ((Hologram)name).destroy(player);
     }
 
     @Override
