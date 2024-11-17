@@ -23,6 +23,8 @@ public class JoinAndQuit implements Event {
         plugin.getPacketEventManager().create(event.getPlayer());
         if (XG7Plugins.getMinecraftVersion() > 7) plugin.getHologramsManager().addPlayer(event.getPlayer());
         plugin.getNpcManager().addPlayer(event.getPlayer());
+
+
     }
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {

@@ -80,48 +80,79 @@ public class Text {
     }
 
     public String getWithPlaceholders(Player player) {
-        YamlConfiguration entity = this.plugin.getLangManager().getLangByPlayer(player);
-        String textToTraslate = getText();
-        Matcher matcher = LANG_PATTERN.matcher(textToTraslate);
-        while (matcher.find()) {
-            String lang = matcher.group(1);
-            if (entity.getString(lang) == null) {
-                String translation = plugin.getLangManager().getLang(plugin.getLangManager().getMainLang()).getString(lang);
-                if (translation == null) {
-                    textToTraslate = "Cannot found path \"" + lang + "\" in langs";
+
+        String text = getText();
+
+        YamlConfiguration entity;
+        Matcher matcher = LANG_PATTERN.matcher(text);
+        if (plugin.getLangManager() == null) {
+
+            entity = plugin.getConfigsManager().getConfig("messages").getConfig();
+
+            while (matcher.find()) {
+                String lang = matcher.group(1);
+                text = text.replace(text.substring(matcher.start(), matcher.end()), entity.getString(lang));
+            }
+
+        } else {
+            entity = this.plugin.getLangManager().getLangByPlayer(player);
+            while (matcher.find()) {
+                String lang = matcher.group(1);
+                if (entity.getString(lang) == null) {
+                    String translation = plugin.getLangManager().getLang(plugin.getLangManager().getMainLang()).getString(lang);
+                    if (translation == null) {
+                        text = "Cannot found path \"" + lang + "\" in langs";
+                        continue;
+                    }
+                    text = text.replace(text.substring(matcher.start(), matcher.end()), translation);
+
                     continue;
                 }
-                textToTraslate = textToTraslate.replace(textToTraslate.substring(matcher.start(), matcher.end()), translation);
-
-                continue;
+                text = text.replace(text.substring(matcher.start(), matcher.end()), entity.getString(lang));
             }
-            textToTraslate = textToTraslate.replace(textToTraslate.substring(matcher.start(), matcher.end()), entity.getString(lang));
         }
-        textToTraslate = textToTraslate.replace("[PLAYER]", player.getName());
-
+        text = text.replace("[PLAYER]", player.getName());
         for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            textToTraslate = textToTraslate.replace(entry.getKey(),entry.getValue());
+            text = text.replace(entry.getKey(),entry.getValue());
         }
 
-        return Text.format(XG7Plugins.isPlaceholderAPI() ? PlaceholderAPI.setPlaceholders((OfflinePlayer) player, textToTraslate) : textToTraslate, plugin).getText();
+        return Text.format(XG7Plugins.isPlaceholderAPI() ? PlaceholderAPI.setPlaceholders((OfflinePlayer) player, text) : text, plugin).getText();
     }
 
     public static String getWithPlaceholders(Plugin plugin, String text, Player player) {
 
-        YamlConfiguration entity = plugin.getLangManager().getLangByPlayer(player);
+        YamlConfiguration entity;
+        Matcher matcher = LANG_PATTERN.matcher(text);
+        if (plugin.getLangManager() == null) {
 
-        String textToTraslate = text;
+            entity = plugin.getConfigsManager().getConfig("messages").getConfig();
 
-        Matcher matcher = LANG_PATTERN.matcher(textToTraslate);
+            while (matcher.find()) {
+                String lang = matcher.group(1);
+                text = text.replace(text.substring(matcher.start(), matcher.end()), entity.getString(lang));
+            }
 
-        while (matcher.find()) {
-            String lang = matcher.group(1);
-            textToTraslate = textToTraslate.replace(textToTraslate.substring(matcher.start(), matcher.end()), entity.getString(lang));
+        } else {
+            entity = plugin.getLangManager().getLangByPlayer(player);
+            while (matcher.find()) {
+                String lang = matcher.group(1);
+                if (entity.getString(lang) == null) {
+                    String translation = plugin.getLangManager().getLang(plugin.getLangManager().getMainLang()).getString(lang);
+                    if (translation == null) {
+                        text = "Cannot found path \"" + lang + "\" in langs";
+                        continue;
+                    }
+                    text = text.replace(text.substring(matcher.start(), matcher.end()), translation);
+
+                    continue;
+                }
+                text = text.replace(text.substring(matcher.start(), matcher.end()), entity.getString(lang));
+            }
         }
 
-        textToTraslate = textToTraslate.replace("[PLAYER]", player.getName());
+        text = text.replace("[PLAYER]", player.getName());
 
-        return Text.format(XG7Plugins.isPlaceholderAPI() ? PlaceholderAPI.setPlaceholders((OfflinePlayer) player, textToTraslate) : textToTraslate, plugin).getText();
+        return Text.format(XG7Plugins.isPlaceholderAPI() ? PlaceholderAPI.setPlaceholders((OfflinePlayer) player, text) : text, plugin).getText();
     }
 
     public Text replace(String placeholder, String replacement) {
@@ -151,7 +182,7 @@ public class Text {
 
         Matcher matcher = LANG_PATTERN.matcher(textToTraslate);
 
-        YamlConfiguration mainLang = plugin.getLangManager().getLang(plugin.getLangManager().getMainLang());
+        YamlConfiguration mainLang = plugin.getLangManager() == null ? plugin.getConfigsManager().getConfig("messages").getConfig() : plugin.getLangManager().getLang(plugin.getLangManager().getMainLang());
 
         while (matcher.find()) {
             textToTraslate = textToTraslate.replace(textToTraslate.substring(matcher.start(), matcher.end()), mainLang.getString(matcher.group(1)));

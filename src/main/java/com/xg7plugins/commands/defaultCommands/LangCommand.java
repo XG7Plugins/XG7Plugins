@@ -14,7 +14,8 @@ import org.bukkit.entity.Player;
         syntax = "/xg7pluginlang",
         aliasesPath = "lang",
         perm = "xg7plugins.command.lang",
-        isOnlyPlayer = true
+        isOnlyPlayer = true,
+        enabledPath = {"config", "enable-langs", "false"}
 )
 public class LangCommand implements ICommand {
     @Override

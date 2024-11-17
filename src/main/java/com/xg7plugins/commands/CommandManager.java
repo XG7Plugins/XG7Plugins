@@ -4,6 +4,7 @@ import com.xg7plugins.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.data.config.Config;
 import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionMethod;
@@ -50,6 +51,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             if (!command.isEnabled()) return;
 
             Command commandSetup = command.getClass().getAnnotation(Command.class);
+
+            Config config = plugin.getConfigsManager().getConfig(commandSetup.enabledPath()[0]);
+
+            boolean invert = Boolean.parseBoolean(commandSetup.enabledPath()[2]);
+            if (config != null) if ((boolean) config.get(commandSetup.enabledPath()[1]) == invert) return;
+            else if (invert) return;
 
             String aliases = plugin.getConfigsManager().getConfig("commands").get(commandSetup.aliasesPath());
             if (aliases == null) return;

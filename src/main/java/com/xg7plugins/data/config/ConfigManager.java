@@ -20,6 +20,10 @@ public class ConfigManager {
         Arrays.stream(configs).forEach(config -> this.configs.put(config, new Config(plugin, config)));
     }
 
+    public void putConfig(String name, Config config) {
+        configs.put(name, config);
+    }
+
     public Config getConfig(String name) {
         return configs.get(name);
     }

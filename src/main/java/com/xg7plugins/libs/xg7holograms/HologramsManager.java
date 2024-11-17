@@ -58,6 +58,7 @@ public class HologramsManager {
         })),delay);
     }
     public void cancelTask() {
+        if (taskId == null) return;
         plugin.getTaskManager().cancelTask(this.taskId);
         taskId = null;
     }

@@ -33,7 +33,7 @@ public class TaskMenu {
 
         List<BaseItemBuilder<?>> items = new ArrayList<>();
 
-        YamlConfiguration lang = plugin.getLangManager().getLangByPlayer(player);
+        YamlConfiguration lang = plugin.getLangManager() == null ? plugin.getConfigsManager().getConfig("messages").getConfig() : plugin.getLangManager().getLangByPlayer(player);
         tasks.forEach(task -> {
 
             String[] split = task.split(":");

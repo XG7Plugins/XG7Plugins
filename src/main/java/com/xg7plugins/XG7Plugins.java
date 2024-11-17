@@ -1,6 +1,7 @@
 package com.xg7plugins;
 
 import com.xg7plugins.data.database.EntityProcessor;
+import com.xg7plugins.data.lang.LangManager;
 import com.xg7plugins.data.lang.PlayerLanguage;
 import com.xg7plugins.events.packetevents.PacketManagerBase;
 import com.xg7plugins.libs.xg7geyserforms.FormManager;
@@ -33,17 +34,14 @@ public final class XG7Plugins extends Plugin {
     @Getter
     private static final int minecraftVersion;
     @Getter
-    private static final boolean floodgate;
+    private static boolean floodgate;
     @Getter
-    private static final boolean placeholderAPI;
+    private static boolean placeholderAPI;
 
     static {
         Pattern pattern = Pattern.compile("1\\.([0-9]?[0-9])");
         Matcher matcher = pattern.matcher(Bukkit.getServer().getVersion());
         minecraftVersion = matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
-
-        floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
-        placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
     }
 
     private DBManager databaseManager;
@@ -59,13 +57,19 @@ public final class XG7Plugins extends Plugin {
     private final HashMap<String, Plugin> plugins = new HashMap<>();
 
     public XG7Plugins() {
-        super("[XG7Plugins]", new String[] {"pt-br", "en-us"}, /* null will be default configs */ null);
+        super("[XG7Plugins]", /* null will be default configs */ null);
         instance = this;
     }
 
     @Override
     public void onEnable() {
+        floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
+        placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
         Config config = getConfigsManager().getConfig("config");
+        this.setLangManager(config.get("enable-langs") ? new LangManager(this, new String[]{"en-us", "pt-br"}) : null);
+        if (this.getLangManager() == null) {
+            getConfigsManager().putConfig("messages", new Config(this, "langs/" + config.get("main-lang")));
+        }
         if (config.get("prefix") != null) this.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix")));
         this.databaseManager = new DBManager(this);
         this.databaseManager.connectPlugin(this);
@@ -90,6 +94,7 @@ public final class XG7Plugins extends Plugin {
 
     @Override
     public void onDisable() {
+        this.plugins.forEach((name, plugin) -> unregister(plugin));
         Bukkit.getOnlinePlayers().forEach(player -> {
             packetEventManager.stopEvent(player);
             if (minecraftVersion > 7) hologramsManager.removePlayer(player);
@@ -104,8 +109,13 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void onLoad() {}
 
-    public static void register(Plugin plugin) {
+    public static void register(Plugin plugin, String[] mainLangs) {
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
+
+        plugin.setLangManager(xg7Plugins.getConfigsManager().getConfig("config").get("enable-langs") ? new LangManager(plugin, mainLangs) : null);
+        if (plugin.getLangManager() == null) {
+            plugin.getConfigsManager().putConfig("messages", new Config(plugin, "langs/" + plugin.getConfigsManager().getConfig("config").get("main-lang")));
+        }
 
         xg7Plugins.getPlugins().put(plugin.getName().split(" ")[0], plugin);
 

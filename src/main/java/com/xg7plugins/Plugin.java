@@ -1,6 +1,7 @@
 package com.xg7plugins;
 
 import com.xg7plugins.commands.CommandManager;
+import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
 import com.xg7plugins.data.lang.LangManager;
 import com.xg7plugins.utils.Log;
@@ -19,20 +20,18 @@ public abstract class Plugin extends JavaPlugin {
 
     private final ConfigManager configsManager;
     private final CommandManager commandManager;
-    private final LangManager langManager;
+    private LangManager langManager;
     private final Log log;
 
     private String customPrefix;
     private List<String> enabledWorlds = Collections.emptyList();
 
-    public Plugin(String prefix, String[] defLangs, String[] configs) {
+    public Plugin(String prefix, String[] configs) {
         this.configsManager = new ConfigManager(this, configs);
         this.prefix = ChatColor.translateAlternateColorCodes('&', prefix);
         this.customPrefix = this.prefix;
         this.log = new Log(this);
-
         log.loading("Loading " + prefix + "...");
-        this.langManager = new LangManager(this, defLangs);
         this.commandManager = new CommandManager(this);
     }
 
