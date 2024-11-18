@@ -52,12 +52,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             Command commandSetup = command.getClass().getAnnotation(Command.class);
 
-            Config config = plugin.getConfigsManager().getConfig(commandSetup.enabledPath()[0]);
-
-            boolean invert = Boolean.parseBoolean(commandSetup.enabledPath()[2]);
-            if (config != null) if ((boolean) config.get(commandSetup.enabledPath()[1]) == invert) return;
-            else if (invert) return;
-
             String aliases = plugin.getConfigsManager().getConfig("commands").get(commandSetup.aliasesPath());
             if (aliases == null) return;
 

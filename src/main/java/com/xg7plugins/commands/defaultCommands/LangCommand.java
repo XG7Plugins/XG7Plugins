@@ -14,10 +14,15 @@ import org.bukkit.entity.Player;
         syntax = "/xg7pluginlang",
         aliasesPath = "lang",
         perm = "xg7plugins.command.lang",
-        isOnlyPlayer = true,
-        enabledPath = {"config", "enable-langs", "false"}
+        isOnlyPlayer = true
 )
 public class LangCommand implements ICommand {
+
+    @Override
+    public boolean isEnabled() {
+        return XG7Plugins.getInstance().getConfigsManager().getConfig("config").get("enable-langs");
+    }
+
     @Override
     public ItemBuilder getIcon() {
         return ItemBuilder.commandIcon(XMaterial.WRITABLE_BOOK, this, XG7Plugins.getInstance());

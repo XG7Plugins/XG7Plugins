@@ -13,7 +13,6 @@ public @interface Command {
     String syntax();
     String aliasesPath();
     String perm() default "";
-    String[] enabledPath() default {"", "", "false"};
     boolean isOnlyInWorld() default false;
     boolean isOnlyPlayer() default false;
 }
