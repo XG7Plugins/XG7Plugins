@@ -29,8 +29,6 @@ import java.util.regex.Pattern;
 @Getter(AccessLevel.PUBLIC)
 public final class XG7Plugins extends Plugin {
 
-    private static XG7Plugins instance;
-
     @Getter
     private static final int minecraftVersion;
     @Getter
@@ -58,7 +56,6 @@ public final class XG7Plugins extends Plugin {
 
     public XG7Plugins() {
         super("[XG7Plugins]", /* null will be default configs */ null);
-        instance = this;
     }
 
     @Override
