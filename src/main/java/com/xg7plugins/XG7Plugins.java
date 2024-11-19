@@ -1,6 +1,7 @@
 package com.xg7plugins;
 
 import com.xg7plugins.data.database.EntityProcessor;
+import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.lang.LangManager;
 import com.xg7plugins.data.lang.PlayerLanguage;
 import com.xg7plugins.events.packetevents.PacketManagerBase;
@@ -49,6 +50,7 @@ public final class XG7Plugins extends Plugin {
     private PacketManagerBase packetEventManager;
     private MenuManager menuManager;
     private FormManager formManager;
+    private JsonManager jsonManager;
     private HologramsManager hologramsManager;
     private NPCManager npcManager;
 
@@ -62,13 +64,17 @@ public final class XG7Plugins extends Plugin {
     public void onEnable() {
         floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
         placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+
         Config config = getConfigsManager().getConfig("config");
         this.setLangManager(config.get("enable-langs") ? new LangManager(this, new String[]{"en-us", "pt-br"}) : null);
-        if (this.getLangManager() == null) {
-            getConfigsManager().putConfig("messages", new Config(this, "langs/" + config.get("main-lang")));
-        }
+        if (this.getLangManager() == null) getConfigsManager().putConfig("messages", new Config(this, "langs/" + config.get("main-lang")));
+
         if (config.get("prefix") != null) this.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix")));
+
+        getLog().loading("Enabling XG7Plugins...");
+
         this.databaseManager = new DBManager(this);
+        this.jsonManager = new JsonManager(this);
         this.databaseManager.connectPlugin(this);
         this.hologramsManager = minecraftVersion < 8 ? null : new HologramsManager(this);
         this.npcManager = new NPCManager(this);
