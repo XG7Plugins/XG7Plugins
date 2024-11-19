@@ -21,7 +21,9 @@ repositories {
     }
 }
 
-dependencies {    compileOnly files("D:/buildTools/spigot-1.16.1.jar")
+dependencies {
+
+    compileOnly files("D:/buildTools/spigot-1.16.1.jar")
 
     compileOnly 'io.netty:netty-all:4.1.111.Final'
     implementation 'com.mojang:authlib:1.5.25'

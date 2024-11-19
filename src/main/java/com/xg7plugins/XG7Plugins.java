@@ -62,12 +62,11 @@ public final class XG7Plugins extends Plugin {
 
     @Override
     public void onEnable() {
+        super.onEnable();
         floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
         placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         Config config = getConfigsManager().getConfig("config");
-        this.setLangManager(config.get("enable-langs") ? new LangManager(this, new String[]{"en-us", "pt-br"}) : null);
-        if (this.getLangManager() == null) getConfigsManager().putConfig("messages", new Config(this, "langs/" + config.get("main-lang")));
 
         if (config.get("prefix") != null) this.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix")));
 
@@ -109,16 +108,8 @@ public final class XG7Plugins extends Plugin {
         taskManager.getExecutor().shutdown();
     }
 
-    @Override
-    public void onLoad() {}
-
-    public static void register(Plugin plugin, String[] mainLangs) {
+    public static void register(Plugin plugin) {
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
-
-        plugin.setLangManager(xg7Plugins.getConfigsManager().getConfig("config").get("enable-langs") ? new LangManager(plugin, mainLangs) : null);
-        if (plugin.getLangManager() == null) {
-            plugin.getConfigsManager().putConfig("messages", new Config(plugin, "langs/" + plugin.getConfigsManager().getConfig("config").get("main-lang")));
-        }
 
         xg7Plugins.getPlugins().put(plugin.getName().split(" ")[0], plugin);
 
