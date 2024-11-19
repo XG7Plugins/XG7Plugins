@@ -74,7 +74,7 @@ public final class XG7Plugins extends Plugin {
         getLog().loading("Enabling XG7Plugins...");
 
         this.databaseManager = new DBManager(this);
-        this.jsonManager = new JsonManager(this);
+        this.jsonManager = new JsonManager();
         this.databaseManager.connectPlugin(this);
         this.hologramsManager = minecraftVersion < 8 ? null : new HologramsManager(this);
         this.npcManager = new NPCManager(this);

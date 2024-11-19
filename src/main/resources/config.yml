@@ -10,6 +10,8 @@ lang-cache-expires: 30m
 auto-chose-lang: true
 cooldown-to-toggle-lang: 15s
 
+json-cache-expires: 10m
+
 enable-geyser-forms: true
 enable-lang-form: true
 
