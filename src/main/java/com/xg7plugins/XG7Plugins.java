@@ -7,10 +7,11 @@ import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.database.Entity;
 import com.xg7plugins.data.database.EntityProcessor;
 import com.xg7plugins.data.JsonManager;
-import com.xg7plugins.data.lang.LangManager;
 import com.xg7plugins.data.lang.PlayerLanguage;
 import com.xg7plugins.events.Event;
 import com.xg7plugins.events.PacketEvent;
+import com.xg7plugins.events.defaultevents.CommandAntiTab;
+import com.xg7plugins.events.defaultevents.CommandAntiTabOlder;
 import com.xg7plugins.events.defaultevents.JoinAndQuit;
 import com.xg7plugins.events.packetevents.PacketManagerBase;
 import com.xg7plugins.libs.xg7geyserforms.FormManager;
@@ -18,7 +19,6 @@ import com.xg7plugins.libs.xg7holograms.HologramsManager;
 import com.xg7plugins.libs.xg7menus.MenuManager;
 import com.xg7plugins.libs.xg7npcs.NPCManager;
 import com.xg7plugins.libs.xg7scores.ScoreManager;
-import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.DBManager;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
@@ -27,7 +27,6 @@ import com.xg7plugins.tasks.TaskManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -65,7 +64,7 @@ public final class XG7Plugins extends Plugin {
     private final HashMap<String, Plugin> plugins = new HashMap<>();
 
     public XG7Plugins() {
-        super("[XG7Plugins]", /* null will be default configs */ null);
+        super("XG7Plugins", /* null will be default configs */ null);
     }
 
     @Override
@@ -73,10 +72,6 @@ public final class XG7Plugins extends Plugin {
         super.onEnable();
         floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
         placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
-
-        Config config = getConfigsManager().getConfig("config");
-
-        if (config.get("prefix") != null) this.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix")));
 
         getLog().loading("Enabling XG7Plugins...");
 
@@ -89,15 +84,21 @@ public final class XG7Plugins extends Plugin {
         this.menuManager = new MenuManager(this);
         this.eventManager = new EventManager();
         this.packetEventManager = minecraftVersion < 8 ? new PacketEventManager1_7() : new PacketEventManager();
+        this.taskManager = new TaskManager(this);
+        this.scoreManager = new ScoreManager(this);
+        List<Class<?>> events = new ArrayList<>();
+        events.add(JoinAndQuit.class);
+        if (minecraftVersion > 12) {
+            events.add(CommandAntiTab.class);
+        }
+        this.eventManager.registerPlugin(this, events.toArray(new Class[0]));
+        if (minecraftVersion < 13) this.packetEventManager.registerPlugin(this, CommandAntiTabOlder.class);
+        this.formManager = floodgate ? new FormManager() : null;
         Bukkit.getOnlinePlayers().forEach(player -> {
             packetEventManager.create(player);
             if (minecraftVersion > 7) hologramsManager.addPlayer(player);
             npcManager.addPlayer(player);
         });
-        this.taskManager = new TaskManager(this);
-        this.scoreManager = new ScoreManager(this);
-        this.eventManager.registerPlugin(this, JoinAndQuit.class);
-        this.formManager = floodgate ? new FormManager() : null;
         EntityProcessor.createTableOf(this, PlayerLanguage.class);
     }
 

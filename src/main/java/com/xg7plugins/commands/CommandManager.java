@@ -86,7 +86,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             if (processSubCommands(commandSender, command.getSubCommands(), strings, s, 0)) return;
 
             if (strings.length != 0) {
-                Text.format("lang:[commands.syntax-error]",plugin)
+                Text.format("lang:[commands.syntax-error]",XG7Plugins.getInstance())
                         .replace("[SYNTAX]", cmd.getUsage())
                         .send(commandSender);
                 return;
@@ -94,22 +94,22 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             Command commandConfig = command.getClass().getAnnotation(Command.class);
 
-            if (!commandSender.hasPermission(commandConfig.perm())) {
-                Text.format("lang:[commands.no-permission]",plugin).send(commandSender);
+            if (!commandSender.hasPermission(commandConfig.perm()) && !commandConfig.perm().isEmpty()) {
+                Text.format("lang:[commands.no-permission]",XG7Plugins.getInstance()).send(commandSender);
                 return;
             }
 
             if (commandConfig.isOnlyPlayer() && !(commandSender instanceof Player)) {
-                Text.format("lang:[commands.not-a-player]",plugin).send(commandSender);
+                Text.format("lang:[commands.not-a-player]",XG7Plugins.getInstance()).send(commandSender);
                 return;
             }
             if (commandConfig.isOnlyConsole() && commandSender instanceof Player) {
-                Text.format("lang:[commands.is-a-player]",plugin).send(commandSender);
+                Text.format("lang:[commands.is-a-player]",XG7Plugins.getInstance()).send(commandSender);
                 return;
             }
             if (commandSender instanceof Player) {
                 if (!commandConfig.isOnlyInWorld() && plugin.getEnabledWorlds().contains(((Player) commandSender).getWorld().getName()) && !plugin.getEnabledWorlds().isEmpty()) {
-                    Text.format("lang:[commands.disabled-world]",plugin).send(commandSender);
+                    Text.format("lang:[commands.disabled-world]",XG7Plugins.getInstance()).send(commandSender);
                     return;
                 }
             }
@@ -141,21 +141,21 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     continue;
                 }
 
-                if (!sender.hasPermission(subCommandConfig.perm())) {
-                    Text.format("lang:[commands.no-permission]",plugin).send(sender);
+                if (!sender.hasPermission(subCommandConfig.perm()) && !subCommandConfig.perm().isEmpty()) {
+                    Text.format("lang:[commands.no-permission]",XG7Plugins.getInstance()).send(sender);
                     return true;
                 }
                 if (subCommandConfig.isOnlyPlayer() && !(sender instanceof Player)) {
-                    Text.format("lang:[commands.not-a-player]",plugin).send(sender);
+                    Text.format("lang:[commands.not-a-player]",XG7Plugins.getInstance()).send(sender);
                     return true;
                 }
                 if (subCommandConfig.isOnlyConsole() && sender instanceof Player) {
-                    Text.format("lang:[commands.is-a-player]",plugin).send(sender);
+                    Text.format("lang:[commands.is-a-player]",XG7Plugins.getInstance()).send(sender);
                     return true;
                 }
                 if (sender instanceof Player) {
                     if (!subCommandConfig.isOnlyInWorld() && plugin.getEnabledWorlds().contains(((Player) sender).getWorld().getName()) && !plugin.getEnabledWorlds().isEmpty()) {
-                        Text.format("lang:[commands.disabled-world]",plugin).send(sender);
+                        Text.format("lang:[commands.disabled-world]",XG7Plugins.getInstance()).send(sender);
                         return true;
                     }
                 }
@@ -180,7 +180,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                         OfflinePlayer player = Bukkit.getOfflinePlayer(args[argsIndex]);
 
                         if (!player.hasPlayedBefore()) {
-                            Text.format("lang:[commands.never-played]",plugin).send(sender);
+                            Text.format("lang:[commands.never-played]",XG7Plugins.getInstance()).send(sender);
                             return true;
                         }
 

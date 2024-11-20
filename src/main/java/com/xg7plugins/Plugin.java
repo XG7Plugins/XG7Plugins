@@ -44,6 +44,7 @@ public abstract class Plugin extends JavaPlugin {
         Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
         this.langManager = config.get("enable-langs") ? new LangManager(this, new String[]{"en-us", "pt-br"}) : null;
         if (langManager == null) configsManager.putConfig("messages", new Config(this, "langs/" + config.get("main-lang")));
+        if (configsManager.getConfig("config").get("prefix") != null) this.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', configsManager.getConfig("config").get("prefix")));
     }
     @Override
     public void onDisable() {

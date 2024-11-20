@@ -1,10 +1,12 @@
 
-prefix: "&8[&bXG&37P&9lu&1gins&8]&r"
+prefix: "&bXG&37P&9lu&1gins&r"
 
 log-enabled: true
 
 enable-langs: true
 main-lang: en-us
+
+anti-tab: true
 
 lang-cache-expires: 30m
 auto-chose-lang: true
