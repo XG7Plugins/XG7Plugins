@@ -4,12 +4,13 @@ import com.xg7plugins.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.data.config.Config;
 import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionMethod;
 import com.xg7plugins.utils.reflection.ReflectionObject;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.*;
@@ -17,13 +18,14 @@ import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.reflections.Reflections;
+
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+@AllArgsConstructor
 public class CommandManager implements CommandExecutor, TabCompleter {
 
     private final Plugin plugin;
@@ -31,24 +33,22 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     @Getter
     private final HashMap<String, ICommand> commands = new HashMap<>();
 
-    public CommandManager(Plugin plugin) {
+    public void registerCommands(Class<? extends ICommand>... commandClasses) {
 
-        this.plugin = plugin;
-
-        Reflections reflections = new Reflections(plugin.getClass().getPackage().getName());
+        plugin.getLog().loading("Loading Commands...");
 
         CommandMap commandMap = ReflectionObject.of(Bukkit.getServer()).getField("commandMap");
 
-        reflections.getTypesAnnotatedWith(Command.class).forEach(aClass -> {
-
-            if (aClass.isAssignableFrom(ICommand.class)) {
-                plugin.getLog().severe("Commands must implements ICommand interface!!");
-                return;
-            }
+        Arrays.stream(commandClasses).forEach(aClass -> {
 
             ICommand command = (ICommand) ReflectionClass.of(aClass).newInstance().getObject();
 
             if (!command.isEnabled()) return;
+
+            if (!aClass.isAnnotationPresent(Command.class)) {
+                plugin.getLog().severe("Commands must be annotated with Command interface!!");
+                return;
+            }
 
             Command commandSetup = command.getClass().getAnnotation(Command.class);
 
@@ -73,6 +73,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         });
 
+        plugin.getLog().loading("Successfully loaded Commands!");
     }
 
     @Override
@@ -100,6 +101,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             if (commandConfig.isOnlyPlayer() && !(commandSender instanceof Player)) {
                 Text.format("lang:[commands.not-a-player]",plugin).send(commandSender);
+                return;
+            }
+            if (commandConfig.isOnlyConsole() && commandSender instanceof Player) {
+                Text.format("lang:[commands.is-a-player]",plugin).send(commandSender);
                 return;
             }
             if (commandSender instanceof Player) {
@@ -144,11 +149,19 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     Text.format("lang:[commands.not-a-player]",plugin).send(sender);
                     return true;
                 }
+                if (subCommandConfig.isOnlyConsole() && sender instanceof Player) {
+                    Text.format("lang:[commands.is-a-player]",plugin).send(sender);
+                    return true;
+                }
                 if (sender instanceof Player) {
                     if (!subCommandConfig.isOnlyInWorld() && plugin.getEnabledWorlds().contains(((Player) sender).getWorld().getName()) && !plugin.getEnabledWorlds().isEmpty()) {
                         Text.format("lang:[commands.disabled-world]",plugin).send(sender);
                         return true;
                     }
+                }
+                if (subCommandConfig.type() == SubCommandType.ARGS) {
+                    subCommand.onSubCommand(sender,args,label);
+                    return true;
                 }
 
                 if (subCommand.getSubCommands().length != 0) return processSubCommands(sender, subCommand.getSubCommands(), args, label, argsIndex + 1);

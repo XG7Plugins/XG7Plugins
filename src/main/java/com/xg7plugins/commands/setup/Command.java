@@ -15,4 +15,5 @@ public @interface Command {
     String perm() default "";
     boolean isOnlyInWorld() default false;
     boolean isOnlyPlayer() default false;
+    boolean isOnlyConsole() default false;
 }

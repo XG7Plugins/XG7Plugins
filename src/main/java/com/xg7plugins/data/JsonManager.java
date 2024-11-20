@@ -12,27 +12,38 @@ import java.util.concurrent.TimeUnit;
 
 public class JsonManager {
 
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().create();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     private final Cache<String, Object> cache = CacheBuilder.newBuilder().expireAfterAccess(XG7Plugins.getInstance().getConfigsManager().getConfig("config").getTime("json-cache-expires"), TimeUnit.MINUTES).build();
 
-    public void saveJson(Plugin plugin, String path, Object object) throws IOException {
-        plugin.getLog().info("Saving " + path + ".json...");
+    public <T> void saveJson(Plugin plugin, String path, T object) throws IOException {
+        plugin.getLog().info("Saving " + path + "...");
 
-
+        // Verifica se o diretório existe, caso contrário cria
         File file = new File(plugin.getDataFolder(), path);
+        if (!file.getParentFile().exists()) {
+            plugin.getLog().info("Diretório não existe, criando...");
+            file.getParentFile().mkdirs();
+        }
 
-        file.getParentFile().mkdirs();
+        // Cria o arquivo caso não exista
+        if (!file.exists()) {
+            plugin.getLog().info("Arquivo não existe, criando...");
+            file.createNewFile();
+        } else {
+            plugin.getLog().info("Arquivo já existe, sobrescrevendo...");
+        }
 
-        if (!file.exists()) file.createNewFile();
-
-        Writer writer = new FileWriter(file, false);
-        gson.toJson(object, writer);
-        writer.flush();
-        writer.close();
+        try (Writer writer = new BufferedWriter(new FileWriter(file, false))) {
+            gson.toJson(object, writer);
+        } catch (Exception e) {
+            plugin.getLog().severe("Erro ao serializar o objeto: " + e.getMessage());
+            throw e;
+        }
 
         plugin.getLog().info("Saved!");
     }
+
 
     public <T> T load(Plugin plugin, String path, Class<T> clazz) throws IOException {
         if (cache.getIfPresent(path) != null) return (T) cache.getIfPresent(path);

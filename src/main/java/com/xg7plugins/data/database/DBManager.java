@@ -8,14 +8,10 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.reflections.Reflections;
 
 import java.io.File;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +31,7 @@ public class DBManager {
     }
 
     @SneakyThrows
-    public void connectPlugin(Plugin plugin) {
+    public void connectPlugin(Plugin plugin, Class<? extends Entity>... entityClasses) {
 
         plugin.getLog().loading("Connecting database...");
 
@@ -83,11 +79,8 @@ public class DBManager {
         plugin.getLog().loading("Successfully connected to database!");
 
         plugin.getLog().loading("Checking tables...");
-        Reflections reflections = new Reflections(plugin.getClass().getPackage().getName());
 
-        reflections.getSubTypesOf(Entity.class).forEach((entity) ->  {
-            EntityProcessor.createTableOf(plugin, entity);
-        });
+        Arrays.stream(entityClasses).forEach(aClass -> EntityProcessor.createTableOf(plugin, aClass));
 
         plugin.getLog().loading("Successfully checked tables!");
 

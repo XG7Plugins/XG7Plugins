@@ -24,14 +24,25 @@ public class Location {
     public World getWorld() {
         return Bukkit.getWorld(world);
     }
+
     public Location add(double x, double y, double z) {
         return new Location(world, this.x + x, this.y + y, this.z + z);
+    }
+
+    public static Location of(String world, double x, double y, double z) {
+        return new Location(world, x, y, z);
+    }
+    public static Location of(String world, double x, double y, double z, float yaw, float pitch) {
+        return new Location(world, x, y, z, yaw, pitch);
     }
     public static Location fromBukkit(org.bukkit.Location location) {
         return new Location(location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
     public static Location fromPlayer(Player player) {
         return fromBukkit(player.getLocation());
+    }
+    public org.bukkit.Location getBukkitLocation() {
+        return new org.bukkit.Location(getWorld(), x, y, z, yaw, pitch);
     }
 
     @Override

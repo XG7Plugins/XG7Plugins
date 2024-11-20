@@ -41,7 +41,7 @@ public abstract class Plugin extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
         this.commandManager = new CommandManager(this);
-        Config config = getConfigsManager().getConfig("config");
+        Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
         this.langManager = config.get("enable-langs") ? new LangManager(this, new String[]{"en-us", "pt-br"}) : null;
         if (langManager == null) configsManager.putConfig("messages", new Config(this, "langs/" + config.get("main-lang")));
     }

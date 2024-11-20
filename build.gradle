@@ -35,7 +35,6 @@ dependencies {
     compileOnly 'org.geysermc.floodgate:api:2.2.3-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.6'
 
-    implementation 'org.reflections:reflections:0.9.12'
     implementation 'org.javassist:javassist:3.28.0-GA'
 
     compileOnly 'org.projectlombok:lombok:1.18.34'

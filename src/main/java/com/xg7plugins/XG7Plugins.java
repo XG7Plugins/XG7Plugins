@@ -1,9 +1,17 @@
 package com.xg7plugins;
 
+import com.xg7plugins.commands.defaultCommands.LangCommand;
+import com.xg7plugins.commands.defaultCommands.ReloadCommand;
+import com.xg7plugins.commands.defaultCommands.TaskCommands;
+import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.data.database.Entity;
 import com.xg7plugins.data.database.EntityProcessor;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.lang.LangManager;
 import com.xg7plugins.data.lang.PlayerLanguage;
+import com.xg7plugins.events.Event;
+import com.xg7plugins.events.PacketEvent;
+import com.xg7plugins.events.defaultevents.JoinAndQuit;
 import com.xg7plugins.events.packetevents.PacketManagerBase;
 import com.xg7plugins.libs.xg7geyserforms.FormManager;
 import com.xg7plugins.libs.xg7holograms.HologramsManager;
@@ -72,9 +80,10 @@ public final class XG7Plugins extends Plugin {
 
         getLog().loading("Enabling XG7Plugins...");
 
+        this.getCommandManager().registerCommands(LangCommand.class, ReloadCommand.class, TaskCommands.class);
         this.databaseManager = new DBManager(this);
         this.jsonManager = new JsonManager();
-        this.databaseManager.connectPlugin(this);
+        this.databaseManager.connectPlugin(this, PlayerLanguage.class);
         this.hologramsManager = minecraftVersion < 8 ? null : new HologramsManager(this);
         this.npcManager = new NPCManager(this);
         this.menuManager = new MenuManager(this);
@@ -87,8 +96,7 @@ public final class XG7Plugins extends Plugin {
         });
         this.taskManager = new TaskManager(this);
         this.scoreManager = new ScoreManager(this);
-        this.eventManager.registerPlugin(this);
-        this.packetEventManager.registerPlugin(this);
+        this.eventManager.registerPlugin(this, JoinAndQuit.class);
         this.formManager = floodgate ? new FormManager() : null;
         EntityProcessor.createTableOf(this, PlayerLanguage.class);
     }
@@ -109,13 +117,10 @@ public final class XG7Plugins extends Plugin {
     }
 
     public static void register(Plugin plugin) {
+        XG7Plugins.getInstance().getLog().loading("Registering " + plugin.getName() + "...");
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
 
         xg7Plugins.getPlugins().put(plugin.getName().split(" ")[0], plugin);
-
-        xg7Plugins.getDatabaseManager().connectPlugin(plugin);
-        xg7Plugins.getEventManager().registerPlugin(plugin);
-        xg7Plugins.getPacketEventManager().registerPlugin(plugin);
     }
 
     public static void unregister(Plugin plugin) {
@@ -128,6 +133,23 @@ public final class XG7Plugins extends Plugin {
         xg7Plugins.getPlugins().remove(plugin.getName());
 
     }
+
+    public void registerEvents(Plugin plugin, Class<? extends Event> eventClass) {
+        eventManager.registerPlugin(plugin, eventClass);
+    }
+    @SafeVarargs
+    public final void connectPlugin(Plugin plugin, Class<? extends Entity>... entityClasses) {
+        databaseManager.connectPlugin(plugin, entityClasses);
+    }
+    @SafeVarargs
+    public final void registerPacketEvents(Plugin plugin, Class<? extends PacketEvent>... eventClasses) {
+        packetEventManager.registerPlugin(plugin, eventClasses);
+    }
+    @SafeVarargs
+    public final void registerCommands(Plugin plugin, Class<? extends ICommand>... commandClasses) {
+        plugin.getCommandManager().registerCommands(commandClasses);
+    }
+
 
     public static @NotNull XG7Plugins getInstance() {
         return getPlugin(XG7Plugins.class);

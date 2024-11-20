@@ -1,6 +1,7 @@
 package com.xg7plugins.events.bukkitevents;
 
 import com.xg7plugins.Plugin;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.events.Event;
 import com.xg7plugins.events.PacketEvent;
@@ -10,30 +11,24 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.world.WorldEvent;
-import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.Set;
 
 public class EventManager {
 
     private final HashMap<String, Listener> listeners = new HashMap<>();
 
-    public void registerPlugin(Plugin plugin) {
+    public void registerPlugin(Plugin plugin, Class<? extends Event>... eventClasses) {
 
         plugin.getLog().info("Loading Events...");
 
-        Reflections reflections = new Reflections(plugin.getClass().getPackage().getName());
-
-        Set<Class<? extends Event>> events = reflections.getSubTypesOf(Event.class);
-
-        if (events.isEmpty()) return;
+        if (eventClasses == null) return;
 
         listeners.put(plugin.getName(), new Listener() {});
 
-        for (Class<?> eventClass : events) {
+        for (Class<?> eventClass : eventClasses) {
 
             if (eventClass.isAssignableFrom(PacketEvent.class)) continue;
 

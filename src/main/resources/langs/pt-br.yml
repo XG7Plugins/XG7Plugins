@@ -10,6 +10,7 @@ commands:
   no-permission: "Você não tem permissão para executar este comando!"
   disabled-world: "Você não pode executar o comando nesse mundo!"
   not-a-player: "Você não pode executar este comando no console!"
+  is-a-player: "Você não pode executar este comando sendo um jogador!"
 
 reload-message:
   config: "Configs de [PLUGIN] recarregados!"

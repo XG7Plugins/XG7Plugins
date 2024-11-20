@@ -18,7 +18,7 @@ public class PlayerLanguageDAO {
     private Cache<UUID,PlayerLanguage> playerLanguages;
 
     public PlayerLanguageDAO(Plugin plugin) {
-        Config config = plugin.getConfigsManager().getConfig("config");
+        Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
 
         playerLanguages = Caffeine.newBuilder()
                 .expireAfterAccess(Text.convertToMilliseconds(plugin, config.get("lang-cache-expires")), TimeUnit.MILLISECONDS)

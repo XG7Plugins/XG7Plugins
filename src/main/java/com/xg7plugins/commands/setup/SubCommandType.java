@@ -4,5 +4,6 @@ public enum SubCommandType {
 
     PLAYER,
     NORMAL,
-    OPTIONS
+    OPTIONS,
+    ARGS
 }

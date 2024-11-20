@@ -33,7 +33,7 @@ public class LangManager {
 
         plugin.getLog().loading("Loading langs...");
 
-        Config config = plugin.getConfigsManager().getConfig("config");
+        Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
 
         this.mainLang = config.get("main-lang");
         this.langs = Caffeine.newBuilder()
@@ -90,8 +90,10 @@ public class LangManager {
 
         String langId = mainLang;
 
-        String playerLocale = XG7Plugins.getMinecraftVersion() >= 12 ? player.getLocale() : PlayerNMS.cast(player).getCraftPlayerHandle().getField("locale");
-        if (config.get("auto-chose-lang")) if (langs.asMap().containsKey(playerLocale)) langId = playerLocale;
+        if (XG7Plugins.getInstance().getConfigsManager().getConfig("config").get("auto-chose-lang")){
+            String playerLocale = XG7Plugins.getMinecraftVersion() >= 12 ? player.getLocale() : PlayerNMS.cast(player).getCraftPlayerHandle().getField("locale");
+            if (langs.asMap().containsKey(playerLocale)) langId = playerLocale;
+        }
         PlayerLanguage newLang = new PlayerLanguage(player.getUniqueId(), langId);
         playerLanguageDAO.addPlayerLanguage(newLang);
         return getLang(langId);

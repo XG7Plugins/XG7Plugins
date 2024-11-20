@@ -192,7 +192,7 @@ public class Text {
             textToTraslate = textToTraslate.replace(entry.getKey(),entry.getValue());
         }
 
-        sender.sendMessage(getCentralizedText(PixelsSize.CHAT.pixels, textToTraslate));
+        sender.sendMessage(getCentralizedText(PixelsSize.CHAT.pixels, Text.format(textToTraslate,plugin).getText()));
     }
 
     @SneakyThrows
