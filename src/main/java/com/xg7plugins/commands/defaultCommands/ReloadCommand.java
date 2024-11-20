@@ -38,12 +38,16 @@ public class ReloadCommand implements ICommand {
     public List<String> onTabComplete(org.bukkit.command.Command command, CommandSender sender, String label, String[] args) {
         List<String> suggestions = new ArrayList<>();
 
-        if (args.length == 1) suggestions.addAll(subCommands[0].getOptions());
+        if (args.length == 1) {
+            suggestions.addAll(subCommands[1].getOptions());
+            suggestions.add("invalidatejsoncache");
+        }
         if (args.length == 2) suggestions = Arrays.stream(subCommands[0].getSubCommands()).map(sub -> sub.getClass().getAnnotation(SubCommand.class).name()).collect(Collectors.toList());
         return suggestions;
     }
 
     @SubCommand(
+            name = "invalidatejsoncache",
             description = "Invalidates the json cache",
             perm = "xg7plugins.command.reload.json",
             type = SubCommandType.NORMAL,
@@ -52,7 +56,7 @@ public class ReloadCommand implements ICommand {
     static class JsonSubCommand implements ISubCommand {
 
         @Override
-        public void onCommand(org.bukkit.command.Command command, CommandSender sender, String label) {
+        public void onSubCommand(CommandSender sender, String[] args, String label) {
             XG7Plugins.getInstance().getJsonManager().invalidateCache();
             Text.format("lang:[reload-message.json]", XG7Plugins.getInstance()).send(sender);
         }
