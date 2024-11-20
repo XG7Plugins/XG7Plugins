@@ -17,13 +17,13 @@ import java.util.stream.Collectors;
 @Command(
         name = "xg7pluginreload",
         description = "Reloads the plugin",
-        syntax = "/xg7pluginreload <plugin> <[config, lang, database, events, all]>",
+        syntax = "/xg7pluginreload [<plugin> or <invalidatejsoncache>] <[config, lang, database, events, all]>",
         aliasesPath = "reload",
         perm = "xg7plugins.command.reload"
 )
 public class ReloadCommand implements ICommand {
 
-    private final ISubCommand[] subCommands = new ISubCommand[]{new PluginSubCommand()};
+    private final ISubCommand[] subCommands = new ISubCommand[]{new JsonSubCommand(), new PluginSubCommand()};
 
     @Override
     public ItemBuilder getIcon() {
@@ -44,7 +44,26 @@ public class ReloadCommand implements ICommand {
     }
 
     @SubCommand(
-            name = "config",
+            description = "Invalidates the json cache",
+            perm = "xg7plugins.command.reload.json",
+            type = SubCommandType.NORMAL,
+            syntax = "/xg7pluginreload invalidatejsoncache"
+    )
+    static class JsonSubCommand implements ISubCommand {
+
+        @Override
+        public void onCommand(org.bukkit.command.Command command, CommandSender sender, String label) {
+            XG7Plugins.getInstance().getJsonManager().invalidateCache();
+            Text.format("lang:[reload-message.json]", XG7Plugins.getInstance()).send(sender);
+        }
+
+        @Override
+        public ItemBuilder getIcon() {
+            return ItemBuilder.subCommandIcon(XMaterial.PAPER, this, XG7Plugins.getInstance());
+        }
+    }
+
+    @SubCommand(
             description = "Reloads the plugin",
             perm = "xg7plugins.command.reload",
             type = SubCommandType.OPTIONS,
@@ -89,7 +108,6 @@ public class ReloadCommand implements ICommand {
 
             @Override
             public void onSubCommand(CommandSender sender, String[] args, String label) {
-
 
                 Plugin plugin = args[0].equals("XG7Plugins") ? XG7Plugins.getInstance() : XG7Plugins.getInstance().getPlugins().get(args[0]);
                 plugin.getConfigsManager().getConfigs().values().forEach(Config::reload);
@@ -212,11 +230,13 @@ public class ReloadCommand implements ICommand {
                 }
 
                 Plugin plugin = xg7Plugins.getPlugins().get(args[0]);
-                Bukkit.getPluginManager().disablePlugin(plugin);
-                Bukkit.getPluginManager().enablePlugin(plugin);
-                Text.format("lang:[reload-message.all]", XG7Plugins.getInstance())
-                        .replace("[PLUGIN]", plugin.getName())
-                        .send(sender);
+                Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> {
+                    Bukkit.getPluginManager().disablePlugin(plugin);
+                    Bukkit.getPluginManager().enablePlugin(plugin);
+                    Text.format("lang:[reload-message.all]", XG7Plugins.getInstance())
+                            .replace("[PLUGIN]", plugin.getName())
+                            .send(sender);
+                });
             }
         }
 

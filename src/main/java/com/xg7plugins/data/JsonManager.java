@@ -16,6 +16,10 @@ public class JsonManager {
 
     private final Cache<String, Object> cache = Caffeine.newBuilder().expireAfterAccess(XG7Plugins.getInstance().getConfigsManager().getConfig("config").getTime("json-cache-expires"), TimeUnit.MINUTES).build();
 
+    public void invalidateCache() {
+        cache.invalidateAll();
+    }
+
     public <T> void saveJson(Plugin plugin, String path, T object) throws IOException {
         plugin.getLog().info("Saving " + path + "...");
 

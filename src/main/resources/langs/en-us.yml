@@ -19,6 +19,7 @@ reload-message:
   all: "[PLUGIN] reloaded!"
   lang: "Languages of [PLUGIN] reloaded!"
   events: "Events of [PLUGIN] reloaded!"
+  json: "Successful invalidate json cache!"
 
 
 #Plugin defaults

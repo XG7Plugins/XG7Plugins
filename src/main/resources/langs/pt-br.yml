@@ -18,6 +18,7 @@ reload-message:
   all: "[PLUGIN] recarregado!"
   lang: "Idiomas de [PLUGIN] recarregados!"
   events: "Eventos de [PLUGIN] recarregados!"
+  json: "Caches invalidados com sucesso!"
 
 
 #Plugin defaults
