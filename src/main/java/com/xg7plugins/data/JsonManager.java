@@ -31,6 +31,8 @@ public class JsonManager {
             throw e;
         }
 
+        cache.put(path, object);
+
         plugin.getLog().info("Saved!");
     }
 

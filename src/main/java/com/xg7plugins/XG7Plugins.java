@@ -16,8 +16,12 @@ import com.xg7plugins.events.defaultevents.JoinAndQuit;
 import com.xg7plugins.events.packetevents.PacketManagerBase;
 import com.xg7plugins.libs.xg7geyserforms.FormManager;
 import com.xg7plugins.libs.xg7holograms.HologramsManager;
+import com.xg7plugins.libs.xg7holograms.event.ClickEventHandler;
 import com.xg7plugins.libs.xg7menus.MenuManager;
+import com.xg7plugins.libs.xg7menus.listeners.MenuListener;
+import com.xg7plugins.libs.xg7menus.listeners.PlayerMenuListener;
 import com.xg7plugins.libs.xg7npcs.NPCManager;
+import com.xg7plugins.libs.xg7scores.ScoreListener;
 import com.xg7plugins.libs.xg7scores.ScoreManager;
 import com.xg7plugins.data.database.DBManager;
 import com.xg7plugins.events.bukkitevents.EventManager;
@@ -88,9 +92,13 @@ public final class XG7Plugins extends Plugin {
         this.scoreManager = new ScoreManager(this);
         List<Class<?>> events = new ArrayList<>();
         events.add(JoinAndQuit.class);
-        if (minecraftVersion > 12) {
-            events.add(CommandAntiTab.class);
-        }
+        if (minecraftVersion > 12) events.add(CommandAntiTab.class);
+        events.add(ClickEventHandler.class);
+        events.add(com.xg7plugins.libs.xg7npcs.event.ClickEventHandler.class);
+        events.add(MenuListener.class);
+        events.add(PlayerMenuListener.class);
+        events.add(ScoreListener.class);
+
         this.eventManager.registerPlugin(this, events.toArray(new Class[0]));
         if (minecraftVersion < 13) this.packetEventManager.registerPlugin(this, CommandAntiTabOlder.class);
         this.formManager = floodgate ? new FormManager() : null;
