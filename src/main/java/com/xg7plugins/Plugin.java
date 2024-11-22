@@ -18,6 +18,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.geysermc.cumulus.form.Form;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -32,26 +33,28 @@ public abstract class Plugin extends JavaPlugin {
     private LangManager langManager;
     private final Log log;
 
+    private final String[] enableDraw;
+
     @Setter
     private String customPrefix;
     @Setter
     private List<String> enabledWorlds = Collections.emptyList();
 
-    public Plugin(String prefix, String[] configs) {
+    public Plugin(String prefix, String[] configs, String[] enableDraw) {
         this.configsManager = new ConfigManager(this, configs);
         this.prefix = ChatColor.translateAlternateColorCodes('&', prefix);
+        this.enableDraw = enableDraw;
         this.customPrefix = this.prefix;
         this.log = new Log(this);
         log.loading("Loading " + prefix + "...");
         this.commandManager = new CommandManager(this);
-
-
-
     }
 
     @Override
     public void onEnable() {
         super.onEnable();
+
+        Arrays.stream(enableDraw).forEach(s -> Bukkit.getConsoleSender().sendMessage(s));
 
         log.loading("Loading langs...");
         Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
