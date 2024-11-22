@@ -9,6 +9,7 @@ import com.xg7plugins.libs.xg7npcs.npcs.NPC;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC1_17_1_XX;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC1_7;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC1_8_1_16;
+import com.xg7plugins.utils.Builder;
 import com.xg7plugins.utils.Location;
 import com.xg7plugins.utils.Pair;
 import org.bukkit.entity.Player;
@@ -18,7 +19,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NPCBuilder {
+public class NPCBuilder extends Builder<NPC> {
 
     private Object name;
     private Object skin;
@@ -102,7 +103,7 @@ public class NPCBuilder {
     }
 
 
-    public <T extends NPC> T build() {
+    public NPC build(Object... args) {
         if (location == null) {
             throw new IllegalArgumentException("Location cannot be null");
         }
@@ -135,7 +136,7 @@ public class NPCBuilder {
             }
         }
 
-        return (T) npc;
+        return npc;
     }
 
     public static NPCBuilder creator(Plugin plugin, String id) {

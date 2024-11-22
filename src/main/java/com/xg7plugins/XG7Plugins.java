@@ -15,12 +15,16 @@ import com.xg7plugins.events.defaultevents.CommandAntiTabOlder;
 import com.xg7plugins.events.defaultevents.JoinAndQuit;
 import com.xg7plugins.events.packetevents.PacketManagerBase;
 import com.xg7plugins.libs.xg7geyserforms.FormManager;
+import com.xg7plugins.libs.xg7geyserforms.builders.FormCreator;
 import com.xg7plugins.libs.xg7holograms.HologramsManager;
 import com.xg7plugins.libs.xg7holograms.event.ClickEventHandler;
 import com.xg7plugins.libs.xg7menus.MenuManager;
+import com.xg7plugins.libs.xg7menus.builders.BaseMenuBuilder;
 import com.xg7plugins.libs.xg7menus.listeners.MenuListener;
 import com.xg7plugins.libs.xg7menus.listeners.PlayerMenuListener;
+import com.xg7plugins.libs.xg7npcs.NPCBuilder;
 import com.xg7plugins.libs.xg7npcs.NPCManager;
+import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreListener;
 import com.xg7plugins.libs.xg7scores.ScoreManager;
 import com.xg7plugins.data.database.DBManager;
@@ -28,9 +32,11 @@ import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager1_7;
 import com.xg7plugins.tasks.TaskManager;
+import com.xg7plugins.utils.Location;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.geysermc.cumulus.form.Form;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -68,7 +74,7 @@ public final class XG7Plugins extends Plugin {
     private final HashMap<String, Plugin> plugins = new HashMap<>();
 
     public XG7Plugins() {
-        super("XG7Plugins", /* null will be default configs */ null);
+        super("&bXG&37P&9lu&1gins&r", /* null will be default configs */ null);
     }
 
     @Override
@@ -79,10 +85,8 @@ public final class XG7Plugins extends Plugin {
 
         getLog().loading("Enabling XG7Plugins...");
 
-        this.getCommandManager().registerCommands(LangCommand.class, ReloadCommand.class, TaskCommands.class);
         this.databaseManager = new DBManager(this);
         this.jsonManager = new JsonManager();
-        this.databaseManager.connectPlugin(this, PlayerLanguage.class);
         this.hologramsManager = minecraftVersion < 8 ? null : new HologramsManager(this);
         this.npcManager = new NPCManager(this);
         this.menuManager = new MenuManager(this);
@@ -90,24 +94,34 @@ public final class XG7Plugins extends Plugin {
         this.packetEventManager = minecraftVersion < 8 ? new PacketEventManager1_7() : new PacketEventManager();
         this.taskManager = new TaskManager(this);
         this.scoreManager = new ScoreManager(this);
-        List<Class<?>> events = new ArrayList<>();
-        events.add(JoinAndQuit.class);
-        if (minecraftVersion > 12) events.add(CommandAntiTab.class);
-        events.add(ClickEventHandler.class);
-        events.add(com.xg7plugins.libs.xg7npcs.event.ClickEventHandler.class);
-        events.add(MenuListener.class);
-        events.add(PlayerMenuListener.class);
-        events.add(ScoreListener.class);
-
-        this.eventManager.registerPlugin(this, events.toArray(new Class[0]));
-        if (minecraftVersion < 13) this.packetEventManager.registerPlugin(this, CommandAntiTabOlder.class);
         this.formManager = floodgate ? new FormManager() : null;
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            packetEventManager.create(player);
-            if (minecraftVersion > 7) hologramsManager.addPlayer(player);
-            npcManager.addPlayer(player);
+
+        Bukkit.getOnlinePlayers().forEach(player -> packetEventManager.create(player));
+
+        getLog().loading("Loading plugins...");
+        register(this);
+        plugins.forEach((name, plugin) -> {
+            getLog().info("Enabling " + plugin.getName() + "...");
+            Bukkit.getPluginManager().enablePlugin(plugin);
+            plugin.getCommandManager().registerCommands(loadCommands());
+            eventManager.registerPlugin(plugin, loadEvents());
+            packetEventManager.registerPlugin(plugin, loadPacketEvents());
+            databaseManager.connectPlugin(plugin, plugin.loadEntites());
+            scoreManager.registerScores(loadScores());
+            BaseMenuBuilder<?,?>[] menus = plugin.loadMenus();
+            if (menus != null) Arrays.stream(menus).forEach(menu -> menuManager.registerBuilder(menu.getId(), menu));
+            if (formManager != null) {
+                FormCreator<? extends Form,?>[] forms = plugin.loadGeyserForms();
+                if (forms != null) Arrays.stream(forms).forEach(form -> formManager.registerCreator(form));
+            }
+            loadTasks();
         });
-        EntityProcessor.createTableOf(this, PlayerLanguage.class);
+
+        NPCBuilder.creator(this, "npc")
+                .setName("aaaaaaa")
+                .setLocation(Location.of("world",0,90,0)).build();
+
+        getLog().loading("XG7Plugins enabled.");
     }
 
 
@@ -123,6 +137,24 @@ public final class XG7Plugins extends Plugin {
         if (minecraftVersion > 7) hologramsManager.cancelTask();
         npcManager.cancelTask();
         taskManager.getExecutor().shutdown();
+    }
+
+    public Class<? extends Entity>[] loadEntites() {
+        return new Class[]{PlayerLanguage.class};
+    }
+    @Override
+    public ICommand[] loadCommands() {
+        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommands()};
+    }
+
+    @Override
+    public Event[] loadEvents() {
+        return new Event[]{new JoinAndQuit(), new ClickEventHandler(), new com.xg7plugins.libs.xg7npcs.event.ClickEventHandler(), minecraftVersion > 12 ? new CommandAntiTab() : null, new MenuListener(), new PlayerMenuListener(), new ScoreListener()};
+    }
+
+    @Override
+    public PacketEvent[] loadPacketEvents() {
+        return minecraftVersion < 13 ? new PacketEvent[]{new CommandAntiTabOlder()} : super.loadPacketEvents();
     }
 
     public static void register(Plugin plugin) {
@@ -141,22 +173,6 @@ public final class XG7Plugins extends Plugin {
 
         xg7Plugins.getPlugins().remove(plugin.getName());
 
-    }
-
-    public void registerEvents(Plugin plugin, Class<? extends Event> eventClass) {
-        eventManager.registerPlugin(plugin, eventClass);
-    }
-    @SafeVarargs
-    public final void connectPlugin(Plugin plugin, Class<? extends Entity>... entityClasses) {
-        databaseManager.connectPlugin(plugin, entityClasses);
-    }
-    @SafeVarargs
-    public final void registerPacketEvents(Plugin plugin, Class<? extends PacketEvent>... eventClasses) {
-        packetEventManager.registerPlugin(plugin, eventClasses);
-    }
-    @SafeVarargs
-    public final void registerCommands(Plugin plugin, Class<? extends ICommand>... commandClasses) {
-        plugin.getCommandManager().registerCommands(commandClasses);
     }
 
 

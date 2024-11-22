@@ -2,6 +2,7 @@ package com.xg7plugins.libs.xg7geyserforms;
 
 import com.xg7plugins.libs.xg7geyserforms.builders.FormCreator;
 import org.bukkit.entity.Player;
+import org.geysermc.cumulus.form.Form;
 import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.HashMap;
@@ -9,12 +10,13 @@ import java.util.Map;
 
 public class FormManager {
 
-    private final Map<String, FormCreator> creators = new HashMap<>();
+    private final Map<String, FormCreator<? extends Form,?>> creators = new HashMap<>();
 
-    public void registerCreator(FormCreator creator) {
+    public void registerCreator(FormCreator<? extends Form,?> creator) {
+        if (creator == null) return;
         creators.put(creator.getId(), creator);
     }
-    public void registerCreator(FormCreator creator, Player player) {
+    public void registerCreator(FormCreator<? extends Form,?> creator, Player player) {
         creators.put(creator.getId() + ":" + player.getUniqueId(), creator);
     }
     public void unregisterCreator(String id) {

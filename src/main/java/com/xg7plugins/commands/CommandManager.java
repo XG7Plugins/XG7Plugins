@@ -33,20 +33,20 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     @Getter
     private final HashMap<String, ICommand> commands = new HashMap<>();
 
-    public void registerCommands(Class<? extends ICommand>... commandClasses) {
+    public void registerCommands(ICommand... commands) {
 
         plugin.getLog().loading("Loading Commands...");
 
         CommandMap commandMap = ReflectionObject.of(Bukkit.getServer()).getField("commandMap");
 
-        Arrays.stream(commandClasses).forEach(aClass -> {
+        Arrays.stream(commands).forEach(command -> {
 
-            ICommand command = (ICommand) ReflectionClass.of(aClass).newInstance().getObject();
+            if (command == null) return;
 
             if (!command.isEnabled()) return;
 
-            if (!aClass.isAnnotationPresent(Command.class)) {
-                plugin.getLog().severe("Commands must be annotated with Command interface!!");
+            if (!command.getClass().isAnnotationPresent(Command.class)) {
+                plugin.getLog().severe("Commands must be annotated with @Command interface!!");
                 return;
             }
 
@@ -69,7 +69,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             pluginCommand.setTabCompleter(this);
             commandMap.register(commandSetup.name(), pluginCommand);
 
-            commands.put(commandSetup.name(), command);
+            this.commands.put(commandSetup.name(), command);
 
         });
 

@@ -3,6 +3,7 @@ package com.xg7plugins.libs.xg7menus;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.libs.xg7menus.builders.BaseMenuBuilder;
 import com.xg7plugins.libs.xg7menus.menus.player.PlayerMenu;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 public class MenuManager {
 
     private final XG7Plugins plugin;
+    private final Map<String, BaseMenuBuilder<?,?>> builders = new HashMap<>();
 
     private final Map<UUID, PlayerMenu> playerMenuMap = new HashMap<>();
 
@@ -45,5 +47,11 @@ public class MenuManager {
     }
     public void removePlayerFromAll(Player player) {
         cachedMenus.asMap().entrySet().removeIf(entry -> entry.getKey().endsWith(player.getUniqueId().toString()));
+    }
+    public void registerBuilder(String id, BaseMenuBuilder<?,?> builder) {
+        builders.put(id, builder);
+    }
+    public BaseMenuBuilder<?,?> getBuilder(String id) {
+        return builders.get(id);
     }
 }

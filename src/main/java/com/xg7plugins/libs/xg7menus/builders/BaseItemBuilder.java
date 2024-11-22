@@ -9,6 +9,7 @@ import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
 import com.xg7plugins.libs.xg7menus.builders.item.ItemBuilder;
 import com.xg7plugins.libs.xg7menus.builders.item.SkullItemBuilder;
 import com.xg7plugins.libs.xg7menus.events.ClickEvent;
+import com.xg7plugins.utils.Builder;
 import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.reflection.NMSUtil;
 import com.xg7plugins.utils.reflection.ReflectionClass;
@@ -33,7 +34,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public abstract class BaseItemBuilder<B extends BaseItemBuilder<B>> {
+public abstract class BaseItemBuilder<B> {
 
 
     protected ItemStack itemStack;
@@ -225,7 +226,7 @@ public abstract class BaseItemBuilder<B extends BaseItemBuilder<B>> {
         return gson.toJson(inventoryItem);
     }
 
-    public static <B extends BaseItemBuilder<B>> B from(String material, Plugin plugin) {
+    public static <B extends BaseItemBuilder> B from(String material, Plugin plugin) {
 
         if (material == null) return (B) ItemBuilder.from(Material.STONE,plugin);
         if (material.startsWith("eyJ0")) return (B) new SkullItemBuilder(plugin).setValue(material);

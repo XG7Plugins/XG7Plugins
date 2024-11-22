@@ -6,7 +6,7 @@ import com.xg7plugins.libs.xg7scores.scores.XPBar;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XPBarBuilder extends ScoreBuilder<XPBarBuilder> {
+public class XPBarBuilder extends ScoreBuilder<XPBar, XPBarBuilder> {
 
     private List<String> xp = new ArrayList<>();
 
@@ -28,10 +28,11 @@ public class XPBarBuilder extends ScoreBuilder<XPBarBuilder> {
         return this;
     }
 
+
     @Override
-    public XPBar build(Plugin plugin) {
+    public XPBar build(Object... args) {
         if (id == null || delayToUpdate == 0) throw new IllegalArgumentException("You must specify the id and the delay to update the score");
 
-        return new XPBar(delayToUpdate, xp.toArray(new String[0]), id, condition, plugin);
+        return new XPBar(delayToUpdate, xp.toArray(new String[0]), id, condition, (Plugin) args[0]);
     }
 }

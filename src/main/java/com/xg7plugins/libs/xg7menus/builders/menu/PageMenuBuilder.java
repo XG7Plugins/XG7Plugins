@@ -5,8 +5,10 @@ import com.xg7plugins.libs.xg7menus.MenuException;
 import com.xg7plugins.libs.xg7menus.Slot;
 import com.xg7plugins.libs.xg7menus.builders.BaseItemBuilder;
 import com.xg7plugins.libs.xg7menus.builders.BaseMenuBuilder;
+import com.xg7plugins.libs.xg7menus.builders.item.ItemBuilder;
 import com.xg7plugins.libs.xg7menus.menus.gui.ItemsPageMenu;
 import com.xg7plugins.libs.xg7menus.builders.item.SkullItemBuilder;
+import com.xg7plugins.libs.xg7menus.menus.gui.Menu;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -14,13 +16,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class PageMenuBuilder extends BaseMenuBuilder<PageMenuBuilder> {
+public class PageMenuBuilder extends BaseMenuBuilder<ItemsPageMenu,PageMenuBuilder> {
 
 
     protected String title;
@@ -82,26 +81,29 @@ public class PageMenuBuilder extends BaseMenuBuilder<PageMenuBuilder> {
 
 
     @Override
-    public ItemsPageMenu build(Player player, Plugin plugin) {
+    public ItemsPageMenu build(Object... args) {
         if (title == null) throw new MenuException("The inventory must have a title!");
 
-        Map<Integer, ItemStack> buildItems = items.entrySet().stream()
-                .collect(
-                        Collectors.toMap(
-                                Map.Entry::getKey,
-                                entry -> {
-                                    BaseItemBuilder<?> builder = entry.getValue();
-                                    if (builder instanceof SkullItemBuilder) {
-                                        SkullMeta meta = (SkullMeta) builder.toItemStack().getItemMeta();
-                                        if ("THIS_PLAYER".equals(meta.getOwner())) return ((SkullItemBuilder) builder).setOwner(player.getName()).setPlaceHolders(player).toItemStack();
-                                    }
-                                    return builder.setPlaceHolders(player, builder.getBuildReplacements()).toItemStack();
-                                }
+        Player player = (Player) args[0];
+        Plugin plugin = (Plugin) args[1];
 
-                        )
-                );
+        Map<Integer, ItemStack> buildItems = new HashMap<>();
+        items.forEach((slot, itemBuilder) -> {
+            if (itemBuilder instanceof SkullItemBuilder) {
+                SkullMeta meta = (SkullMeta) itemBuilder.toItemStack().getItemMeta();
+                if ("THIS_PLAYER".equals(meta.getOwner())) buildItems.put(slot, ((SkullItemBuilder) itemBuilder).setOwner(player.getName()).setPlaceHolders(player,itemBuilder.getBuildReplacements()).toItemStack());
+            }
+            buildItems.put(slot, ((ItemBuilder) itemBuilder).setPlaceHolders(player,itemBuilder.getBuildReplacements()).toItemStack());
+        });
 
-        List<BaseItemBuilder<?>> buildedPlayerItens = pageItems.stream().map(item -> item.setPlaceHolders(player, item.getBuildReplacements())).collect(Collectors.toList());
+        List<BaseItemBuilder<?>> buildedPlayerItens = new ArrayList<>();
+        pageItems.forEach(itemBuilder -> {
+            if (itemBuilder instanceof SkullItemBuilder) {
+                SkullMeta meta = (SkullMeta) itemBuilder.toItemStack().getItemMeta();
+                if ("THIS_PLAYER".equals(meta.getOwner())) buildedPlayerItens.add(((SkullItemBuilder) itemBuilder).setOwner(player.getName()).setPlaceHolders(player,itemBuilder.getBuildReplacements()));
+            }
+            buildedPlayerItens.add(((ItemBuilder) itemBuilder).setPlaceHolders(player,itemBuilder.getBuildReplacements()));
+        });
 
 
         return type == null ? new ItemsPageMenu(id,Text.getCentralizedText(Text.PixelsSize.INV.getPixels(),Text.format(title,plugin).getWithPlaceholders(player)), size, buildItems, clickEventMap, defaultClickEvent, openMenuEvent, closeMenuEvent, allowedPermissions, player,initSlot,finalSlot,buildedPlayerItens,keepSavingPageIndex) : new ItemsPageMenu(id,Text.getCentralizedText(Text.PixelsSize.INV.getPixels(),Text.format(title,plugin).getWithPlaceholders(player)), type, buildItems, clickEventMap, defaultClickEvent, openMenuEvent, closeMenuEvent, allowedPermissions, player,initSlot,finalSlot,buildedPlayerItens,keepSavingPageIndex);

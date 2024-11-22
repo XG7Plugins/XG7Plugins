@@ -17,18 +17,18 @@ public abstract class PacketManagerBase {
     protected final HashMap<String, List<Event>> events = new HashMap<>();
 
 
-    public void registerPlugin(Plugin plugin, Class<? extends PacketEvent>... eventClasses) {
+    public void registerPlugin(Plugin plugin, PacketEvent... events) {
 
         plugin.getLog().loading("Loading Packet Events...");
 
-        if (eventClasses == null) return;
+        if (events == null) return;
 
         this.events.putIfAbsent(plugin.getName(), new ArrayList<>());
 
-        for (Class<? extends PacketEvent> eventClass : eventClasses) {
-            PacketEvent packetEvent = (PacketEvent) ReflectionClass.of(eventClass).newInstance().getObject();
-            if (!packetEvent.isEnabled()) continue;
-            this.events.get(plugin.getName()).add(packetEvent);
+        for (PacketEvent event : events) {
+            if (event == null) continue;
+            if (!event.isEnabled()) continue;
+            this.events.get(plugin.getName()).add(event);
         }
         plugin.getLog().loading("Successfully loaded Packet Events!");
     }

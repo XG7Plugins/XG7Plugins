@@ -2,6 +2,7 @@ package com.xg7plugins.libs.xg7geyserforms.builders;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.Plugin;
+import com.xg7plugins.utils.Builder;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.Form;
@@ -12,7 +13,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 
-public abstract class FormCreator<FC extends FormCreator<FC>> {
+public abstract class FormCreator<F extends Form,FC extends FormCreator<F,FC>> extends Builder<F> {
 
     @Getter
     protected String id;
@@ -56,7 +57,4 @@ public abstract class FormCreator<FC extends FormCreator<FC>> {
     public static CustomFormCreator custom(String id, Plugin plugin) {
         return new CustomFormCreator(id, plugin);
     }
-
-
-    public abstract <F extends Form> F build(Player player);
 }

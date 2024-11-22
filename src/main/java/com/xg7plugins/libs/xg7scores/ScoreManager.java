@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Getter
 public class ScoreManager {
@@ -22,6 +23,11 @@ public class ScoreManager {
 
     public ScoreManager(XG7Plugins plugin) {
         this.plugin = plugin;
+    }
+    public void registerScores(final Score[] scores) {
+        if (scores == null) return;
+        initTask();
+        scoreboards.putAll(Arrays.stream(scores).map(sc -> new AbstractMap.SimpleEntry<>(sc.getId(), sc)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
     }
 
     public void registerScore(final Score score) {

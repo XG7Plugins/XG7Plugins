@@ -6,7 +6,7 @@ import com.xg7plugins.libs.xg7scores.scores.ScoreBoard;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScoreBoardBuilder extends ScoreBuilder<ScoreBoardBuilder> {
+public class ScoreBoardBuilder extends ScoreBuilder<ScoreBoard, ScoreBoardBuilder> {
 
     private List<String> title = new ArrayList<>();
     private List<String> lines = new ArrayList<>();
@@ -33,9 +33,9 @@ public class ScoreBoardBuilder extends ScoreBuilder<ScoreBoardBuilder> {
     }
 
     @Override
-    public ScoreBoard build(Plugin plugin) {
+    public ScoreBoard build(Object... args) {
         if (id == null || delayToUpdate == 0) throw new IllegalArgumentException("You must specify the id and the delay to update the score");
 
-        return new ScoreBoard(title.toArray(new String[0]),lines.toArray(new String[0]),id,condition,delayToUpdate,plugin);
+        return new ScoreBoard(title.toArray(new String[0]),lines.toArray(new String[0]),id,condition,delayToUpdate,(Plugin) args[0]);
     }
 }

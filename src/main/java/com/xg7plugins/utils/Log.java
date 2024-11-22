@@ -25,23 +25,23 @@ public class Log {
     }
 
     public void severe(String message) {
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getCustomPrefix()  + " §cERROR§8] §c" + message);
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix()  + " §cERROR§8] §c" + message);
     }
 
     public void fine(String message) {
-        if (isLogEnabled) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getCustomPrefix()  + " §aSUCCESS§8] §a" + message);
+        if (isLogEnabled) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix()  + " §aSUCCESS§8] §a" + message);
     }
 
     public void info(String message) {
-        if (isLogEnabled) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getCustomPrefix() + " §6DEBUG§8] §6" + message);
+        if (isLogEnabled) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §6DEBUG§8] §6" + message);
     }
 
     public void warn(String message) {
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getCustomPrefix() + " §eALERT§8] §e" + message);
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §eALERT§8] §e" + message);
     }
 
     public void loading(String message) {
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getCustomPrefix() + "§8] §r" + message);
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + "§8] §r" + message);
     }
 
 }

@@ -5,8 +5,10 @@ import com.xg7plugins.libs.xg7menus.MenuException;
 import com.xg7plugins.libs.xg7menus.Slot;
 import com.xg7plugins.libs.xg7menus.builders.BaseItemBuilder;
 import com.xg7plugins.libs.xg7menus.builders.BaseMenuBuilder;
+import com.xg7plugins.libs.xg7menus.builders.item.ItemBuilder;
 import com.xg7plugins.libs.xg7menus.events.ClickEvent;
 import com.xg7plugins.libs.xg7menus.events.DragEvent;
+import com.xg7plugins.libs.xg7menus.menus.gui.Menu;
 import com.xg7plugins.libs.xg7menus.menus.gui.StorageMenu;
 import com.xg7plugins.libs.xg7menus.builders.item.SkullItemBuilder;
 import com.xg7plugins.utils.text.Text;
@@ -19,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class StorageMenuBuilder extends BaseMenuBuilder<StorageMenuBuilder> {
+public class StorageMenuBuilder extends BaseMenuBuilder<StorageMenu, StorageMenuBuilder> {
 
     protected String title;
     protected int size;
@@ -68,26 +70,21 @@ public class StorageMenuBuilder extends BaseMenuBuilder<StorageMenuBuilder> {
     }
 
     @Override
-    public StorageMenu build(Player player, Plugin plugin) {
-
+    public StorageMenu build(Object... args) {
         if (title == null) throw new MenuException("The inventory must have a title!");
+
+        Player player = (Player) args[0];
+        Plugin plugin = (Plugin) args[1];
         if (initStorageSlot == null || finalStorageSlot == null) throw new MenuException("The inventory must have a area to put storedItems!");
 
-        Map<Integer, ItemStack> buildItems = items.entrySet().stream()
-                .collect(
-                        Collectors.toMap(
-                                Map.Entry::getKey,
-                                entry -> {
-                                    BaseItemBuilder<?> builder = entry.getValue();
-                                    if (builder instanceof SkullItemBuilder) {
-                                        SkullMeta meta = (SkullMeta) builder.toItemStack().getItemMeta();
-                                        if ("THIS_PLAYER".equals(meta.getOwner())) return ((SkullItemBuilder) builder).setOwner(player.getName()).setPlaceHolders(player).toItemStack();
-                                    }
-                                    return builder.setBuildReplacements(builder.getBuildReplacements()).setPlaceHolders(player).toItemStack();
-                                }
-
-                        )
-                );
+        Map<Integer, ItemStack> buildItems = new HashMap<>();
+        items.forEach((slot, itemBuilder) -> {
+            if (itemBuilder instanceof SkullItemBuilder) {
+                SkullMeta meta = (SkullMeta) itemBuilder.toItemStack().getItemMeta();
+                if ("THIS_PLAYER".equals(meta.getOwner())) buildItems.put(slot, ((SkullItemBuilder) itemBuilder).setOwner(player.getName()).setPlaceHolders(player).toItemStack());
+            }
+            buildItems.put(slot, ((ItemBuilder) itemBuilder).setBuildReplacements(itemBuilder.getBuildReplacements()).setPlaceHolders(player).toItemStack());
+        });
 
         if (defaultClickEvent == null) setDefaultClickEvent(event -> {
             if (event.getClickAction().equals(ClickEvent.ClickAction.DRAG)) {

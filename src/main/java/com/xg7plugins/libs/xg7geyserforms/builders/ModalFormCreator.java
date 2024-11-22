@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.ModalForm;
 
 
-public class ModalFormCreator extends FormCreator<ModalFormCreator> {
+public class ModalFormCreator extends FormCreator<ModalForm, ModalFormCreator> {
 
     private String content;
     private String button1;
@@ -32,13 +32,15 @@ public class ModalFormCreator extends FormCreator<ModalFormCreator> {
     }
 
     @Override
-    public ModalForm build(Player player) {
+    public ModalForm build(Object... args) {
 
         ModalForm.Builder builder = ModalForm.builder();
 
         if (title == null || content == null) {
             throw new IllegalStateException("Title and content must be set");
         }
+
+        Player player = (Player) args[0];
 
         builder.title(Text.format(title,plugin).getWithPlaceholders(player));
         builder.content(Text.format(content,plugin).getWithPlaceholders(player));

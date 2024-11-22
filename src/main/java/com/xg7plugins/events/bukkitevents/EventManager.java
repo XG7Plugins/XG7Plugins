@@ -20,19 +20,18 @@ public class EventManager {
 
     private final HashMap<String, Listener> listeners = new HashMap<>();
 
-    public void registerPlugin(Plugin plugin, Class<? extends Event>... eventClasses) {
+    public void registerPlugin(Plugin plugin, Event... events) {
 
         plugin.getLog().info("Loading Events...");
 
-        if (eventClasses == null) return;
+        if (events == null) return;
 
         listeners.put(plugin.getName(), new Listener() {});
 
-        for (Class<?> eventClass : eventClasses) {
+        for (Event event : events) {
+            if (event == null) continue;
 
-            if (eventClass.isAssignableFrom(PacketEvent.class)) continue;
-
-            Event event = (Event) ReflectionClass.of(eventClass).newInstance().getObject();
+            if (event.getClass().isAssignableFrom(PacketEvent.class)) continue;
 
             if (!event.isEnabled()) continue;
             for (Method method : event.getClass().getMethods()) {

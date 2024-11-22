@@ -25,6 +25,8 @@ public class DBManager {
     @SneakyThrows
     public DBManager(XG7Plugins plugin) {
 
+        plugin.getLog().loading("Loading database manager...");
+
         Config config = plugin.getConfigsManager().getConfig("config");
 
         entitiesCached = Caffeine.newBuilder().expireAfterAccess(Text.convertToMilliseconds(plugin, config.get("sql.cache-expires")), TimeUnit.MILLISECONDS).build();
@@ -32,6 +34,8 @@ public class DBManager {
 
     @SneakyThrows
     public void connectPlugin(Plugin plugin, Class<? extends Entity>... entityClasses) {
+
+        if (entityClasses == null) return;
 
         plugin.getLog().loading("Connecting database...");
 

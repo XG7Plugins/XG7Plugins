@@ -1,10 +1,9 @@
 package com.xg7plugins.libs.xg7scores.builder;
 
-import com.xg7plugins.Plugin;
-import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreCondition;
+import com.xg7plugins.utils.Builder;
 
-public abstract class ScoreBuilder<B extends ScoreBuilder<B>> {
+public abstract class ScoreBuilder<S,B> extends Builder<S> {
 
     protected String id;
     protected long delayToUpdate;
@@ -39,9 +38,6 @@ public abstract class ScoreBuilder<B extends ScoreBuilder<B>> {
     public static ActionBarBuilder actionBar(String id) {
         return new ActionBarBuilder(id);
     }
-
-    public abstract <S extends Score> S build(Plugin plugin);
-
 
 
 

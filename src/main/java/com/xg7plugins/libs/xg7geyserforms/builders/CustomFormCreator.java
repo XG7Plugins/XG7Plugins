@@ -6,8 +6,9 @@ import org.geysermc.cumulus.form.CustomForm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-public class CustomFormCreator extends FormCreator<CustomFormCreator> {
+public class CustomFormCreator extends FormCreator<CustomForm,CustomFormCreator> {
 
     private List<ComponentFactory.IComponent> components = new ArrayList<>();
 
@@ -22,10 +23,10 @@ public class CustomFormCreator extends FormCreator<CustomFormCreator> {
 
 
     @Override
-    public CustomForm build(Player player) {
+    public CustomForm build(Object... args) {
         CustomForm.Builder builder = CustomForm.builder();
 
-        components.stream().map(component -> component.build(player, plugin)).forEach(builder::component);
+        components.stream().map(component -> component.build((Player) args[0], plugin)).forEach(builder::component);
 
         return builder.build();
     }

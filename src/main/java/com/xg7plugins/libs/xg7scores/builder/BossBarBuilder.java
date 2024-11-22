@@ -12,7 +12,7 @@ import org.bukkit.boss.BarStyle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BossBarBuilder extends ScoreBuilder<BossBarBuilder> {
+public class BossBarBuilder extends ScoreBuilder<GenericBossBar, BossBarBuilder> {
 
     private Object color;
     private Object style;
@@ -52,7 +52,9 @@ public class BossBarBuilder extends ScoreBuilder<BossBarBuilder> {
     }
 
     @Override
-    public GenericBossBar build(Plugin plugin) {
+    public GenericBossBar build(Object... args) {
+
+        Plugin plugin = (Plugin) args[0];
 
         if (id == null || delayToUpdate == 0) throw new IllegalArgumentException("You must specify the id and the delay to update the score");
 
@@ -65,6 +67,5 @@ public class BossBarBuilder extends ScoreBuilder<BossBarBuilder> {
         if (isPublic) return new PublicBossBar(delayToUpdate, title.toArray(new String[0]),id,condition, (BarColor) color, (BarStyle) style,progress,plugin);
 
         return new BossBar(delayToUpdate,id,condition, title.toArray(new String[0]), (BarColor) color, (BarStyle) style,progress,plugin);
-
     }
 }

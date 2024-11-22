@@ -10,7 +10,7 @@ import org.geysermc.cumulus.form.SimpleForm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleFormCreator extends FormCreator<SimpleFormCreator> {
+public class SimpleFormCreator extends FormCreator<SimpleForm, SimpleFormCreator> {
 
     private List<ButtonComponent> buttons = new ArrayList<>();
     private String content;
@@ -29,13 +29,14 @@ public class SimpleFormCreator extends FormCreator<SimpleFormCreator> {
     }
 
     @Override
-    public SimpleForm build(Player player) {
+    public SimpleForm build(Object... args) {
 
         if (title == null || content == null) {
             throw new IllegalStateException("Title and content must be set");
         }
 
         SimpleForm.Builder builder = SimpleForm.builder();
+        Player player = (Player) args[0];
 
         builder.title(Text.format(title,plugin).getWithPlaceholders(player));
         builder.content(Text.format(content,plugin).getWithPlaceholders(player));
