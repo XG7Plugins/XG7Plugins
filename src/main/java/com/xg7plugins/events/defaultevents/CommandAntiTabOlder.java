@@ -58,9 +58,6 @@ public class CommandAntiTabOlder implements Event, PacketEvent {
                 return packet.getObject();
             }
 
-            HashMap<String, Plugin> plugins = (HashMap<String, Plugin>) XG7Plugins.getInstance().getPlugins().clone();
-            plugins.put("XG7Plugins", XG7Plugins.getInstance());
-
             List<String> suggestions = new ArrayList<>(Arrays.stream((String[]) packet.getField("a")).collect(Collectors.toList()));
 
             List<String> filteredSuggestions = suggestions.stream()

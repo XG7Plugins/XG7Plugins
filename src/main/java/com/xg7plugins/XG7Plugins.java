@@ -41,6 +41,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,7 +72,7 @@ public final class XG7Plugins extends Plugin {
     private HologramsManager hologramsManager;
     private NPCManager npcManager;
 
-    private final HashMap<String, Plugin> plugins = new HashMap<>();
+    private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
     public XG7Plugins() {
         super("&bXG&37P&9lu&1gins&r", /* null will be default configs */ null);
@@ -166,7 +167,7 @@ public final class XG7Plugins extends Plugin {
 
     public static void unregister(Plugin plugin) {
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
-
+        XG7Plugins.getInstance().getLog().loading("Unregistering " + plugin.getName() + "...");
         xg7Plugins.getPacketEventManager().unregisterPlugin(plugin);
         xg7Plugins.getDatabaseManager().disconnectPlugin(plugin);
         xg7Plugins.getScoreManager().unregisterPlugin(plugin);

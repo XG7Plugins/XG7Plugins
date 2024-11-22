@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandAntiTab implements Event {
 
@@ -48,9 +49,6 @@ public class CommandAntiTab implements Event {
     @EventHandler
     public void onTabComplete(PlayerCommandSendEvent event) {
         if (event.getPlayer().hasPermission("xg7plugins.command.anti-tab.bypass")) return;
-
-        HashMap<String, Plugin> plugins = (HashMap<String, Plugin>) XG7Plugins.getInstance().getPlugins().clone();
-        plugins.put("XG7Plugins", XG7Plugins.getInstance());
 
         for (String command : new ArrayList<>(event.getCommands())) {
 
