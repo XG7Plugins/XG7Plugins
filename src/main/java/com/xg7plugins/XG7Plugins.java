@@ -29,6 +29,7 @@ import com.xg7plugins.data.database.DBManager;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager1_7;
+import com.xg7plugins.tasks.CooldownManager;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.utils.Location;
 import lombok.AccessLevel;
@@ -62,6 +63,7 @@ public final class XG7Plugins extends Plugin {
     private DBManager databaseManager;
     private EventManager eventManager;
     private TaskManager taskManager;
+    private CooldownManager cooldownManager;
     private ScoreManager scoreManager;
     private PacketManagerBase packetEventManager;
     private MenuManager menuManager;
@@ -125,10 +127,6 @@ public final class XG7Plugins extends Plugin {
             }
             loadTasks();
         });
-
-        NPCBuilder.creator(this, "npc")
-                .setName("aaaaaaa")
-                .setLocation(Location.of("world",0,90,0)).build();
 
         getLog().loading("XG7Plugins enabled.");
     }

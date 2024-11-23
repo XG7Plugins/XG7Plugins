@@ -22,11 +22,19 @@ public class CooldownManager {
         this.timeFactor = timeFactor;
     }
 
-    public void addCooldown(UUID player, CooldownTask task) {
-        cooldowns.put(player, task);
+    public void addCooldown(Player player, CooldownTask task) {
+        cooldowns.put(player.getUniqueId(), task);
         if (taskId == null) {
             initTask();
         }
+    }
+
+    public void containsPlayer(Player player) {
+        cooldowns.containsKey(player.getUniqueId());
+    }
+    public void removePlayer(Player player) {
+        cooldowns.get(player.getUniqueId()).onFinish(player, true);
+        cooldowns.remove(player.getUniqueId());
     }
 
     private void initTask() {
@@ -40,7 +48,7 @@ public class CooldownManager {
                 task.setTime(task.getTime() - timeFactor);
                 task.tick(Bukkit.getPlayer(id));
                 if (task.getTime() <= 0) {
-                    task.onFinish(Bukkit.getPlayer(id));
+                    task.onFinish(Bukkit.getPlayer(id),false);
                     cooldowns.remove(id);
                 }
             });
@@ -55,7 +63,7 @@ public class CooldownManager {
         private double time;
         private TimeUnit timeUnit;
         public abstract void tick(Player player);
-        public abstract void onFinish(Player player);
+        public abstract void onFinish(Player player, boolean error);
     }
 
 }
