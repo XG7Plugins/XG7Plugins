@@ -19,6 +19,8 @@ enable-lang-form: true
 
 task-threads: 4
 
+player-cooldown-task-delay: 1s
+
 menu-cache-expires: 10m
 
 holograms-update-delay: 1s

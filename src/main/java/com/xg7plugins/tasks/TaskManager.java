@@ -26,17 +26,6 @@ public class TaskManager {
         tasksRunning.put(taskId, executor.scheduleWithFixedDelay(runnable, 0, delay, TimeUnit.MILLISECONDS));
         return taskId;
     }
-    public String addCooldownTask(Plugin plugin, String name, Runnable runnable, int seconds) {
-        String taskId = plugin + ":" + name + ":" + UUID.randomUUID();
-
-        tasksRunning.put(taskId, executor.scheduleWithFixedDelay(runnable, 0, seconds, TimeUnit.SECONDS));
-
-        executor.submit(() -> {
-            tasksRunning.get(taskId).cancel(false);
-            tasksRunning.remove(taskId);
-        });
-        return taskId;
-    }
 
     public void runTask(Runnable runnable) {
         CompletableFuture.runAsync(runnable,executor);
