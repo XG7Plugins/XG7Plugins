@@ -47,9 +47,7 @@ public class Config {
         return config.getConfigurationSection(path);
     }
     public List<String> getList(String path) {
-        List<String> list = config.getStringList(path);
-        if (list.isEmpty()) plugin.getLog().warn(path + " not found in " + name + ".yml or the list is empty");
-        return list;
+        return config.getStringList(path);
     }
 
     public void set(String path, Object value) {
