@@ -1,7 +1,6 @@
 package com.xg7plugins.tasks;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +17,8 @@ public class CooldownManager {
     private final int timeFactor;
     private String taskId;
 
-    public CooldownManager(int timeFactor) {
-        this.timeFactor = timeFactor;
+    public CooldownManager(XG7Plugins plugin) {
+        this.timeFactor = plugin.getConfigsManager().getConfig("config").get("player-cooldown-task-delay");
     }
 
     public void addCooldown(Player player, CooldownTask task) {

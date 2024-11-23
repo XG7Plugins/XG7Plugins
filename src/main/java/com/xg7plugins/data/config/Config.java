@@ -8,6 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.util.List;
 
 @Getter
 public class Config {
@@ -44,6 +45,11 @@ public class Config {
     }
     public ConfigurationSection getConfigutationSection(String path) {
         return config.getConfigurationSection(path);
+    }
+    public List<String> getList(String path) {
+        List<String> list = config.getStringList(path);
+        if (list.isEmpty()) plugin.getLog().warn(path + " not found in " + name + ".yml or the list is empty");
+        return list;
     }
 
     public void set(String path, Object value) {

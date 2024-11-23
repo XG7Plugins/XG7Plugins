@@ -104,6 +104,7 @@ public final class XG7Plugins extends Plugin {
         this.eventManager = new EventManager();
         this.packetEventManager = minecraftVersion < 8 ? new PacketEventManager1_7() : new PacketEventManager();
         this.taskManager = new TaskManager(this);
+        this.cooldownManager = new CooldownManager(this);
         this.scoreManager = new ScoreManager(this);
         this.formManager = floodgate ? new FormManager() : null;
 
