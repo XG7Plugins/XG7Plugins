@@ -73,7 +73,7 @@ public final class XG7Plugins extends Plugin {
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
     public XG7Plugins() {
-        super("&bXG&37P&9lu&1gins&r", /* null will be default configs */ null,
+        super("§bXG§37P§9lu§1gins§r", /* null will be default configs */ null,
                 new String[]{
                         "§b __   _______ §3______ §9_____  _             §1_           ",
                         "§b \\ \\ / / ____|§3____ §9 |  __ \\| |           §1(_)          ",
