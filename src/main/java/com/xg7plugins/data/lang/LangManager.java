@@ -29,7 +29,7 @@ public class LangManager {
     public LangManager(Plugin plugin, String[] defaultLangs) {
         this.plugin = plugin;
         this.defLangs = defaultLangs;
-        this.playerLanguageDAO = new PlayerLanguageDAO(plugin);
+        this.playerLanguageDAO = new PlayerLanguageDAO();
 
         plugin.getLog().loading("Loading langs...");
 

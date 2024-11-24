@@ -11,8 +11,6 @@ import java.util.concurrent.ExecutionException;
 @AllArgsConstructor
 public abstract class DAO<ID,T extends Entity> {
 
-    protected final Plugin plugin;
-
     public abstract void add(T entity) throws ExecutionException, InterruptedException;
     public abstract CompletableFuture<T> get(ID id);
     public abstract CompletableFuture<Void> update(T entity);
