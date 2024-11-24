@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class LangMenu {
 
@@ -49,7 +50,12 @@ public class LangMenu {
         List<BaseItemBuilder<?>> items = new ArrayList<>();
         plugin.getLangManager().getLangs().asMap().forEach((s, c)-> {
             BaseItemBuilder<?> builder = BaseItemBuilder.from(c.getString("icon"), plugin);
-            PlayerLanguage language = plugin.getLangManager().getPlayerLanguageDAO().getLanguage(player.getUniqueId());
+            PlayerLanguage language;
+            try {
+                language = plugin.getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
 
             boolean selected = language != null && language.getLangId().equals(s);
 
@@ -75,12 +81,12 @@ public class LangMenu {
                     return;
                 }
 
-                plugin.getLangManager().getPlayerLanguageDAO().updatePlayerLanguage(s,player.getUniqueId()).thenAccept(r -> {
+                plugin.getLangManager().getPlayerLanguageDAO().update(new PlayerLanguage(player.getUniqueId(),s)).thenAccept(r -> {
                     plugin.getMenuManager().removePlayerFromAll(player);
                     create(player);
                     Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
                 });
-                plugin.getPlugins().forEach((n, pl) -> pl.getLangManager().getPlayerLanguageDAO().updatePlayerLanguage(s,player.getUniqueId()));
+                plugin.getPlugins().forEach((n, pl) -> pl.getLangManager().getPlayerLanguageDAO().update(new PlayerLanguage(player.getUniqueId(),s)));
 
 
                 cooldownToToggle.put(player.getUniqueId(), System.currentTimeMillis() + Text.convertToMilliseconds(plugin, config.get("cooldown-to-toggle-lang")));

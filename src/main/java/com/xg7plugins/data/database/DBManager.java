@@ -132,6 +132,22 @@ public class DBManager {
         },XG7Plugins.getInstance().getTaskManager().getExecutor());
     }
 
+    public synchronized CompletableFuture<ResultSet> executeNormalStatement(Plugin plugin, String sql, Object... args) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Connection connection = connections.get(plugin.getName());
+
+                PreparedStatement ps = connection.prepareStatement(sql);
+                for (int i = 0; i < args.length; i++) ps.setObject(i + 1, args[i]);
+
+                return ps.executeQuery();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
+        },XG7Plugins.getInstance().getTaskManager().getExecutor());
+    }
+
     public synchronized CompletableFuture<Void> executeUpdate(Plugin plugin, String sql, Object... args) {
         return CompletableFuture.runAsync(() -> {
             try {

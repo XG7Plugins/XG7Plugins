@@ -6,6 +6,7 @@ import com.xg7plugins.Plugin;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.*;
@@ -124,6 +125,21 @@ public class EntityProcessor {
             if (!childs.isEmpty()) childs.forEach(item -> insetEntity(plugin, ((Entity) item)));
 
         },XG7Plugins.getInstance().getTaskManager().getExecutor());
+    }
+
+    public static CompletableFuture<Boolean> exists(Plugin plugin, Class<? extends Entity> entityClass, String idTable, Object id) {
+        DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
+
+        if (manager.getEntitiesCached().asMap().containsKey(id)) return CompletableFuture.completedFuture(true);
+
+        return manager.executeNormalStatement(plugin, "SELECT EXISTS (SELECT 1 FROM " + entityClass.getSimpleName() +" WHERE " + idTable + " = ?", id).thenApplyAsync(result -> {
+            try {
+                return result.getBoolean(1);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
     }
 
 }

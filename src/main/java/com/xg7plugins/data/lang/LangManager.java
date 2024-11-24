@@ -79,14 +79,13 @@ public class LangManager {
         return langConfig.getString(path);
     }
 
+    @SneakyThrows
     public YamlConfiguration getLangByPlayer(Player player) {
         if (player == null) return getLang(mainLang);
 
-        PlayerLanguage language = playerLanguageDAO.getLanguage(player.getUniqueId());
+        PlayerLanguage language = playerLanguageDAO.get(player.getUniqueId()).get();
 
         if (language != null) return getLang(language.getLangId());
-
-        Config config = plugin.getConfigsManager().getConfig("config");
 
         String langId = mainLang;
 
@@ -95,7 +94,7 @@ public class LangManager {
             if (langs.asMap().containsKey(playerLocale)) langId = playerLocale;
         }
         PlayerLanguage newLang = new PlayerLanguage(player.getUniqueId(), langId);
-        playerLanguageDAO.addPlayerLanguage(newLang);
+        playerLanguageDAO.add(newLang);
         return getLang(langId);
 
     }

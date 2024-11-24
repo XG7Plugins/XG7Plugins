@@ -10,6 +10,8 @@ import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.response.SimpleFormResponse;
 import org.geysermc.cumulus.util.FormImage;
 
+import java.util.concurrent.ExecutionException;
+
 public class LangForm {
 
     public static void create(Player player) {
@@ -33,7 +35,12 @@ public class LangForm {
 
         plugin.getLangManager().getLangs().asMap().forEach((s, c)-> {
 
-            PlayerLanguage language = plugin.getLangManager().getPlayerLanguageDAO().getLanguage(player.getUniqueId());
+            PlayerLanguage language;
+            try {
+                language = plugin.getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
 
 
             boolean selected = language != null && language.getLangId().equals(s);
@@ -58,7 +65,12 @@ public class LangForm {
 
         formCreator.onFinish((form, res) -> {
 
-                    PlayerLanguage language = plugin.getLangManager().getPlayerLanguageDAO().getLanguage(player.getUniqueId());
+                    PlayerLanguage language;
+                    try {
+                        language = plugin.getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     SimpleFormResponse response = (SimpleFormResponse) res;
 
@@ -79,13 +91,13 @@ public class LangForm {
                         return;
                     }
 
-                    plugin.getLangManager().getPlayerLanguageDAO().updatePlayerLanguage(lang, player.getUniqueId()).thenAccept(r -> {
+                    plugin.getLangManager().getPlayerLanguageDAO().update(new PlayerLanguage(player.getUniqueId(), lang)).thenAccept(r -> {
                         plugin.getMenuManager().removePlayerFromAll(player);
                         plugin.getFormManager().unregisterCreator("lang", player);
                         create(player);
                         Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
                     });
-                    plugin.getPlugins().forEach((n, pl) -> pl.getLangManager().getPlayerLanguageDAO().updatePlayerLanguage(lang, player.getUniqueId()));
+                    plugin.getPlugins().forEach((n, pl) -> pl.getLangManager().getPlayerLanguageDAO().update(new PlayerLanguage(player.getUniqueId(), lang)));
 
 
                     LangMenu.cooldownToToggle.put(player.getUniqueId(), System.currentTimeMillis() + Text.convertToMilliseconds(plugin, config.get("cooldown-to-toggle-lang")));

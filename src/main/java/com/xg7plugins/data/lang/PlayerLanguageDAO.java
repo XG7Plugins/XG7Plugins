@@ -1,60 +1,38 @@
 package com.xg7plugins.data.lang;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.Plugin;
-import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.EntityProcessor;
 import com.xg7plugins.data.database.Query;
-import com.xg7plugins.utils.text.Text;
+import com.xg7plugins.utils.DAO;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
 
-public class PlayerLanguageDAO {
+public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
 
-    private Cache<UUID,PlayerLanguage> playerLanguages;
-
+    private Plugin plugin;
     public PlayerLanguageDAO(Plugin plugin) {
-        Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
-
-        playerLanguages = Caffeine.newBuilder()
-                .expireAfterAccess(Text.convertToMilliseconds(plugin, config.get("lang-cache-expires")), TimeUnit.MILLISECONDS)
-                .build();
+        super(plugin);
     }
 
-    public void addPlayerLanguage(PlayerLanguage playerLanguage) {
+    public void add(PlayerLanguage playerLanguage) throws ExecutionException, InterruptedException {
         if(playerLanguage == null || playerLanguage.getPlayerUUID() == null) return;
-        if (playerLanguages.asMap().containsKey(playerLanguage.getPlayerUUID())) return;
+        if (EntityProcessor.exists(plugin,PlayerLanguage.class, "playerUUID", playerLanguage.getPlayerUUID()).get()) return;
 
         EntityProcessor.insetEntity(XG7Plugins.getInstance(), playerLanguage);
-        playerLanguages.put(playerLanguage.getPlayerUUID(),playerLanguage);
     }
 
-    public PlayerLanguage getLanguage(UUID uuid) {
+    public CompletableFuture<PlayerLanguage> get(UUID uuid) {
         if (uuid == null) return null;
 
-        PlayerLanguage playerLanguage =  playerLanguages.getIfPresent(uuid);
-        if (playerLanguage != null) return playerLanguage;
-
-        try {
-            playerLanguage = Query.getEntity(XG7Plugins.getInstance(), "SELECT * FROM playerlanguage WHERE playeruuid = ?", uuid, PlayerLanguage.class).get();
-            if (playerLanguage != null){
-                playerLanguages.put(uuid,playerLanguage);
-                return playerLanguage;
-            }
-            return null;
-        } catch (Exception exception) {
-            return null;
-        }
+        return Query.getEntity(plugin, "SELECT * FROM playerlanguage WHERE playeruuid = ?", uuid, PlayerLanguage.class);
     }
-    public CompletableFuture<Void> updatePlayerLanguage(String lang, UUID playerUUID)
-    {
-        if (playerUUID == null) return null;
-        playerLanguages.put(playerUUID,new PlayerLanguage(playerUUID,lang));
-        return Query.update(XG7Plugins.getInstance(), "UPDATE playerlanguage SET langid = ? WHERE playeruuid = ?", lang, playerUUID);
+    public CompletableFuture<Void> update(PlayerLanguage playerLanguage) {
+        if (playerLanguage == null) return null;
+
+        return Query.update(XG7Plugins.getInstance(), playerLanguage);
 
 
     }

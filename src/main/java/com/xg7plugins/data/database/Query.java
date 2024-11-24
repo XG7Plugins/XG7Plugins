@@ -2,7 +2,9 @@ package com.xg7plugins.data.database;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.Plugin;
+import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -33,8 +35,37 @@ public class Query {
         return XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql, id).thenApply(q -> !q.hasNextLine() ? null : q.get(clazz));
     }
 
-    public static CompletableFuture<Void> update(Plugin plugin, String sql, Object... params) {
-        return XG7Plugins.getInstance().getDatabaseManager().executeUpdate(plugin, sql,params);
+    @SneakyThrows
+    public static CompletableFuture<Void> update(Plugin plugin, Entity entity) {
+
+        DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
+
+        StringBuilder sql = new StringBuilder("UPDATE " + entity.getClass().getSimpleName() + " SET ");
+
+        Pair<String, Object> id = new Pair<>(null, null);
+
+        List<Object> params = new ArrayList<>();
+        int index = 0;
+
+        for (Field field : entity.getClass().getDeclaredFields()) {
+            index++;
+            field.setAccessible(true);
+            if (field.isAnnotationPresent(Entity.PKey.class)){
+                id = new Pair<>(field.getName(), field.get(entity));
+                continue;
+            }
+            sql.append(field.getName()).append(index == entity.getClass().getDeclaredFields().length ? "= ?" : " = ?,");
+            params.add(field.get(entity));
+        }
+
+        sql.append(" WHERE ").append(id.getFirst()).append(" = ?");
+
+        params.add(id.getSecond());
+
+
+        final Pair<String, Object> finalId = id;
+
+        return manager.executeUpdate(plugin, sql.toString(), params.toArray()).thenRunAsync(() -> manager.getEntitiesCached().put(finalId.getSecond(), entity));
     }
 
     public boolean hasNextLine() {
@@ -51,6 +82,7 @@ public class Query {
 
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> clazz) {
+        if (!hasNextLine()) return null;
         try {
             Map<String, Object> values = results.next();
 
