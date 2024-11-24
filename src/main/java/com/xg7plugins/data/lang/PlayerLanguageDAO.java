@@ -12,7 +12,6 @@ import java.util.concurrent.ExecutionException;
 
 public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
 
-    private Plugin plugin;
     public PlayerLanguageDAO(Plugin plugin) {
         super(plugin);
     }
@@ -33,8 +32,6 @@ public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
         if (playerLanguage == null) return null;
 
         return Query.update(XG7Plugins.getInstance(), playerLanguage);
-
-
     }
 
 }
