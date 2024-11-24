@@ -118,6 +118,10 @@ public class Query {
 
     }
 
+    public <T> CompletableFuture<T> getAsync(Class<T> clazz) {
+        return CompletableFuture.supplyAsync(() -> get(clazz), XG7Plugins.getInstance().getTaskManager().getExecutor());
+    }
+
     public <T> List<T> getResultList(Class<T> clazz) {
         List<T> tList = new ArrayList<>();
         while (results.hasNext()) {
