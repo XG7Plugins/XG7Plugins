@@ -14,11 +14,11 @@ import java.util.concurrent.TimeUnit;
 public class CooldownManager {
 
     private final ConcurrentHashMap<UUID, CooldownTask> cooldowns = new ConcurrentHashMap<>();
-    private final int timeFactor;
+    private final long timeFactor;
     private String taskId;
 
     public CooldownManager(XG7Plugins plugin) {
-        this.timeFactor = plugin.getConfigsManager().getConfig("config").get("player-cooldown-task-delay");
+        this.timeFactor = plugin.getConfigsManager().getConfig("config").getTime("player-cooldown-task-delay");
     }
 
     public void addCooldown(Player player, CooldownTask task) {
