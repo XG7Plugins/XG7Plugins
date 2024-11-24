@@ -8,6 +8,7 @@ main-lang: en-us
 
 anti-tab: true
 
+lang-cache-expires: 30m
 auto-chose-lang: true
 cooldown-to-toggle-lang: 15s
 
