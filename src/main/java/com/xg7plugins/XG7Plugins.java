@@ -113,11 +113,11 @@ public final class XG7Plugins extends Plugin {
         plugins.forEach((name, plugin) -> {
             getLog().info("Enabling " + plugin.getName() + "...");
             Bukkit.getPluginManager().enablePlugin(plugin);
-            plugin.getCommandManager().registerCommands(loadCommands());
-            eventManager.registerPlugin(plugin, loadEvents());
-            packetEventManager.registerPlugin(plugin, loadPacketEvents());
+            plugin.getCommandManager().registerCommands(plugin.loadCommands());
+            eventManager.registerPlugin(plugin, plugin.loadEvents());
+            packetEventManager.registerPlugin(plugin, plugin.loadPacketEvents());
             databaseManager.connectPlugin(plugin, plugin.loadEntites());
-            scoreManager.registerScores(loadScores());
+            scoreManager.registerScores(plugin.loadScores());
             BaseMenuBuilder<?,?>[] menus = plugin.loadMenus();
             if (menus != null) Arrays.stream(menus).forEach(menu -> menuManager.registerBuilder(menu.getId(), menu));
             if (formManager != null) {

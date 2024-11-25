@@ -82,6 +82,8 @@ public class Query {
 
     @SuppressWarnings("unchecked")
     public <T> T get(Class<T> clazz) {
+        System.out.println("Getting " + clazz.getSimpleName());
+        System.out.println(results.toString());
         if (!hasNextLine()) return null;
         try {
             Map<String, Object> values = results.next();

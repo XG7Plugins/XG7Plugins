@@ -22,7 +22,7 @@ public class EventManager {
 
     public void registerPlugin(Plugin plugin, Event... events) {
 
-        plugin.getLog().info("Loading Events...");
+        plugin.getLog().loading("Loading Events...");
 
         if (events == null) return;
 
@@ -89,7 +89,7 @@ public class EventManager {
 
         }
 
-        plugin.getLog().fine("Events loaded.");
+        plugin.getLog().loading("Events loaded.");
     }
 
     public void unregisterEvents(Plugin plugin) {

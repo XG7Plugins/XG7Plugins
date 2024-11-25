@@ -60,14 +60,13 @@ public class DBManager {
             case SQLITE:
 
                 Class.forName("org.sqlite.JDBC");
-                File file = new File(plugin.getDataFolder(), "data.db");
 
+                File file = new File(plugin.getDataFolder(), "data.db");
                 if (!file.exists()) file.createNewFile();
 
                 connections.put(plugin.getName(), DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getPath() + "/data.db"));
 
-
-                return;
+                break;
             case MARIADB:
 
                 connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mariadb://" + host + ":" + port + "/" + database, username, password));
