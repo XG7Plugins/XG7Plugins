@@ -2,11 +2,11 @@ package com.xg7plugins.data.database;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.Plugin;
+import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.*;
@@ -138,20 +138,13 @@ public class EntityProcessor {
         },XG7Plugins.getInstance().getTaskManager().getExecutor());
     }
 
-    public static CompletableFuture<Boolean> exists(Plugin plugin, Class<? extends Entity> entityClass, String idColumn, Object id) {
+    @SneakyThrows
+    public static boolean exists(Plugin plugin, Class<? extends Entity> entityClass, String idColumn, Object id) {
         DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
-        if (manager.getEntitiesCached().asMap().containsKey(id)) return CompletableFuture.completedFuture(true);
+        if (manager.getEntitiesCached().asMap().containsKey(id)) return true;
 
-        return manager.executeNormalStatement(plugin, "SELECT EXISTS (SELECT 1 FROM " + entityClass.getSimpleName() +" WHERE " + idColumn + " = ?)", id)
-                .thenApplyAsync(result -> {
-            try {
-                return result.getBoolean(1);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
+        return manager.executeNormalStatement(plugin, "SELECT EXISTS (SELECT 1 FROM " + entityClass.getSimpleName() +" WHERE " + idColumn + " = ?)", id).getBoolean(1);
     }
 
 }

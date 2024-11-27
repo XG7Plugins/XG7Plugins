@@ -2,6 +2,7 @@ package com.xg7plugins.utils.text;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.Plugin;
+import com.xg7plugins.utils.Condition;
 import com.xg7plugins.utils.reflection.NMSUtil;
 import com.xg7plugins.utils.reflection.PlayerNMS;
 import com.xg7plugins.utils.reflection.ReflectionObject;
@@ -20,6 +21,7 @@ import org.bukkit.entity.Player;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,8 +36,6 @@ public class Text {
     static {
         packetPlayOutChat = XG7Plugins.getMinecraftVersion() < 13 ? NMSUtil.getNMSClass("PacketPlayOutChat").newInstance() : null;
     }
-
-
 
     private String text;
     private final Plugin plugin;
@@ -116,7 +116,11 @@ public class Text {
             text = text.replace(entry.getKey(),entry.getValue());
         }
 
-        return Text.format(XG7Plugins.isPlaceholderAPI() ? PlaceholderAPI.setPlaceholders((OfflinePlayer) player, text) : text, plugin).getText();
+        String transleted = Text.format(XG7Plugins.isPlaceholderAPI() ? PlaceholderAPI.setPlaceholders((OfflinePlayer) player, text) : text, plugin).getText();
+
+        transleted = Condition.processCondition(transleted,plugin,player);
+
+        return transleted;
     }
 
     public static String getWithPlaceholders(Plugin plugin, String text, Player player) {
@@ -152,7 +156,11 @@ public class Text {
 
         text = text.replace("[PLAYER]", player.getName());
 
-        return Text.format(XG7Plugins.isPlaceholderAPI() ? PlaceholderAPI.setPlaceholders((OfflinePlayer) player, text) : text, plugin).getText();
+        String transleted = Text.format(XG7Plugins.isPlaceholderAPI() ? PlaceholderAPI.setPlaceholders((OfflinePlayer) player, text) : text, plugin).getText();
+
+        transleted = Condition.processCondition(transleted,plugin,player);
+
+        return transleted;
     }
 
     public Text replace(String placeholder, String replacement) {
@@ -167,6 +175,10 @@ public class Text {
         if (sender instanceof Player) {
 
             String transleted = getWithPlaceholders((Player) sender);
+
+            transleted = Condition.processCondition(transleted,plugin,(Player) sender);
+
+            if (Objects.equals(transleted, "")) return;
 
             transleted = transleted.replace("[PLAYER]", sender.getName());
             if (transleted.startsWith("[ACTION] ")) {

@@ -26,88 +26,97 @@ public class LangMenu {
 
     public static void create(Player player) {
 
+        try {
+            XG7Plugins plugin = XG7Plugins.getInstance();
 
-        XG7Plugins plugin = XG7Plugins.getInstance();
+            if (plugin.getMenuManager().cacheExistsPlayer("lang", player)) {
+                ItemsPageMenu menu = (ItemsPageMenu) XG7Plugins.getInstance().getMenuManager().getMenuByPlayer("lang", player);
 
-        if (plugin.getMenuManager().cacheExistsPlayer("lang", player)) {
-            ItemsPageMenu menu = (ItemsPageMenu) XG7Plugins.getInstance().getMenuManager().getMenuByPlayer("lang", player);
-
-            menu.open();
-            return;
-        }
-
-        plugin.getLangManager().loadAllLangs();
-
-        Config config = plugin.getConfigsManager().getConfig("config");
-
-        if (XG7Plugins.isFloodgate() && (boolean) config.get("enable-lang-form")) {
-            if (FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
-                LangForm.create(player);
+                menu.open();
                 return;
             }
-        }
 
-        List<BaseItemBuilder<?>> items = new ArrayList<>();
-        plugin.getLangManager().getLangs().asMap().forEach((s, c)-> {
-            BaseItemBuilder<?> builder = BaseItemBuilder.from(c.getString("icon"), plugin);
-            PlayerLanguage language;
-            try {
-                language = plugin.getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+            plugin.getLangManager().loadAllLangs();
+
+            Config config = plugin.getConfigsManager().getConfig("config");
+
+            if (XG7Plugins.isFloodgate() && (boolean) config.get("enable-lang-form")) {
+                if (FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
+                    LangForm.create(player);
+                    return;
+                }
             }
 
-            boolean selected = language != null && language.getLangId().equals(s);
 
-            builder.name(c.getString("formated-name") != null ? selected ? "§a" + c.getString("formated-name") : "§7" + c.getString("formated-name") : selected ? "§a" + s : "§7" + s);
-            builder.lore(c.getStringList("lang-menu.item-click"));
-            builder.click(event -> {
+            PlayerLanguage language = plugin.getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).join();
 
 
-                if (language != null && language.getLangId().equals(s)) {
-                    Text.formatComponent("lang:[lang-menu.already-selected]", plugin).send(player);
-                    return;
+            List<BaseItemBuilder<?>> items = new ArrayList<>();
+            plugin.getLangManager().getLangs().asMap().forEach((s, c)-> {
+                try {
+                    BaseItemBuilder<?> builder = BaseItemBuilder.from(c.getString("icon"), plugin);
+                    boolean selected = language != null && language.getLangId().equals(s);
+
+                    builder.name(c.getString("formated-name") != null ? selected ? "§a" + c.getString("formated-name") : "§7" + c.getString("formated-name") : selected ? "§a" + s : "§7" + s);
+                    builder.lore(c.getStringList("lang-menu.item-click"));
+                    builder.click(event -> {
+
+
+                        if (language != null && language.getLangId().equals(s)) {
+                            Text.formatComponent("lang:[lang-menu.already-selected]", plugin).send(player);
+                            return;
+                        }
+
+                        cooldownToToggle.putIfAbsent(player.getUniqueId(), 0L);
+
+                        if (cooldownToToggle.get(player.getUniqueId()) >= System.currentTimeMillis()) {
+                            Text.formatComponent("lang:[lang-menu.cooldown-to-toggle]",plugin)
+                                    .replace("[MILLISECONDS]", String.valueOf((cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis())))
+                                    .replace("[SECONDS]", String.valueOf((int)((cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000)))
+                                    .replace("[MINUTES]", String.valueOf((int)((cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis()) / 60000)))
+                                    .replace("[HOURS]", String.valueOf((int)((cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis()) / 3600000)))
+                                    .send(player);
+                            return;
+                        }
+
+                        plugin.getLangManager().getPlayerLanguageDAO().update(new PlayerLanguage(player.getUniqueId(),s)).thenAccept(r -> {
+                            plugin.getMenuManager().removePlayerFromAll(player);
+                            create(player);
+                            Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
+                        });
+                        plugin.getPlugins().forEach((n, pl) -> pl.getLangManager().getPlayerLanguageDAO().update(new PlayerLanguage(player.getUniqueId(),s)));
+
+
+                        cooldownToToggle.put(player.getUniqueId(), System.currentTimeMillis() + Text.convertToMilliseconds(plugin, config.get("cooldown-to-toggle-lang")));
+
+                    });
+
+                    items.add(builder);
+                } catch (Exception e){
+                    e.printStackTrace();
                 }
-
-                cooldownToToggle.putIfAbsent(player.getUniqueId(), 0L);
-
-                if (cooldownToToggle.get(player.getUniqueId()) >= System.currentTimeMillis()) {
-                    Text.formatComponent("lang:[lang-menu.cooldown-to-toggle]",plugin)
-                            .replace("[MILLISECONDS]", String.valueOf((cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis())))
-                            .replace("[SECONDS]", String.valueOf((int)((cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000)))
-                            .replace("[MINUTES]", String.valueOf((int)((cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis()) / 60000)))
-                            .replace("[HOURS]", String.valueOf((int)((cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis()) / 3600000)))
-                            .send(player);
-                    return;
-                }
-
-                plugin.getLangManager().getPlayerLanguageDAO().update(new PlayerLanguage(player.getUniqueId(),s)).thenAccept(r -> {
-                    plugin.getMenuManager().removePlayerFromAll(player);
-                    create(player);
-                    Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
-                });
-                plugin.getPlugins().forEach((n, pl) -> pl.getLangManager().getPlayerLanguageDAO().update(new PlayerLanguage(player.getUniqueId(),s)));
-
-
-                cooldownToToggle.put(player.getUniqueId(), System.currentTimeMillis() + Text.convertToMilliseconds(plugin, config.get("cooldown-to-toggle-lang")));
 
             });
 
-            items.add(builder);
-        });
-        PageMenuBuilder builder = MenuBuilder.page("lang")
-                .title("lang:[lang-menu.title]")
-                .rows(6)
-                .setArea(Slot.of(2,2), Slot.of(5,8))
-                .setItems(items)
-                .setItem(49, ItemBuilder.from(XMaterial.BARRIER.parseItem(), plugin).name("lang:[close-item]").click(event -> ((ItemsPageMenu) event.getClickedMenu()).close()));
-        int langSize = plugin.getLangManager().getLangs().asMap().size();
+            PageMenuBuilder builder = MenuBuilder.page("lang")
+                    .title("lang:[lang-menu.title]")
+                    .rows(6)
+                    .setArea(Slot.of(2,2), Slot.of(5,8))
+                    .setItems(items)
+                    .setItem(49, ItemBuilder.from(XMaterial.BARRIER.parseItem(), plugin).name("lang:[close-item]").click(event -> ((ItemsPageMenu) event.getClickedMenu()).close()));
+            int langSize = plugin.getLangManager().getLangs().asMap().size();
 
-        if (langSize > 24) {
-            builder.setItem(45, ItemBuilder.from(Material.ARROW, plugin).name("lang:[go-back-item]").click(event -> ((ItemsPageMenu) event.getClickedMenu()).previousPage()));
-            builder.setItem(53, ItemBuilder.from(Material.ARROW, plugin).name("lang:[go-next-item]").click(event -> ((ItemsPageMenu) event.getClickedMenu()).nextPage()));
+            if (langSize > 24) {
+                builder.setItem(45, ItemBuilder.from(Material.ARROW, plugin).name("lang:[go-back-item]").click(event -> ((ItemsPageMenu) event.getClickedMenu()).previousPage()));
+                builder.setItem(53, ItemBuilder.from(Material.ARROW, plugin).name("lang:[go-next-item]").click(event -> ((ItemsPageMenu) event.getClickedMenu()).nextPage()));
+            }
+            builder.build(player, plugin).open();
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
-       builder.build(player, plugin).open();
+
+
+
     }
 
 

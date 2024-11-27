@@ -73,7 +73,7 @@ public class TextComponent {
             return;
         }
 
-        String finalText = text.startsWith("[CENTER] ") ? text.substring(9) : text;
+        String finalText = text.startsWith("[CENTER] ") ? Text.getWithPlaceholders(plugin, text.substring(9), player) : Text.getWithPlaceholders(plugin, text, player);
 
 
         Matcher matcher = pattern.matcher(finalText);

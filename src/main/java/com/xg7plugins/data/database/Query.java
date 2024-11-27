@@ -22,21 +22,29 @@ public class Query {
     private final DBManager dbManager;
 
     public static CompletableFuture<Query> create(Plugin plugin, String sql, Object... params) {
-        return XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql,params);
+        return CompletableFuture.supplyAsync(() -> XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql,params), XG7Plugins.getInstance().getTaskManager().getExecutor());
     }
     public static <T extends Entity> CompletableFuture<T> getEntity(Plugin plugin, String sql, Object id, Class<T> clazz) {
+
+        System.out.println("Fazendo query: " + sql);
+        System.out.println("ID: " + id);
+        System.out.println("StackTrace " + Arrays.toString(Thread.currentThread().getStackTrace()));
 
         DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
         ScheduledExecutorService executorService = XG7Plugins.getInstance().getTaskManager().getExecutor();
 
-        if (manager.getEntitiesCached().asMap().containsKey(id)) return CompletableFuture.supplyAsync(() -> (T) manager.getEntitiesCached().asMap().get(id), executorService);
+        if (manager.getEntitiesCached().asMap().containsKey(id)) return CompletableFuture.completedFuture((T) manager.getEntitiesCached().asMap().get(id));
 
-        return XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql, id).thenApply(q -> !q.hasNextLine() ? null : q.get(clazz));
+        Query query = XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql, id);
+
+        if (!query.hasNextLine()) return CompletableFuture.completedFuture(null);
+
+        return CompletableFuture.supplyAsync(() -> query.get(clazz), executorService);
     }
 
     @SneakyThrows
-    public static CompletableFuture<Void> update(Plugin plugin, Entity entity) {
+    public static void update(Plugin plugin, Entity entity) {
 
         DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
@@ -65,7 +73,10 @@ public class Query {
 
         final Pair<String, Object> finalId = id;
 
-        return manager.executeUpdate(plugin, sql.toString(), params.toArray()).thenRunAsync(() -> manager.getEntitiesCached().put(finalId.getSecond(), entity));
+        manager.executeUpdate(plugin, sql.toString(), params.toArray());
+
+        manager.getEntitiesCached().put(finalId.getSecond(), entity);
+
     }
 
     public boolean hasNextLine() {
@@ -81,7 +92,7 @@ public class Query {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T get(Class<T> clazz) {
+    public <T extends Entity> T get(Class<T> clazz) {
         System.out.println("Getting " + clazz.getSimpleName());
         System.out.println(results.toString());
         if (!hasNextLine()) return null;
@@ -128,7 +139,7 @@ public class Query {
                         fListf.set(listInstance, values.get(clazz.getSimpleName() + "." + fListf.getName()));
                     }
                     tList.add(listInstance);
-                    tList.addAll(getResultList((Class<?>) tipoGenerico));
+                    tList.addAll(getResultList((Class<? extends Entity>) tipoGenerico));
 
                     f.set(instance, tList);
 
@@ -141,7 +152,7 @@ public class Query {
                 f.set(instance, value);
             }
 
-            dbManager.cacheEntity(id, (Entity) instance);
+            dbManager.cacheEntity(id, instance);
 
             return instance;
         } catch (Exception e) {
@@ -152,7 +163,7 @@ public class Query {
 
     }
 
-    public <T> List<T> getResultList(Class<T> clazz) {
+    public <T extends Entity> List<T> getResultList(Class<T> clazz) {
         List<T> tList = new ArrayList<>();
         while (results.hasNext()) {
             tList.add(get(clazz));

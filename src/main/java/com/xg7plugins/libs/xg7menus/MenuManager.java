@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7menus.builders.BaseMenuBuilder;
+import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
 import com.xg7plugins.libs.xg7menus.menus.player.PlayerMenu;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;

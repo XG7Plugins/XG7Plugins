@@ -1,31 +1,25 @@
-package com.xg7plugins.libs.xg7menus.events;
+package com.xg7plugins.libs.newxg7menus.events;
 
-import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
+import com.xg7plugins.libs.newxg7menus.Menu;
+import com.xg7plugins.libs.newxg7menus.item.Item;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.bukkit.Location;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.inventory.ItemStack;
 
-@RequiredArgsConstructor
 @Getter
-public class ClickEvent implements Cancellable {
+@RequiredArgsConstructor
+public abstract class MenuEvent implements Cancellable {
 
-    private boolean cancelled = true;
-    private final Player whoClicked;
+    private final HumanEntity whoClicked;
     private final ClickAction clickAction;
-    private final int clickedSlot;
-    private final ItemStack clickedItem;
-    private final BaseMenu clickedMenu;
+    private final Menu<?> menu;
+    private boolean cancelled = true;
     //On player menus
     private final Location locationClicked;
-
-
-    public <T extends BaseMenu> T getClickedMenu() {
-        return (T) clickedMenu;
-    }
-
 
     @Override
     public boolean isCancelled() {
@@ -36,6 +30,7 @@ public class ClickEvent implements Cancellable {
     public void setCancelled(boolean b) {
         this.cancelled = b;
     }
+
 
     public enum ClickAction {
         LEFT,

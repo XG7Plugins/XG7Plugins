@@ -1,6 +1,7 @@
 package com.xg7plugins.libs.xg7menus.builders.menu;
 
 import com.xg7plugins.Plugin;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7menus.MenuException;
 import com.xg7plugins.libs.xg7menus.builders.BaseItemBuilder;
 import com.xg7plugins.libs.xg7menus.builders.BaseMenuBuilder;
@@ -56,10 +57,15 @@ public class MenuBuilder extends BaseMenuBuilder<Menu, MenuBuilder> {
         Map<Integer, ItemStack> buildItems = new HashMap<>();
         items.forEach((slot, itemBuilder) -> {
             if (itemBuilder instanceof SkullItemBuilder) {
-                SkullMeta meta = (SkullMeta) itemBuilder.toItemStack().getItemMeta();
-                if ("THIS_PLAYER".equals(meta.getOwner())) buildItems.put(slot, ((SkullItemBuilder) itemBuilder).setOwner(player.getName()).setPlaceHolders(player).toItemStack());
+                if (XG7Plugins.getMinecraftVersion() > 7) {
+                    SkullMeta meta = (SkullMeta) itemBuilder.toItemStack().getItemMeta();
+                    if ("THIS_PLAYER".equals(meta.getOwner()))
+                        buildItems.put(slot, ((SkullItemBuilder) itemBuilder).setOwner(player.getName()).setPlaceHolders(player, itemBuilder.getBuildReplacements()).toItemStack());
+                }
+                buildItems.put(slot, ((SkullItemBuilder) itemBuilder).setPlaceHolders(player, itemBuilder.getBuildReplacements()).toItemStack());
+                return;
             }
-            buildItems.put(slot, ((ItemBuilder) itemBuilder).setBuildReplacements(itemBuilder.getBuildReplacements()).setPlaceHolders(player).toItemStack());
+            buildItems.put(slot, ((ItemBuilder) itemBuilder).setPlaceHolders(player, itemBuilder.getBuildReplacements()).toItemStack());
         });
 
         return type == null ? new Menu(id,Text.getCentralizedText(Text.PixelsSize.INV.getPixels(),Text.format(title,plugin).getWithPlaceholders(player)), size, buildItems, clickEventMap, defaultClickEvent, openMenuEvent, closeMenuEvent, allowedPermissions, player) : new Menu(id,Text.getCentralizedText(Text.PixelsSize.INV.getPixels(),Text.format(title,plugin).getWithPlaceholders(player)), type, buildItems, clickEventMap, defaultClickEvent, openMenuEvent, closeMenuEvent, allowedPermissions, player);

@@ -20,7 +20,7 @@ public class CommandAntiTabOlder implements Event, PacketEvent {
 
     public CommandAntiTabOlder() {
         Bukkit.getScheduler().runTaskAsynchronously(XG7Plugins.getInstance(), () -> {
-            XG7Plugins.getInstance().getLogger().info("Initializing anti-tab...");
+            XG7Plugins.getInstance().getLog().loading("Initializing anti-tab...");
             HashMap<String, Plugin> plugins = new HashMap<>(XG7Plugins.getInstance().getPlugins());
             plugins.put("XG7Plugins", XG7Plugins.getInstance());
 
@@ -39,6 +39,7 @@ public class CommandAntiTabOlder implements Event, PacketEvent {
                     aliases.forEach(alias -> commandPermissions.put("/" + alias, commandConfig.perm()));
                 }
             }
+            XG7Plugins.getInstance().getLog().loading("Anti-tab initialized.");
         });
 
     }

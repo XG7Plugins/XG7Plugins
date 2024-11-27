@@ -226,7 +226,7 @@ public abstract class BaseItemBuilder<B> {
         return gson.toJson(inventoryItem);
     }
 
-    public static <B extends BaseItemBuilder> B from(String material, Plugin plugin) {
+    public static <B extends BaseItemBuilder<B>> B from(String material, Plugin plugin) {
 
         if (material == null) return (B) ItemBuilder.from(Material.STONE,plugin);
         if (material.startsWith("eyJ0")) return (B) new SkullItemBuilder(plugin).setValue(material);

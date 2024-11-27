@@ -1,7 +1,6 @@
 package com.xg7plugins.data.lang;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.Plugin;
 import com.xg7plugins.data.database.EntityProcessor;
 import com.xg7plugins.data.database.Query;
 import com.xg7plugins.utils.DAO;
@@ -14,7 +13,7 @@ public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
 
     public void add(PlayerLanguage playerLanguage) throws ExecutionException, InterruptedException {
         if(playerLanguage == null || playerLanguage.getPlayerUUID() == null) return;
-        if (EntityProcessor.exists(XG7Plugins.getInstance(),PlayerLanguage.class, "playerUUID", playerLanguage.getPlayerUUID()).get()) return;
+        if (EntityProcessor.exists(XG7Plugins.getInstance(),PlayerLanguage.class, "playerUUID", playerLanguage.getPlayerUUID())) return;
 
         EntityProcessor.insetEntity(XG7Plugins.getInstance(), playerLanguage);
     }
@@ -27,7 +26,7 @@ public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
     public CompletableFuture<Void> update(PlayerLanguage playerLanguage) {
         if (playerLanguage == null) return null;
 
-        return Query.update(XG7Plugins.getInstance(), playerLanguage);
+        return CompletableFuture.runAsync(() -> Query.update(XG7Plugins.getInstance(), playerLanguage));
     }
 
 }

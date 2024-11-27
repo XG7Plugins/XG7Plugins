@@ -101,38 +101,38 @@ public class DBManager {
         plugin.getLog().loading("Disconnected database!");
     }
 
-    public synchronized CompletableFuture<Query> executeQuery(Plugin plugin, String sql, Object... args) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                Connection connection = connections.get(plugin.getName());
+    public synchronized Query executeQuery(Plugin plugin, String sql, Object... args) {
 
-                PreparedStatement ps = connection.prepareStatement(sql);
-                for (int i = 0; i < args.length; i++) ps.setObject(i + 1, args[i]);
+        try {
+            Connection connection = connections.get(plugin.getName());
+
+            PreparedStatement ps = connection.prepareStatement(sql);
+            for (int i = 0; i < args.length; i++) ps.setObject(i + 1, args[i]);
 
 
-                ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
 
-                List<Map<String, Object>> results = new ArrayList<>();
+            List<Map<String, Object>> results = new ArrayList<>();
 
-                while (rs.next()) {
+            while (rs.next()) {
 
-                    Map<String, Object> map = new HashMap<>();
+                Map<String, Object> map = new HashMap<>();
 
-                    for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) map.put(rs.getMetaData().getTableName(i + 1) + "." + rs.getMetaData().getColumnName(i + 1), rs.getObject(i + 1));
+                for (int i = 0; i < rs.getMetaData().getColumnCount(); i++)
+                    map.put(rs.getMetaData().getTableName(i + 1) + "." + rs.getMetaData().getColumnName(i + 1), rs.getObject(i + 1));
 
-                    results.add(map);
-                }
-
-                return new Query(results.iterator(), this);
-            } catch (SQLException e) {
-                e.printStackTrace();
+                results.add(map);
             }
+
+            return new Query(results.iterator(), this);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
             return null;
-        },XG7Plugins.getInstance().getTaskManager().getExecutor());
     }
 
-    public synchronized CompletableFuture<ResultSet> executeNormalStatement(Plugin plugin, String sql, Object... args) {
-        return CompletableFuture.supplyAsync(() -> {
+    public synchronized ResultSet executeNormalStatement(Plugin plugin, String sql, Object... args) {
+
             try {
                 Connection connection = connections.get(plugin.getName());
 
@@ -144,11 +144,9 @@ public class DBManager {
                 e.printStackTrace();
             }
             return null;
-        },XG7Plugins.getInstance().getTaskManager().getExecutor());
     }
 
-    public synchronized CompletableFuture<Void> executeUpdate(Plugin plugin, String sql, Object... args) {
-        return CompletableFuture.runAsync(() -> {
+    public synchronized void executeUpdate(Plugin plugin, String sql, Object... args) {
             try {
                 Connection connection = connections.get(plugin.getName());
                 PreparedStatement ps = connection.prepareStatement(sql);
@@ -157,7 +155,6 @@ public class DBManager {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        },XG7Plugins.getInstance().getTaskManager().getExecutor());
     }
 
 

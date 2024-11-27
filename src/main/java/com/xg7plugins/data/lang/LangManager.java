@@ -31,8 +31,6 @@ public class LangManager {
         this.defLangs = defaultLangs;
         this.playerLanguageDAO = new PlayerLanguageDAO();
 
-        plugin.getLog().loading("Loading langs...");
-
         Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
 
         this.mainLang = config.get("main-lang");
@@ -83,7 +81,7 @@ public class LangManager {
     public YamlConfiguration getLangByPlayer(Player player) {
         if (player == null) return getLang(mainLang);
 
-        PlayerLanguage language = playerLanguageDAO.get(player.getUniqueId()).get();
+        PlayerLanguage language = playerLanguageDAO.get(player.getUniqueId()).join();
 
         if (language != null) return getLang(language.getLangId());
 

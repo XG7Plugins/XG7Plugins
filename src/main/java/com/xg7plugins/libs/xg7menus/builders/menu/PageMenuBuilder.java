@@ -1,6 +1,7 @@
 package com.xg7plugins.libs.xg7menus.builders.menu;
 
 import com.xg7plugins.Plugin;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7menus.MenuException;
 import com.xg7plugins.libs.xg7menus.Slot;
 import com.xg7plugins.libs.xg7menus.builders.BaseItemBuilder;
@@ -84,28 +85,38 @@ public class PageMenuBuilder extends BaseMenuBuilder<ItemsPageMenu,PageMenuBuild
     public ItemsPageMenu build(Object... args) {
         if (title == null) throw new MenuException("The inventory must have a title!");
 
-        Player player = (Player) args[0];
-        Plugin plugin = (Plugin) args[1];
+            Player player = (Player) args[0];
+            Plugin plugin = (Plugin) args[1];
 
-        Map<Integer, ItemStack> buildItems = new HashMap<>();
-        items.forEach((slot, itemBuilder) -> {
-            if (itemBuilder instanceof SkullItemBuilder) {
-                SkullMeta meta = (SkullMeta) itemBuilder.toItemStack().getItemMeta();
-                if ("THIS_PLAYER".equals(meta.getOwner())) buildItems.put(slot, ((SkullItemBuilder) itemBuilder).setOwner(player.getName()).setPlaceHolders(player,itemBuilder.getBuildReplacements()).toItemStack());
-            }
-            buildItems.put(slot, ((ItemBuilder) itemBuilder).setPlaceHolders(player,itemBuilder.getBuildReplacements()).toItemStack());
-        });
+            Map<Integer, ItemStack> buildItems = new HashMap<>();
+            items.forEach((slot, itemBuilder) -> {
+                if (itemBuilder instanceof SkullItemBuilder) {
+                    if (XG7Plugins.getMinecraftVersion() > 7) {
+                        SkullMeta meta = (SkullMeta) itemBuilder.toItemStack().getItemMeta();
+                        if ("THIS_PLAYER".equals(meta.getOwner()))
+                            buildItems.put(slot, ((SkullItemBuilder) itemBuilder).setOwner(player.getName()).setPlaceHolders(player, itemBuilder.getBuildReplacements()).toItemStack());
+                    }
+                    buildItems.put(slot, ((SkullItemBuilder) itemBuilder).setPlaceHolders(player, itemBuilder.getBuildReplacements()).toItemStack());
+                    return;
+                }
+                buildItems.put(slot, ((ItemBuilder) itemBuilder).setPlaceHolders(player, itemBuilder.getBuildReplacements()).toItemStack());
+            });
 
-        List<BaseItemBuilder<?>> buildedPlayerItens = new ArrayList<>();
-        pageItems.forEach(itemBuilder -> {
-            if (itemBuilder instanceof SkullItemBuilder) {
-                SkullMeta meta = (SkullMeta) itemBuilder.toItemStack().getItemMeta();
-                if ("THIS_PLAYER".equals(meta.getOwner())) buildedPlayerItens.add(((SkullItemBuilder) itemBuilder).setOwner(player.getName()).setPlaceHolders(player,itemBuilder.getBuildReplacements()));
-            }
-            buildedPlayerItens.add(((ItemBuilder) itemBuilder).setPlaceHolders(player,itemBuilder.getBuildReplacements()));
-        });
+            List<BaseItemBuilder<?>> buildedPlayerItens = new ArrayList<>();
+            pageItems.forEach(itemBuilder -> {
+                if (itemBuilder instanceof SkullItemBuilder) {
+                    if (XG7Plugins.getMinecraftVersion() > 7) {
+                        SkullMeta meta = (SkullMeta) itemBuilder.toItemStack().getItemMeta();
+                        if ("THIS_PLAYER".equals(meta.getOwner()))
+                            buildedPlayerItens.add(((SkullItemBuilder) itemBuilder).setOwner(player.getName()).setPlaceHolders(player, itemBuilder.getBuildReplacements()));
+                    }
+                    buildedPlayerItens.add(((SkullItemBuilder) itemBuilder).setPlaceHolders(player, itemBuilder.getBuildReplacements()));
+                    return;
+                }
+                buildedPlayerItens.add(((ItemBuilder) itemBuilder).setPlaceHolders(player, itemBuilder.getBuildReplacements()));
+            });
 
 
-        return type == null ? new ItemsPageMenu(id,Text.getCentralizedText(Text.PixelsSize.INV.getPixels(),Text.format(title,plugin).getWithPlaceholders(player)), size, buildItems, clickEventMap, defaultClickEvent, openMenuEvent, closeMenuEvent, allowedPermissions, player,initSlot,finalSlot,buildedPlayerItens,keepSavingPageIndex) : new ItemsPageMenu(id,Text.getCentralizedText(Text.PixelsSize.INV.getPixels(),Text.format(title,plugin).getWithPlaceholders(player)), type, buildItems, clickEventMap, defaultClickEvent, openMenuEvent, closeMenuEvent, allowedPermissions, player,initSlot,finalSlot,buildedPlayerItens,keepSavingPageIndex);
+            return type == null ? new ItemsPageMenu(id, Text.getCentralizedText(Text.PixelsSize.INV.getPixels(), Text.format(title, plugin).getWithPlaceholders(player)), size, buildItems, clickEventMap, defaultClickEvent, openMenuEvent, closeMenuEvent, allowedPermissions, player, initSlot, finalSlot, buildedPlayerItens, keepSavingPageIndex) : new ItemsPageMenu(id, Text.getCentralizedText(Text.PixelsSize.INV.getPixels(), Text.format(title, plugin).getWithPlaceholders(player)), type, buildItems, clickEventMap, defaultClickEvent, openMenuEvent, closeMenuEvent, allowedPermissions, player, initSlot, finalSlot, buildedPlayerItens, keepSavingPageIndex);
     }
 }

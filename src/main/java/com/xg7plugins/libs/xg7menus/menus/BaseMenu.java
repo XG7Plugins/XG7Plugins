@@ -1,6 +1,7 @@
-package com.xg7plugins.libs.xg7menus;
+package com.xg7plugins.libs.xg7menus.menus;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.libs.xg7menus.MenuPermissions;
 import com.xg7plugins.libs.xg7menus.events.ClickEvent;
 import com.xg7plugins.libs.xg7menus.events.MenuEvent;
 import com.xg7plugins.libs.xg7menus.menus.player.PlayerMenu;
