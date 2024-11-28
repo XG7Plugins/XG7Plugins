@@ -5,12 +5,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xg7plugins.Plugin;
+import com.xg7plugins.libs.newxg7menus.XSeries.XMaterial;
 import com.xg7plugins.utils.reflection.NMSUtil;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
@@ -25,8 +27,8 @@ import java.util.stream.Collectors;
 @Getter
 public class Item {
 
-    private ItemStack itemStack;
-    private int slot;
+    protected ItemStack itemStack;
+    protected int slot;
 
     private HashMap<String, String> buildPlaceholders = new HashMap<>();
 
@@ -34,6 +36,28 @@ public class Item {
     public Item(ItemStack itemStack) {
         this.itemStack = itemStack;
         this.slot = -1;
+    }
+
+    public static Item from(ItemStack itemStack) {
+        return new Item(itemStack);
+    }
+    public static Item from(XMaterial material) {
+        return new Item(material.parseItem());
+    }
+    public static Item from(Material material) {
+        return new Item(new ItemStack(material));
+    }
+    public static Item from(Material material, int amount) {
+        return new Item(new ItemStack(material, amount));
+    }
+    public static Item from(XMaterial material, int amount) {
+        return new Item(material.parseItem(amount));
+    }
+    public static Item from(MaterialData data) {
+        return new Item(data.toItemStack());
+    }
+    public static Item from(MaterialData data, int amount) {
+        return new Item(data.toItemStack(amount));
     }
 
     public Item slot(int slot) {

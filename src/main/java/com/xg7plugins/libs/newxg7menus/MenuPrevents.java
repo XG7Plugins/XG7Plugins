@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.newxg7menus;
 
-public enum MenuPermissions {
+public enum MenuPrevents {
 
     DRAG,
     CLICK,
