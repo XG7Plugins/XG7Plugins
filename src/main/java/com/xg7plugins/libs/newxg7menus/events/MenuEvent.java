@@ -16,7 +16,7 @@ public abstract class MenuEvent implements Cancellable {
 
     private final HumanEntity whoClicked;
     private final ClickAction clickAction;
-    private final Menu<?> menu;
+    private final Menu menu;
     private boolean cancelled = true;
     //On player menus
     private final Location locationClicked;

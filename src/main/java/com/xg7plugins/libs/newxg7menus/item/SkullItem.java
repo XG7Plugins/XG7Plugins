@@ -152,28 +152,9 @@ public class SkullItem extends Item {
 
     @Override
     public ItemStack getItemFor(Player player, Plugin plugin) {
-        ItemStack prepared = this.itemStack.clone();
-        ItemMeta meta = prepared.getItemMeta();
+        ItemStack prepared = super.getItemFor(player,plugin);
 
-        meta.setDisplayName(Text.format(meta.getDisplayName(), plugin).setReplacements(buildPlaceholders).getWithPlaceholders(player));
-
-        if (meta.getLore() != null) {
-            List<String> lore = new ArrayList<>();
-
-            for (String line : meta.getLore()) {
-                String formatted = Text.format(line, plugin).setReplacements(buildPlaceholders).getWithPlaceholders(player);
-                if (formatted.isEmpty()) continue;
-                lore.add(formatted);
-            }
-            meta.setLore(lore);
-        }
-        if (XG7Plugins.getMinecraftVersion() > 7) {
-            if (renderSkullPlayer) {
-                setOwner(player.getDisplayName());
-            }
-        }
-
-        prepared.setItemMeta(meta);
+        if (renderSkullPlayer) setOwner(player.getDisplayName());
 
         return prepared;
 

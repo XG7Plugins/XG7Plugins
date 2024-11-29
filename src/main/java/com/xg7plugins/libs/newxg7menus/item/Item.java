@@ -30,7 +30,7 @@ public class Item {
     protected ItemStack itemStack;
     protected int slot;
 
-    private HashMap<String, String> buildPlaceholders = new HashMap<>();
+    protected HashMap<String, String> buildPlaceholders = new HashMap<>();
 
 
     public Item(ItemStack itemStack) {

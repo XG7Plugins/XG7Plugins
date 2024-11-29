@@ -16,7 +16,7 @@ public class ClickEvent extends MenuEvent {
     private final int clickedSlot;
     private final Item clickedItem;
 
-    public ClickEvent(HumanEntity whoClicked, ClickAction clickAction, Menu<?> menu, int clickedSlot, Item clickedItem, Location locationClicked) {
+    public ClickEvent(HumanEntity whoClicked, ClickAction clickAction, Menu menu, int clickedSlot, Item clickedItem, Location locationClicked) {
         super(whoClicked, clickAction, menu, locationClicked);
         this.clickedSlot = clickedSlot;
         this.clickedItem = clickedItem;
