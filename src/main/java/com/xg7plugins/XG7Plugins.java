@@ -65,6 +65,7 @@ public final class XG7Plugins extends Plugin {
     private ScoreManager scoreManager;
     private PacketManagerBase packetEventManager;
     private MenuManager menuManager;
+    private com.xg7plugins.libs.newxg7menus.MenuManager newMenuManagerTest;
     private FormManager formManager;
     private JsonManager jsonManager;
     private HologramsManager hologramsManager;
@@ -99,6 +100,7 @@ public final class XG7Plugins extends Plugin {
         this.hologramsManager = minecraftVersion < 8 ? null : new HologramsManager(this);
         this.npcManager = new NPCManager(this);
         this.menuManager = new MenuManager(this);
+        this.newMenuManagerTest = new com.xg7plugins.libs.newxg7menus.MenuManager();
         this.eventManager = new EventManager();
         this.packetEventManager = minecraftVersion < 8 ? new PacketEventManager1_7() : new PacketEventManager();
         this.taskManager = new TaskManager(this);

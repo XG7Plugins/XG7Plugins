@@ -1,13 +1,10 @@
 package com.xg7plugins.libs.newxg7menus.events;
 
-import com.xg7plugins.libs.newxg7menus.Menu;
-import com.xg7plugins.libs.newxg7menus.item.Item;
+import com.xg7plugins.libs.newxg7menus.menus.BaseMenu;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 
 @Getter
@@ -16,7 +13,6 @@ public abstract class MenuEvent implements Cancellable {
 
     private final HumanEntity whoClicked;
     private final ClickAction clickAction;
-    private final Menu menu;
     private boolean cancelled = true;
     //On player menus
     private final Location locationClicked;
