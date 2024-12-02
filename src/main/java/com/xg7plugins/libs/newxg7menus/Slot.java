@@ -34,4 +34,8 @@ public class Slot {
     public static @NotNull Slot fromList(@NotNull List<Integer> list) {
         return new Slot(list.get(0), list.get(1));
     }
+
+    public static boolean isInside(Slot start, Slot end, Slot slot) {
+        return slot.getRow() >= start.getRow() && slot.getRow() <= end.getRow() && slot.getColumn() >= start.getColumn() && slot.getColumn() <= end.getColumn();
+    }
 }

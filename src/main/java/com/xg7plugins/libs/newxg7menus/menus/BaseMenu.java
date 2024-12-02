@@ -39,10 +39,19 @@ public abstract class BaseMenu {
     protected abstract Set<MenuPrevents> permissions();
 
     protected void putItems(Player player, Inventory inventory) {
-        CompletableFuture.runAsync(() -> items().forEach(item -> inventory.setItem(item.getSlot(), item.getItemFor(player, plugin))), XG7Plugins.getInstance().getTaskManager().getExecutor());
+        CompletableFuture.runAsync(() -> {
+            items().forEach(item -> {
+                        if (item.getOnClick() != null) clickActions.put(item.getSlot(), item.getOnClick());
+                        inventory.setItem(item.getSlot(), item.getItemFor(player, plugin));
+                    }
+            );
+        }, XG7Plugins.getInstance().getTaskManager().getExecutor());
     }
     public static CompletableFuture<Void> update(Player player, Item item, MenuHolder inventory) {
-        return CompletableFuture.runAsync(() -> inventory.getInventory().setItem(item.getSlot(), item.getItemFor(player, inventory.getPlugin())), XG7Plugins.getInstance().getTaskManager().getExecutor());
+        return CompletableFuture.runAsync(() -> {
+            if (item.getOnClick() != null) inventory.getUpdatedClickActions().put(item.getSlot(), item.getOnClick());
+            inventory.getInventory().setItem(item.getSlot(), item.getItemFor(player, inventory.getPlugin()));
+        }, XG7Plugins.getInstance().getTaskManager().getExecutor());
     }
 
     public abstract void open(Player player);

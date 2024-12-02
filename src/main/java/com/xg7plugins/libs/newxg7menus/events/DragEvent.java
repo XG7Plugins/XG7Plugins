@@ -14,8 +14,8 @@ public class DragEvent extends MenuEvent {
     private final Map<Integer, Item> clickedItems;
     private final Set<Integer> clickedSlots;
 
-    public DragEvent(HumanEntity whoClicked, Map<Integer, Item> clickedItems, Set<Integer> clickedSlots) {
-        super(whoClicked, ClickAction.DRAG, null);
+    public DragEvent(HumanEntity whoClicked, BaseMenu menu, Map<Integer, Item> clickedItems, Set<Integer> clickedSlots) {
+        super(whoClicked, ClickAction.DRAG, menu, null);
         this.clickedItems = clickedItems;
         this.clickedSlots = clickedSlots;
     }

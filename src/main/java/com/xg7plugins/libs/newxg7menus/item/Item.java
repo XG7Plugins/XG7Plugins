@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xg7plugins.Plugin;
 import com.xg7plugins.libs.newxg7menus.XSeries.XMaterial;
+import com.xg7plugins.libs.newxg7menus.events.ClickEvent;
+import com.xg7plugins.libs.xg7menus.events.MenuEvent;
 import com.xg7plugins.utils.reflection.NMSUtil;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
@@ -22,12 +24,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Getter
 public class Item {
 
     protected ItemStack itemStack;
+    private Consumer<ClickEvent> onClick;
     protected int slot;
 
     protected HashMap<String, String> buildPlaceholders = new HashMap<>();
@@ -62,6 +66,11 @@ public class Item {
 
     public Item slot(int slot) {
         this.slot = slot;
+        return this;
+    }
+
+    public Item onClick(Consumer<MenuEvent> onClick) {
+        this.onClick = onClick;
         return this;
     }
 

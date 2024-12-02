@@ -13,14 +13,11 @@ import java.util.HashMap;
 import java.util.function.Consumer;
 
 @Getter
-@AllArgsConstructor
-public class MenuHolder implements InventoryHolder {
+public class ConfirmationMenuHolder extends MenuHolder {
 
-    protected final HashMap<Integer, Consumer<ClickEvent>> updatedClickActions = new HashMap<>();
-    protected final String id;
-    protected final Plugin plugin;
-    protected final Inventory inventory;
-    protected final Player player;
+    public ConfirmationMenuHolder(String id, Plugin plugin, Inventory inventory, Player player) {
+        super(id, plugin, inventory, player);
+    }
 
     @NotNull
     @Override
