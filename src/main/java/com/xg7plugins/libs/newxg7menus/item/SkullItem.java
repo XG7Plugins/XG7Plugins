@@ -11,6 +11,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -151,10 +152,10 @@ public class SkullItem extends Item {
 
 
     @Override
-    public ItemStack getItemFor(Player player, Plugin plugin) {
-        ItemStack prepared = super.getItemFor(player,plugin);
+    public <T extends HumanEntity> ItemStack getItemFor(T player, Plugin plugin) {
+        ItemStack prepared = super.getItemFor(player, plugin);
 
-        if (renderSkullPlayer) setOwner(player.getDisplayName());
+        if (renderSkullPlayer) setOwner(((Player) player).getDisplayName());
 
         return prepared;
 

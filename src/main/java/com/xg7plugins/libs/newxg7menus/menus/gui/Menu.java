@@ -1,12 +1,17 @@
 package com.xg7plugins.libs.newxg7menus.menus.gui;
 
+import com.google.common.collect.Sets;
 import com.xg7plugins.Plugin;
+import com.xg7plugins.libs.newxg7menus.MenuPrevents;
 import com.xg7plugins.libs.newxg7menus.menus.BaseMenu;
 import com.xg7plugins.libs.newxg7menus.menus.holders.MenuHolder;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class Menu extends BaseMenu {
 
@@ -29,8 +34,8 @@ public abstract class Menu extends BaseMenu {
 
     @Override
     public void open(Player player) {
-        MenuHolder holder = new MenuHolder(id, plugin, type == null ? Bukkit.createInventory(player, size, Text.getWithPlaceholders(plugin, title, player)) : Bukkit.createInventory(player, type, Text.getWithPlaceholders(plugin, title, player)), player);
+        MenuHolder holder = new MenuHolder(id, plugin, title,size,type, this,player);
         player.openInventory(holder.getInventory());
-        putItems(player, holder.getInventory());
+        putItems(player, holder);
     }
 }

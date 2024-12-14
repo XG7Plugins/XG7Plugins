@@ -176,8 +176,6 @@ public class Text {
 
             String transleted = getWithPlaceholders((Player) sender);
 
-            transleted = Condition.processCondition(transleted,plugin,(Player) sender);
-
             if (Objects.equals(transleted, "")) return;
 
             transleted = transleted.replace("[PLAYER]", sender.getName());

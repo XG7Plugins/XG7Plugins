@@ -61,7 +61,9 @@ public class PacketEventManager extends PacketManagerBase {
         Channel channel = NMSUtil.getValueByFieldName(playerNMS.getNetworkManager().getObject(), "Channel");
 
         ChannelPipeline channelPipeline = channel.pipeline();
-        channelPipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
+        if (!channelPipeline.names().contains(player.getName())) {
+            channelPipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
+        }
     }
 
     @Override

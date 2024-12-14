@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.newxg7menus.events;
 
-import com.xg7plugins.libs.newxg7menus.menus.BaseMenu;
+import com.xg7plugins.libs.newxg7menus.menus.holders.MenuHolder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
@@ -9,12 +9,12 @@ import org.bukkit.event.Cancellable;
 
 @Getter
 @RequiredArgsConstructor
-public abstract class MenuEvent implements Cancellable {
+public class MenuEvent implements Cancellable {
 
     private final HumanEntity whoClicked;
     private final ClickAction clickAction;
-    private final BaseMenu menuClicked;
-    private boolean cancelled = true;
+    private final MenuHolder inventoryHolder;
+    private boolean cancelled = false;
     //On player menus
     private final Location locationClicked;
 
@@ -39,19 +39,21 @@ public abstract class MenuEvent implements Cancellable {
         WINDOW_BORDER_RIGHT,
         MIDDLE,
         NUMBER_KEY,
+        KEYBOARD,
         DOUBLE_CLICK,
         DROP,
         CONTROL_DROP,
         CREATIVE,
         SWAP_OFFHAND,
         UNKNOWN,
+
         LEFT_CLICK_BLOCK,
         RIGHT_CLICK_BLOCK,
         LEFT_CLICK_AIR,
         RIGHT_CLICK_AIR,
         PHYSICAL;
         public boolean isKeyboardClick() {
-            return this == NUMBER_KEY || this == DROP || this == CONTROL_DROP;
+            return this == NUMBER_KEY || this == DROP || this == CONTROL_DROP || this == KEYBOARD;
         }
 
         public boolean isCreativeAction() {

@@ -25,11 +25,6 @@ public class Query {
         return CompletableFuture.supplyAsync(() -> XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql,params), XG7Plugins.getInstance().getTaskManager().getExecutor());
     }
     public static <T extends Entity> CompletableFuture<T> getEntity(Plugin plugin, String sql, Object id, Class<T> clazz) {
-
-        System.out.println("Fazendo query: " + sql);
-        System.out.println("ID: " + id);
-        System.out.println("StackTrace " + Arrays.toString(Thread.currentThread().getStackTrace()));
-
         DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
         ScheduledExecutorService executorService = XG7Plugins.getInstance().getTaskManager().getExecutor();

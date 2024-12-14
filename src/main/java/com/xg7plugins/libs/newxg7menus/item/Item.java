@@ -17,6 +17,7 @@ import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -31,7 +32,6 @@ import java.util.stream.Collectors;
 public class Item {
 
     protected ItemStack itemStack;
-    private Consumer<ClickEvent> onClick;
     protected int slot;
 
     protected HashMap<String, String> buildPlaceholders = new HashMap<>();
@@ -63,15 +63,17 @@ public class Item {
     public static Item from(MaterialData data, int amount) {
         return new Item(data.toItemStack(amount));
     }
+    public static Item air() {
+        return new Item(new ItemStack(Material.AIR));
+    }
 
     public Item slot(int slot) {
         this.slot = slot;
         return this;
     }
 
-    public Item onClick(Consumer<MenuEvent> onClick) {
-        this.onClick = onClick;
-        return this;
+    public ClickableItem clickable() {
+        return new ClickableItem(this.itemStack, this.slot);
     }
 
     public Item setBuildPlaceholders(HashMap<String, String> buildPlaceholders) {
@@ -163,7 +165,7 @@ public class Item {
         this.itemStack = craftItemStackClass.getMethod("asBukkitCopy", nmsItemStackClass.getAClass()).invoke(nmsItem);
         return this;
     }
-    public static <T> T getTag(String key, ItemStack item, Class<T> clazz) {
+    public static <T> Optional<T> getTag(String key, ItemStack item, Class<T> clazz) {
         Gson gson = new Gson();
 
         ReflectionClass nmsItemStackClass = NMSUtil.getNMSClass("ItemStack");
@@ -174,9 +176,13 @@ public class Item {
 
         if (tag != null) {
             String jsonValue = tag.getMethod("getString", String.class).invoke(key);
-            return gson.fromJson(jsonValue, clazz);
+            return Optional.of(gson.fromJson(jsonValue, clazz));
         }
-        return null;
+        return Optional.empty();
+    }
+
+    public <T> Optional<T> getTag(String key, Class<T> clazz) {
+        return getTag(key, this.itemStack, clazz);
     }
 
     @SneakyThrows
@@ -209,26 +215,33 @@ public class Item {
         return gson.toJson(inventoryItem);
     }
 
-    public ItemStack getItemFor(Player player, Plugin plugin) {
-        ItemStack prepared = this.itemStack.clone();
-        ItemMeta meta = prepared.getItemMeta();
+    public <T extends HumanEntity> ItemStack getItemFor(T player, Plugin plugin) {
 
-        meta.setDisplayName(Text.format(meta.getDisplayName(), plugin).setReplacements(buildPlaceholders).getWithPlaceholders(player));
 
-        if (meta.getLore() != null) {
-            List<String> lore = new ArrayList<>();
+            if (this.itemStack.getType().equals(Material.AIR)) return this.itemStack;
 
-            for (String line : meta.getLore()) {
-                String formatted = Text.format(line, plugin).setReplacements(buildPlaceholders).getWithPlaceholders(player);
-                if (formatted.isEmpty()) continue;
-                lore.add(formatted);
+            ItemStack prepared = this.itemStack.clone();
+            ItemMeta meta = prepared.getItemMeta();
+            if (meta.getDisplayName() != null) {
+                String newName = Text.format(meta.getDisplayName(), plugin).setReplacements(buildPlaceholders).getWithPlaceholders((Player) player);
+                meta.setDisplayName(newName.isEmpty() ? " " : newName);
             }
-            meta.setLore(lore);
-        }
 
-        prepared.setItemMeta(meta);
+            if (meta.getLore() != null) {
+                List<String> lore = new ArrayList<>();
 
-        return prepared;
+                for (String line : meta.getLore()) {
+                    String formatted = Text.format(line, plugin).setReplacements(buildPlaceholders).getWithPlaceholders((Player) player);
+                    if (formatted.isEmpty()) continue;
+                    lore.add(formatted);
+                }
+                meta.setLore(lore);
+            }
+
+            prepared.setItemMeta(meta);
+
+
+            return prepared;
 
     }
 

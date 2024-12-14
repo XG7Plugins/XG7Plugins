@@ -2,7 +2,8 @@ package com.xg7plugins;
 
 import com.xg7plugins.commands.defaultCommands.LangCommand;
 import com.xg7plugins.commands.defaultCommands.ReloadCommand;
-import com.xg7plugins.commands.defaultCommands.TaskCommands;
+import com.xg7plugins.commands.defaultCommands.TaskCommand;
+import com.xg7plugins.commands.defaultCommands.TestCommand;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.database.Entity;
 import com.xg7plugins.data.JsonManager;
@@ -13,6 +14,8 @@ import com.xg7plugins.events.defaultevents.CommandAntiTab;
 import com.xg7plugins.events.defaultevents.CommandAntiTabOlder;
 import com.xg7plugins.events.defaultevents.JoinAndQuit;
 import com.xg7plugins.events.packetevents.PacketManagerBase;
+import com.xg7plugins.libs.newxg7menus.menuhandler.MenuHandler;
+import com.xg7plugins.libs.newxg7menus.menuhandler.PlayerMenuHandler;
 import com.xg7plugins.libs.xg7geyserforms.FormManager;
 import com.xg7plugins.libs.xg7geyserforms.builders.FormCreator;
 import com.xg7plugins.libs.xg7holograms.HologramsManager;
@@ -152,12 +155,12 @@ public final class XG7Plugins extends Plugin {
     }
     @Override
     public ICommand[] loadCommands() {
-        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommands()};
+        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand(), new TestCommand()};
     }
 
     @Override
     public Event[] loadEvents() {
-        return new Event[]{new JoinAndQuit(), new ClickEventHandler(), new com.xg7plugins.libs.xg7npcs.event.ClickEventHandler(), minecraftVersion > 12 ? new CommandAntiTab() : null, new MenuListener(), new PlayerMenuListener(), new ScoreListener()};
+        return new Event[]{new JoinAndQuit(), new ClickEventHandler(), new com.xg7plugins.libs.xg7npcs.event.ClickEventHandler(), minecraftVersion > 12 ? new CommandAntiTab() : null, new MenuListener(), new PlayerMenuListener(), new ScoreListener(), new MenuHandler(), new PlayerMenuHandler(newMenuManagerTest)};
     }
 
     @Override

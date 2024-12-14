@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 @AllArgsConstructor
 @Getter
-public class Location {
+public class Location implements Cloneable{
 
     private String world;
     private double x;
@@ -28,6 +28,26 @@ public class Location {
     public Location add(double x, double y, double z) {
         return new Location(world, this.x + x, this.y + y, this.z + z);
     }
+    public Location add(double x, double y, double z,float yaw, float pitch) {
+        return new Location(world, this.x + x, this.y + y, this.z + z, this.yaw + yaw, this.pitch + pitch);
+    }
+    public Location add(Location locationToAdd) {
+        return new Location(world, this.x + locationToAdd.getX(), this.y + locationToAdd.getY(), this.z + locationToAdd.getZ(), this.yaw + locationToAdd.getYaw(), this.pitch + locationToAdd.getPitch());
+    }
+    public Location subtract(double x, double y, double z) {
+        return new Location(world, this.x - x, this.y - y, this.z - z);
+    }
+    public Location subtract(double x, double y, double z, float yaw, float pitch) {
+        return new Location(world, this.x - x, this.y - y, this.z - z, this.yaw - yaw, this.pitch - pitch);
+    }
+    public Location subtract(Location locationToSubtract) {
+        return new Location(world, this.x - locationToSubtract.getX(), this.y - locationToSubtract.getY(), this.z - locationToSubtract.getZ(), this.yaw - locationToSubtract.getYaw(), this.pitch - locationToSubtract.getPitch());
+    }
+
+    public boolean isNearby(Location location, double distance) {
+        return Math.abs(location.getX() - x) <= distance && Math.abs(location.getY() - y) <= distance && Math.abs(location.getZ() - z) <= distance;
+    }
+
 
     public static Location of(String world, double x, double y, double z) {
         return new Location(world, x, y, z);
@@ -57,4 +77,12 @@ public class Location {
                 '}';
     }
 
+    @Override
+    public Location clone() {
+        try {
+            return (Location) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
 }

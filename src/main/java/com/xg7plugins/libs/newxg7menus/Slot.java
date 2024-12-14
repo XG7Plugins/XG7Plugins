@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -11,7 +12,7 @@ public class Slot {
     private final int row;
     private final int column;
     public Slot(int row, int column) {
-        if (row < 1 || row > 6 || column < 1 || column > 9) throw new MenuException("Inventory cordinate invalid!");
+        if (row < 1 || row > 6 || column < 1 || column > 9) throw new MenuException(MenuException.ExceptionCause.SLOT_OUT_OF_BOUNDS, "Inventory coordinate invalid!");
         this.row = row;
         this.column = column;
     }

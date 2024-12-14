@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
         aliasesPath = "tasks",
         perm = "xg7plugins.command.tasks"
 )
-public class TaskCommands implements ICommand {
+public class TaskCommand implements ICommand {
     @Override
     public ItemBuilder getIcon() {
         return ItemBuilder.commandIcon(XMaterial.REPEATER, this, XG7Plugins.getInstance());

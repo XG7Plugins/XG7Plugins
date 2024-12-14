@@ -9,7 +9,6 @@ import net.minecraft.util.io.netty.channel.*;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 
 public class PacketEventManager1_7 extends PacketManagerBase {
@@ -62,7 +61,9 @@ public class PacketEventManager1_7 extends PacketManagerBase {
         Channel channel = NMSUtil.getValueByFieldName(playerNMS.getNetworkManager().getObject(), "Channel");
 
         ChannelPipeline channelPipeline = channel.pipeline();
-        channelPipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
+        if (!channelPipeline.names().contains(player.getName())) {
+            channelPipeline.addBefore("packet_handler", player.getName(), channelDuplexHandler);
+        }
     }
 
     @Override

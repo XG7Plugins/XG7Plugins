@@ -35,6 +35,8 @@ public class Config {
 
     public <T> T get(String path) {
         T value = (T) config.get(path);
+
+        
         if (value == null) plugin.getLog().warn(path + " not found in " + name + ".yml");
         return (T) config.get(path);
     }

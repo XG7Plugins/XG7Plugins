@@ -42,7 +42,7 @@ public enum Condition {
     }
     public static String processCondition(String line, Plugin plugin, Player player) {
         Pair<Condition, String> extracted = extractCondition(line);
-        if (extracted == null) return "";
+        if (extracted == null) return line;
 
         if (!extracted.getFirst().apply(new ConditionPack(plugin, player, extracted.getSecond()))) return "";
 
