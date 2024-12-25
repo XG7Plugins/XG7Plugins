@@ -19,7 +19,7 @@ public class HologramsManager {
 
     public HologramsManager(XG7Plugins plugin) {
         this.plugin = plugin;
-        this.delay = plugin.getConfigsManager().getConfig("config").getTime("holograms-update-delay");
+        this.delay = plugin.getConfigsManager().getConfig("config").getTime("holograms-update-delay").orElse(100L);
     }
 
     private HashMap<String, Hologram> holograms = new HashMap<>();
@@ -44,7 +44,7 @@ public class HologramsManager {
 
     public void initTask() {
         if (taskId != null) return;
-        this.taskId = plugin.getTaskManager().addRepeatingTask(plugin, "holograms", () -> holograms.values().forEach(hologram -> Bukkit.getOnlinePlayers().forEach(player -> {
+        this.taskId = plugin.getTaskManager().addAsyncRepeatingTask(plugin, "holograms", () -> holograms.values().forEach(hologram -> Bukkit.getOnlinePlayers().forEach(player -> {
             World world = hologram.getLocation().getWorld();
             if (!player.getWorld().equals(world) && hologram.getIds().containsKey(player.getUniqueId())) {
                 hologram.destroy(player);

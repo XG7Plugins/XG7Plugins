@@ -11,11 +11,11 @@ import java.util.concurrent.ExecutionException;
 
 public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
 
-    public void add(PlayerLanguage playerLanguage) throws ExecutionException, InterruptedException {
-        if(playerLanguage == null || playerLanguage.getPlayerUUID() == null) return;
-        if (EntityProcessor.exists(XG7Plugins.getInstance(),PlayerLanguage.class, "playerUUID", playerLanguage.getPlayerUUID())) return;
-
-        EntityProcessor.insetEntity(XG7Plugins.getInstance(), playerLanguage);
+    public CompletableFuture<Void> add(PlayerLanguage playerLanguage) throws ExecutionException, InterruptedException {
+        if(playerLanguage == null || playerLanguage.getPlayerUUID() == null) return CompletableFuture.completedFuture(null);
+        return EntityProcessor.exists(XG7Plugins.getInstance(),PlayerLanguage.class, "playerUUID", playerLanguage.getPlayerUUID()).thenAccept(r -> {
+            if (!r) EntityProcessor.insetEntity(XG7Plugins.getInstance(), playerLanguage);
+        });
     }
 
     public CompletableFuture<PlayerLanguage> get(UUID uuid) {
@@ -26,7 +26,7 @@ public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
     public CompletableFuture<Void> update(PlayerLanguage playerLanguage) {
         if (playerLanguage == null) return null;
 
-        return CompletableFuture.runAsync(() -> Query.update(XG7Plugins.getInstance(), playerLanguage));
+        return Query.update(XG7Plugins.getInstance(), playerLanguage);
     }
 
 }

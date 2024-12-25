@@ -25,10 +25,14 @@ repositories {
 dependencies {
 
     compileOnly files("C:/Users/davis/Documents/Build tools/spigot-1.16.5.jar")
+    compileOnly files("C:/Users/davis/Documents/Build tools/spigot-1.8.8.jar")
+    compileOnly files("C:/Users/davis/Documents/Build tools/spigot-1.7.8.jar")
+
+    compileOnly 'org.spigotmc:spigot:1.17.1-R0.1-SNAPSHOT'
 
     compileOnly 'io.netty:netty-all:4.1.111.Final'
     implementation 'com.mojang:authlib:1.5.25'
-    compileOnly 'org.spigotmc:spigot:1.7.8-R0.1-SNAPSHOT'
+
 
     implementation 'com.github.ben-manes.caffeine:caffeine:2.8.0'
 

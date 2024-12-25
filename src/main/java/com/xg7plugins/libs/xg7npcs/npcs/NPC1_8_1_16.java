@@ -2,11 +2,14 @@ package com.xg7plugins.libs.xg7npcs.npcs;
 
 import com.mojang.authlib.GameProfile;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.utils.Location;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.reflection.*;
+import com.xg7plugins.utils.reflection.nms.EntityDataWatcher;
+import com.xg7plugins.utils.reflection.nms.NMSUtil;
+import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +22,7 @@ import java.util.UUID;
 
 public class NPC1_8_1_16 extends NPC {
 
-    private static final ReflectionClass enumItemSlotClass = XG7Plugins.getMinecraftVersion() > 9 ?NMSUtil.getNMSClass("EnumItemSlot") : null;
+    private static final ReflectionClass enumItemSlotClass = XG7Plugins.getMinecraftVersion() > 9 ? NMSUtil.getNMSClass("EnumItemSlot") : null;
 
     public NPC1_8_1_16(Plugin plugin, String id, List<String> name, Location location) {
         super(plugin, id, name, location);

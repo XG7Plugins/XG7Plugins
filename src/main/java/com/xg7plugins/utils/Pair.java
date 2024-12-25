@@ -14,6 +14,10 @@ public class Pair<F,S> {
     private F first;
     private S second;
 
+    public static <F,S> Pair<F,S> of (F first, S second) {
+        return new Pair<>(first, second);
+    }
+
     public com.mojang.datafixers.util.Pair<F,S> toMojangPair() {
         return new com.mojang.datafixers.util.Pair<>(first, second);
     }

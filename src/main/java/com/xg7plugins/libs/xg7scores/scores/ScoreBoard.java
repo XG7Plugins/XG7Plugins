@@ -1,12 +1,11 @@
 package com.xg7plugins.libs.xg7scores.scores;
 
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.Plugin;
 import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreCondition;
+import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -15,155 +14,133 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-@Getter
-@Setter
+import java.util.*;
 public class ScoreBoard extends Score {
 
-    private String[] lines;
+    private List<String> lines;
 
-    private Scoreboard scoreboard;
+    private HashMap<UUID, PlayerBoard> playerBoards = new HashMap<>();
 
-    public ScoreBoard(String title, String[] lines, String id, ScoreCondition condition, long delay, Plugin plugin) {
-        super(delay, new String[]{title},id, condition, plugin);
+
+    public ScoreBoard(String title, List<String> lines, String id, ScoreCondition condition, long delay, Plugin plugin) {
+        super(delay, Collections.singletonList(title),id, condition, plugin);
         this.lines = lines;
-
-        Bukkit.getScheduler().runTask(plugin, () -> {
-
-                    this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-
-                    Objective objective = scoreboard.registerNewObjective(id, "dummy");
-                    objective.setDisplayName(title);
-                    objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-                    int index = lines.length + 1;
-
-                    for (String s : lines) {
-                        index--;
-
-                        String entry = IntStream.range(0, index).mapToObj(i -> "§r").collect(Collectors.joining());
-
-                        Team team = scoreboard.registerNewTeam(id + ":Team=" + index);
-
-                        s = Text.format(s, plugin).getText();
-
-                        String prefix = s.substring(0, Math.min(s.length(), 16));
-                        String suffix = null;
-                        if (s.length() > 16) {
-                            suffix = XG7Plugins.getMinecraftVersion() > 12 ? s.substring(16) : s.substring(16, Math.min(s.length(), 32));
-                            suffix = ChatColor.getLastColors(prefix) + suffix;
-                            if (suffix.length() > 16) suffix = s.substring(0, 16);
-                        }
-
-                        team.setPrefix(prefix);
-                        if (suffix != null) team.setSuffix(suffix);
-
-                        team.addEntry(entry);
-
-                        objective.getScore(entry).setScore(index);
-
-                    }
-                });
-
         XG7Plugins.getInstance().getScoreManager().registerScore(this);
 
     }
 
-    public ScoreBoard(String[] title, String[] lines, String id, ScoreCondition condition, long taskDelay,Plugin plugin) {
+    public ScoreBoard(List<String> title, List<String> lines, String id, ScoreCondition condition, long taskDelay, Plugin plugin) {
         super(taskDelay, title,id,condition,plugin);
         this.lines = lines;
+        XG7Plugins.getInstance().getScoreManager().registerScore(this);
+    }
 
-        Bukkit.getScheduler().runTask(plugin, () -> {
+    public void update() {
+        for (UUID uuid : super.getPlayers()) {
 
-            this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-
-            Objective objective = scoreboard.registerNewObjective(id, "dummy");
-            objective.setDisplayName(title[0]);
-            objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-            int index = lines.length + 1;
-
-            for (String s : lines) {
-                index--;
-
-                String entry = IntStream.range(0, index).mapToObj(i -> "§r").collect(Collectors.joining());
-
-                Team team = scoreboard.registerNewTeam(id + ":Team=" + index);
-
-                s = Text.format(s, plugin).getText();
-
-                String prefix = s.substring(0, Math.min(s.length(), 16));
-                String suffix = null;
-                if (s.length() > 16) {
-                    suffix = XG7Plugins.getMinecraftVersion() > 12 ? s.substring(16) : s.substring(16, Math.min(s.length(), 32));
-                    suffix = ChatColor.getLastColors(prefix) + suffix;
-                    if (suffix.length() > 16) suffix = s.substring(0, 16);
-                }
-
-                team.setPrefix(prefix);
-                if (suffix != null) team.setSuffix(suffix);
-
-                team.addEntry(entry);
-
-
-                objective.getScore(entry).setScore(index);
-
-            }
-
-            XG7Plugins.getInstance().getScoreManager().registerScore(this);
-        });
-
+            PlayerBoard playerBoard = playerBoards.get(uuid);
+            playerBoard.update();
+        }
     }
 
     @Override
-    public void update() {
-
-
-        for (UUID id : super.getPlayers()) {
-            Player player = Bukkit.getPlayer(id);
-            if (player == null) continue;
-
-            Objective objective = scoreboard.getObjective(super.getId());
-
-            objective.setDisplayName(Text.format(super.getToUpdate()[super.getIndexUpdating()],plugin).getWithPlaceholders(player));
-
-            int index = lines.length + 1;
-
-            for (String s : lines) {
-
-                index--;
-
-                String entry = IntStream.range(0, index).mapToObj(i -> "§r").collect(Collectors.joining());
-
-                Team team = scoreboard.getTeam(super.getId() + ":Team=" + index);
-
-                s = Text.format(s,plugin).getWithPlaceholders(player);
-
-                String prefix = s.substring(0, Math.min(s.length(), 16));
-                String suffix = null;
-                if (s.length() > 16) {
-                    suffix = XG7Plugins.getMinecraftVersion() > 12 ? s.substring(16) : s.substring(16, Math.min(s.length(), 32));
-                    suffix = ChatColor.getLastColors(prefix) + suffix;
-                    if (suffix.length() > 16) suffix = s.substring(0,16);
-                }
-
-                team.setPrefix(prefix);
-                if (suffix != null) team.setSuffix(suffix);
-                else team.setSuffix("");
-            }
-
-            player.setScoreboard(scoreboard);
-
+    public void addPlayer(Player player) {
+        if (!super.getPlayers().contains(player.getUniqueId())) {
+            super.addPlayer(player);
+            playerBoards.put(player.getUniqueId(), new PlayerBoard(player, super.updateText, lines));
         }
-
     }
 
     @Override
     public void removePlayer(Player player) {
         super.removePlayer(player);
+        playerBoards.remove(player.getUniqueId());
+
         player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+    }
+
+    private class PlayerBoard {
+        private Scoreboard scoreboard;
+        private Objective objective;
+        private final List<String> title;
+        private List<String> lines;
+        private final HashMap<Integer, Pair<String, String>> lastLines;
+        private final Player player;
+
+        public PlayerBoard(Player player, List<String> title, List<String> lines) {
+            this.player = player;
+            this.title = title;
+            this.lastLines = new HashMap<>();
+            this.lines = lines;
+            Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> {
+                this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+                this.objective = scoreboard.registerNewObjective(getId(), "dummy");
+                objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+                objective.setDisplayName(title.get(0));
+
+                for (int i = 0; i < lines.size(); i++) {
+
+                    lastLines.put(i,Pair.of("Loading... " + i,"Loading... " + i));
+
+
+                    Team team = scoreboard.registerNewTeam("team_" + i);
+                    team.setPrefix("P ");
+                    team.setSuffix(" S");
+
+                    objective.getScore("Loading... " + i).setScore(lines.size() - i);
+
+                }
+                player.setScoreboard(scoreboard);
+
+                System.out.println("Criado");
+
+                System.out.println("Atualizar");
+
+                update();
+            });
+
+        }
+
+        public void update() {
+            List<String> lastEntries = new ArrayList<>();
+            for (int i = 0; i < lines.size(); i++) {
+                String translatedText = Text.format(lines.get(i), XG7Plugins.getInstance()).getWithPlaceholders(player);
+
+                String prefix = translatedText.substring(0, Math.min(translatedText.length(), 16));
+                String entry = translatedText.length() > 16 ? translatedText.substring(16, Math.min(translatedText.length(), 56)) : "";
+                String suffix = translatedText.length() > 56 ? translatedText.substring(56, Math.min(translatedText.length(), XG7Plugins.getMinecraftVersion() > 12 ? translatedText.length() : 72)) : "";
+
+                if (!lastLines.containsKey(i) || !lastLines.get(i).equals(translatedText)) {
+                    Team team = scoreboard.getTeam("team_" + i);
+                    if (team == null) {
+                        team = scoreboard.registerNewTeam("team_" + i);
+                    }
+
+                    if (lastLines.containsKey(i)) {
+                        scoreboard.resetScores(lastLines.get(i).getSecond());
+                    }
+
+                    team.setPrefix(prefix);
+                    team.setSuffix(suffix);
+
+                    while (lastEntries.contains(entry)) {
+                        entry = "§r" + ChatColor.getLastColors(prefix) + entry;
+                    }
+
+
+                    team.addEntry(entry);
+                    objective.getScore(entry).setScore(lines.size() - i);
+
+                    lastLines.put(i, Pair.of(translatedText,entry));
+                    lastEntries.add(entry);
+
+                }
+            }
+
+            objective.setDisplayName(Text.format(title.get(indexUpdating), XG7Plugins.getInstance()).getWithPlaceholders(player));
+        }
+
+
     }
 }

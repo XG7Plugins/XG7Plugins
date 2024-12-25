@@ -1,7 +1,7 @@
 package com.xg7plugins.commands.defaultCommands;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
@@ -46,13 +46,6 @@ public class ReloadCommand implements ICommand {
         return suggestions;
     }
 
-    @SubCommand(
-            name = "invalidatejsoncache",
-            description = "Invalidates the json cache",
-            perm = "xg7plugins.command.reload.json",
-            type = SubCommandType.NORMAL,
-            syntax = "/xg7pluginreload invalidatejsoncache"
-    )
     static class JsonSubCommand implements ISubCommand {
 
         @Override
@@ -67,12 +60,6 @@ public class ReloadCommand implements ICommand {
         }
     }
 
-    @SubCommand(
-            description = "Reloads the plugin",
-            perm = "xg7plugins.command.reload",
-            type = SubCommandType.OPTIONS,
-            syntax = "/xg7pluginreload <plugin> <[config, lang, database, events, all]>"
-    )
     @Data
     static class PluginSubCommand implements ISubCommand {
 
@@ -96,13 +83,6 @@ public class ReloadCommand implements ICommand {
             return ItemBuilder.subCommandIcon(XMaterial.REDSTONE, this, XG7Plugins.getInstance());
         }
 
-        @SubCommand(
-                name = "config",
-                description = "Reloads the config of the plugin",
-                perm = "xg7plugins.command.reload.config",
-                type = SubCommandType.NORMAL,
-                syntax = "/xg7pluginreload <plugin> config"
-        )
         static class ConfigSubCommand implements ISubCommand {
 
             @Override
@@ -122,13 +102,6 @@ public class ReloadCommand implements ICommand {
             }
         }
 
-        @SubCommand(
-                name = "database",
-                description = "Reloads the database of the plugin",
-                perm = "xg7plugins.command.reload.database",
-                type = SubCommandType.NORMAL,
-                syntax = "/xg7pluginreload <plugin> database"
-        )
         static class DatabaseSubCommand implements ISubCommand {
 
             @Override
@@ -150,13 +123,6 @@ public class ReloadCommand implements ICommand {
             }
         }
 
-        @SubCommand(
-                name = "lang",
-                description = "Reloads the lang of the plugin",
-                perm = "xg7plugins.command.reload.lang",
-                type = SubCommandType.NORMAL,
-                syntax = "/xg7pluginreload <plugin> lang"
-        )
         static class LangSubCommand implements ISubCommand {
 
             @Override
@@ -174,13 +140,6 @@ public class ReloadCommand implements ICommand {
             }
         }
 
-        @SubCommand(
-                name = "events",
-                description = "Reloads the events of the plugin",
-                perm = "xg7plugins.command.reload.events",
-                type = SubCommandType.NORMAL,
-                syntax = "/xg7pluginreload <plugin> events"
-        )
         static class EventSubCommand implements ISubCommand {
             @Override
             public ItemBuilder getIcon() {
@@ -200,13 +159,6 @@ public class ReloadCommand implements ICommand {
             }
         }
 
-        @SubCommand(
-                name = "all",
-                description = "Reloads all the plugin",
-                perm = "xg7plugins.command.reload.all",
-                type = SubCommandType.NORMAL,
-                syntax = "/xg7pluginreload <plugin> all"
-        )
         static class AllSubCommand implements ISubCommand {
 
             @Override

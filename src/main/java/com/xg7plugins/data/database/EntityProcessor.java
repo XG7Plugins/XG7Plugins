@@ -1,12 +1,13 @@
 package com.xg7plugins.data.database;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.*;
@@ -30,11 +31,11 @@ public class EntityProcessor {
         return "TEXT";
     }
 
-    public static void createTableOf(Plugin plugin, Class<?> clazz) {
+    public static CompletableFuture<Void> createTableOf(Plugin plugin, Class<?> clazz) {
 
         DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
-        CompletableFuture.runAsync(() -> {
+        return CompletableFuture.runAsync(() -> {
             try {
                 StringBuilder builder = new StringBuilder();
                 builder.append("CREATE TABLE IF NOT EXISTS " + clazz.getSimpleName() + "(");
@@ -83,21 +84,24 @@ public class EntityProcessor {
 
                 fkeys.forEach(fkey -> builder.append(", ").append(fkey));
                 builder.append(");");
-                manager.executeUpdate(plugin,builder.toString());
+                manager.executeUpdate(plugin,builder.toString()).exceptionally(e -> {
+                    e.printStackTrace();
+                    return null;
+                });
                 if (oneToManyClass != null) createTableOf(plugin, oneToManyClass);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
 
 
-        },XG7Plugins.getInstance().getTaskManager().getExecutor());
+        },XG7Plugins.taskManager().getAsyncExecutors().get("database"));
     }
 
-    public static void insetEntity(Plugin plugin, Entity entity) {
+    public static CompletableFuture<Void> insetEntity(Plugin plugin, Entity entity) {
 
         DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
-        CompletableFuture.runAsync(() -> {
+        return CompletableFuture.runAsync(() -> {
             try {
                 StringBuilder builder = new StringBuilder();
                 builder.append("INSERT INTO " + entity.getClass().getSimpleName() + " VALUES (");
@@ -128,23 +132,36 @@ public class EntityProcessor {
                         throw new RuntimeException(e);
                     }
                 }
-                manager.executeUpdate(plugin, builder.toString(), args.toArray());
+                manager.executeUpdate(plugin, builder.toString(), args.toArray()).exceptionally(
+                        e -> {
+                            e.printStackTrace();
+                            return null;
+                        }
+                );
                 if (!childs.isEmpty()) childs.forEach(item -> insetEntity(plugin, ((Entity) item)));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
 
 
-        },XG7Plugins.getInstance().getTaskManager().getExecutor());
+        },XG7Plugins.taskManager().getAsyncExecutors().get("database"));
     }
 
     @SneakyThrows
-    public static boolean exists(Plugin plugin, Class<? extends Entity> entityClass, String idColumn, Object id) {
+    public static CompletableFuture<Boolean> exists(Plugin plugin, Class<? extends Entity> entityClass, String idColumn, Object id) {
         DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
-        if (manager.getEntitiesCached().asMap().containsKey(id)) return true;
+        if (manager.getEntitiesCached().asMap().containsKey(id)) return CompletableFuture.completedFuture(true);
 
-        return manager.executeNormalStatement(plugin, "SELECT EXISTS (SELECT 1 FROM " + entityClass.getSimpleName() +" WHERE " + idColumn + " = ?)", id).getBoolean(1);
+        return manager.executeNormalStatement(plugin, "SELECT EXISTS (SELECT 1 FROM " + entityClass.getSimpleName() +" WHERE " + idColumn + " = ?)", id).thenCompose(r -> {
+            if (r == null) throw new RuntimeException("Error while executing query");
+
+            try {
+                return CompletableFuture.completedFuture(r.getBoolean(1));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
 }

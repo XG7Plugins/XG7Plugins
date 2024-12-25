@@ -4,7 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 
 import java.io.*;

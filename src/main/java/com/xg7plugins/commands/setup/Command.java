@@ -8,12 +8,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Command {
+
     String name();
     String description();
     String syntax();
-    String aliasesPath();
-    String perm() default "";
-    boolean isOnlyInWorld() default false;
-    boolean isOnlyPlayer() default false;
-    boolean isOnlyConsole() default false;
+    String[] aliases() default {};
+    String permission() default "";
+
+    boolean isAsync() default false;
+    boolean isPlayerOnly() default false;
+    boolean isConsoleOnly() default false;
+    boolean isInEnabledWorldOnly() default false;
+
 }

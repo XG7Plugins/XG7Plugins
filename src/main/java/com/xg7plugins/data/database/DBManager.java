@@ -2,12 +2,13 @@ package com.xg7plugins.data.database;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
 import java.sql.*;
@@ -29,7 +30,7 @@ public class DBManager {
 
         Config config = plugin.getConfigsManager().getConfig("config");
 
-        entitiesCached = Caffeine.newBuilder().expireAfterAccess(Text.convertToMilliseconds(plugin, config.get("sql.cache-expires")), TimeUnit.MILLISECONDS).build();
+        entitiesCached = Caffeine.newBuilder().expireAfterAccess(config.getTime("sql.cache-expires").orElse(30 * 60 * 1000L), TimeUnit.MILLISECONDS).build();
     }
 
     @SneakyThrows
@@ -41,18 +42,18 @@ public class DBManager {
 
         Config pluginConfig = plugin.getConfigsManager().getConfig("config");
 
-        if (pluginConfig == null || pluginConfig.getConfigutationSection("sql") == null) {
+        if (pluginConfig == null || !pluginConfig.get("sql", ConfigurationSection.class).isPresent()) {
             plugin.getLog().warn("Connection aborted!");
             return;
         }
 
-        ConnectionType connectionType = ConnectionType.valueOf(((String) pluginConfig.get("sql.type")).toUpperCase());
+        ConnectionType connectionType = pluginConfig.get("sql.type", ConnectionType.class).orElse(ConnectionType.SQLITE);
 
-        String host = pluginConfig.get("sql.host");
-        String port = pluginConfig.get("sql.port");
-        String database = pluginConfig.get("sql.database");
-        String username = pluginConfig.get("sql.username");
-        String password = pluginConfig.get("sql.password");
+        String host = pluginConfig.get("sql.host", String.class).orElse(null);
+        String port = pluginConfig.get("sql.port", String.class).orElse(null);
+        String database = pluginConfig.get("sql.database", String.class).orElse(null);
+        String username = pluginConfig.get("sql.username", String.class).orElse(null);
+        String password = pluginConfig.get("sql.password", String.class).orElse(null);
 
         plugin.getLog().loading("Connection type: " + connectionType);
 
@@ -101,38 +102,39 @@ public class DBManager {
         plugin.getLog().loading("Disconnected database!");
     }
 
-    public synchronized Query executeQuery(Plugin plugin, String sql, Object... args) {
+    public synchronized CompletableFuture<Query> executeQuery(Plugin plugin, String sql, Object... args) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Connection connection = connections.get(plugin.getName());
 
-        try {
-            Connection connection = connections.get(plugin.getName());
-
-            PreparedStatement ps = connection.prepareStatement(sql);
-            for (int i = 0; i < args.length; i++) ps.setObject(i + 1, args[i]);
+                PreparedStatement ps = connection.prepareStatement(sql);
+                for (int i = 0; i < args.length; i++) ps.setObject(i + 1, args[i]);
 
 
-            ResultSet rs = ps.executeQuery();
+                ResultSet rs = ps.executeQuery();
 
-            List<Map<String, Object>> results = new ArrayList<>();
+                List<Map<String, Object>> results = new ArrayList<>();
 
-            while (rs.next()) {
+                while (rs.next()) {
 
-                Map<String, Object> map = new HashMap<>();
+                    Map<String, Object> map = new HashMap<>();
 
-                for (int i = 0; i < rs.getMetaData().getColumnCount(); i++)
-                    map.put(rs.getMetaData().getTableName(i + 1) + "." + rs.getMetaData().getColumnName(i + 1), rs.getObject(i + 1));
+                    for (int i = 0; i < rs.getMetaData().getColumnCount(); i++)
+                        map.put(rs.getMetaData().getTableName(i + 1) + "." + rs.getMetaData().getColumnName(i + 1), rs.getObject(i + 1));
 
-                results.add(map);
+                    results.add(map);
+                }
+
+                return new Query(results.iterator(), this);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
+        }, XG7Plugins.taskManager().getAsyncExecutors().get("database"));
 
-            return new Query(results.iterator(), this);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-            return null;
     }
 
-    public synchronized ResultSet executeNormalStatement(Plugin plugin, String sql, Object... args) {
-
+    public synchronized CompletableFuture<ResultSet> executeNormalStatement(Plugin plugin, String sql, Object... args) {
+        return CompletableFuture.supplyAsync(() -> {
             try {
                 Connection connection = connections.get(plugin.getName());
 
@@ -141,20 +143,22 @@ public class DBManager {
 
                 return ps.executeQuery();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
-            return null;
+        }, XG7Plugins.taskManager().getAsyncExecutors().get("database"));
     }
 
-    public synchronized void executeUpdate(Plugin plugin, String sql, Object... args) {
+    public synchronized CompletableFuture<Void> executeUpdate(Plugin plugin, String sql, Object... args) {
+        return CompletableFuture.runAsync(() -> {
             try {
                 Connection connection = connections.get(plugin.getName());
                 PreparedStatement ps = connection.prepareStatement(sql);
                 for (int i = 0; i < args.length; i++) ps.setObject(i + 1, args[i]);
                 ps.executeUpdate();
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new RuntimeException(e);
             }
+        }, XG7Plugins.taskManager().getAsyncExecutors().get("database"));
     }
 
 

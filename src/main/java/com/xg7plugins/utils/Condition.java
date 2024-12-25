@@ -1,6 +1,6 @@
 package com.xg7plugins.utils;
 
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,8 +15,20 @@ import java.util.regex.Pattern;
 @Getter
 public enum Condition {
 
-    IF((conditionPack) -> Parser.BOOLEAN.convert(Text.format(conditionPack.conditionValue, conditionPack.getPlugin()).getWithPlaceholders(conditionPack.getPlayer()))),
-    IF_NOT((conditionPack) -> !((boolean) Parser.BOOLEAN.convert(Text.format(conditionPack.getConditionValue(), conditionPack.getPlugin()).getWithPlaceholders(conditionPack.getPlayer())))),
+    IF((conditionPack) -> {
+        try {
+            return Parser.BOOLEAN.convert(Text.format(conditionPack.conditionValue, conditionPack.getPlugin()).getWithPlaceholders(conditionPack.getPlayer()));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }),
+    IF_NOT((conditionPack) -> {
+        try {
+            return !((boolean) Parser.BOOLEAN.convert(Text.format(conditionPack.getConditionValue(), conditionPack.getPlugin()).getWithPlaceholders(conditionPack.getPlayer())));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }),
     PERMISSION((conditionPack -> conditionPack.getPlayer().hasPermission(conditionPack.getConditionValue()))),
     NO_PERMISSION((conditionPack) -> !conditionPack.getPlayer().hasPermission(conditionPack.getConditionValue()));
 

@@ -1,42 +1,25 @@
 package com.xg7plugins.libs.xg7geyserforms;
 
-import com.xg7plugins.libs.xg7geyserforms.builders.FormCreator;
+import com.xg7plugins.libs.xg7geyserforms.forms.Form;
 import org.bukkit.entity.Player;
-import org.geysermc.cumulus.form.Form;
-import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class FormManager {
 
-    private final Map<String, FormCreator<? extends Form,?>> creators = new HashMap<>();
+    private final Map<String, Form<?,?>> creators = new HashMap<>();
 
-    public void registerCreator(FormCreator<? extends Form,?> creator) {
+    public void registerForm(Form<?,?> creator) {
         if (creator == null) return;
         creators.put(creator.getId(), creator);
     }
-    public void registerCreator(FormCreator<? extends Form,?> creator, Player player) {
-        creators.put(creator.getId() + ":" + player.getUniqueId(), creator);
-    }
-    public void unregisterCreator(String id) {
+
+    public void unregisterForm(String id) {
         creators.remove(id);
     }
-    public void unregisterCreator(String id, Player player) {
-        creators.remove(id + ":" + player.getUniqueId());
-    }
-    public void sendPlayerForm(String id, Player player) {
-
-        if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) return;
-
-        FloodgateApi.getInstance().sendForm(player.getUniqueId(), creators.get(id).build(player));
-    }
-
     public boolean contaninsForm(String id) {
         return creators.containsKey(id);
-    }
-    public boolean contaninsForm(String id, Player player) {
-        return creators.containsKey(id + ":" + player.getUniqueId());
     }
 
 }

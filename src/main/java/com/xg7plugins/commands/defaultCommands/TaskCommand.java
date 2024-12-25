@@ -56,13 +56,6 @@ public class TaskCommand implements ICommand {
         return suggestions;
     }
 
-    @SubCommand(
-            name = "delete",
-            description = "delete a task",
-            perm = "xg7plugins.command.tasks.delete",
-            type = SubCommandType.NORMAL,
-            syntax = "/xg7pluginstasks <delete> <UUID>"
-    )
     static class DeleteTaskSubCommand implements ISubCommand {
 
         @Override

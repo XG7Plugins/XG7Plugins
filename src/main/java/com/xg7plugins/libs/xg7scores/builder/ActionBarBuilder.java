@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.xg7scores.builder;
 
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7scores.scores.ActionBar;
 
 import java.util.ArrayList;
@@ -27,6 +27,6 @@ public class ActionBarBuilder extends ScoreBuilder<ActionBar, ActionBarBuilder> 
     public ActionBar build(Object... args) {
         if (id == null || delayToUpdate == 0) throw new IllegalArgumentException("You must specify the id and the delay to update the score");
 
-        return new ActionBar(delayToUpdate,text.toArray(new String[0]),id,condition, (Plugin) args[0]);
+        return new ActionBar(delayToUpdate,text,id,condition, (Plugin) args[0]);
     }
 }

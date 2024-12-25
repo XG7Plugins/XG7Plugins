@@ -1,9 +1,12 @@
 package com.xg7plugins.libs.xg7holograms.holograms;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.Location;
 import com.xg7plugins.utils.reflection.*;
+import com.xg7plugins.utils.reflection.nms.EntityDataWatcher1_17_1_XX;
+import com.xg7plugins.utils.reflection.nms.NMSUtil;
+import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
@@ -28,95 +31,90 @@ public class Hologram1_17_1_XX extends Hologram {
 
     @Override
     public void create(Player player) {
+         for (int i = 0; i < lines.size(); i++) {
+             Location spawnLocation = location.add(0, i * 0.3, 0);
+             int entityID = ((AtomicInteger) NMSUtil.getNewerNMSClass("world.entity.Entity").getStaticField(getEntityCountField())).incrementAndGet();
 
-        try {
-            for (int i = 0; i < lines.size(); i++) {
-                Location spawnLocation = location.add(0, i * 0.3, 0);
-                int entityID = ((AtomicInteger) NMSUtil.getNewerNMSClass("world.entity.Entity").getStaticField(getEntityCountField())).incrementAndGet();
+             EntityDataWatcher1_17_1_XX dataWatcher = new EntityDataWatcher1_17_1_XX();
 
-                EntityDataWatcher1_17_1_XX dataWatcher = new EntityDataWatcher1_17_1_XX();
+             dataWatcher.watch(0, (byte) 0x20);
+             dataWatcher.watch(2, Text.format(lines.get(i), XG7Plugins.getInstance().getPlugins().getOrDefault(pluginName, XG7Plugins.getInstance())).getWithPlaceholders(player));
+             dataWatcher.watch(3, true);
+             dataWatcher.watch(5, true);
 
-                dataWatcher.watch(0, (byte) 0x20);
-                dataWatcher.watch(2, Text.format(lines.get(i), XG7Plugins.getInstance().getPlugins().getOrDefault(pluginName, XG7Plugins.getInstance())).getWithPlaceholders(player));
-                dataWatcher.watch(3, true);
-                dataWatcher.watch(5, true);
+             ReflectionObject spawn = XG7Plugins.getMinecraftVersion() < 19 ?
+                     packetPlayOutSpawnEntityClass
+                             .getConstructor(
+                                     int.class,
+                                     UUID.class,
+                                     double.class,
+                                     double.class,
+                                     double.class,
+                                     float.class,
+                                     float.class,
+                                     entityTypesClass.getAClass(),
+                                     int.class,
+                                     vector3dClass.getAClass()
+                             ).newInstance(
+                                     entityID,
+                                     UUID.randomUUID(),
+                                     spawnLocation.getX(),
+                                     spawnLocation.getY(),
+                                     spawnLocation.getZ(),
+                                     0,
+                                     0,
+                                     entityTypesClass.getStaticField("c"),
+                                     0,
+                                     vector3dClass.getConstructor(double.class, double.class, double.class).newInstance(0, 0, 0).getObject()
+                             )
+                     :
+                     packetPlayOutSpawnEntityClass
+                             .getConstructor(
+                                     int.class,
+                                     UUID.class,
+                                     double.class,
+                                     double.class,
+                                     double.class,
+                                     float.class,
+                                     float.class,
+                                     entityTypesClass.getAClass(),
+                                     int.class,
+                                     vector3dClass.getAClass(),
+                                     double.class
+                             ).newInstance(
+                                     entityID,
+                                     UUID.randomUUID(),
+                                     spawnLocation.getX(),
+                                     spawnLocation.getY(),
+                                     spawnLocation.getZ(),
+                                     0,
+                                     0,
+                                     entityTypesClass.getStaticField("d"),
+                                     0,
+                                     vector3dClass.getConstructor(double.class, double.class, double.class).newInstance(0, 0, 0).getObject(),
+                                     0
+                             );
 
-                ReflectionObject spawn = XG7Plugins.getMinecraftVersion() < 19 ?
-                        packetPlayOutSpawnEntityClass
-                                .getConstructor(
-                                        int.class,
-                                        UUID.class,
-                                        double.class,
-                                        double.class,
-                                        double.class,
-                                        float.class,
-                                        float.class,
-                                        entityTypesClass.getAClass(),
-                                        int.class,
-                                        vector3dClass.getAClass()
-                                ).newInstance(
-                                        entityID,
-                                        UUID.randomUUID(),
-                                        spawnLocation.getX(),
-                                        spawnLocation.getY(),
-                                        spawnLocation.getZ(),
-                                        0,
-                                        0,
-                                        entityTypesClass.getStaticField("c"),
-                                        0,
-                                        vector3dClass.getConstructor(double.class, double.class, double.class).newInstance(0, 0, 0).getObject()
-                                )
-                        :
-                        packetPlayOutSpawnEntityClass
-                                .getConstructor(
-                                        int.class,
-                                        UUID.class,
-                                        double.class,
-                                        double.class,
-                                        double.class,
-                                        float.class,
-                                        float.class,
-                                        entityTypesClass.getAClass(),
-                                        int.class,
-                                        vector3dClass.getAClass(),
-                                        double.class
-                                ).newInstance(
-                                        entityID,
-                                        UUID.randomUUID(),
-                                        spawnLocation.getX(),
-                                        spawnLocation.getY(),
-                                        spawnLocation.getZ(),
-                                        0,
-                                        0,
-                                        entityTypesClass.getStaticField("d"),
-                                        0,
-                                        vector3dClass.getConstructor(double.class, double.class, double.class).newInstance(0, 0, 0).getObject(),
-                                        0
-                                );
-
-                ReflectionObject metadata = XG7Plugins.getMinecraftVersion() < 19 ?
-                        packetPlayOutEntityMetadataClass
-                                .getConstructor(int.class, dataWatcher.getWatcher().getObjectClass(), boolean.class)
-                                .newInstance(entityID, dataWatcher.getWatcher().getObject(), true)
-                        :
-                        packetPlayOutEntityMetadataClass
-                                .getConstructor(int.class, List.class)
-                                .newInstance(entityID, dataWatcher.getWatcher().getMethod("b").invoke());
+             ReflectionObject metadata = XG7Plugins.getMinecraftVersion() < 19 ?
+                     packetPlayOutEntityMetadataClass
+                             .getConstructor(int.class, dataWatcher.getWatcher().getObjectClass(), boolean.class)
+                             .newInstance(entityID, dataWatcher.getWatcher().getObject(), true)
+                     :
+                     packetPlayOutEntityMetadataClass
+                             .getConstructor(int.class, List.class)
+                             .newInstance(entityID, dataWatcher.getWatcher().getMethod("b").invoke());
 
 
-                PlayerNMS playerNMS = PlayerNMS.cast(player);
-                playerNMS.sendPacket(spawn.getObject());
-                playerNMS.sendPacket(metadata.getObject());
+             PlayerNMS playerNMS = PlayerNMS.cast(player);
+             playerNMS.sendPacket(spawn.getObject());
+             playerNMS.sendPacket(metadata.getObject());
 
-                ids.putIfAbsent(player.getUniqueId(), new ArrayList<>());
+             ids.putIfAbsent(player.getUniqueId(), new ArrayList<>());
 
-                ids.get(player.getUniqueId()).add(entityID);
+             ids.get(player.getUniqueId()).add(entityID);
 
 
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+         }
 
 
 

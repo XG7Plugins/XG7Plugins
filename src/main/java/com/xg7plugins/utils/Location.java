@@ -24,6 +24,9 @@ public class Location implements Cloneable{
     public World getWorld() {
         return Bukkit.getWorld(world);
     }
+    public String getWorldName() {
+        return world;
+    }
 
     public Location add(double x, double y, double z) {
         return new Location(world, this.x + x, this.y + y, this.z + z);
@@ -46,6 +49,16 @@ public class Location implements Cloneable{
 
     public boolean isNearby(Location location, double distance) {
         return Math.abs(location.getX() - x) <= distance && Math.abs(location.getY() - y) <= distance && Math.abs(location.getZ() - z) <= distance;
+    }
+
+    public static boolean isInside(Location location1, Location location2, Location location) {
+
+        Location maxLocation = new Location(location1.getWorld().getName(), Math.max(location1.getX(), location2.getX()), Math.max(location1.getY(), location2.getY()), Math.max(location1.getZ(), location2.getZ()));
+        Location minLocation = new Location(location1.getWorld().getName(), Math.min(location1.getX(), location2.getX()), Math.min(location1.getY(), location2.getY()), Math.min(location1.getZ(), location2.getZ()));
+
+        return maxLocation.getX() >= location.getX() && minLocation.getX() <= location.getX() &&
+                maxLocation.getY() >= location.getY() && minLocation.getY() <= location.getY() &&
+                maxLocation.getZ() >= location.getZ() && minLocation.getZ() <= location.getZ();
     }
 
 

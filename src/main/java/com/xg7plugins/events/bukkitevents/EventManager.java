@@ -1,11 +1,9 @@
 package com.xg7plugins.events.bukkitevents;
 
-import com.xg7plugins.Plugin;
-import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.events.Event;
 import com.xg7plugins.events.PacketEvent;
-import com.xg7plugins.utils.reflection.ReflectionClass;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockEvent;

@@ -1,51 +1,97 @@
 package com.xg7plugins.libs.xg7menus.menus;
 
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.libs.xg7menus.MenuPermissions;
-import com.xg7plugins.libs.xg7menus.events.ClickEvent;
+import com.xg7plugins.libs.xg7menus.MenuPrevents;
 import com.xg7plugins.libs.xg7menus.events.MenuEvent;
-import com.xg7plugins.libs.xg7menus.menus.player.PlayerMenu;
+import com.xg7plugins.libs.xg7menus.item.ClickableItem;
+import com.xg7plugins.libs.xg7menus.item.Item;
+import com.xg7plugins.libs.xg7menus.menus.holders.MenuHolder;
+import com.xg7plugins.libs.xg7menus.menus.holders.PageMenuHolder;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.entity.Player;
 
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.function.Consumer;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @Getter
+@Setter(AccessLevel.PROTECTED)
 public abstract class BaseMenu {
 
-    protected Map<Integer, ItemStack> items;
-    protected Map<Integer, Consumer<ClickEvent>> clickEvents;
-    protected Consumer<ClickEvent> defaultClickEvent;
-    protected Consumer<MenuEvent> openEvent;
-    protected Consumer<MenuEvent> closeEvent;
-    protected EnumSet<MenuPermissions> permissions;
-    protected HumanEntity player;
+    protected Set<MenuPrevents> menuPrevents;
+    protected final Plugin plugin;
+    protected final String id;
 
-    public BaseMenu(
-            String id,
-            Consumer<ClickEvent> defaultClickEvent,
-            Consumer<MenuEvent> openEvent,
-            Consumer<MenuEvent> closeEvent,
-            Map<Integer,ItemStack> items,
-            Map<Integer,Consumer<ClickEvent>> clickEvents,
-            EnumSet<MenuPermissions> permissions,
-            HumanEntity player
-    )
-    {
-        this.items = items;
-        this.clickEvents = clickEvents;
-        this.defaultClickEvent = defaultClickEvent;
-        this.openEvent = openEvent;
-        this.closeEvent = closeEvent;
-        this.permissions = permissions;
-        this.player = player;
 
-        if (this instanceof PlayerMenu) return;
+    protected BaseMenu(Plugin plugin, String id, Set<MenuPrevents> menuPrevents) {
+        this.menuPrevents = menuPrevents;
+        this.plugin = plugin;
+        this.id = id;
 
-        XG7Plugins.getInstance().getMenuManager().getCachedMenus().put(id + ":" + player.getUniqueId(), this);
+        if (menuPrevents == null) {
+            Set<MenuPrevents> prevents = new HashSet<>();
+
+            prevents.add(MenuPrevents.CLICK);
+            prevents.add(MenuPrevents.DRAG);
+            prevents.add(MenuPrevents.PLAYER_INTERACT);
+            prevents.add(MenuPrevents.PLAYER_DROP);
+            prevents.add(MenuPrevents.PLAYER_PICKUP);
+            prevents.add(MenuPrevents.PLAYER_BREAK_BLOCKS);
+            prevents.add(MenuPrevents.PLAYER_PLACE_BLOCKS);
+            setMenuPrevents(prevents);
+        }
+
     }
+
+    protected BaseMenu(Plugin plugin, String id) {
+        this(plugin, id, new HashSet<>());
+    }
+
+    public abstract boolean isEnabled();
+
+    protected abstract List<Item> items(Player player);
+
+    public <T extends MenuEvent> void onClick(T event) {
+        event.setCancelled(true);
+    };
+    public void onOpen(MenuEvent event) {}
+    public void onClose(MenuEvent event) {}
+
+    protected CompletableFuture<Void> putItems(Player player, MenuHolder holder) {
+        return CompletableFuture.runAsync(() -> items(player).forEach(item -> {
+            if (item instanceof ClickableItem) {
+                ClickableItem clickItem = (ClickableItem) item;
+                holder.getUpdatedClickEvents().put(clickItem.getSlot(), clickItem.getOnClick());
+            }
+            holder.getInventory().setItem(item.getSlot(), item.getItemFor(player, plugin));
+        }), XG7Plugins.taskManager().getAsyncExecutors().get("menus"));
+    }
+    public static CompletableFuture<Void> update(HumanEntity player, Item item, MenuHolder holder) {
+        return CompletableFuture.runAsync(() -> {
+            if (item instanceof ClickableItem) {
+                ClickableItem clickableItem = (ClickableItem) item;
+                holder.getUpdatedClickEvents().compute(item.getSlot(), (k,v) -> clickableItem.getOnClick());
+            }
+            holder.getInventory().setItem(item.getSlot(), item.getItemFor(player, holder.getPlugin()));
+        }, XG7Plugins.taskManager().getAsyncExecutors().get("menus"));
+    }
+
+    public static void refresh(MenuHolder holder) {
+
+        holder.getInventory().clear();
+        holder.getUpdatedClickEvents().clear();
+
+        holder.getMenu().putItems(holder.getPlayer(), holder).thenRun(() -> holder.getPlayer().updateInventory());
+        if (holder instanceof PageMenuHolder) {
+            ((PageMenuHolder) holder).goPage(0);
+        }
+    }
+
+    public abstract void open(Player player);
 
 }

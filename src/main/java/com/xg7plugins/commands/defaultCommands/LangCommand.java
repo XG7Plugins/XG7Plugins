@@ -4,8 +4,6 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
-import com.xg7plugins.libs.xg7menus.builders.item.ItemBuilder;
-import com.xg7plugins.menus.LangMenu;
 import org.bukkit.entity.Player;
 
 @Command(
@@ -24,8 +22,8 @@ public class LangCommand implements ICommand {
     }
 
     @Override
-    public ItemBuilder getIcon() {
-        return ItemBuilder.commandIcon(XMaterial.WRITABLE_BOOK, this, XG7Plugins.getInstance());
+    public Item getIcon() {
+        return Item.commandIcon(XMaterial.WRITABLE_BOOK, this, XG7Plugins.getInstance());
     }
 
 

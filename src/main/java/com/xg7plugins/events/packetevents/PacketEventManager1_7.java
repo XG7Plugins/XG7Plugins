@@ -1,8 +1,8 @@
 package com.xg7plugins.events.packetevents;
 
 import com.xg7plugins.events.Event;
-import com.xg7plugins.utils.reflection.NMSUtil;
-import com.xg7plugins.utils.reflection.PlayerNMS;
+import com.xg7plugins.utils.reflection.nms.NMSUtil;
+import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.SneakyThrows;
 import net.minecraft.util.io.netty.channel.*;

@@ -29,6 +29,15 @@ public class ReflectionObject {
             e.printStackTrace();
         }
     }
+    public static void setField(Object object, String name, Object value) {
+        try {
+            Field field = object.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            field.set(object, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public <T> T getField(String name) {
         try {

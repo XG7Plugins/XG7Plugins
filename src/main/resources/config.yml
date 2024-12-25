@@ -17,7 +17,7 @@ json-cache-expires: 10m
 enable-geyser-forms: true
 enable-lang-form: true
 
-task-threads: 4
+repeating-tasks-threads: 4
 
 player-cooldown-task-delay: 1s
 

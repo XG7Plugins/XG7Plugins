@@ -1,6 +1,6 @@
 package com.xg7plugins.events.defaultevents;
 
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.CommandManager;
 import com.xg7plugins.commands.setup.Command;
@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandAntiTab implements Event {
 

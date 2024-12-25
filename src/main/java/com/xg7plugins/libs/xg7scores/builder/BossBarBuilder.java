@@ -1,18 +1,18 @@
 package com.xg7plugins.libs.xg7scores.builder;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.Plugin;
-import com.xg7plugins.libs.xg7scores.scores.BossBar;
-import com.xg7plugins.libs.xg7scores.scores.GenericBossBar;
-import com.xg7plugins.libs.xg7scores.scores.LegacyBossBar;
-import com.xg7plugins.libs.xg7scores.scores.PublicBossBar;
+import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.libs.xg7scores.Score;
+import com.xg7plugins.libs.xg7scores.scores.bossbar.BossBar;
+import com.xg7plugins.libs.xg7scores.scores.bossbar.LegacyBossBar;
+import com.xg7plugins.libs.xg7scores.scores.bossbar.PublicBossBar;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BossBarBuilder extends ScoreBuilder<GenericBossBar, BossBarBuilder> {
+public class BossBarBuilder extends ScoreBuilder<Score, BossBarBuilder> {
 
     private Object color;
     private Object style;
@@ -52,7 +52,7 @@ public class BossBarBuilder extends ScoreBuilder<GenericBossBar, BossBarBuilder>
     }
 
     @Override
-    public GenericBossBar build(Object... args) {
+    public Score build(Object... args) {
 
         Plugin plugin = (Plugin) args[0];
 
@@ -61,11 +61,11 @@ public class BossBarBuilder extends ScoreBuilder<GenericBossBar, BossBarBuilder>
         if (progress == 0) throw new IllegalArgumentException("You must specify the progress of the boss bar");
 
         if (XG7Plugins.getMinecraftVersion() <= 8) {
-            return new LegacyBossBar(delayToUpdate, title.toArray(new String[0]),id,condition,progress,plugin);
+            return new LegacyBossBar(delayToUpdate, title,id,condition,progress,plugin);
         }
 
-        if (isPublic) return new PublicBossBar(delayToUpdate, title.toArray(new String[0]),id,condition, (BarColor) color, (BarStyle) style,progress,plugin);
+        if (isPublic) return new PublicBossBar(delayToUpdate, title,id,condition, (BarColor) color, (BarStyle) style,progress,plugin);
 
-        return new BossBar(delayToUpdate,id,condition, title.toArray(new String[0]), (BarColor) color, (BarStyle) style,progress,plugin);
+        return new BossBar(delayToUpdate,id,condition, title, (BarColor) color, (BarStyle) style,progress,plugin);
     }
 }

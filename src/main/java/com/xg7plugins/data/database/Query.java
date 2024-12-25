@@ -1,7 +1,7 @@
 package com.xg7plugins.data.database;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -22,24 +22,25 @@ public class Query {
     private final DBManager dbManager;
 
     public static CompletableFuture<Query> create(Plugin plugin, String sql, Object... params) {
-        return CompletableFuture.supplyAsync(() -> XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql,params), XG7Plugins.getInstance().getTaskManager().getExecutor());
+        return XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql,params);
     }
     public static <T extends Entity> CompletableFuture<T> getEntity(Plugin plugin, String sql, Object id, Class<T> clazz) {
-        DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
-        ScheduledExecutorService executorService = XG7Plugins.getInstance().getTaskManager().getExecutor();
+        DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
         if (manager.getEntitiesCached().asMap().containsKey(id)) return CompletableFuture.completedFuture((T) manager.getEntitiesCached().asMap().get(id));
 
-        Query query = XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql, id);
+        return XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql, id).thenCompose(query -> {
 
-        if (!query.hasNextLine()) return CompletableFuture.completedFuture(null);
+            if (!query.hasNextLine()) return CompletableFuture.completedFuture(null);
 
-        return CompletableFuture.supplyAsync(() -> query.get(clazz), executorService);
+            return CompletableFuture.supplyAsync(() -> query.get(clazz), XG7Plugins.taskManager().getAsyncExecutors().get("database"));
+        });
+
     }
 
     @SneakyThrows
-    public static void update(Plugin plugin, Entity entity) {
+    public static CompletableFuture<Void> update(Plugin plugin, Entity entity) {
 
         DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
@@ -68,9 +69,8 @@ public class Query {
 
         final Pair<String, Object> finalId = id;
 
-        manager.executeUpdate(plugin, sql.toString(), params.toArray());
+        return manager.executeUpdate(plugin, sql.toString(), params.toArray()).thenRun(() -> manager.getEntitiesCached().put(finalId.getSecond(), entity));
 
-        manager.getEntitiesCached().put(finalId.getSecond(), entity);
 
     }
 
@@ -88,8 +88,6 @@ public class Query {
 
     @SuppressWarnings("unchecked")
     public <T extends Entity> T get(Class<T> clazz) {
-        System.out.println("Getting " + clazz.getSimpleName());
-        System.out.println(results.toString());
         if (!hasNextLine()) return null;
         try {
             Map<String, Object> values = results.next();

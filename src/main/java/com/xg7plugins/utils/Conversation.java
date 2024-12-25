@@ -1,6 +1,6 @@
 package com.xg7plugins.utils;
 
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.conversations.*;
 import org.bukkit.entity.Player;
@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Conversation {
 

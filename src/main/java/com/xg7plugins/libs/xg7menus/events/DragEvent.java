@@ -1,22 +1,24 @@
 package com.xg7plugins.libs.xg7menus.events;
 
-import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
+import com.xg7plugins.libs.xg7menus.item.Item;
+import com.xg7plugins.libs.xg7menus.menus.holders.MenuHolder;
 import lombok.Getter;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.entity.HumanEntity;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 @Getter
-public class DragEvent extends ClickEvent {
+public class DragEvent extends MenuEvent {
 
-    private final Map<Integer,ItemStack> clickedItems;
-    private final Set<Integer> clickedSlots;
+    private final List<Item> draggedItems;
+    private final Set<Integer> draggedSlots;
+    private final Set<Integer> draggedRawSlots;
 
-    public DragEvent(Player whoClicked, Set<Integer> clickedSlots, Map<Integer, ItemStack> clickedItems, BaseMenu clickedMenu) {
-        super(whoClicked, ClickAction.DRAG , 0, null, clickedMenu, null);
-        this.clickedSlots = clickedSlots;
-        this.clickedItems = clickedItems;
+    public DragEvent(HumanEntity whoClicked, MenuHolder menu, List<Item> draggedItems, Set<Integer> draggedSlots, Set<Integer> draggedRawSlots) {
+        super(whoClicked, ClickAction.DRAG, menu, null);
+        this.draggedItems = draggedItems;
+        this.draggedSlots = draggedSlots;
+        this.draggedRawSlots = draggedRawSlots;
     }
 }

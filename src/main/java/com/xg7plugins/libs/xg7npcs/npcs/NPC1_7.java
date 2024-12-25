@@ -2,12 +2,12 @@ package com.xg7plugins.libs.xg7npcs.npcs;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.Location;
 import com.xg7plugins.utils.Pair;
-import com.xg7plugins.utils.reflection.NMSUtil;
-import com.xg7plugins.utils.reflection.PlayerNMS;
+import com.xg7plugins.utils.reflection.nms.NMSUtil;
+import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.text.Text;
 import net.minecraft.util.com.mojang.authlib.GameProfile;

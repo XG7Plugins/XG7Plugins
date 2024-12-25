@@ -2,7 +2,7 @@ package com.xg7plugins.libs.xg7scores;
 
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -66,8 +66,14 @@ public class ScoreManager {
         this.taskId = plugin.getTaskManager().addRepeatingTask(plugin, "scores", () -> {
                 scoreboards.values().forEach(score -> {
                             Bukkit.getOnlinePlayers().forEach(p -> {
-                                if (score.getCondition().verify(p)) score.addPlayer(p);
-                                else if (score.getPlayers().contains(p.getUniqueId())) score.removePlayer(p);
+                                try {
+                                    if (p == null) return;
+                                    if (score.getCondition().verify(p)) score.addPlayer(p);
+                                    else if (score.getPlayers().contains(p.getUniqueId())) score.removePlayer(p);
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             });
 
                             if (counter.get() % score.getDelay() == 0) {

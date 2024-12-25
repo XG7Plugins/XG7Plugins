@@ -44,19 +44,34 @@ lang-menu:
 tasks-menu:
   title: "Tasks"
 
-  item-click:
+  task-item:
     - "&fTask id: &b[ID]"
     - "&fTask plugin: &e[PLUGIN]"
     - " "
     - "&fClick esquerdo -> &aCopiar id"
     - "&fClick direito -> &cDeletar Task"
 
+  executor-item:
+    - "&fNome do executor: &b[NAME]"
+    - " "
+    - "&fClick esquerdo -> &aCopiar nome"
+    - "&fClick direito -> &cFechar Executor"
+
   copy-to-clipboard: "Clique [CLICK action=%COPY_TO_CLICKBOARD% value=%[ID]%]&baqui&r[/CLICK] para copiar o id!"
 
   notes:
-    - "&f&oPara retornar uma tarefa para"
-    - "&f&oa execução, você precisa reiniciar"
-    - "&f&oo plugin da tarefa."
+    - "Uso de ram: [RAM]"
+    - "TPS: [TPS]"
+
+  item-tasks-running:
+    name: "&fTasks rodando: &a[TASKS]"
+    lore:
+      - "&fClique para ver as tasks que estão sendo executadas!"
+
+  item-executors:
+    name: "&fExecutores: &a[EXECUTORS]"
+    lore:
+      - "&fClique para ver os executores!"
 
 task-command:
   not-found: "Task não encontrada!"

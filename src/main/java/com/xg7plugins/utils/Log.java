@@ -1,6 +1,6 @@
 package com.xg7plugins.utils;
 
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
@@ -20,8 +20,7 @@ public class Log {
         this.plugin = plugin;
         Config config = plugin.getConfigsManager().getConfig("config");
         if (config == null) return;
-        if (config.get("log-enabled") == null) return;
-        isLogEnabled = config.get("log-enabled");
+        isLogEnabled = config.get("log-enabled", boolean.class).orElse(false);
     }
 
     public void severe(String message) {

@@ -3,55 +3,45 @@ package com.xg7plugins.menus;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.lang.PlayerLanguage;
-import com.xg7plugins.libs.xg7geyserforms.builders.SimpleFormCreator;
+import com.xg7plugins.data.lang.PlayerLanguageDAO;
+import com.xg7plugins.libs.xg7geyserforms.forms.SimpleForm;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.response.SimpleFormResponse;
+import org.geysermc.cumulus.response.result.InvalidFormResponseResult;
 import org.geysermc.cumulus.util.FormImage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class LangForm {
+public class LangForm extends SimpleForm {
 
-    public static void create(Player player) {
+    public LangForm() {
+        super("lang-form", "lang:[lang-menu.title]", XG7Plugins.getInstance(), "lang:[lang-menu.content]");
+    }
 
-        XG7Plugins plugin = XG7Plugins.getInstance();
+    @Override
+    public List<ButtonComponent> buttons(Player player) {
 
-        if (plugin.getFormManager().contaninsForm("lang", player)) {
-            plugin.getFormManager().sendPlayerForm("lang:" + player.getUniqueId(), player);
-            return;
-        }
+        List<ButtonComponent> components = new ArrayList<>();
 
-        SimpleFormCreator formCreator = new SimpleFormCreator("lang",plugin);
+        XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin).join();
 
-        plugin.getLangManager().loadAllLangs();
+        XG7Plugins.getInstance().getLangManager().getLangs().asMap().forEach((s, c)-> {
 
-        Config config = plugin.getConfigsManager().getConfig("config");
-
-        formCreator.title("lang:[lang-menu.title]");
-        formCreator.content("lang:[lang-menu.content]");
-
-
-        plugin.getLangManager().getLangs().asMap().forEach((s, c)-> {
-
-            PlayerLanguage language;
-            try {
-                language = plugin.getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).get();
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-
+            PlayerLanguage language = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).join();
 
             boolean selected = language != null && language.getLangId().equals(s);
 
             String[] icon = c.getString("bedrock-icon").split(", ");
 
             if (icon.length == 1) {
-                formCreator.addButton(ButtonComponent.of(c.getString("formated-name") != null ? selected ? "§a" + c.getString("formated-name") : "§8" + c.getString("formated-name") : selected ? "§a" + s : "§8" + s));
+                components.add(ButtonComponent.of(c.getString("formated-name") != null ? selected ? "§a" + c.getString("formated-name") : "§8" + c.getString("formated-name") : selected ? "§a" + s : "§8" + s));
                 return;
             }
-            formCreator.addButton(
+            components.add(
                     ButtonComponent.of(
                             c.getString("formated-name") != null ? selected ? "§a" + c.getString("formated-name") : "§8" + c.getString("formated-name") : selected ? "§a" + s : "§8" + s,
                             FormImage.Type.valueOf(icon[0]),
@@ -59,54 +49,58 @@ public class LangForm {
                     )
             );
 
-
-
         });
 
-        formCreator.onFinish((form, res) -> {
 
-                    PlayerLanguage language;
-                    try {
-                        language = plugin.getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    SimpleFormResponse response = (SimpleFormResponse) res;
-
-                    String lang = plugin.getLangManager().getLangs().asMap().keySet().toArray(new String[0])[response.clickedButtonId()];
-                    if (language != null && language.getLangId().equals(lang)) {
-                        Text.formatComponent("lang:[lang-menu.already-selected]", plugin).send(player);
-                        return;
-                    }
-                    LangMenu.cooldownToToggle.putIfAbsent(player.getUniqueId(), 0L);
-
-                    if (LangMenu.cooldownToToggle.get(player.getUniqueId()) >= System.currentTimeMillis()) {
-                        Text.formatComponent("lang:[lang-menu.cooldown-to-toggle]", plugin)
-                                .replace("[MILLISECONDS]", String.valueOf((LangMenu.cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis())))
-                                .replace("[SECONDS]", String.valueOf((int) ((LangMenu.cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis()) / 1000)))
-                                .replace("[MINUTES]", String.valueOf((int) ((LangMenu.cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis()) / 60000)))
-                                .replace("[HOURS]", String.valueOf((int) ((LangMenu.cooldownToToggle.get(player.getUniqueId()) - System.currentTimeMillis()) / 3600000)))
-                                .send(player);
-                        return;
-                    }
-
-                    plugin.getLangManager().getPlayerLanguageDAO().update(new PlayerLanguage(player.getUniqueId(), lang)).thenAccept(r -> {
-                        plugin.getMenuManager().removePlayerFromAll(player);
-                        plugin.getFormManager().unregisterCreator("lang", player);
-                        create(player);
-                        Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
-                    });
-                    plugin.getPlugins().forEach((n, pl) -> pl.getLangManager().getPlayerLanguageDAO().update(new PlayerLanguage(player.getUniqueId(), lang)));
-
-
-                    LangMenu.cooldownToToggle.put(player.getUniqueId(), System.currentTimeMillis() + Text.convertToMilliseconds(plugin, config.get("cooldown-to-toggle-lang")));
-        }
-        );
-
-        plugin.getFormManager().registerCreator(formCreator, player);
-
-        plugin.getFormManager().sendPlayerForm("lang:" + player.getUniqueId(), player);
+        return components;
     }
+
+    @Override
+    public boolean isEnabled() {
+        Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
+        return config.get("enable-langs", Boolean.class).orElse(false) && config.get("enable-lang-form", Boolean.class).orElse(false);
+    }
+
+    @Override
+    public void onFinish(org.geysermc.cumulus.form.SimpleForm form, SimpleFormResponse result, Player player) {
+
+        XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin).thenRun(() -> XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).thenAccept(language -> {
+
+            String lang = XG7Plugins.getInstance().getLangManager().getLangs().asMap().keySet().toArray(new String[0])[result.clickedButtonId()];
+            if (language != null && language.getLangId().equals(lang)) {
+                Text.formatComponent("lang:[lang-menu.already-selected]", plugin).send(player);
+                return;
+            }
+            if (XG7Plugins.getInstance().getCooldownManager().containsPlayer("lang-change", player)) {
+
+                double cooldownToToggle = XG7Plugins.getInstance().getCooldownManager().getReamingTime("lang-change", player);
+
+                Text.formatComponent("lang:[lang-menu.cooldown-to-toggle]",plugin)
+                        .replace("[MILLISECONDS]", String.valueOf((cooldownToToggle - System.currentTimeMillis())))
+                        .replace("[SECONDS]", String.valueOf((int)((cooldownToToggle - System.currentTimeMillis()) / 1000)))
+                        .replace("[MINUTES]", String.valueOf((int)((cooldownToToggle - System.currentTimeMillis()) / 60000)))
+                        .replace("[HOURS]", String.valueOf((int)((cooldownToToggle - System.currentTimeMillis()) / 3600000)))
+                        .send(player);
+            }
+
+            PlayerLanguageDAO dao = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO();
+
+            dao.update(new PlayerLanguage(player.getUniqueId(), lang)).thenAccept(r -> {
+                XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
+                Text.formatComponent("lang:[lang-menu.changed]", plugin).send(player);
+                send(player);
+            });
+
+            XG7Plugins.getInstance().getCooldownManager().addCooldown(player, "lang-change", XG7Plugins.getInstance().getConfig("config").getTime("cooldown-to-toggle-lang").orElse(10000L));
+
+
+        }));
+    }
+
+    @Override
+    public void onError(org.geysermc.cumulus.form.SimpleForm form, InvalidFormResponseResult<SimpleFormResponse> result, Player player) {}
+
+    @Override
+    public void onClose(org.geysermc.cumulus.form.SimpleForm form, Player player) {}
 
 }

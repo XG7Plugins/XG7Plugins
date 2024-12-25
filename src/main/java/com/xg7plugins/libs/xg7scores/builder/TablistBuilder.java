@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.xg7scores.builder;
 
-import com.xg7plugins.Plugin;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7scores.scores.Tablist;
 
 import java.util.ArrayList;
@@ -45,6 +45,6 @@ public class TablistBuilder extends ScoreBuilder<Tablist, TablistBuilder> {
 
     @Override
     public Tablist build(Object... args) {
-        return new Tablist(delayToUpdate, header.toArray(new String[0]), footer.toArray(new String[0]), playerPrefix,playerSuffix,id, condition, (Plugin) args[0]);
+        return new Tablist(delayToUpdate, header, footer, playerPrefix,playerSuffix,id, condition, (Plugin) args[0]);
     }
 }
