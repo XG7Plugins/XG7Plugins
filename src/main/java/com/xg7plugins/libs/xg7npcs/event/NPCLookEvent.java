@@ -1,13 +1,13 @@
 package com.xg7plugins.libs.xg7npcs.event;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.events.Event;
+import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import com.xg7plugins.libs.xg7npcs.NPCManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-public class NPCLookEvent implements Event {
+public class NPCLookEvent implements Listener {
     private final NPCManager npcManager = XG7Plugins.getInstance().getNpcManager();
 
     @Override

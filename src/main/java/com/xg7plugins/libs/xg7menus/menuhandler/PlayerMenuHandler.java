@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.xg7menus.menuhandler;
 
-import com.xg7plugins.events.Event;
+import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import com.xg7plugins.libs.xg7menus.MenuManager;
 import com.xg7plugins.libs.xg7menus.MenuPrevents;
@@ -23,7 +23,7 @@ import org.bukkit.inventory.PlayerInventory;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-public class PlayerMenuHandler implements Event {
+public class PlayerMenuHandler implements Listener {
 
     private final MenuManager menuManager;
 

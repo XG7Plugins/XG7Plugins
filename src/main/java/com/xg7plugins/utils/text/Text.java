@@ -5,8 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.lang.LangManager;
 import com.xg7plugins.utils.Condition;
-import com.xg7plugins.utils.reflection.nms.NMSUtil;
-import com.xg7plugins.utils.reflection.nms.PlayerNMS;
+import com.xg7plugins.utils.reflection.nms.*;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -32,11 +31,8 @@ public class Text {
     private static final Pattern GRADIENT_PATTERN = Pattern.compile("\\[g#([0-9a-fA-F]{6})\\](.*?)\\[/g#([0-9a-fA-F]{6})\\]");
     private static final Pattern HEX_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
-    private static ReflectionObject packetPlayOutChat;
 
-    static {
-        packetPlayOutChat = XG7Plugins.getMinecraftVersion() < 13 ? NMSUtil.getNMSClass("PacketPlayOutChat").newInstance() : null;
-    }
+    private static final PacketClass packetPlayOutChat = XG7Plugins.getMinecraftVersion() == 8 ? new PacketClass("PacketPlayOutChat") : null;
 
     private String text;
     private final Plugin plugin;
@@ -118,6 +114,7 @@ public class Text {
             //This method must be synchronized, the Future will block until the result is returned
 
             langConfig = Config.of(plugin, langManager.getLangByPlayer(plugin,player).join());
+
             while (matcher.find()) {
                 String lang = matcher.group(1);
                 text = text.replace(text.substring(matcher.start(), matcher.end()), langConfig.get(lang,String.class).orElse("Cannot found path \"" + lang + "\" in " + langConfig.get("formated-name", String.class).orElse("langs")));
@@ -193,12 +190,14 @@ public class Text {
             return;
         }
 
-        ReflectionObject chatComponent = NMSUtil.getNMSClass("ChatComponentText").getConstructor(String.class).newInstance(finalText);
+        ChatComponent chatComponent = new ChatComponent(finalText);
 
-        packetPlayOutChat.setField("a",chatComponent.getObject());
-        packetPlayOutChat.setField("b",(byte) 2);
+        Packet packet = new Packet(packetPlayOutChat);
 
-        PlayerNMS.cast(player).sendPacket(packetPlayOutChat.getObject());
+        packet.setField("a",chatComponent.getChatComponent());
+        packet.setField("b",(byte) 2);
+
+        PlayerNMS.cast(player).sendPacket(packet);
 
     }
 

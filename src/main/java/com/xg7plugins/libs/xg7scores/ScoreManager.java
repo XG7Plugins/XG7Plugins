@@ -3,6 +3,8 @@ package com.xg7plugins.libs.xg7scores;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.tasks.Task;
+import com.xg7plugins.tasks.TaskState;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -19,14 +21,43 @@ public class ScoreManager {
     private final HashMap<String, Score> scoreboards = new HashMap<>();
     private final List<UUID> sendActionBlackList = new ArrayList<>();
 
-    private String taskId;
+    private Task task;
 
     public ScoreManager(XG7Plugins plugin) {
         this.plugin = plugin;
     }
     public void registerScores(final Score[] scores) {
         if (scores == null) return;
-        initTask();
+        AtomicLong counter = new AtomicLong();
+        this.task = new Task(
+                plugin,
+                "score-task",
+                true,
+                true,
+                1,
+                TaskState.IDLE,
+                () -> scoreboards.values().forEach(score -> {
+                    Bukkit.getOnlinePlayers().forEach(p -> {
+                        try {
+                            if (p == null) return;
+                            if (score.getCondition().verify(p)) score.addPlayer(p);
+                            else if (score.getPlayers().contains(p.getUniqueId())) score.removePlayer(p);
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+                    if (counter.get() % score.getDelay() == 0) {
+                        score.update();
+                        score.incrementIndex();
+                    }
+                    counter.incrementAndGet();
+
+                    if (counter.get() == Long.MAX_VALUE) counter.set(0);
+
+                })
+        );
         scoreboards.putAll(Arrays.stream(scores).map(sc -> new AbstractMap.SimpleEntry<>(sc.getId(), sc)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
     }
 
@@ -55,37 +86,7 @@ public class ScoreManager {
     }
 
     public void cancelTask() {
-        if (taskId == null) return;
-        plugin.getTaskManager().cancelTask(this.taskId);
-        taskId = null;
-    }
-
-    public void initTask() {
-        if (taskId != null) return;
-        AtomicLong counter = new AtomicLong();
-        this.taskId = plugin.getTaskManager().addRepeatingTask(plugin, "scores", () -> {
-                scoreboards.values().forEach(score -> {
-                            Bukkit.getOnlinePlayers().forEach(p -> {
-                                try {
-                                    if (p == null) return;
-                                    if (score.getCondition().verify(p)) score.addPlayer(p);
-                                    else if (score.getPlayers().contains(p.getUniqueId())) score.removePlayer(p);
-
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-
-                            if (counter.get() % score.getDelay() == 0) {
-                                score.update();
-                                score.incrementIndex();
-                            }
-
-                        }
-                );
-                counter.incrementAndGet();
-
-        },1);
+        XG7Plugins.taskManager().cancelTask(task);
     }
 
 }

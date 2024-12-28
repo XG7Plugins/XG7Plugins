@@ -20,10 +20,43 @@ public class CooldownManager {
 
     private final ConcurrentHashMap<UUID, Map<String, CooldownTask>> cooldowns = new ConcurrentHashMap<>();
     private final long timeFactor;
-    private String taskId;
+    @Getter
+    private final Task task;
 
     public CooldownManager(XG7Plugins plugin) {
         this.timeFactor = plugin.getConfigsManager().getConfig("config").getTime("player-cooldown-task-delay").orElse(1000L);
+        this.task = new Task(
+                plugin,
+                "cooldown-task",
+                true,
+                true,
+                timeFactor,
+                TaskState.IDLE,
+                () -> {
+                    cooldowns.forEach((id, tasks) -> {
+                        Player player = Bukkit.getPlayer(id);
+
+                        tasks.values().forEach(task -> {
+                            task.setTime(task.getTime() - timeFactor);
+
+
+                            if (player == null) {
+                                removePlayer(task.getId(), id);
+                                return;
+                            }
+
+                            if (task.getTick() != null) task.getTick().accept(player);
+                            if (task.getTime() <= 0) {
+                                if (task.getOnFinish() != null) task.getOnFinish().accept(player, false);
+                                cooldowns.get(id).remove(task.getId());
+
+                                if (cooldowns.get(id).isEmpty()) cooldowns.remove(id);
+                            }
+                        });
+                    });
+                }
+        );
+
     }
 
     public void addCooldown(Player player, CooldownTask task) {
@@ -51,39 +84,9 @@ public class CooldownManager {
 
         if (cooldowns.get(playerID).isEmpty()) cooldowns.remove(playerID);
     }
-    public void initTask() {
-        XG7Plugins.taskManager().addAsyncRepeatingTask(XG7Plugins.getInstance(), "cooldown-task",() -> {
-            cooldowns.forEach((id, tasks) -> {
-                Player player = Bukkit.getPlayer(id);
-
-                tasks.values().forEach(task -> {
-                    task.setTime(task.getTime() - timeFactor);
-
-
-                    if (player == null) {
-                        removePlayer(task.getId(), id);
-                        return;
-                    }
-
-                    if (task.getTick() != null) task.getTick().accept(player);
-                    if (task.getTime() <= 0) {
-                        if (task.getOnFinish() != null) task.getOnFinish().accept(player, false);
-                        cooldowns.get(id).remove(task.getId());
-
-                        if (cooldowns.get(id).isEmpty()) cooldowns.remove(id);
-                    }
-                });
-
-
-
-            });
-        },timeFactor);
-    }
 
     public void cancelTask() {
-        if (taskId == null) return;
-        XG7Plugins.taskManager().cancelTask(taskId);
-        taskId = null;
+        XG7Plugins.taskManager().cancelTask(task);
     }
 
 

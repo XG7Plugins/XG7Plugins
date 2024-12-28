@@ -40,6 +40,14 @@ public class TaskManager {
         });
     }
 
+    public void runAsyncTask(Plugin plugin, String executorName, Runnable task) {
+        runTask(new Task(plugin, "task-" + UUID.randomUUID(), true, executorName, 0, TaskState.IDLE, task));
+    }
+    public void runSyncTask(Plugin plugin, Runnable task) {
+        runTask(new Task(plugin, "task-" + UUID.randomUUID(), false, false, 0, TaskState.IDLE, task));
+    }
+
+
     public void runTask(Task task) {
         if (task == null) return;
 
@@ -49,7 +57,6 @@ public class TaskManager {
         if (task.getState() == TaskState.RUNNING) return;
 
         Runnable taskRunnable = () -> {
-            long before = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
             try {
                 task.getRunnable().run();
@@ -57,17 +64,10 @@ public class TaskManager {
                 e.printStackTrace();
             }
 
-            long after = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+            task.setState(TaskState.IDLE);
 
-            task.setRAMUsage(after - before);
+            if (!task.isRepeating()) return;
 
-            if (!task.isRepeating()) {
-                task.setState(TaskState.STOPED);
-                if (task.isAsync()) task.getFuture().cancel(true);
-                else Bukkit.getScheduler().cancelTask(task.getBukkitTaskId());
-
-                tasks.remove(taskId);
-            }
         };
 
         if (task.isRepeating()) {
@@ -85,32 +85,54 @@ public class TaskManager {
             }
         } else {
             if (task.isAsync()) {
-                task.setFuture(repeatingAsyncTasksExecutor.schedule(taskRunnable, 0, TimeUnit.MILLISECONDS));
+                asyncExecutors.get(task.getExecutorName()).submit(taskRunnable);
             } else {
-                task.setBukkitTaskId(
-                        Bukkit.getScheduler().runTask(
-                                task.getPlugin(),
-                                taskRunnable
-                        ).getTaskId()
-                );
+                Bukkit.getScheduler().runTask(task.getPlugin(), taskRunnable);
             }
         }
 
         task.setState(TaskState.RUNNING);
     }
 
+    public void cancelTask(Plugin plugin, String id) {
+        Task task = tasks.get(plugin.getName() + ":" + id);
+        if (task == null) return;
+
+        cancelTask(task);
+    }
     public void cancelTask(String id) {
         Task task = tasks.get(id);
         if (task == null) return;
 
+        cancelTask(task);
+    }
+
+    public void cancelTask(Task task) {
         if (task.isAsync()) {
             task.getFuture().cancel(true);
         } else {
             Bukkit.getScheduler().cancelTask(task.getBukkitTaskId());
         }
-        if (!task.isRepeating()) tasks.remove(id);
+        if (!task.isRepeating()) tasks.remove(task.getPlugin().getName() + ":" + task.getName());
 
-        task.setState(TaskState.STOPED);
+        task.setState(TaskState.IDLE);
+    }
+
+    public void deleteTask(Task task) {
+        cancelTask(task);
+        tasks.remove(task.getPlugin().getName() + ":" + task.getName());
+    }
+    public void deleteTask(Plugin plugin, String id) {
+        Task task = tasks.get(plugin.getName() + ":" + id);
+        if (task == null) return;
+
+        deleteTask(task);
+    }
+    public void deleteTask(String id) {
+        Task task = tasks.get(id);
+        if (task == null) return;
+
+        deleteTask(task);
     }
 
 

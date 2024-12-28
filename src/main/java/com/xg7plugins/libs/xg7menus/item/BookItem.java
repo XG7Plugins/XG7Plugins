@@ -1,7 +1,10 @@
 package com.xg7plugins.libs.xg7menus.item;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.nms.NMSUtil;
+import com.xg7plugins.utils.reflection.nms.Packet;
+import com.xg7plugins.utils.reflection.nms.PacketClass;
 import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import io.netty.buffer.ByteBuf;
@@ -13,7 +16,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-public class BookItem extends Item{
+public class BookItem extends Item {
+
+    private static final PacketClass packetPlayOutCustomPayloadClass = new PacketClass("PacketPlayOutCustomPayload");
+
+    private static final ReflectionClass packetDataSerializerClass = NMSUtil.getNMSClass("PacketDataSerializer");
 
     public BookItem() {
         super(new ItemStack(Material.WRITTEN_BOOK));
@@ -83,11 +90,9 @@ public class BookItem extends Item{
         buf.setByte(0, 0);
         buf.writerIndex(1);
 
-        ReflectionObject packet = NMSUtil.getNMSClass("PacketPlayOutCustomPayload")
-                .getConstructor(String.class, NMSUtil.getNMSClass("PacketDataSerializer").getAClass())
-                .newInstance("MC|BOpen", NMSUtil.getNMSClass("PacketDataSerializer").getConstructor(ByteBuf.class).newInstance(buf).getObject());
+        Packet packet = new Packet(packetPlayOutCustomPayloadClass, "MC|BOpen", packetDataSerializerClass.getConstructor(ByteBuf.class).newInstance(buf).getObject());
 
-        PlayerNMS.cast(player).sendPacket(packet.getObject());
+        PlayerNMS.cast(player).sendPacket(packet);
 
         player.getInventory().setItem(slot, old);
     }

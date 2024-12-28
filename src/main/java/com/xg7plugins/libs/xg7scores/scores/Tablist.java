@@ -4,9 +4,8 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreCondition;
+import com.xg7plugins.utils.reflection.nms.*;
 import com.xg7plugins.utils.text.Text;
-import com.xg7plugins.utils.reflection.nms.NMSUtil;
-import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -17,15 +16,7 @@ import java.util.UUID;
 
 public class Tablist extends Score {
 
-    private static ReflectionObject packetPlayOutListHeaderFooter;
-
-    static {
-        try {
-            packetPlayOutListHeaderFooter = NMSUtil.getNMSClass("PacketPlayOutPlayerListHeaderFooter").newInstance();
-        } catch (Exception ignored) {
-            //Not is the version
-        }
-    }
+    private static PacketClass packetTabClass = XG7Plugins.getMinecraftVersion() < 13 ? new PacketClass("PacketPlayOutPlayerListHeaderFooter") : null;
 
     private final List<String> header;
     private final List<String> footer;
@@ -68,10 +59,12 @@ public class Tablist extends Score {
             return;
         }
 
-        packetPlayOutListHeaderFooter.setField("a", NMSUtil.getNMSClass("ChatComponentText").getConstructor(String.class).newInstance(header).getObject());
-        packetPlayOutListHeaderFooter.setField("b", NMSUtil.getNMSClass("ChatComponentText").getConstructor(String.class).newInstance(footer).getObject());
+        ChatComponent headerComponent = new ChatComponent(header);
+        ChatComponent footerComponent = new ChatComponent(footer);
 
-        PlayerNMS.cast(player).sendPacket(packetPlayOutListHeaderFooter.getObject());
+        Packet packetPlayOutListHeaderFooter = new Packet(packetTabClass, new Class<?>[]{ChatComponent.iChatClass, ChatComponent.iChatClass}, headerComponent, footerComponent);
+
+        PlayerNMS.cast(player).sendPacket(packetPlayOutListHeaderFooter);
     }
 
     @Override

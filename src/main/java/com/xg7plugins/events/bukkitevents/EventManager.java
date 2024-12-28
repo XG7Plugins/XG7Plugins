@@ -2,10 +2,9 @@ package com.xg7plugins.events.bukkitevents;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.events.Event;
-import com.xg7plugins.events.PacketEvent;
+import com.xg7plugins.events.Listener;
+import com.xg7plugins.events.PacketListener;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.world.WorldEvent;
@@ -16,20 +15,20 @@ import java.util.HashMap;
 
 public class EventManager {
 
-    private final HashMap<String, Listener> listeners = new HashMap<>();
+    private final HashMap<String, org.bukkit.event.Listener> listeners = new HashMap<>();
 
-    public void registerPlugin(Plugin plugin, Event... events) {
+    public void registerPlugin(Plugin plugin, Listener... events) {
 
         plugin.getLog().loading("Loading Events...");
 
         if (events == null) return;
 
-        listeners.put(plugin.getName(), new Listener() {});
+        listeners.put(plugin.getName(), new org.bukkit.event.Listener() {});
 
-        for (Event event : events) {
+        for (Listener event : events) {
             if (event == null) continue;
 
-            if (event.getClass().isAssignableFrom(PacketEvent.class)) continue;
+            if (event.getClass().isAssignableFrom(PacketListener.class)) continue;
 
             if (!event.isEnabled()) continue;
             for (Method method : event.getClass().getMethods()) {
@@ -39,7 +38,7 @@ public class EventManager {
                 Config config = plugin.getConfigsManager().getConfig(eventHandler.enabledPath()[0]);
 
                 boolean invert = Boolean.parseBoolean(eventHandler.enabledPath()[2]);
-                if (config != null) if ((boolean) config.get(eventHandler.enabledPath()[1]) == invert) continue;
+                if (config != null) if (config.get(eventHandler.enabledPath()[1], Boolean.class).orElse(false) == invert) continue;
                 else if (invert) continue;
 
                 plugin.getServer().getPluginManager().registerEvent(
@@ -65,14 +64,7 @@ public class EventManager {
                                 }
                             }
 
-                            if (method.getParameterTypes().length == 2) {
-                                try {
-                                    method.invoke(event, event2, plugin);
-                                } catch (IllegalAccessException | InvocationTargetException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                                return;
-                            }
+
 
                             try {
                                 method.invoke(event, event2);

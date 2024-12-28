@@ -1,15 +1,11 @@
 package com.xg7plugins.events.packetevents;
 
-import com.xg7plugins.events.Event;
 import com.xg7plugins.utils.reflection.nms.NMSUtil;
+import com.xg7plugins.utils.reflection.nms.Packet;
 import com.xg7plugins.utils.reflection.nms.PlayerNMS;
-import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.SneakyThrows;
 import net.minecraft.util.io.netty.channel.*;
 import org.bukkit.entity.Player;
-
-import java.lang.reflect.Method;
-import java.util.List;
 
 public class PacketEventManager1_7 extends PacketManagerBase {
 
@@ -17,43 +13,25 @@ public class PacketEventManager1_7 extends PacketManagerBase {
     public void create(Player player) {
         ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
             @Override
-            public void channelRead(ChannelHandlerContext context, Object packet)
+            public void channelRead(ChannelHandlerContext context, Object o)
                     throws Exception {
 
-                Object modPacket = packet;
+                Packet packet = new Packet(o);
 
-                for (List<Event> eventList : events.values()) {
-                    for (Event event : eventList) {
-                        for (Method method : event.getClass().getMethods()) {
-                            if (!method.isAnnotationPresent(PacketEventHandler.class)) continue;
-                            PacketEventHandler eventHandler = method.getAnnotation(PacketEventHandler.class);
-                            if (packet.getClass().getName().endsWith(eventHandler.packet()))
-                                modPacket = method.invoke(event, player, ReflectionObject.of(packet));
-                        }
-                    }
-                }
+                processPacket(packet, player);
 
-                super.channelRead(context, modPacket);
+                super.channelRead(context, packet.getPacket());
             }
 
             @Override
-            public void write(ChannelHandlerContext context, Object packet,
+            public void write(ChannelHandlerContext context, Object o,
                               ChannelPromise channelPromise) throws Exception {
 
-                Object modPacket = packet;
+                Packet packet = new Packet(o);
 
-                for (List<Event> eventList : events.values()) {
-                    for (Event event : eventList) {
-                        for (Method method : event.getClass().getMethods()) {
-                            if (!method.isAnnotationPresent(PacketEventHandler.class)) continue;
-                            PacketEventHandler eventHandler = method.getAnnotation(PacketEventHandler.class);
-                            if (packet.getClass().getName().endsWith(eventHandler.packet()))
-                                modPacket = method.invoke(event, player, ReflectionObject.of(packet));
-                        }
-                    }
-                }
+                processPacket(packet, player);
 
-                super.write(context, modPacket, channelPromise);
+                super.write(context, packet.getPacket(), channelPromise);
             }
         };
 

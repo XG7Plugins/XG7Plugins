@@ -54,14 +54,15 @@ public class NPCBuilder extends Builder<NPC> {
         return this;
     }
     public NPCBuilder setEquipments(ItemStack mainHand, ItemStack offHand, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots) {
-        this.equipments = new HashMap(){{
-            put(0, mainHand);
-            put(1, offHand);
-            put(2, helmet);
-            put(3, chestplate);
-            put(4, leggings);
-            put(5, boots);
-        }};
+        this.equipments = new HashMap<>();
+
+        equipments.put(0, mainHand);
+        equipments.put(1, offHand);
+        equipments.put(2, helmet);
+        equipments.put(3, chestplate);
+        equipments.put(4, leggings);
+        equipments.put(5, boots);
+
         return this;
     }
     public NPCBuilder setMainHand(ItemStack mainHand) {

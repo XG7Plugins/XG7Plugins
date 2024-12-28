@@ -1,11 +1,11 @@
 package com.xg7plugins.libs.xg7scores;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.events.Event;
+import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public class ScoreListener implements Event {
+public class ScoreListener implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {

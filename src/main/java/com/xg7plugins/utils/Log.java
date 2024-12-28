@@ -42,5 +42,8 @@ public class Log {
     public void loading(String message) {
         Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + "§8] §r" + message);
     }
+    public void log(String message) {
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §cLOG§8] §r" + message);
+    }
 
 }

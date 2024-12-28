@@ -5,9 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreCondition;
 import com.xg7plugins.utils.reflection.*;
-import com.xg7plugins.utils.reflection.nms.EntityDataWatcher;
-import com.xg7plugins.utils.reflection.nms.NMSUtil;
-import com.xg7plugins.utils.reflection.nms.PlayerNMS;
+import com.xg7plugins.utils.reflection.nms.*;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -27,8 +25,15 @@ public class LegacyBossBar extends Score {
 
     private final HashMap<UUID, Integer> entities = new HashMap<>();
 
-    private static final ReflectionObject packetPlayOutEntityTeleport = NMSUtil.getNMSClass("PacketPlayOutEntityTeleport").newInstance();
-    private static final ReflectionObject packetPlayOutEntityMetadata = NMSUtil.getNMSClass("PacketPlayOutEntityMetadata").newInstance();
+    private static final PacketClass packetPlayOutEntityTeleportClass = new PacketClass("PacketPlayOutEntityTeleport");
+    private static final PacketClass packetPlayOutEntityMetadataClass = new PacketClass("PacketPlayOutEntityMetadata");
+    private static final PacketClass packetPlayOutSpawnEntityLivingClass = new PacketClass("PacketPlayOutSpawnEntityLiving");
+    private static final PacketClass packetPlayOutEntityDestroyClass = new PacketClass("PacketPlayOutEntityDestroy");
+
+    private static final ReflectionClass entityWitherClass = NMSUtil.getNMSClass("EntityWither");
+    private static final ReflectionClass worldClass = NMSUtil.getNMSClass("World");
+    private static final ReflectionClass entityLivingClass = NMSUtil.getNMSClass("EntityLiving");
+
 
     @SneakyThrows
     public LegacyBossBar(long delay, List<String> text, String id, ScoreCondition condition, float healthPercent, Plugin plugin) {
@@ -43,13 +48,10 @@ public class LegacyBossBar extends Score {
 
             super.addPlayer(player);
 
-            ReflectionObject wither = NMSUtil.getNMSClass("EntityWither")
-                    .getConstructor(NMSUtil.getNMSClass("World").getAClass())
-                    .newInstance(NMSUtil.getNMSClass("World").cast(ReflectionMethod.of(player.getWorld(), "getHandle").invoke()));
+            ReflectionObject wither = entityWitherClass.getConstructor(worldClass.getAClass())
+                    .newInstance(worldClass.cast(ReflectionMethod.of(player.getWorld(), "getHandle").invoke()));
 
-            ReflectionObject packet = NMSUtil.getNMSClass("PacketPlayOutSpawnEntityLiving")
-                    .getConstructor(NMSUtil.getNMSClass("EntityLiving").getAClass())
-                    .newInstance(wither.getObject());
+            Packet spawnPacket = new Packet(packetPlayOutSpawnEntityLivingClass, new Class<?>[]{entityLivingClass.getAClass()}, wither.getObject());
 
             EntityDataWatcher dataWatcher = new EntityDataWatcher();
 
@@ -68,16 +70,15 @@ public class LegacyBossBar extends Score {
             dataWatcher.watch(20, 1000);
             dataWatcher.watch(0, (byte) (1 << 5));
 
-            packetPlayOutEntityMetadata.setField("a", wither.getMethod("getId").invoke());
-            packetPlayOutEntityMetadata.setField("b", dataWatcher.getWatcherAsARObject().getMethod("c").invoke());
+            Packet packetPlayOutEntityMetadata = new Packet(packetPlayOutEntityMetadataClass, (int) wither.getMethod("getId").invoke(), dataWatcher.getWatcher().getObject(), true);
 
             entities.put(player.getUniqueId(), wither.getMethod("getId").invoke());
 
             PlayerNMS playerNMS = PlayerNMS.cast(player);
 
-            playerNMS.sendPacket(packet.getObject());
+            playerNMS.sendPacket(spawnPacket);
 
-            playerNMS.sendPacket(packetPlayOutEntityMetadata.getObject());
+            playerNMS.sendPacket(packetPlayOutEntityMetadata);
         }
 
     }
@@ -87,10 +88,9 @@ public class LegacyBossBar extends Score {
     public void removePlayer(Player player) {
         super.removePlayer(player);
 
-        ReflectionObject packet = NMSUtil.getNMSClass("PacketPlayOutEntityDestroy").
-                getConstructor(int[].class).newInstance(new int[]{entities.get(player.getUniqueId())});
+        Packet packet = new Packet(packetPlayOutEntityDestroyClass, new int[] {entities.get(player.getUniqueId())});
 
-        PlayerNMS.cast(player).sendPacket(packet.getObject());
+        PlayerNMS.cast(player).sendPacket(packet);
 
         entities.remove(player.getUniqueId());
     }
@@ -110,26 +110,27 @@ public class LegacyBossBar extends Score {
 
             Location targetLocation = playerLocation.add(direction.multiply(40));
 
-            packetPlayOutEntityTeleport.setField("a", entities.get(player.getUniqueId()));
-            packetPlayOutEntityTeleport.setField("b", (int) (targetLocation.getX() * 32D));
-            packetPlayOutEntityTeleport.setField("c", (int) (targetLocation.getY() * 32D));
-            packetPlayOutEntityTeleport.setField("d", (int) (targetLocation.getZ() * 32D));
-            packetPlayOutEntityTeleport.setField("e", (byte) (int) (targetLocation.getYaw() * 256F / 360F));
-            packetPlayOutEntityTeleport.setField("f", (byte) (int) (targetLocation.getPitch() * 256F / 360F));
+            Packet packet = new Packet(packetPlayOutEntityTeleportClass);
+
+            packet.setField("a", entities.get(player.getUniqueId()));
+            packet.setField("b", (int) (targetLocation.getX() * 32D));
+            packet.setField("c", (int) (targetLocation.getY() * 32D));
+            packet.setField("d", (int) (targetLocation.getZ() * 32D));
+            packet.setField("e", (byte) (int) (targetLocation.getYaw() * 256F / 360F));
+            packet.setField("f", (byte) (int) (targetLocation.getPitch() * 256F / 360F));
 
             PlayerNMS playerNMS = PlayerNMS.cast(player);
 
-            playerNMS.sendPacket(packetPlayOutEntityTeleport.getObject());
+            playerNMS.sendPacket(packet);
 
             EntityDataWatcher dataWatcher = new EntityDataWatcher();
 
             dataWatcher.watch(10, Text.format(updateText.get(indexUpdating),plugin).getWithPlaceholders(player));
             dataWatcher.watch(2, Text.format(updateText.get(indexUpdating),plugin).getWithPlaceholders(player));
 
-            packetPlayOutEntityMetadata.setField("a", entities.get(player.getUniqueId()));
-            packetPlayOutEntityMetadata.setField("b", dataWatcher.getWatcherAsARObject().getMethod("c").invoke());
+            Packet packetPlayOutEntityMetadata = new Packet(packetPlayOutEntityMetadataClass, (int) entities.get(player.getUniqueId()), dataWatcher.getWatcher().getObject(), true);
 
-            playerNMS.sendPacket(packetPlayOutEntityMetadata.getObject());
+            playerNMS.sendPacket(packetPlayOutEntityMetadata);
 
 
         }

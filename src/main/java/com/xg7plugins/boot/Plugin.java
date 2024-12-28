@@ -6,8 +6,8 @@ import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
 import com.xg7plugins.data.database.Entity;
-import com.xg7plugins.events.Event;
-import com.xg7plugins.events.PacketEvent;
+import com.xg7plugins.events.Listener;
+import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.libs.xg7geyserforms.forms.Form;
 import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
 import com.xg7plugins.libs.xg7scores.Score;
@@ -74,8 +74,6 @@ public abstract class Plugin extends JavaPlugin {
         XG7Plugins.register(this);
     };
 
-    public abstract void onReload();
-
     public Class<? extends Entity>[] loadEntites() {
         return null;
     }
@@ -88,10 +86,10 @@ public abstract class Plugin extends JavaPlugin {
     public ICommand[] loadCommands() {
         return null;
     }
-    public Event[] loadEvents() {
+    public Listener[] loadEvents() {
         return null;
     }
-    public PacketEvent[] loadPacketEvents() {
+    public PacketListener[] loadPacketEvents() {
         return null;
     }
     public Task[] loadRepeatingTasks() {

@@ -90,6 +90,12 @@ public class Config {
     }
 
     @SneakyThrows
+    public <T> boolean is(String path, Class<T> type) {
+
+        return (boolean) config.getClass().getMethod("is" + type.getSimpleName(), String.class).invoke(config, path);
+    }
+
+    @SneakyThrows
     public void save() {
         plugin.getLog().info("Saving " + name + ".yml...");
         config.save(new File(plugin.getDataFolder(), name + ".yml"));

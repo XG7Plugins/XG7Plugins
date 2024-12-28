@@ -1,11 +1,11 @@
-package com.xg7plugins.commands.defaultCommands;
+package com.xg7plugins.commands.defaultCommands.reloadCommand;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
-import com.xg7plugins.libs.xg7menus.builders.item.ItemBuilder;
+import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import lombok.Data;
 import org.bukkit.Bukkit;
@@ -15,34 +15,38 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Command(
-        name = "xg7pluginreload",
+        name = "reload",
         description = "Reloads the plugin",
-        syntax = "/xg7pluginreload [<plugin> or <invalidatejsoncache>] <[config, lang, database, events, all]>",
-        aliasesPath = "reload",
-        perm = "xg7plugins.command.reload"
+        syntax = "/xg7plugins reload <jsoncache or [config, lang, database, events, all]> (plugin)",
+        permission = "xg7plugins.command.reload",
+        isAsync = true
 )
 public class ReloadCommand implements ICommand {
 
-    private final ISubCommand[] subCommands = new ISubCommand[]{new JsonSubCommand(), new PluginSubCommand()};
+    private final ICommand[] subCommands = new ICommand[]{new JsonSubCommand(), new PluginSubCommand()};
 
     @Override
-    public ItemBuilder getIcon() {
-        return ItemBuilder.commandIcon(XMaterial.STONE_BUTTON, this, XG7Plugins.getInstance());
+    public Item getIcon() {
+        return Item.commandIcon(XMaterial.STONE_BUTTON, this);
     }
     @Override
-    public ISubCommand[] getSubCommands() {
+    public ICommand[] getSubCommands() {
         return subCommands;
     }
 
     @Override
-    public List<String> onTabComplete(org.bukkit.command.Command command, CommandSender sender, String label, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
         List<String> suggestions = new ArrayList<>();
 
-        if (args.length == 1) {
-            suggestions.addAll(subCommands[1].getOptions());
+        if (args.len() == 1) {
+            suggestions.add("config");
+            suggestions.add("lang");
+            suggestions.add("database");
+            suggestions.add("events");
+            suggestions.add("all");
             suggestions.add("invalidatejsoncache");
         }
-        if (args.length == 2) suggestions = Arrays.stream(subCommands[0].getSubCommands()).map(sub -> sub.getClass().getAnnotation(SubCommand.class).name()).collect(Collectors.toList());
+        if (args.len() == 2) suggestions.addAll(XG7Plugins.getInstance().getPlugins().keySet().stream().filter(s -> !s.equals("XG7Plugins")).collect(Collectors.toList()));
         return suggestions;
     }
 

@@ -69,7 +69,7 @@ public class Query {
 
         final Pair<String, Object> finalId = id;
 
-        return manager.executeUpdate(plugin, sql.toString(), params.toArray()).thenRun(() -> manager.getEntitiesCached().put(finalId.getSecond(), entity));
+        return manager.executeUpdate(plugin, sql.toString(), params.toArray()).thenRun(() -> manager.cacheEntity(finalId.getSecond(), entity));
 
 
     }
@@ -107,7 +107,7 @@ public class Query {
 
                 Entity.PKey pKey = f.getAnnotation(Entity.PKey.class);
                 if (pKey != null) {
-                    if (dbManager.getEntitiesCached().asMap().containsKey(value)) return (T) dbManager.getEntitiesCached().asMap().get(value);
+                    if (dbManager.getEntitiesCached().asMap().containsKey(value.toString())) return (T) dbManager.getEntitiesCached().asMap().get(value);
                     id = value;
                 }
 

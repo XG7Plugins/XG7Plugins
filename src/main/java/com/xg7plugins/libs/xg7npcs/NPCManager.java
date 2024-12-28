@@ -2,6 +2,8 @@ package com.xg7plugins.libs.xg7npcs;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC;
+import com.xg7plugins.tasks.Task;
+import com.xg7plugins.tasks.TaskState;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -12,16 +14,34 @@ import java.util.UUID;
 
 public class NPCManager {
     @Getter
-    private HashMap<String, NPC> npcs = new HashMap<>();
+    private final HashMap<String, NPC> npcs = new HashMap<>();
     @Getter
     private HashMap<Integer, Object> lookingNPCS = null;
-    private XG7Plugins plugin;
-    private String taskId;
-    private long delay;
+    private final XG7Plugins plugin;
+    @Getter
+    private final Task task;
 
     public NPCManager(XG7Plugins plugin) {
         this.plugin = plugin;
-        this.delay = plugin.getConfigsManager().getConfig("config").getTime("npcs-update-delay");
+        long delay = plugin.getConfigsManager().getConfig("config").getTime("npcs-update-delay").orElse(10000L);
+        this.task = new Task(
+                plugin,
+                "npcs",
+                true,
+                true,
+                delay,
+                TaskState.IDLE,
+                () -> npcs.values().forEach(npc -> Bukkit.getOnlinePlayers().forEach(player -> {
+                    World world = npc.getLocation().getWorld();
+                    if (!player.getWorld().equals(world) && npc.getNpcIDS().containsKey(player.getUniqueId())) {
+                        npc.destroy(player);
+                        return;
+                    }
+                    if (player.getWorld().equals(world) && !npc.getNpcIDS().containsKey(player.getUniqueId())) {
+                        npc.spawn(player);
+                    }
+                }))
+        );
     }
 
     public NPC getNPCByID(UUID uuid) {
@@ -47,7 +67,7 @@ public class NPCManager {
 
 
     public void registerLookingNPC(int id, Object entity) {
-        if (!(boolean)plugin.getConfigsManager().getConfig("config").get("npcs-look-at-player")) return;
+        if (!(boolean)plugin.getConfigsManager().getConfig("config").get("npcs-look-at-player", Boolean.class).orElse(false)) return;
 
         if (lookingNPCS == null) {
             lookingNPCS = new HashMap<>();
@@ -55,31 +75,14 @@ public class NPCManager {
         lookingNPCS.put(id, entity);
     }
     public void unregisterLookingNPC(int id) {
-        if (!(boolean)plugin.getConfigsManager().getConfig("config").get("npcs-look-at-player")) return;
+        if (!(boolean)plugin.getConfigsManager().getConfig("config").get("npcs-look-at-player", Boolean.class).orElse(false)) return;
 
         lookingNPCS.remove(id);
         if (lookingNPCS.isEmpty()) {
             lookingNPCS = null;
         }
     }
-
-    public void initTask() {
-        if (taskId != null) return;
-            this.taskId = plugin.getTaskManager().addRepeatingTask(plugin, "npcs", () -> npcs.values().forEach(npc -> Bukkit.getOnlinePlayers().forEach(player -> {
-                World world = npc.getLocation().getWorld();
-                if (!player.getWorld().equals(world) && npc.getNpcIDS().containsKey(player.getUniqueId())) {
-                    npc.destroy(player);
-                    return;
-                }
-                if (player.getWorld().equals(world) && !npc.getNpcIDS().containsKey(player.getUniqueId())) {
-                    npc.spawn(player);
-                }
-            })),delay);
-
-    }
     public void cancelTask() {
-        if (taskId == null) return;
-        plugin.getTaskManager().cancelTask(this.taskId);
-        taskId = null;
+        plugin.getTaskManager().cancelTask(task);
     }
 }

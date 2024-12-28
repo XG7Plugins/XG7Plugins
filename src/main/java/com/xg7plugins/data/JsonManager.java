@@ -8,46 +8,67 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 
 import java.io.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class JsonManager {
 
-    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private final Cache<String, Object> cache = Caffeine.newBuilder().expireAfterAccess(XG7Plugins.getInstance().getConfigsManager().getConfig("config").getTime("json-cache-expires"), TimeUnit.MINUTES).build();
+    private final Cache<String, Object> cache = Caffeine.newBuilder().expireAfterAccess(XG7Plugins.getInstance().getConfigsManager().getConfig("config").getTime("json-cache-expires").orElse(60 * 10 * 1000L), TimeUnit.MINUTES).build();
+
+    public void registerAdapter(Class<?> type, Object adapter) {
+        gson = new GsonBuilder().registerTypeAdapter(type, adapter).setPrettyPrinting().create();
+    }
 
     public void invalidateCache() {
         cache.invalidateAll();
     }
 
-    public <T> void saveJson(Plugin plugin, String path, T object) throws IOException {
-        plugin.getLog().info("Saving " + path + "...");
+    public <T> CompletableFuture<Void> saveJson(Plugin plugin, String path, T object) {
+        return CompletableFuture.runAsync(() -> {
+            plugin.getLog().info("Saving " + path + "...");
 
-        File file = new File(plugin.getDataFolder(), path);
-        if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
-        if (!file.exists()) file.createNewFile();
+            File file = new File(plugin.getDataFolder(), path);
+            if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+            if (!file.exists()) {
+                try {
+                    if (!file.createNewFile()) return;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
 
-        try (Writer writer = new BufferedWriter(new FileWriter(file, false))) {
-            gson.toJson(object, writer);
-        } catch (Exception e) {
-            plugin.getLog().severe("Erro ao serializar o objeto: " + e.getMessage());
-            throw e;
-        }
+            try (Writer writer = new BufferedWriter(new FileWriter(file, false))) {
+                gson.toJson(object, writer);
+            } catch (Exception e) {
+                plugin.getLog().severe("Erro ao serializar o objeto: " + e.getMessage());
+                e.printStackTrace();
+            }
 
-        cache.put(path, object);
+            cache.put(path, object);
 
-        plugin.getLog().info("Saved!");
+            plugin.getLog().info("Saved!");
+        }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
+
     }
 
 
-    public <T> T load(Plugin plugin, String path, Class<T> clazz) throws IOException {
-        if (cache.asMap().containsKey(path)) return (T) cache.getIfPresent(path);
-        File file = new File(plugin.getDataFolder(), path);
-        if (!file.exists()) saveJson(plugin, path, new Object());
-        T t = gson.fromJson(new FileReader(file), clazz);
-        cache.put(path, t);
-        return t;
+    public <T> CompletableFuture<T> load(Plugin plugin, String path, Class<T> clazz) {
+        if (cache.asMap().containsKey(path)) return CompletableFuture.completedFuture((T) cache.getIfPresent(path));
+        return CompletableFuture.supplyAsync(() -> {
+            File file = new File(plugin.getDataFolder(), path);
+            if (!file.exists()) saveJson(plugin, path, new Object()).join();
+            T t;
+            try {
+                t = gson.fromJson(new FileReader(file), clazz);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            cache.put(path, t);
+            return t;
+        }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
     }
 
 

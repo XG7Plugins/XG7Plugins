@@ -38,13 +38,13 @@ public class PlayerNMS {
 
     }
 
-    public void sendPacket(Object packet) {
+    public void sendPacket(Packet packet) {
         try {
             if (XG7Plugins.getMinecraftVersion() >= 19 && XG7Plugins.getMinecraftVersion() < 21) {
-                playerConnection.getMethod("a", ReflectionClass.of("net.minecraft.network.protocol.Packet").getAClass()).invoke(packet);
+                playerConnection.getMethod("a", NMSUtil.getNewerNMSClass("network.protocol.Packet").getAClass()).invoke(packet.getPacket());
                 return;
             }
-            playerConnection.getMethod("sendPacket", NMSUtil.getNMSClassViaVersion(17, "Packet", "network.protocol.Packet").getAClass()).invoke(packet);
+            playerConnection.getMethod("sendPacket", NMSUtil.getNMSClassViaVersion(17, "Packet", "network.protocol.Packet").getAClass()).invoke(packet.getPacket());
         } catch (Exception e) {
             e.printStackTrace();
         }

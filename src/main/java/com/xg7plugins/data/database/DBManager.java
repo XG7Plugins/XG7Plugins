@@ -20,7 +20,7 @@ public class DBManager {
 
     private final HashMap<String, Connection> connections = new HashMap<>();
     @Getter
-    private final Cache<Object, Entity> entitiesCached;
+    private final Cache<String, Entity> entitiesCached;
 
 
     @SneakyThrows
@@ -91,7 +91,7 @@ public class DBManager {
     }
 
     protected void cacheEntity(Object id, Entity entity) {
-        entitiesCached.put(id, entity);
+        entitiesCached.put(id.toString(), entity);
     }
 
     @SneakyThrows

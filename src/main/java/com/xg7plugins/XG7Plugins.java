@@ -3,8 +3,8 @@ package com.xg7plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.commands.defaultCommands.LangCommand;
-import com.xg7plugins.commands.defaultCommands.ReloadCommand;
-import com.xg7plugins.commands.defaultCommands.TaskCommand;
+import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
+import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
 import com.xg7plugins.commands.defaultCommands.TestCommand;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
@@ -13,8 +13,8 @@ import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.lang.LangItemTypeAdapter;
 import com.xg7plugins.data.lang.LangManager;
 import com.xg7plugins.data.lang.PlayerLanguage;
-import com.xg7plugins.events.Event;
-import com.xg7plugins.events.PacketEvent;
+import com.xg7plugins.events.Listener;
+import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.events.defaultevents.CommandAntiTab;
 import com.xg7plugins.events.defaultevents.CommandAntiTabOlder;
 import com.xg7plugins.events.defaultevents.JoinAndQuit;
@@ -38,6 +38,7 @@ import com.xg7plugins.events.packetevents.PacketEventManager1_7;
 import com.xg7plugins.libs.xg7scores.builder.ScoreBoardBuilder;
 import com.xg7plugins.menus.LangForm;
 import com.xg7plugins.tasks.CooldownManager;
+import com.xg7plugins.tasks.TPSCalculator;
 import com.xg7plugins.tasks.TaskManager;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -83,6 +84,7 @@ public final class XG7Plugins extends Plugin {
     }
 
     private DBManager databaseManager;
+    private TPSCalculator tpsCalculator;
     private LangManager langManager;
     private EventManager eventManager;
     private TaskManager taskManager;
@@ -104,6 +106,8 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void onEnable() {
         super.onEnable();
+        this.tpsCalculator = new TPSCalculator();
+        tpsCalculator.start();
         floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
         placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
@@ -159,6 +163,7 @@ public final class XG7Plugins extends Plugin {
 
     @Override
     public void onDisable() {
+        tpsCalculator.cancel();
         scoreManager.removePlayers();
         this.plugins.forEach((name, plugin) -> unregister(plugin));
         Bukkit.getOnlinePlayers().forEach(player -> {
@@ -171,11 +176,6 @@ public final class XG7Plugins extends Plugin {
         taskManager.shutdown();
     }
 
-    @Override
-    public void onReload() {
-
-    }
-
     public Class<? extends Entity>[] loadEntites() {
         return new Class[]{PlayerLanguage.class};
     }
@@ -185,13 +185,13 @@ public final class XG7Plugins extends Plugin {
     }
 
     @Override
-    public Event[] loadEvents() {
-        return new Event[]{new JoinAndQuit(), new ClickEventHandler(), new com.xg7plugins.libs.xg7npcs.event.ClickEventHandler(), minecraftVersion > 12 ? new CommandAntiTab() : null, new ScoreListener(), new MenuHandler(), new PlayerMenuHandler(menuManager)};
+    public Listener[] loadEvents() {
+        return new Listener[]{new JoinAndQuit(), new ClickEventHandler(), new com.xg7plugins.libs.xg7npcs.event.ClickEventHandler(), minecraftVersion > 12 ? new CommandAntiTab() : null, new ScoreListener(), new MenuHandler(), new PlayerMenuHandler(menuManager)};
     }
 
     @Override
-    public PacketEvent[] loadPacketEvents() {
-        return minecraftVersion < 13 ? new PacketEvent[]{new CommandAntiTabOlder()} : super.loadPacketEvents();
+    public PacketListener[] loadPacketEvents() {
+        return minecraftVersion < 13 ? new PacketListener[]{new CommandAntiTabOlder()} : super.loadPacketEvents();
     }
 
     @Override
@@ -239,6 +239,18 @@ public final class XG7Plugins extends Plugin {
         return XG7Plugins.getInstance().getTaskManager();
     }
 
+    public static void reload(Plugin plugin) {
+        XG7Plugins xg7Plugins = XG7Plugins.getInstance();
+
+        if (plugin == xg7Plugins) {
+            return;
+        }
+
+        unregister(plugin);
+        Bukkit.getPluginManager().disablePlugin(plugin);
+        Bukkit.getPluginManager().enablePlugin(plugin);
+        register(plugin);
+    }
 
     public static @NotNull XG7Plugins getInstance() {
         return getPlugin(XG7Plugins.class);

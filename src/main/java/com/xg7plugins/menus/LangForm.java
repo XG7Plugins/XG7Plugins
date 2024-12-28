@@ -14,7 +14,6 @@ import org.geysermc.cumulus.util.FormImage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class LangForm extends SimpleForm {
 

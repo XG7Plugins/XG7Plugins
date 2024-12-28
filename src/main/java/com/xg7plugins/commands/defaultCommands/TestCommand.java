@@ -2,27 +2,27 @@ package com.xg7plugins.commands.defaultCommands;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.libs.xg7menus.builders.item.ItemBuilder;
+import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
+import org.bukkit.command.CommandSender;
 
 @Command(
         name = "test",
         description = "test",
         syntax = "test",
-        aliasesPath = "test"
+        permission = "xg7plugins.commands.test"
 )
 public class TestCommand implements ICommand {
     @Override
-    public ItemBuilder getIcon() {
+    public Item getIcon() {
         return null;
     }
 
     @Override
-    public void onCommand(org.bukkit.command.Command command, org.bukkit.command.CommandSender sender, String label) {
-        Text.format("&aCCCCCCCCC", XG7Plugins.getInstance()).send(sender);
-
-
+    public void onCommand(CommandSender sender, CommandArgs args) {
+        Text.format("lang:[commands.test]", XG7Plugins.getInstance()).send(sender);
     }
 
 }

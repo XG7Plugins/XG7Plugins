@@ -1,6 +1,6 @@
 package com.xg7plugins.events;
 
-public interface Event {
+public interface Listener {
 
     boolean isEnabled();
 

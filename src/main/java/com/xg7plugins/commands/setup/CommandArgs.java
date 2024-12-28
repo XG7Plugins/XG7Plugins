@@ -12,6 +12,10 @@ public class CommandArgs {
 
     private final String[] args;
 
+    public int len() {
+        return args.length;
+    }
+
     @SneakyThrows
     public <T> T get(int index, Class<T> type) {
 

@@ -3,7 +3,6 @@ package com.xg7plugins.commands.setup;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;

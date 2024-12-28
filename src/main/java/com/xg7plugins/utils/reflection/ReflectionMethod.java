@@ -33,6 +33,10 @@ public class ReflectionMethod {
         return new ReflectionMethod(object, object.getClass().getDeclaredMethod(name, parameterTypes));
     }
 
+    public boolean hasAnnotation(Class<? extends Annotation> annotationClass) {
+        return method.isAnnotationPresent(annotationClass);
+    }
+
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
         return method.getAnnotation(annotationClass);
     }

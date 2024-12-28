@@ -58,56 +58,56 @@ public class LangMenu extends PageMenu {
 
     @Override
     public void onClick(MenuEvent event) {
-        if (event instanceof ClickEvent) {
-            ClickEvent clickEvent = (ClickEvent) event;
-            Player player = (Player) clickEvent.getWhoClicked();
+        event.setCancelled(true);
+        if (!(event instanceof ClickEvent)) return;
+        ClickEvent clickEvent = (ClickEvent) event;
+        Player player = (Player) clickEvent.getWhoClicked();
 
-            PageMenuHolder holder = (PageMenuHolder) clickEvent.getInventoryHolder();
+        PageMenuHolder holder = (PageMenuHolder) clickEvent.getInventoryHolder();
 
-            switch (clickEvent.getClickedSlot()) {
-                case 45:
-                    holder.previousPage();
-                    break;
-                case 49:
-                    player.closeInventory();
-                    break;
-                case 53:
-                    holder.nextPage();
-                    break;
-                default:
-                    if (clickEvent.getClickedItem() == null || clickEvent.getClickedItem().isAir()) return;
+        switch (clickEvent.getClickedSlot()) {
+            case 45:
+                holder.previousPage();
+                break;
+            case 49:
+                player.closeInventory();
+                break;
+            case 53:
+                holder.nextPage();
+                break;
+            default:
+                if (clickEvent.getClickedItem() == null || clickEvent.getClickedItem().isAir()) return;
 
-                    String langName = clickEvent.getClickedItem().getTag("lang-id", String.class).orElse(null);
-                    boolean selected = clickEvent.getClickedItem().getTag("selected", Boolean.class).orElse(false);
+                String langName = clickEvent.getClickedItem().getTag("lang-id", String.class).orElse(null);
+                boolean selected = clickEvent.getClickedItem().getTag("selected", Boolean.class).orElse(false);
 
-                    if (selected) {
-                        Text.formatComponent("lang:[lang-menu.already-selected]", plugin).send(player);
-                        return;
-                    }
+                if (selected) {
+                    Text.formatComponent("lang:[lang-menu.already-selected]", plugin).send(player);
+                    return;
+                }
 
-                    if (XG7Plugins.getInstance().getCooldownManager().containsPlayer("lang-change", player)) {
+                if (XG7Plugins.getInstance().getCooldownManager().containsPlayer("lang-change", player)) {
 
-                        double cooldownToToggle = XG7Plugins.getInstance().getCooldownManager().getReamingTime("lang-change", player);
+                    double cooldownToToggle = XG7Plugins.getInstance().getCooldownManager().getReamingTime("lang-change", player);
 
-                        Text.formatComponent("lang:[lang-menu.cooldown-to-toggle]",plugin)
-                                .replace("[MILLISECONDS]", String.valueOf((cooldownToToggle - System.currentTimeMillis())))
-                                .replace("[SECONDS]", String.valueOf((int)((cooldownToToggle - System.currentTimeMillis()) / 1000)))
-                                .replace("[MINUTES]", String.valueOf((int)((cooldownToToggle - System.currentTimeMillis()) / 60000)))
-                                .replace("[HOURS]", String.valueOf((int)((cooldownToToggle - System.currentTimeMillis()) / 3600000)))
-                                .send(player);
-                    }
+                    Text.formatComponent("lang:[lang-menu.cooldown-to-toggle]", plugin)
+                            .replace("[MILLISECONDS]", String.valueOf((cooldownToToggle - System.currentTimeMillis())))
+                            .replace("[SECONDS]", String.valueOf((int) ((cooldownToToggle - System.currentTimeMillis()) / 1000)))
+                            .replace("[MINUTES]", String.valueOf((int) ((cooldownToToggle - System.currentTimeMillis()) / 60000)))
+                            .replace("[HOURS]", String.valueOf((int) ((cooldownToToggle - System.currentTimeMillis()) / 3600000)))
+                            .send(player);
+                }
 
-                    PlayerLanguageDAO dao = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO();
+                PlayerLanguageDAO dao = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO();
 
-                    dao.update(new PlayerLanguage(player.getUniqueId(), langName)).thenAccept(r -> {
-                        XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
-                        Text.formatComponent("lang:[lang-menu.changed]", plugin).send(player);
-                        refresh(holder);
-                    });
+                dao.update(new PlayerLanguage(player.getUniqueId(), langName)).thenAccept(r -> {
+                    XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
+                    Text.formatComponent("lang:[lang-menu.changed]", plugin).send(player);
+                    refresh(holder);
+                });
 
-                    XG7Plugins.getInstance().getCooldownManager().addCooldown(player, "lang-change", XG7Plugins.getInstance().getConfig("config").getTime("cooldown-to-toggle-lang").orElse(10000L));
+                XG7Plugins.getInstance().getCooldownManager().addCooldown(player, "lang-change", XG7Plugins.getInstance().getConfig("config").getTime("cooldown-to-toggle-lang").orElse(10000L));
 
-            }
         }
     }
 }

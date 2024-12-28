@@ -30,9 +30,9 @@ public abstract class CustomForm extends Form<org.geysermc.cumulus.form.CustomFo
 
             components(player).stream().map(component -> component.build(player, plugin)).forEach(builder::component);
 
-            builder.invalidResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask("menus", () -> onError(form, response, player)));
-            builder.validResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask("menus", () -> onFinish(form, response, player)));
-            builder.closedResultHandler((form) -> XG7Plugins.taskManager().runAsyncTask("menus", () -> onClose(form, player)));
+            builder.invalidResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onError(form, response, player)));
+            builder.validResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onFinish(form, response, player)));
+            builder.closedResultHandler((form) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onClose(form, player)));
 
             if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) return false;
 

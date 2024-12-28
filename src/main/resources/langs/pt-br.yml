@@ -26,6 +26,13 @@ reload-message:
 go-back-item: "Voltar"
 go-next-item: "Avançar"
 close-item: "Fechar"
+refresh-item: "Recarregar página"
+
+confirmation-menu:
+  title: "&aTem certeza que deseja fazer isso?"
+
+  yes-item: "&cSim"
+  no-item: "&aNão"
 
 lang-menu:
   title: "Idiomas"
@@ -49,33 +56,22 @@ tasks-menu:
     - "&fTask plugin: &e[PLUGIN]"
     - " "
     - "&fClick esquerdo -> &aCopiar id"
-    - "&fClick direito -> &cDeletar Task"
+    - "[IF: %task_is_running%] &fClick direito -> &cParar Task"
+    - "[IF: %task_is_running%] &fClick direito -> &cRecomeçar Task"
 
-  executor-item:
-    - "&fNome do executor: &b[NAME]"
-    - " "
-    - "&fClick esquerdo -> &aCopiar nome"
-    - "&fClick direito -> &cFechar Executor"
 
   copy-to-clipboard: "Clique [CLICK action=%COPY_TO_CLICKBOARD% value=%[ID]%]&baqui&r[/CLICK] para copiar o id!"
 
   notes:
-    - "Uso de ram: [RAM]"
-    - "TPS: [TPS]"
-
-  item-tasks-running:
-    name: "&fTasks rodando: &a[TASKS]"
-    lore:
-      - "&fClique para ver as tasks que estão sendo executadas!"
-
-  item-executors:
-    name: "&fExecutores: &a[EXECUTORS]"
-    lore:
-      - "&fClique para ver os executores!"
+    - "&fUso de ram: &9[RAM]MB"
+    - "&fTPS: &9[TPS]"
+    - "&fTarefas rodando: &9[TASKS]"
 
 task-command:
   not-found: "Task não encontrada!"
   deleted: "Task deletada!"
+  stopped: "Task parada!"
+  resumed: "Task recomeçada!"
 
 commands-menu:
 
@@ -88,14 +84,3 @@ commands-menu:
     desc: "&fDescrição: &e[DESCRIPTION]"
     perm: "&fPermissão: &c[PERMISSION]"
     player-only: "&fSó players podem usar: &b[PLAYER_ONLY]"
-
-subcommands-menu:
-
-  if-subcommand: "&aClique para ver os subcomandos!"
-
-  command-item:
-    usage: "&fUso: &a[SYNTAX]"
-    desc: "&fDescrição: &e[DESCRIPTION]"
-    perm: "&fPermissão: &c[PERMISSION]"
-    player-only: "&fSó players podem usar: &b[PLAYER_ONLY]"
-    type: "&fTipo: &b[TYPE]"

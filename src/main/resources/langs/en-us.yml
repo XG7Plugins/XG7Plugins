@@ -27,6 +27,13 @@ reload-message:
 go-back-item: "Back"
 go-next-item: "Next"
 close-item: "Close"
+refresh-item: "Refresh page"
+
+confirmation-menu:
+  title: "&cAre you sure you want to do this?"
+
+  yes-item: "&cYes"
+  no-item: "&aNo"
 
 lang-menu:
   title: "Languages"
@@ -50,32 +57,21 @@ tasks-menu:
     - "&fTask plugin: &e[PLUGIN]"
     - " "
     - "&fLeft click -> &aCopy id"
-    - "&fRight click -> &cDelete Task"
-  executor-item:
-    - "&fExecutor name: &b[NAME]"
-    - " "
-    - "&fClick esquerdo -> &aCopy name"
-    - "&fClick direito -> &cShutdown Executor"
+    - "[IF: %task_is_running%] &fRight click -> &cStop Task"
+    - "[IF: %task_is_not_running%] &fRight click -> &aRestart task"
 
   copy-to-clipboard: "Click [CLICK action=%COPY_TO_CLICKBOARD% value=%[ID]%]&bhere&r[/CLICK] to copy the task id!"
 
   notes:
-    - "Server RAM usage: [RAM]"
-    - "Server TPS: [TPS]"
-
-  item-tasks-running:
-    name: "&fTasks running: &a[TASKS]"
-    lore:
-      - "&fClick to see the tasks running!"
-
-  item-executors:
-    name: "&fExecutors: &a[EXECUTORS]"
-    lore:
-      - "&fClick to see the executors!"
+    - "&fServer RAM usage: &9[RAM]MB"
+    - "&fServer TPS: &9[TPS]"
+    - "&fTasks running: &9[TASKS]"
 
 task-command:
   not-found: "Task not found!"
   deleted: "Task deleted!"
+  stopped: "Task stopped!"
+  restarted: "Task restarted!"
 
 commands-menu:
 
@@ -88,14 +84,3 @@ commands-menu:
     desc: "&fDescription: &e[DESCRIPTION]"
     perm: "&fPermission: &c[PERMISSION]"
     player-only: "&fOnly players can use: &b[PLAYER_ONLY]"
-
-subcommands-menu:
-
-  if-subcommand: "&aClick to see the subcommands!"
-
-  command-item:
-    usage: "&fUsage: &a[SYNTAX]"
-    desc: "&fDescription: &e[DESCRIPTION]"
-    perm: "&fPermission: &c[PERMISSION]"
-    player-only: "&fOnly players can use: &b[PLAYER_ONLY]"
-    type: "&fType: &b[TYPE]"

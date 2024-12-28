@@ -5,7 +5,6 @@ import com.xg7plugins.libs.xg7menus.MenuPrevents;
 import com.xg7plugins.libs.xg7menus.events.MenuEvent;
 import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.libs.xg7menus.menus.gui.Menu;
-import com.xg7plugins.libs.xg7menus.MenuPermissions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 

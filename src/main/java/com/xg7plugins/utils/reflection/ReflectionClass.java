@@ -96,6 +96,14 @@ public class ReflectionClass {
     public ReflectionObject castToRObject(Object o) {
         return new ReflectionObject(aClass.cast(o));
     }
+    public boolean isInstance(Object object) {
+        return aClass.isInstance(object);
+    }
+    public boolean hasAnnotation(Class<? extends Annotation> annotationClass) {
+        return aClass.isAnnotationPresent(annotationClass);
+    }
+
+
     @SneakyThrows
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
         return aClass.getAnnotation(annotationClass);

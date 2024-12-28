@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
 import com.xg7plugins.utils.reflection.nms.NMSUtil;
 import com.xg7plugins.utils.reflection.ReflectionClass;
@@ -77,6 +79,30 @@ public class Item {
     }
     public static Item air() {
         return new Item(new ItemStack(Material.AIR));
+    }
+
+    public static Item commandIcon(XMaterial material, ICommand command) {
+        Item item = new Item(material.parseItem());
+        Command commandConfig = command.getClass().getAnnotation(com.xg7plugins.commands.setup.Command.class);
+        item.name("&b/&f" + commandConfig.name());
+        item.lore(
+                "lang:[commands-menu.command-item.usage]",
+                "lang:[commands-menu.command-item.description]",
+                "lang:[commands-menu.command-item.permission]",
+                "lang:[commands-menu.command-item.player-only]",
+                "lang:[commands-menu.if-subcommand]"
+        );
+        item.setBuildPlaceholders(
+                new HashMap<String, String>() {
+                    {
+                        put("[SYNTAX]", commandConfig.syntax());
+                        put("[DESCRIPTION]", commandConfig.description());
+                        put("[PERMISSION]", commandConfig.permission());
+                        put("[PLAYER-ONLY]", String.valueOf(commandConfig.isPlayerOnly()));
+                    }
+                }
+        );
+        return item;
     }
 
     public Item slot(int slot) {

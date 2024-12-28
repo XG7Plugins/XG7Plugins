@@ -38,7 +38,7 @@ public class EntityProcessor {
         return CompletableFuture.runAsync(() -> {
             try {
                 StringBuilder builder = new StringBuilder();
-                builder.append("CREATE TABLE IF NOT EXISTS " + clazz.getSimpleName() + "(");
+                builder.append("CREATE TABLE IF NOT EXISTS ").append(clazz.getSimpleName()).append("(");
                 Class<?> oneToManyClass = null;
                 Field[] declaredFields = clazz.getDeclaredFields();
                 List<String> fkeys = new ArrayList<>();
@@ -74,7 +74,7 @@ public class EntityProcessor {
                         continue;
                     }
 
-                    builder.append(field.getName() + " " + getSQLType(field.getType()) + " NOT NULL");
+                    builder.append(field.getName()).append(" ").append(getSQLType(field.getType())).append(" NOT NULL");
 
                     if (i == declaredFields.length - 1) break;
 
@@ -104,7 +104,7 @@ public class EntityProcessor {
         return CompletableFuture.runAsync(() -> {
             try {
                 StringBuilder builder = new StringBuilder();
-                builder.append("INSERT INTO " + entity.getClass().getSimpleName() + " VALUES (");
+                builder.append("INSERT INTO ").append(entity.getClass().getSimpleName()).append(" VALUES (");
 
                 Arrays.stream(entity.getClass().getDeclaredFields()).filter(field -> !field.getType().equals(List.class)).map(field -> "?,").forEach(builder::append);
                 builder.replace(builder.length() - 1, builder.length(), ")");
@@ -151,7 +151,7 @@ public class EntityProcessor {
     public static CompletableFuture<Boolean> exists(Plugin plugin, Class<? extends Entity> entityClass, String idColumn, Object id) {
         DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
-        if (manager.getEntitiesCached().asMap().containsKey(id)) return CompletableFuture.completedFuture(true);
+        if (manager.getEntitiesCached().asMap().containsKey(id.toString())) return CompletableFuture.completedFuture(true);
 
         return manager.executeNormalStatement(plugin, "SELECT EXISTS (SELECT 1 FROM " + entityClass.getSimpleName() +" WHERE " + idColumn + " = ?)", id).thenCompose(r -> {
             if (r == null) throw new RuntimeException("Error while executing query");

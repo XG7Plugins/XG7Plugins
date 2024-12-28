@@ -12,7 +12,6 @@ public @interface Command {
     String name();
     String description();
     String syntax();
-    String[] aliases() default {};
     String permission() default "";
 
     boolean isAsync() default false;

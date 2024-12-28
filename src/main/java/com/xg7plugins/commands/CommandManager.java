@@ -62,7 +62,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             Command commandSetup = command.getClass().getAnnotation(Command.class);
 
-            String aliases = plugin.getConfigsManager().getConfig("commands").get(commandSetup.name(), String.class).orElse(null);
+            List<String> aliases = plugin.getConfigsManager().getConfig("commands").get(commandSetup.name(), List.class).orElse(null);
             if (aliases == null) return;
 
             PluginCommand pluginCommand = (PluginCommand) ReflectionClass.of(PluginCommand.class)
@@ -71,11 +71,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     .getObject();
 
             if (!aliases.isEmpty()) {
-                List<String> aliasesList = Arrays.asList(aliases.split(", "));
-                aliasesList.add(commandSetup.name());
+                aliases.add(commandSetup.name());
 
                 List<String> newAliases = new ArrayList<>();
-                for (String alias : aliasesList) {
+                for (String alias : aliases) {
                     for (String plAlias : pluginCommand.getAliases()) {
                         newAliases.add(plAlias + alias);
                     }
@@ -159,12 +158,16 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             final ICommand finalCommand = command;
 
-            XG7Plugins.taskManager().runAsyncTask("commands", () -> finalCommand.onCommand(commandSender,commandArgs));
+            XG7Plugins.taskManager().runAsyncTask(plugin,"commands", () -> finalCommand.onCommand(commandSender,commandArgs));
 
             return true;
         }
 
-        command.onCommand(commandSender,commandArgs);
+        try {
+            command.onCommand(commandSender,commandArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return true;
     }
@@ -182,7 +185,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         for (ICommand subCommand : subCommands) {
             Command configs = subCommand.getClass().getAnnotation(Command.class);
 
-            if (configs.name().equalsIgnoreCase(args[index]) || Arrays.asList(configs.aliases()).contains(args[index])) {
+            if (configs.name().equalsIgnoreCase(args[index]) || plugin.getConfigsManager().getConfig("commands").get(configs.name(), List.class).orElse(null).contains(args[index])) {
                 subCommandChosen = subCommand;
                 break;
             }
@@ -220,12 +223,16 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             final ICommand finalSubCommand = subCommandChosen;
 
-            XG7Plugins.taskManager().runAsyncTask("commands", () -> finalSubCommand.onCommand(sender,commandArgs));
+            XG7Plugins.taskManager().runAsyncTask(plugin,"commands", () -> finalSubCommand.onCommand(sender,commandArgs));
 
             return true;
         }
 
-        subCommandChosen.onCommand(sender,commandArgs);
+        try {
+            subCommandChosen.onCommand(sender,commandArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return true;
     }
@@ -234,6 +241,25 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull org.bukkit.command.Command cmd, @NotNull String s, @NotNull String[] strings) {
-        return commands.get(cmd.getName()).onTabComplete(commandSender,new CommandArgs(strings));
+
+        PluginConfigurations plConfig = plugin.getClass().getAnnotation(PluginConfigurations.class);;
+
+        ICommand command = commands.get(cmd.getName());
+
+        if (command instanceof MainCommand) {
+            if (strings.length == 0) {
+                return new ArrayList<>();
+            }
+
+            if (strings.length > 1) {
+
+                command = commands.get(plConfig + strings[0]);
+
+                strings = Arrays.copyOfRange(strings, 1, strings.length - 1);
+            }
+
+        }
+
+        return command.onTabComplete(commandSender,new CommandArgs(strings));
     }
 }

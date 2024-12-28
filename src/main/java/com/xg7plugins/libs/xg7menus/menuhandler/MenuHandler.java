@@ -1,6 +1,6 @@
 package com.xg7plugins.libs.xg7menus.menuhandler;
 
-import com.xg7plugins.events.Event;
+import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import com.xg7plugins.libs.xg7menus.MenuPrevents;
 import com.xg7plugins.libs.xg7menus.events.ClickEvent;
@@ -16,7 +16,7 @@ import org.bukkit.inventory.Inventory;
 
 import java.util.stream.Collectors;
 
-public class MenuHandler implements Event {
+public class MenuHandler implements Listener {
     @Override
     public boolean isEnabled() {
         return true;

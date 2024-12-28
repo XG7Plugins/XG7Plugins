@@ -2,6 +2,8 @@ package com.xg7plugins.libs.xg7holograms;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
+import com.xg7plugins.tasks.Task;
+import com.xg7plugins.tasks.TaskState;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -12,14 +14,33 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class HologramsManager {
 
-    private final long delay;
-    private XG7Plugins plugin;
+    private final XG7Plugins plugin;
 
-    private String taskId;
+    private final Task task;
 
     public HologramsManager(XG7Plugins plugin) {
         this.plugin = plugin;
-        this.delay = plugin.getConfigsManager().getConfig("config").getTime("holograms-update-delay").orElse(100L);
+        long delay = plugin.getConfigsManager().getConfig("config").getTime("holograms-update-delay").orElse(100L);
+        this.task = new Task(
+                plugin,
+                "holograms",
+                true,
+                true,
+                delay,
+                TaskState.IDLE,
+                () -> holograms.values().forEach(hologram -> Bukkit.getOnlinePlayers().forEach(player -> {
+                    World world = hologram.getLocation().getWorld();
+                    if (!player.getWorld().equals(world) && hologram.getIds().containsKey(player.getUniqueId())) {
+                        hologram.destroy(player);
+                        return;
+                    }
+                    if (player.getWorld().equals(world) && !hologram.getIds().containsKey(player.getUniqueId())) {
+                        hologram.create(player);
+                        return;
+                    }
+                    hologram.update(player);
+                }))
+        );
     }
 
     private HashMap<String, Hologram> holograms = new HashMap<>();
@@ -41,26 +62,8 @@ public class HologramsManager {
     public void removePlayer(Player player) {
         holograms.values().forEach(hologram -> hologram.destroy(player));
     }
-
-    public void initTask() {
-        if (taskId != null) return;
-        this.taskId = plugin.getTaskManager().addAsyncRepeatingTask(plugin, "holograms", () -> holograms.values().forEach(hologram -> Bukkit.getOnlinePlayers().forEach(player -> {
-            World world = hologram.getLocation().getWorld();
-            if (!player.getWorld().equals(world) && hologram.getIds().containsKey(player.getUniqueId())) {
-                hologram.destroy(player);
-                return;
-            }
-            if (player.getWorld().equals(world) && !hologram.getIds().containsKey(player.getUniqueId())) {
-                hologram.create(player);
-                return;
-            }
-            hologram.update(player);
-        })),delay);
-    }
     public void cancelTask() {
-        if (taskId == null) return;
-        plugin.getTaskManager().cancelTask(this.taskId);
-        taskId = null;
+        plugin.getTaskManager().cancelTask(task);
     }
 
 

@@ -32,11 +32,11 @@ public abstract class PlayerMenu extends BaseMenu {
             playerOldItems.remove(player.getUniqueId());
         }
 
-        PlayerMenuHolder holder = XG7Plugins.getInstance().getNewMenuManagerTest().getPlayerMenusMap().get(player.getUniqueId());
+        PlayerMenuHolder holder = XG7Plugins.getInstance().getMenuManager().getPlayerMenusMap().get(player.getUniqueId());
 
         MenuEvent event = new MenuEvent(player, MenuEvent.ClickAction.UNKNOWN, holder, player.getLocation());
 
-        XG7Plugins.getInstance().getNewMenuManagerTest().removePlayerMenu(player.getUniqueId());
+        XG7Plugins.getInstance().getMenuManager().removePlayerMenu(player.getUniqueId());
 
         onClose(event);
     }
