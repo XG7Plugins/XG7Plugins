@@ -1,4 +1,4 @@
-package com.xg7plugins.commands.defaultCommands.reloadCommand;
+package com.xg7plugins.commands.defaultCommands.reloadCommand.subcommands;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
