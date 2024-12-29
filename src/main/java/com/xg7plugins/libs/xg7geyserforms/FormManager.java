@@ -2,6 +2,7 @@ package com.xg7plugins.libs.xg7geyserforms;
 
 import com.xg7plugins.libs.xg7geyserforms.forms.Form;
 import org.bukkit.entity.Player;
+import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,15 @@ public class FormManager {
     }
     public boolean contaninsForm(String id) {
         return creators.containsKey(id);
+    }
+
+    public boolean sendForm(Player player, String form) {
+        if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) return false;
+        if (!creators.containsKey(form)) return false;
+
+        creators.get(form).send(player);
+
+        return true;
     }
 
 }

@@ -13,7 +13,6 @@ import com.xg7plugins.libs.xg7menus.menus.gui.PageMenu;
 import com.xg7plugins.libs.xg7menus.menus.holders.PageMenuHolder;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 
 import java.util.ArrayList;
 import java.util.Arrays;

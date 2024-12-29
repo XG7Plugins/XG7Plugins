@@ -105,6 +105,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         ICommand command = commands.get(cmd.getName());
 
         if (command instanceof MainCommand) {
+
             if (strings.length == 0) {
                 Text.format("lang:[commands.syntax-error]",XG7Plugins.getInstance())
                         .replace("[SYNTAX]", cmd.getUsage())

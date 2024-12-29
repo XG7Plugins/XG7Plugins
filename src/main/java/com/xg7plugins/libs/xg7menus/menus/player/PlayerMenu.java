@@ -58,7 +58,7 @@ public abstract class PlayerMenu extends BaseMenu {
 
         PlayerMenuHolder holder = new PlayerMenuHolder(id, plugin, this, player);
 
-        XG7Plugins.getInstance().getNewMenuManagerTest().addPlayerMenu(player.getUniqueId(), holder);
+        XG7Plugins.getInstance().getMenuManager().addPlayerMenu(player.getUniqueId(), holder);
 
         putItems(player, holder);
 

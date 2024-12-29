@@ -37,8 +37,6 @@ public abstract class ModalForm extends Form<org.geysermc.cumulus.form.ModalForm
             builder.validResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onFinish(form, response, player)));
             builder.closedResultHandler((form) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onClose(form, player)));
 
-            if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) return false;
-
             FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
 
             return true;

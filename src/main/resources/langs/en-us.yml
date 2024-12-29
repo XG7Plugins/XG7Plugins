@@ -35,6 +35,8 @@ confirmation-menu:
   yes-item: "&cYes"
   no-item: "&aNo"
 
+lang-not-found: "&cLanguage not found!"
+
 lang-menu:
   title: "Languages"
 

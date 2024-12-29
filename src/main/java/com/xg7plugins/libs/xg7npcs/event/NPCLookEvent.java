@@ -12,7 +12,7 @@ public class NPCLookEvent implements Listener {
 
     @Override
     public boolean isEnabled() {
-        return XG7Plugins.getInstance().getConfigsManager().getConfig("config").get("npcs-look-at-player");
+        return XG7Plugins.getInstance().getConfigsManager().getConfig("config").get("npcs-look-at-player", Boolean.class).orElse(false);
     }
 
     @EventHandler
