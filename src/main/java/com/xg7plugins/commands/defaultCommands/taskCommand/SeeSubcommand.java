@@ -24,7 +24,8 @@ import java.util.List;
         name = "see",
         description = "See Task",
         syntax = "/xg7plugins tasks see <ID>",
-        isAsync = true
+        isAsync = true,
+        permission = "xg7plugins.command.tasks.see"
 )
 public class SeeSubcommand implements ICommand {
     @Override
@@ -46,7 +47,7 @@ public class SeeSubcommand implements ICommand {
 
         if (sender instanceof Player) {
 
-            Config lang = XG7Plugins.getInstance().getLangManager() == null ? XG7Plugins.getInstance().getConfig("messages") : Config.of(XG7Plugins.getInstance(), XG7Plugins.getInstance().getLangManager().getLangByPlayer(XG7Plugins.getInstance(), player).join());
+            Config lang = XG7Plugins.getInstance().getLangManager() == null ? XG7Plugins.getInstance().getConfig("messages") : Config.of(XG7Plugins.getInstance(), XG7Plugins.getInstance().getLangManager().getLangByPlayer(XG7Plugins.getInstance(), (Player) sender).join());
 
 
             Item builder = Item.from(XMaterial.REPEATER.parseMaterial());

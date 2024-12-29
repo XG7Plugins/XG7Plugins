@@ -4,6 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ public class HologramsManager {
 
     private final XG7Plugins plugin;
 
+    @Getter
     private final Task task;
 
     public HologramsManager(XG7Plugins plugin) {

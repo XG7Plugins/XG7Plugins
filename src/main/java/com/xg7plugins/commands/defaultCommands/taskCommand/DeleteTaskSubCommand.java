@@ -16,7 +16,8 @@ import java.util.UUID;
         name = "delete",
         description = "Delete Task",
         syntax = "/xg7plugins tasks delete <ID>",
-        isAsync = true
+        isAsync = true,
+        permission = "xg7plugins.command.tasks.delete"
 )
 public class DeleteTaskSubCommand implements ICommand {
     @Override

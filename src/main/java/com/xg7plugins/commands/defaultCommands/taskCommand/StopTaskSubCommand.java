@@ -14,7 +14,8 @@ import org.bukkit.command.CommandSender;
         name = "stop",
         description = "Stop Task",
         syntax = "/xg7plugins tasks stop <ID>",
-        isAsync = true
+        isAsync = true,
+        permission = "xg7plugins.command.tasks.stop"
 )
 public class StopTaskSubCommand implements ICommand {
     @Override

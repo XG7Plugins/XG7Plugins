@@ -100,6 +100,12 @@ public class TaskManager {
 
         cancelTask(task);
     }
+    public void cancelTasks(Plugin plugin) {
+        tasks.keySet().stream()
+                .filter(s -> s.startsWith(plugin.getName() + ":"))
+                .map(tasks::get)
+                .forEach(this::cancelTask);
+    }
     public void cancelTask(String id) {
         Task task = tasks.get(id);
         if (task == null) return;

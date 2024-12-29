@@ -8,8 +8,7 @@ import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.utils.Location;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.reflection.*;
-import com.xg7plugins.utils.reflection.nms.NMSUtil;
-import com.xg7plugins.utils.reflection.nms.PlayerNMS;
+import com.xg7plugins.utils.reflection.nms.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,31 +17,33 @@ import java.util.*;
 
 public class NPC1_17_1_XX extends NPC {
 
+    private static ReflectionClass craftWorldClass = NMSUtil.getCraftBukkitClass("CraftWorld");
     private static final ReflectionClass entityPlayerClass = NMSUtil.getNewerNMSClass("server.level.EntityPlayer");
     private static final ReflectionClass minecraftServerClass = NMSUtil.getNewerNMSClass("server.MinecraftServer");
     private static final ReflectionClass worldServerClass = NMSUtil.getNewerNMSClass("server.level.WorldServer");
     private static final ReflectionClass entityPoseClass = NMSUtil.getNewerNMSClass("world.entity.EntityPose");
-    private static final ReflectionClass packetPlayOutPlayerInfoClass = XG7Plugins.getMinecraftVersion() >= 19 ? null : NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutPlayerInfo");
-    private static final ReflectionClass packetPlayOutScoreboardTeamClass = NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutScoreboardTeam");
-    private static final ReflectionClass enumPlayerInfoActionClass = XG7Plugins.getMinecraftVersion() >= 19 ? null : ReflectionClass.of(packetPlayOutPlayerInfoClass.getClassInside("EnumPlayerInfoAction"));
-    private static final ReflectionClass packetPlayOutNamedEntitySpawnClass = XG7Plugins.getMinecraftVersion() > 20 ? null : NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutNamedEntitySpawn");
-    private static final ReflectionClass packetPlayOutEntityHeadRotationClass = NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutEntityHeadRotation");
-    private static final ReflectionClass packetPlayOutEntityLookClass = NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutEntity$PacketPlayOutEntityLook");
-    private static final ReflectionClass packetPlayOutEntityEquipmentClass = NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutEntityEquipment");
+    private static final PacketClass packetPlayOutPlayerInfoClass = XG7Plugins.getMinecraftVersion() >= 19 ? null : new PacketClass("PacketPlayOutPlayerInfo");
+    private static final PacketClass packetPlayOutScoreboardTeamClass = new PacketClass("PacketPlayOutScoreboardTeam");
+    private static final ReflectionClass enumPlayerInfoActionClass = XG7Plugins.getMinecraftVersion() >= 19 ? null : ReflectionClass.of(packetPlayOutPlayerInfoClass.getReflectionClass().getClassInside("EnumPlayerInfoAction"));
+    private static final PacketClass packetPlayOutNamedEntitySpawnClass = XG7Plugins.getMinecraftVersion() > 20 ? null : new PacketClass("PacketPlayOutNamedEntitySpawn");
+    private static final PacketClass packetPlayOutEntityHeadRotationClass = new PacketClass("PacketPlayOutEntityHeadRotation");
+    private static final PacketClass packetPlayOutEntityLookClass = new PacketClass("PacketPlayOutEntity$PacketPlayOutEntityLook");
+    private static final PacketClass packetPlayOutEntityEquipmentClass = new PacketClass("PacketPlayOutEntityEquipment");
     private static final ReflectionClass scoreBoardTeamClass = NMSUtil.getNewerNMSClass("world.scores.ScoreboardTeam");
     private static final ReflectionClass scoreBoardClass = NMSUtil.getNewerNMSClass("world.scores.Scoreboard");
     private static final ReflectionClass enumTagVisibilityClass = NMSUtil.getNewerNMSClass("world.scores.ScoreboardTeamBase$EnumNameTagVisibility");
-    private static final ReflectionClass packetPlayOutEntityDestroyClass = NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutEntityDestroy");
+    private static final PacketClass packetPlayOutEntityDestroyClass = new PacketClass("PacketPlayOutEntityDestroy");
     private static final ReflectionClass enumItemSlotClass = NMSUtil.getNewerNMSClass("world.entity.EnumItemSlot");
-    private static final ReflectionClass clientBoundPlayerInfoUpdateClass = XG7Plugins.getMinecraftVersion() < 19 ? null : NMSUtil.getNewerNMSClass("network.protocol.game.ClientboundPlayerInfoUpdatePacket");
-    private static final ReflectionClass clientBoundPlayerInfoRemoveClass = XG7Plugins.getMinecraftVersion() < 19 ? null : NMSUtil.getNewerNMSClass("network.protocol.game.ClientboundPlayerInfoRemovePacket");
-    private static final ReflectionClass enumPlayerInfoActionClassNewer = XG7Plugins.getMinecraftVersion() < 19 ? null : ReflectionClass.of(clientBoundPlayerInfoUpdateClass.getClassInside("a"));
-    private static final ReflectionClass packetPlayOutSpawnEntityClass = XG7Plugins.getMinecraftVersion() < 21 ? null : NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutSpawnEntity");
+    private static final PacketClass clientBoundPlayerInfoUpdateClass = XG7Plugins.getMinecraftVersion() < 19 ? null : new PacketClass("ClientboundPlayerInfoUpdatePacket");
+    private static final PacketClass clientBoundPlayerInfoRemoveClass = XG7Plugins.getMinecraftVersion() < 19 ? null : new PacketClass("ClientboundPlayerInfoRemovePacket");
+    private static final ReflectionClass enumPlayerInfoActionClassNewer = XG7Plugins.getMinecraftVersion() < 19 ? null : ReflectionClass.of(clientBoundPlayerInfoUpdateClass.getReflectionClass().getClassInside("a"));
+    private static final PacketClass packetPlayOutSpawnEntityClass = XG7Plugins.getMinecraftVersion() < 21 ? null : new PacketClass("PacketPlayOutSpawnEntity");
     private static final ReflectionClass entityClass = NMSUtil.getNewerNMSClass("world.entity.Entity");
     private static final ReflectionClass blockPositionClass = NMSUtil.getNewerNMSClass("core.BlockPosition");
-    private static final ReflectionClass entityTPClass = NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutEntityTeleport");
-    private static final ReflectionClass packetPlayOutEntityMetadataClass = NMSUtil.getNewerNMSClass("network.protocol.game.PacketPlayOutEntityMetadata");
-
+    private static final PacketClass entityTPClass = new PacketClass("PacketPlayOutEntityTeleport");
+    private static final PacketClass packetPlayOutEntityMetadataClass = new PacketClass("PacketPlayOutEntityMetadata");
+    private static ReflectionClass clientInfoClass = NMSUtil.getNewerNMSClass("server.level.ClientInformation");
+    private static ReflectionClass entityHumanClass = NMSUtil.getNewerNMSClass("world.entity.player.EntityHuman");
 
     public NPC1_17_1_XX(Plugin plugin, String id, List<String> name, Location location) {
         super(plugin, id,name, location);
@@ -53,14 +54,14 @@ public class NPC1_17_1_XX extends NPC {
 
         PlayerNMS playerNMS = PlayerNMS.cast(player);
 
-        ReflectionObject nmsWorld = NMSUtil.getCraftBukkitClass("CraftWorld").castToRObject(location.getWorld()).getMethod("getHandle").invokeToRObject();
+        ReflectionObject nmsWorld = craftWorldClass.castToRObject(location.getWorld()).getMethod("getHandle").invokeToRObject();
 
         ReflectionObject npc;
 
         GameProfile npcSkin = (GameProfile) skin;
 
         if (playerSkin) {
-            GameProfile playerGameProfile = NMSUtil.getCraftBukkitClass("entity.CraftPlayer").castToRObject(player).getMethod("getProfile").invoke();
+            GameProfile playerGameProfile = playerNMS.getCraftPlayer().getMethod("getProfile").invoke();
 
             npcSkin = new GameProfile(UUID.randomUUID(), "dummyNPC");
 
@@ -84,12 +85,12 @@ public class NPC1_17_1_XX extends NPC {
                     minecraftServerClass.getAClass(),
                     worldServerClass.getAClass(),
                     GameProfile.class,
-                    NMSUtil.getNewerNMSClass("server.level.ClientInformation").getAClass()
+                    clientInfoClass.getAClass()
             ).newInstance(
                     playerNMS.getCraftPlayerHandle().getField("d"),
                     nmsWorld.getObject(),
                     npcSkin,
-                    NMSUtil.getNewerNMSClass("server.level.ClientInformation").getMethod("a").invoke()
+                    clientInfoClass.getMethod("a").invoke()
             );
         }
 
@@ -105,46 +106,20 @@ public class NPC1_17_1_XX extends NPC {
 
         int npcId = XG7Plugins.getMinecraftVersion() < 19 ? npc.getMethod("getId").invoke() : npc.getFieldFromSuperClass(entityClass.getAClass(), XG7Plugins.getMinecraftVersion() < 21 ? "q" : "o");
 
-
-        ReflectionObject packetPlayOutPlayerInfo = XG7Plugins.getMinecraftVersion() < 19 ?
-                packetPlayOutPlayerInfoClass
-                        .getConstructor(
-                                enumPlayerInfoActionClass.getAClass(),
-                                Collection.class
-                        ).newInstance(
-                                enumPlayerInfoActionClass.getEnumField("ADD_PLAYER"),
-                                Collections.singletonList(npc.getObject())
-                        )
+        Packet packetPlayOutPlayerInfo = XG7Plugins.getMinecraftVersion() < 19 ?
+                new Packet(packetPlayOutPlayerInfoClass, new Class<?>[]{enumPlayerInfoActionClass.getAClass(), Collection.class}, enumPlayerInfoActionClass.getEnumField("ADD_PLAYER"), Collections.singletonList(npc.getObject()))
                 :
-                clientBoundPlayerInfoUpdateClass
-                        .getConstructor(
-                                enumPlayerInfoActionClassNewer.getAClass(),
-                                entityPlayerClass.getAClass()
-                        ).newInstance(
-                                enumPlayerInfoActionClassNewer.getEnumField("ADD_PLAYER"),
-                                npc.getObject()
-                        );
+                new Packet(clientBoundPlayerInfoUpdateClass, enumPlayerInfoActionClassNewer.getEnumField("ADD_PLAYER"), npc.getObject());
 
-        ReflectionObject entitySpawn = XG7Plugins.getMinecraftVersion() < 21 ?
-                packetPlayOutNamedEntitySpawnClass
-                        .getConstructor(NMSUtil.getNewerNMSClass("world.entity.player.EntityHuman").getAClass())
-                        .newInstance(npc.getObject())
+        Packet packetEntitySpawn = XG7Plugins.getMinecraftVersion() < 21 ?
+                new Packet(packetPlayOutNamedEntitySpawnClass, new Class<?>[]{entityHumanClass.getAClass()}, npc.getObject())
                 :
-                packetPlayOutSpawnEntityClass
-                        .getConstructor(
-                                entityClass.getAClass(),
-                                int.class,
-                                blockPositionClass.getAClass()
-                        )
-                        .newInstance(
-                                npc.getObject(),
-                                0,
-                                blockPositionClass.getConstructor(int.class, int.class, int.class).newInstance((int) location.getX(), (int) location.getY(), (int) location.getZ()).getObject()
-                        );
+                new Packet(packetPlayOutSpawnEntityClass, new Class<?>[]{entityClass.getAClass(), int.class, blockPositionClass.getAClass()}, npc.getObject(), 0, blockPositionClass.getConstructor(int.class, int.class, int.class).newInstance((int) location.getX(), (int) location.getY(), (int) location.getZ()).getObject());
 
-        ReflectionObject packetTeleport = entityTPClass
-                .getConstructor(entityClass.getAClass())
-                .newInstance(npc.getObject());
+
+        Packet packetTeleport = new Packet(
+                entityTPClass, new Class<?>[]{entityClass.getAClass()}, npc.getObject()
+        );
 
         ReflectionObject team = scoreBoardTeamClass
                 .getConstructor(scoreBoardClass.getAClass(), String.class)
@@ -154,72 +129,61 @@ public class NPC1_17_1_XX extends NPC {
         team.getMethod(XG7Plugins.getMinecraftVersion() < 19 ? "setNameTagVisibility" : "a", enumTagVisibilityClass.getAClass())
                 .invoke(enumTagVisibilityClass.getEnumField("NEVER"));
 
-        ReflectionObject scoreboardTeam = packetPlayOutScoreboardTeamClass
-                .getMethod("a", scoreBoardTeamClass.getAClass(), boolean.class)
-                .invokeToRObject(team.getObject(), true);
+
+        Packet packetScoreBoardTeam = new Packet(
+                packetPlayOutScoreboardTeamClass.getReflectionClass()
+                        .getMethod("a", scoreBoardTeamClass.getAClass(), boolean.class)
+                        .invoke(team.getObject(), true)
+        );
 
         float yaw = location.getYaw();
         float pitch = location.getPitch();
 
-        ReflectionObject headRotation = packetPlayOutEntityHeadRotationClass
-                .getConstructor(NMSUtil.getNewerNMSClass("world.entity.Entity").getAClass(), byte.class)
-                .newInstance(npc.getObject(), (byte) ((yaw % 360) * 256 / 360));
+        Packet packetHeadRotation = new Packet(
+                packetPlayOutEntityHeadRotationClass,
+                new Class<?>[]{entityClass.getAClass(), byte.class},
+                npc.getObject(), (byte) ((yaw % 360) * 256 / 360)
+        );
 
-        ReflectionObject bodyRotation = packetPlayOutEntityLookClass
-                .getConstructor(
-                        int.class,
-                        byte.class,
-                        byte.class,
-                        boolean.class
-                ).newInstance(
-                        npcId,
-                        (byte) ((yaw % 360) * 256 / 360),
-                        (byte) ((pitch % 360) * 256 / 360),
-                        player.isOnGround()
-                );
+        Packet packetBodyRotation = new Packet(packetPlayOutEntityLookClass, npcId, (byte) ((yaw % 360) * 256 / 360), (byte) ((pitch % 360) * 256 / 360), player.isOnGround());
 
-        ReflectionObject equipment = packetPlayOutEntityEquipmentClass
-                .getConstructor(int.class, List.class)
-                .newInstance(npcId, Pair.toMojangPairList(equipments));
+        Packet packetEquipment = new Packet(
+                packetPlayOutEntityEquipmentClass,
+                npcId, Pair.toMojangPairList(equipments)
+        );
 
 
-        EntityDataWatcher1_17_1_XX dataWatcher = new EntityDataWatcher1_17_1_XX();
+        EntityDataWatcher dataWatcher = new EntityDataWatcher();
         dataWatcher.watch(17, (byte) 0x07F);
 
-        ReflectionObject metadata = XG7Plugins.getMinecraftVersion() < 19 ?
-                packetPlayOutEntityMetadataClass
-                        .getConstructor(int.class, dataWatcher.getWatcher().getObjectClass(), boolean.class)
-                        .newInstance(npcId, dataWatcher.getWatcher().getObject(), true)
-                :
-                packetPlayOutEntityMetadataClass
-                        .getConstructor(int.class, List.class)
-                        .newInstance(npcId, dataWatcher.getWatcher().getMethod("b").invoke());
+        Packet packetMetadata = XG7Plugins.getMinecraftVersion() < 19 ?
+                new Packet(packetPlayOutEntityMetadataClass,
+                        npcId,
+                        dataWatcher.getWatcher().getObject(),
+                        true
+                ) :
+                new Packet(packetPlayOutEntityMetadataClass,
+                        npcId,
+                        dataWatcher.getWatcher().getMethod("b").invoke()
+                );
 
-        ReflectionObject packetPlayOutPlayerInfo2 = XG7Plugins.getMinecraftVersion() < 19 ?
-                packetPlayOutPlayerInfoClass
-                        .getConstructor(
-                                enumPlayerInfoActionClass.getAClass(),
-                                Collection.class
-                        ).newInstance(
-                                enumPlayerInfoActionClass.getEnumField("REMOVE_PLAYER"),
-                                Collections.singletonList(npc.getObject())
-                        )
+        Packet packetPlayOutPlayerInfo2 = XG7Plugins.getMinecraftVersion() < 19 ?
+                new Packet(packetPlayOutPlayerInfoClass, new Class<?>[]{enumPlayerInfoActionClass.getAClass(), Collection.class}, enumPlayerInfoActionClass.getEnumField("REMOVE_PLAYER"), Collections.singletonList(npc.getObject()))
                 :
-                clientBoundPlayerInfoRemoveClass
-                        .getConstructor(List.class)
-                        .newInstance(Collections.singletonList(npc.getFieldFromSuperClass(entityClass.getAClass(), "ax")));
+                new Packet(clientBoundPlayerInfoRemoveClass, new Class<?>[]{List.class}, Collections.singletonList(npc.getFieldFromSuperClass(entityClass.getAClass(), "ax")));
+
         Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> {
 
-            playerNMS.sendPacket(packetPlayOutPlayerInfo.getObject());
-            playerNMS.sendPacket(entitySpawn.getObject());
-            playerNMS.sendPacket(packetTeleport.getObject());
-            playerNMS.sendPacket(scoreboardTeam.getObject());
-            playerNMS.sendPacket(headRotation.getObject());
-            playerNMS.sendPacket(bodyRotation.getObject());
-            if (!equipments.isEmpty()) playerNMS.sendPacket(equipment.getObject());
-            playerNMS.sendPacket(metadata.getObject());
+            playerNMS.sendPacket(packetPlayOutPlayerInfo);
+            playerNMS.sendPacket(packetEntitySpawn);
+            playerNMS.sendPacket(packetTeleport);
+            playerNMS.sendPacket(packetScoreBoardTeam);
+            playerNMS.sendPacket(packetHeadRotation);
+            playerNMS.sendPacket(packetBodyRotation);
+            if (!equipments.isEmpty()) playerNMS.sendPacket(packetEquipment);
+            playerNMS.sendPacket(packetMetadata);
 
-            Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> playerNMS.sendPacket(packetPlayOutPlayerInfo2.getObject()), 20L);
+            Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> playerNMS.sendPacket(packetPlayOutPlayerInfo2), 20L);
         });
 
         npcIDS.put(player.getUniqueId(), npcId);
@@ -233,11 +197,10 @@ public class NPC1_17_1_XX extends NPC {
     public void destroy(Player player) {
         if (!npcIDS.containsKey(player.getUniqueId())) return;
 
-        ReflectionObject destroy = packetPlayOutEntityDestroyClass
-                .getConstructor(int[].class)
-                .newInstance(new int[]{npcIDS.get(player.getUniqueId())});
+        Packet packetPlayOutEntityDestroy = new Packet(packetPlayOutEntityDestroyClass, new int[]{npcIDS.get(player.getUniqueId())});
+
         PlayerNMS playerNMS = PlayerNMS.cast(player);
-        playerNMS.sendPacket(destroy.getObject());
+        playerNMS.sendPacket(packetPlayOutEntityDestroy);
         npcIDS.remove(player.getUniqueId());
         if (lookAtPlayer) XG7Plugins.getInstance().getNpcManager().unregisterLookingNPC(npcIDS.get(player.getUniqueId()));
 
@@ -257,28 +220,18 @@ public class NPC1_17_1_XX extends NPC {
         float yaw = (float) Math.toDegrees(Math.atan2(-deltaX, deltaZ));
         float pitch = (float) Math.toDegrees(-Math.atan(deltaY / distanceXZ));
 
-        ReflectionObject headRotation = packetPlayOutEntityHeadRotationClass
-                .getConstructor(NMSUtil.getNewerNMSClass("world.entity.Entity").getAClass(), byte.class)
-                .newInstance(npc, (byte) ((yaw % 360) * 256 / 360));
+        Packet packetHeadRotation = new Packet(
+                packetPlayOutEntityHeadRotationClass,
+                new Class<?>[]{entityClass.getAClass(), byte.class},
+                npc, (byte) ((yaw % 360) * 256 / 360)
+        );
 
-        ReflectionObject bodyRotation = packetPlayOutEntityLookClass
-                .getConstructor(
-                        int.class,
-                        byte.class,
-                        byte.class,
-                        boolean.class
-                ).newInstance(
-                        id,
-                        (byte) ((yaw % 360) * 256 / 360),
-                        (byte) ((pitch % 360) * 256 / 360),
-                        player.isOnGround()
-                );
-
+        Packet packetBodyRotation = new Packet(packetPlayOutEntityLookClass, id, (byte) ((yaw % 360) * 256 / 360), (byte) ((pitch % 360) * 256 / 360), player.isOnGround());
 
         PlayerNMS nms = PlayerNMS.cast(player);
 
-        nms.sendPacket(headRotation.getObject());
-        nms.sendPacket(bodyRotation.getObject());
+        nms.sendPacket(packetHeadRotation);
+        nms.sendPacket(packetBodyRotation);
 
     }
 

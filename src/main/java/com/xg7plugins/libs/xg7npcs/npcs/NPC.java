@@ -39,7 +39,7 @@ public abstract class NPC {
     public NPC(Plugin plugin, String id, List<String> name, Location location) {
         this.name = XG7Plugins.getMinecraftVersion() < 8 ? name.get(0) : HologramBuilder.creator(plugin,id + ":name").setLines(name).setLocation(location.add(0,-0.2,0)).build();
 
-        if (XG7Plugins.getMinecraftVersion() > 7) XG7Plugins.getInstance().getHologramsManager().initTask();
+        if (XG7Plugins.getMinecraftVersion() > 7) XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get("npcs"));
 
         initSkin();
 

@@ -21,6 +21,10 @@ public class ConfigManager {
         Arrays.stream(configs).forEach(config -> this.configs.put(config, new Config(plugin, config)));
     }
 
+    public void reloadConfigs() {
+        configs.values().forEach(Config::reload);
+    }
+
     public void putConfig(String name, Config config) {
         configs.put(name, config);
     }

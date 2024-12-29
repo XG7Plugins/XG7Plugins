@@ -5,6 +5,8 @@ import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.events.packetevents.PacketEventHandler;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.utils.reflection.ReflectionObject;
+import com.xg7plugins.utils.reflection.nms.Packet;
+import com.xg7plugins.utils.reflection.nms.PacketEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -17,14 +19,14 @@ public class ClickEventHandler implements PacketListener {
 
 
     @PacketEventHandler(packet = "PacketPlayInUseEntity")
-    public Object onClick(Player player, ReflectionObject packet) {
-        try {
+    public void onClick(PacketEvent event) {
+        Player player = event.getPlayer();
+        Packet packet = event.getPacket();
             Hologram hologram = XG7Plugins.getInstance().getHologramsManager().getHologramById(player, packet.getField(XG7Plugins.getMinecraftVersion() > 20 ? "b" : "a"));
 
-            if (hologram == null) return packet.getObject();
+            if (hologram == null) return;
 
             Enum<?> enumAction = XG7Plugins.getMinecraftVersion() <= 16 ? packet.getField("action") : ReflectionObject.of(packet.getField(XG7Plugins.getMinecraftVersion() > 20 ? "c" : "b")).getMethod("a").invoke() ;
-
 
             ClickType type;
 
@@ -47,11 +49,5 @@ public class ClickEventHandler implements PacketListener {
 
             Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> Bukkit.getServer().getPluginManager().callEvent(new HologramClickEvent(player, type, hologram)));
 
-            return packet.getObject();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return packet.getObject();
     }
 }

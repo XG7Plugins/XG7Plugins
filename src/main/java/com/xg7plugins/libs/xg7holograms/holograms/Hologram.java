@@ -31,6 +31,7 @@ public abstract class Hologram {
         this.lines = lines;
         Collections.reverse(lines);
         this.location = location;
+        XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get("holograms"));
         XG7Plugins.getInstance().getHologramsManager().addHologram(this);
     }
 

@@ -25,14 +25,29 @@ public class LegacyBossBar extends Score {
 
     private final HashMap<UUID, Integer> entities = new HashMap<>();
 
-    private static final PacketClass packetPlayOutEntityTeleportClass = new PacketClass("PacketPlayOutEntityTeleport");
-    private static final PacketClass packetPlayOutEntityMetadataClass = new PacketClass("PacketPlayOutEntityMetadata");
-    private static final PacketClass packetPlayOutSpawnEntityLivingClass = new PacketClass("PacketPlayOutSpawnEntityLiving");
-    private static final PacketClass packetPlayOutEntityDestroyClass = new PacketClass("PacketPlayOutEntityDestroy");
+    private static PacketClass packetPlayOutEntityTeleportClass;
+    private static PacketClass packetPlayOutEntityMetadataClass;
+    private static PacketClass packetPlayOutSpawnEntityLivingClass;
+    private static PacketClass packetPlayOutEntityDestroyClass;
 
-    private static final ReflectionClass entityWitherClass = NMSUtil.getNMSClass("EntityWither");
-    private static final ReflectionClass worldClass = NMSUtil.getNMSClass("World");
-    private static final ReflectionClass entityLivingClass = NMSUtil.getNMSClass("EntityLiving");
+    private static ReflectionClass entityWitherClass;
+    private static ReflectionClass worldClass;
+    private static ReflectionClass entityLivingClass;
+
+    static {
+        try {
+            packetPlayOutEntityTeleportClass = new PacketClass("PacketPlayOutEntityTeleport");
+            packetPlayOutEntityMetadataClass = new PacketClass("PacketPlayOutEntityMetadata");
+            packetPlayOutSpawnEntityLivingClass = new PacketClass("PacketPlayOutSpawnEntityLiving");
+            packetPlayOutEntityDestroyClass = new PacketClass("PacketPlayOutEntityDestroy");
+
+            entityWitherClass = NMSUtil.getNMSClass("EntityWither");
+            worldClass = NMSUtil.getNMSClass("World");
+            entityLivingClass = NMSUtil.getNMSClass("EntityLiving");
+        } catch (Exception ignored) {
+
+        }
+    }
 
 
     @SneakyThrows

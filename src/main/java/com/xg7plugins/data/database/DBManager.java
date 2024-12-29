@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +34,6 @@ public class DBManager {
         entitiesCached = Caffeine.newBuilder().expireAfterAccess(config.getTime("sql.cache-expires").orElse(30 * 60 * 1000L), TimeUnit.MILLISECONDS).build();
     }
 
-    @SneakyThrows
     public void connectPlugin(Plugin plugin, Class<? extends Entity>... entityClasses) {
 
         if (entityClasses == null) return;
@@ -57,28 +57,36 @@ public class DBManager {
 
         plugin.getLog().loading("Connection type: " + connectionType);
 
-        switch (connectionType) {
-            case SQLITE:
+        try {
+            switch (connectionType) {
+                case SQLITE:
 
-                Class.forName("org.sqlite.JDBC");
+                    Class.forName("org.sqlite.JDBC");
 
-                File file = new File(plugin.getDataFolder(), "data.db");
-                if (!file.exists()) file.createNewFile();
+                    File file = new File(plugin.getDataFolder(), "data.db");
+                    if (!file.exists()) file.createNewFile();
 
-                connections.put(plugin.getName(), DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getPath() + "/data.db"));
+                    connections.put(plugin.getName(), DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getPath() + "/data.db"));
 
-                break;
-            case MARIADB:
+                    break;
+                case MARIADB:
 
-                connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mariadb://" + host + ":" + port + "/" + database, username, password));
+                    connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mariadb://" + host + ":" + port + "/" + database, username, password));
 
-                break;
-            case MYSQL:
+                    break;
+                case MYSQL:
 
-                connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password));
+                    connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password));
 
-                break;
+                    break;
+            }
+        } catch (SQLException | ClassNotFoundException | IOException e) {
+            plugin.getLog().severe("Error while connecting to database: " + e.getMessage());
+            e.printStackTrace();
+            return;
         }
+
+
 
         plugin.getLog().loading("Successfully connected to database!");
 

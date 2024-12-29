@@ -7,7 +7,7 @@ import lombok.SneakyThrows;
 import net.minecraft.util.io.netty.channel.*;
 import org.bukkit.entity.Player;
 
-public class PacketEventManager1_7 extends PacketManagerBase {
+public class PacketEventManager1_7 extends PacketEventManagerBase {
 
     @SneakyThrows
     public void create(Player player) {
@@ -18,8 +18,11 @@ public class PacketEventManager1_7 extends PacketManagerBase {
 
                 Packet packet = new Packet(o);
 
-                processPacket(packet, player);
-
+                try {
+                    processPacket(packet, player);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 super.channelRead(context, packet.getPacket());
             }
 
@@ -29,7 +32,11 @@ public class PacketEventManager1_7 extends PacketManagerBase {
 
                 Packet packet = new Packet(o);
 
-                processPacket(packet, player);
+                try {
+                    processPacket(packet, player);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 super.write(context, packet.getPacket(), channelPromise);
             }

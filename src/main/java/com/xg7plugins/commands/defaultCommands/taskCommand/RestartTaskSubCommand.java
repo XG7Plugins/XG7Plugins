@@ -14,7 +14,8 @@ import org.bukkit.command.CommandSender;
         name = "restart",
         description = "Restart Task",
         syntax = "/xg7plugins tasks restart <ID>",
-        isAsync = true
+        isAsync = true,
+        permission = "xg7plugins.command.tasks.restart"
 )
 public class RestartTaskSubCommand implements ICommand {
     @Override

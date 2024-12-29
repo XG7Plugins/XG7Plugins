@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public abstract class PacketManagerBase {
+public abstract class PacketEventManagerBase {
 
     protected final HashMap<String, List<Listener>> events = new HashMap<>();
 
@@ -32,7 +32,7 @@ public abstract class PacketManagerBase {
             if (!event.isEnabled()) continue;
             this.events.get(plugin.getName()).add(event);
         }
-        plugin.getLog().loading("Successfully loaded Packet Events!");
+        plugin.getLog().loading("Successfully loaded Packet Events for " + plugin.getName() +"!");
     }
 
     protected void processPacket(Packet packet, Player player) throws InvocationTargetException, IllegalAccessException {

@@ -1,18 +1,13 @@
 package com.xg7plugins.events.packetevents;
 
-import com.xg7plugins.events.Listener;
 import com.xg7plugins.utils.reflection.nms.NMSUtil;
 import com.xg7plugins.utils.reflection.nms.Packet;
 import com.xg7plugins.utils.reflection.nms.PlayerNMS;
-import com.xg7plugins.utils.reflection.ReflectionObject;
 import io.netty.channel.*;
 import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-public class PacketEventManager extends PacketManagerBase {
+public class PacketEventManager extends PacketEventManagerBase {
 
     @SneakyThrows
     public void create(Player player) {
@@ -24,7 +19,11 @@ public class PacketEventManager extends PacketManagerBase {
 
                 Packet packet = new Packet(o);
 
-                processPacket(packet, player);
+                try {
+                    processPacket(packet, player);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 super.channelRead(context, packet.getPacket());
             }
@@ -34,7 +33,11 @@ public class PacketEventManager extends PacketManagerBase {
 
                 Packet packet = new Packet(o);
 
-                processPacket(packet, player);
+                try {
+                    processPacket(packet, player);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 super.write(context, packet.getPacket(), channelPromise);
             }

@@ -26,7 +26,7 @@ public class Packet {
         this.packet = ReflectionObject.of(packet);
     }
 
-    public Object getField(String name) {
+    public <T> T getField(String name) {
         return packet.getField(name);
     }
 

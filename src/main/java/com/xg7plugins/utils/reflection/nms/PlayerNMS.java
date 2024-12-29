@@ -1,7 +1,6 @@
 package com.xg7plugins.utils.reflection.nms;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +16,7 @@ public class PlayerNMS {
     private final ReflectionObject craftPlayerHandle;
     private final ReflectionObject playerConnection;
     private final ReflectionObject networkManager;
+    private final ReflectionObject craftPlayer;
 
     @SneakyThrows
     public static PlayerNMS cast(Player player) {
@@ -28,13 +28,13 @@ public class PlayerNMS {
         if (XG7Plugins.getMinecraftVersion() >= 21) {
             ReflectionObject connection = ReflectionObject.of(NMSUtil.getValueByFieldName(handle.getObject(), "PlayerConnection"));
             ReflectionObject networkManager = NMSUtil.getValueByFieldNameRObject(Class.forName("net.minecraft.server.network.ServerCommonPacketListenerImpl"), connection.getObject(), "NetworkManager");
-            return new PlayerNMS(player, handle, connection, networkManager);
+            return new PlayerNMS(player, handle, connection, networkManager, craftPlayer);
         }
 
         Object playerConnection = NMSUtil.getValueByFieldName(handle.getObject(), "PlayerConnection");
         Object networkManager =  NMSUtil.getValueByFieldName(playerConnection, "NetworkManager");
 
-        return new PlayerNMS(player, handle, ReflectionObject.of(playerConnection), ReflectionObject.of(networkManager));
+        return new PlayerNMS(player, handle, ReflectionObject.of(playerConnection), ReflectionObject.of(networkManager), craftPlayer);
 
     }
 

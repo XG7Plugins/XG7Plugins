@@ -18,7 +18,7 @@ import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.events.defaultevents.CommandAntiTab;
 import com.xg7plugins.events.defaultevents.CommandAntiTabOlder;
 import com.xg7plugins.events.defaultevents.JoinAndQuit;
-import com.xg7plugins.events.packetevents.PacketManagerBase;
+import com.xg7plugins.events.packetevents.PacketEventManagerBase;
 import com.xg7plugins.libs.xg7geyserforms.forms.Form;
 import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.libs.xg7menus.menuhandler.MenuHandler;
@@ -39,6 +39,7 @@ import com.xg7plugins.libs.xg7scores.builder.ScoreBoardBuilder;
 import com.xg7plugins.menus.LangForm;
 import com.xg7plugins.tasks.CooldownManager;
 import com.xg7plugins.tasks.TPSCalculator;
+import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -90,7 +91,7 @@ public final class XG7Plugins extends Plugin {
     private TaskManager taskManager;
     private CooldownManager cooldownManager;
     private ScoreManager scoreManager;
-    private PacketManagerBase packetEventManager;
+    private PacketEventManagerBase packetEventManager;
     private MenuManager menuManager;
     private FormManager formManager;
     private JsonManager jsonManager;
@@ -194,9 +195,12 @@ public final class XG7Plugins extends Plugin {
         return minecraftVersion < 13 ? new PacketListener[]{new CommandAntiTabOlder()} : super.loadPacketEvents();
     }
 
+    public Task[] loadRepeatingTasks() {
+        return new Task[]{hologramsManager.getTask(), npcManager.getTask(), scoreManager.getTask(), cooldownManager.getTask()};
+    }
+
     @Override
     public Score[] loadScores() {
-        scoreManager.initTask();
         return new Score[]{ScoreBoardBuilder.scoreBoard("teste")
                 .title(Arrays.asList("§bTeste", "§7Teste", "§9Teste", "§1Teste", "§3Teste", "§5Teste", "§dTeste", "§fTeste"))
                 .delay(500)
@@ -227,6 +231,7 @@ public final class XG7Plugins extends Plugin {
     public static void unregister(Plugin plugin) {
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
         XG7Plugins.getInstance().getLog().loading("Unregistering " + plugin.getName() + "...");
+        xg7Plugins.taskManager.cancelTasks(plugin);
         xg7Plugins.getPacketEventManager().unregisterPlugin(plugin);
         xg7Plugins.getDatabaseManager().disconnectPlugin(plugin);
         xg7Plugins.getScoreManager().unregisterPlugin(plugin);
@@ -242,9 +247,8 @@ public final class XG7Plugins extends Plugin {
     public static void reload(Plugin plugin) {
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
 
-        if (plugin == xg7Plugins) {
-            return;
-        }
+        if (plugin == xg7Plugins) return;
+
 
         unregister(plugin);
         Bukkit.getPluginManager().disablePlugin(plugin);
