@@ -64,7 +64,7 @@ public class Config {
         if (type == Long.class || type == long.class) return Optional.ofNullable(type.cast(config.contains(path) ? config.getLong(path) : null));
         if (type == List.class) return Optional.ofNullable(type.cast(config.getList(path)));
         if (type == ConfigurationSection.class) return Optional.ofNullable(type.cast(config.getConfigurationSection(path)));
-        if (type.isEnum()) return Optional.ofNullable(config.contains(path) ? type.cast(Enum.valueOf((Class<? extends Enum>) type, config.getString(path))) : null);
+        if (type.isEnum()) return Optional.ofNullable(config.contains(path) ? type.cast(Enum.valueOf((Class<? extends Enum>) type, config.getString(path).toUpperCase())) : null);
 
         ConfigTypeAdapter<T> adapter = (ConfigTypeAdapter<T>) configManager.getAdapters().get(type);
 

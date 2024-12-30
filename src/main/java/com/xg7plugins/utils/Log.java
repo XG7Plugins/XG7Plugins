@@ -20,7 +20,7 @@ public class Log {
         this.plugin = plugin;
         Config config = plugin.getConfigsManager().getConfig("config");
         if (config == null) return;
-        isLogEnabled = config.get("log-enabled", boolean.class).orElse(false);
+        isLogEnabled = config.get("log-enabled", Boolean.class).orElse(false);
     }
 
     public void severe(String message) {

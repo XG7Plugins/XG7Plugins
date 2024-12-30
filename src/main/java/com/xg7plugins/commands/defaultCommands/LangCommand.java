@@ -8,6 +8,7 @@ import com.xg7plugins.data.lang.PlayerLanguage;
 import com.xg7plugins.data.lang.PlayerLanguageDAO;
 import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
 import com.xg7plugins.libs.xg7menus.item.Item;
+import com.xg7plugins.libs.xg7menus.menus.holders.MenuHolder;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -36,7 +37,7 @@ public class LangCommand implements ICommand {
             if (XG7Plugins.isFloodgate()) {
                 if (XG7Plugins.getInstance().getFormManager().sendForm((Player) sender, "lang-form")) return;
             }
-            XG7Plugins.getInstance().getMenuManager().getMenu("lang-menu").open((Player) sender);
+            XG7Plugins.getInstance().getMenuManager().getMenu(XG7Plugins.getInstance(), "lang-menu").open((Player) sender);
             return;
         }
 
@@ -68,7 +69,16 @@ public class LangCommand implements ICommand {
 
         dao.update(new PlayerLanguage(target.getUniqueId(), lang)).thenAccept(r -> {
             XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
-            Text.formatComponent("lang:[lang-menu.changed]", XG7Plugins.getInstance()).send(sender);
+            Text.formatComponent("lang:[lang-menu.toggle-success]", XG7Plugins.getInstance()).send(sender);
+            if (target.isOnline()) {
+                Player targetOnline = target.getPlayer();
+                Text.formatComponent("lang:[lang-menu.toggle-success]", XG7Plugins.getInstance()).send(targetOnline);
+                if (targetOnline.getOpenInventory().getTopInventory().getHolder() instanceof MenuHolder) {
+                    MenuHolder holder = (MenuHolder) targetOnline.getOpenInventory().getTopInventory().getHolder();
+                    targetOnline.closeInventory();
+                    holder.getMenu().open(targetOnline);
+                }
+            }
         });
 
     }

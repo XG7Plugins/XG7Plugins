@@ -68,12 +68,12 @@ public class LangManager {
 
         String finalLang = lang;
         return CompletableFuture.supplyAsync(() -> {
-            File file = new File(plugin.getDataFolder(), "langs/" + finalLang + ".yml");
-            if (!file.exists()) plugin.saveResource("langs/" + finalLang + ".yml", false);
+            File file = new File(plugin.getDataFolder(), "langs/" + finalLang.split(":")[1] + ".yml");
+            if (!file.exists()) plugin.saveResource("langs/" + finalLang.split(":")[1] + ".yml", false);
 
             YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(file);
 
-            langs.put(plugin.getName() + ":" + finalLang, newConfig);
+            langs.put(finalLang, newConfig);
 
             return newConfig;
         }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
@@ -95,6 +95,7 @@ public class LangManager {
 
             if (XG7Plugins.getInstance().getConfig("config").get("auto-chose-lang", Boolean.class).orElse(false)){
                 String playerLocale = XG7Plugins.getMinecraftVersion() >= 12 ? player.getLocale() : PlayerNMS.cast(player).getCraftPlayerHandle().getField("locale");
+                System.out.println("Player locale " + playerLocale);
                 if (langs.asMap().containsKey(playerLocale)) langId = playerLocale;
             }
             PlayerLanguage newLang = new PlayerLanguage(player.getUniqueId(), langId);

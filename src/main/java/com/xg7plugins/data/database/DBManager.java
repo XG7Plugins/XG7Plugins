@@ -23,6 +23,8 @@ public class DBManager {
     @Getter
     private final Cache<String, Entity> entitiesCached;
 
+    private final Queue<String> queries = new LinkedList<>();
+
 
     @SneakyThrows
     public DBManager(XG7Plugins plugin) {

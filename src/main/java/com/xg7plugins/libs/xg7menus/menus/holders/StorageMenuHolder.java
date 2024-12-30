@@ -29,7 +29,7 @@ public class StorageMenuHolder extends MenuHolder {
 
             List<Item> items = new ArrayList<>();
 
-            StorageMenu menu = (StorageMenu) XG7Plugins.getInstance().getMenuManager().getMenu(id);
+            StorageMenu menu = (StorageMenu) XG7Plugins.getInstance().getMenuManager().getMenu(plugin, id);
 
             for (int x = 0; x < menu.getStartEdge().getColumn(); x++) {
                 for (int y = 0; y < menu.getEndEdge().getRow(); y++) {

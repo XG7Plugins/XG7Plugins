@@ -1,5 +1,6 @@
 package com.xg7plugins.libs.xg7menus;
 
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
 import com.xg7plugins.libs.xg7menus.menus.holders.PlayerMenuHolder;
 import com.xg7plugins.libs.xg7menus.menus.player.PlayerMenu;
@@ -29,11 +30,12 @@ public class MenuManager {
     }
 
     public void registerMenus(BaseMenu... menus) {
+        if (menus == null) return;
         Arrays.stream(menus).forEach(menu -> registeredMenus.put(menu.getPlugin().getName() + ":" + menu.getId(), menu));
     }
 
-    public BaseMenu getMenu(String id) {
-        return registeredMenus.get(id);
+    public BaseMenu getMenu(Plugin plugin, String id) {
+        return registeredMenus.get(plugin.getName() + ":" + id);
     }
 
     public void disable() {

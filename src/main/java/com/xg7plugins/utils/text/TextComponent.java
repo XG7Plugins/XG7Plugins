@@ -47,7 +47,7 @@ public class TextComponent {
     }
 
     public void send(CommandSender sender) {
-
+        System.out.println(replacements);
         if (sender == null) return;
         if (!(sender instanceof Player)) {
             // Envia texto centralizado simples para não-jogadores
@@ -74,7 +74,9 @@ public class TextComponent {
         }
 
         String finalText = text.startsWith("[CENTER] ") ? Text.getWithPlaceholders(plugin, text.substring(9), player) : Text.getWithPlaceholders(plugin, text, player);
-
+        for (Map.Entry<String, String> entry : replacements.entrySet()) {
+            finalText = finalText.replace(entry.getKey(), entry.getValue());
+        }
 
         Matcher matcher = pattern.matcher(finalText);
         int lastIndex = 0;

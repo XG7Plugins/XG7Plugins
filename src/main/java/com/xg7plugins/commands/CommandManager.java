@@ -75,10 +75,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
                 List<String> newAliases = new ArrayList<>();
                 for (String alias : aliases) {
-                    for (String plAlias : pluginCommand.getAliases()) {
+                    for (String plAlias : plConfig.mainCommandAliases()) {
                         newAliases.add(plAlias + alias);
                     }
                 }
+
 
                 pluginCommand.setAliases(newAliases);
             }
@@ -90,7 +91,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             pluginCommand.setTabCompleter(this);
             commandMap.register(plConfig.mainCommandName() + commandSetup.name(), pluginCommand);
 
-            this.commands.put(commandSetup.name(), command);
+            this.commands.put(plConfig.mainCommandName() + commandSetup.name(), command);
 
         });
 
@@ -104,27 +105,28 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         ICommand command = commands.get(cmd.getName());
 
-        if (command instanceof MainCommand) {
+        System.out.println(cmd.getName());
+        System.out.println(commands);
 
+        if (command instanceof MainCommand) {
             if (strings.length == 0) {
-                Text.format("lang:[commands.syntax-error]",XG7Plugins.getInstance())
+                Text.format("lang:[commands.syntax-error]", XG7Plugins.getInstance())
                         .replace("[SYNTAX]", cmd.getUsage())
                         .send(commandSender);
                 return true;
             }
 
-            if (strings.length > 1) {
-                if (strings[0].equalsIgnoreCase("help")) {
-                    Text.format("lang:[commands.help]",XG7Plugins.getInstance())
-                            .replace("[COMMANDS]", String.join(", ", commands.keySet()))
-                            .send(commandSender);
-                    return true;
-                }
-
-                command = commands.get(plConfig + strings[0]);
-
-                strings = Arrays.copyOfRange(strings, 1, strings.length - 1);
+            if (strings[0].equalsIgnoreCase("help")) {
+                Text.format("lang:[commands.help]", XG7Plugins.getInstance())
+                        .replace("[COMMANDS]", String.join(", ", commands.keySet()))
+                        .send(commandSender);
+                return true;
             }
+
+            command = commands.get(plConfig.mainCommandName() + strings[0]);
+
+            strings = Arrays.copyOfRange(strings, Math.min(strings.length - 1, 1), strings.length - 1);
+
 
         }
 

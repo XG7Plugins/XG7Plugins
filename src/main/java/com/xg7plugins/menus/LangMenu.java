@@ -95,14 +95,16 @@ public class LangMenu extends PageMenu {
                             .replace("[MINUTES]", String.valueOf((int) ((cooldownToToggle - System.currentTimeMillis()) / 60000)))
                             .replace("[HOURS]", String.valueOf((int) ((cooldownToToggle - System.currentTimeMillis()) / 3600000)))
                             .send(player);
+                    return;
                 }
 
                 PlayerLanguageDAO dao = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO();
 
                 dao.update(new PlayerLanguage(player.getUniqueId(), langName)).thenAccept(r -> {
                     XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
-                    Text.formatComponent("lang:[lang-menu.changed]", plugin).send(player);
-                    refresh(holder);
+                    Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
+                    player.closeInventory();
+                    open(player);
                 });
 
                 XG7Plugins.getInstance().getCooldownManager().addCooldown(player, "lang-change", XG7Plugins.getInstance().getConfig("config").getTime("cooldown-to-toggle-lang").orElse(10000L));

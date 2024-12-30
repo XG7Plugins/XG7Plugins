@@ -27,6 +27,7 @@ public class CommandAntiTab implements Listener {
                     String commandName = entry.getKey();
                     ICommand iCommand = entry.getValue();
                     Command commandConfig = iCommand.getClass().getAnnotation(Command.class);
+                    if (commandConfig == null) continue;
 
                     List<String> aliases = plugin.getConfigsManager().getConfig("commands").get(commandConfig.name(), List.class).orElse(new ArrayList<>());
 

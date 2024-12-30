@@ -38,7 +38,7 @@ public class TaskCommand implements ICommand {
             return;
         }
 
-        XG7Plugins.getInstance().getMenuManager().getMenu("task-menu").open((Player) sender);
+        XG7Plugins.getInstance().getMenuManager().getMenu(XG7Plugins.getInstance(), "task-menu").open((Player) sender);
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.xg7plugins.libs.xg7menus.menus.gui;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7menus.Slot;
 import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.libs.xg7menus.menus.holders.StorageMenuHolder;
+import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -45,7 +47,7 @@ public abstract class StorageMenu extends Menu {
 
     @Override
     public void open(Player player) {
-        StorageMenuHolder holder = new StorageMenuHolder(id, plugin, title,size,type, this, player);
+        StorageMenuHolder holder = new StorageMenuHolder(id, plugin, Text.format(title, XG7Plugins.getInstance()).getWithPlaceholders(player),size,type, this, player);
         player.openInventory(holder.getInventory());
         putItems(player, holder);
     }

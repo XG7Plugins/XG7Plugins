@@ -27,6 +27,7 @@ import com.xg7plugins.libs.xg7geyserforms.FormManager;
 import com.xg7plugins.libs.xg7holograms.HologramsManager;
 import com.xg7plugins.libs.xg7holograms.event.ClickEventHandler;
 import com.xg7plugins.libs.xg7menus.MenuManager;
+import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
 import com.xg7plugins.libs.xg7npcs.NPCManager;
 import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreListener;
@@ -37,6 +38,8 @@ import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager1_7;
 import com.xg7plugins.libs.xg7scores.builder.ScoreBoardBuilder;
 import com.xg7plugins.menus.LangForm;
+import com.xg7plugins.menus.LangMenu;
+import com.xg7plugins.menus.TaskMenu;
 import com.xg7plugins.tasks.CooldownManager;
 import com.xg7plugins.tasks.TPSCalculator;
 import com.xg7plugins.tasks.Task;
@@ -144,7 +147,7 @@ public final class XG7Plugins extends Plugin {
 
             if (langManager == null) plugin.getConfigsManager().putConfig("messages", new Config(this, "langs/" + plugin.getConfig("config").get("main-lang", String.class).get()));
             else langManager.loadLangsFrom(plugin);
-            Bukkit.getPluginManager().enablePlugin(plugin);
+            if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
             plugin.getCommandManager().registerCommands(plugin.loadCommands());
             eventManager.registerPlugin(plugin, plugin.loadEvents());
             packetEventManager.registerPlugin(plugin, plugin.loadPacketEvents());
@@ -183,6 +186,11 @@ public final class XG7Plugins extends Plugin {
     @Override
     public ICommand[] loadCommands() {
         return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand(), new TestCommand()};
+    }
+
+    @Override
+    public BaseMenu[] loadMenus() {
+        return new BaseMenu[]{new LangMenu(this), new TaskMenu(this)};
     }
 
     @Override

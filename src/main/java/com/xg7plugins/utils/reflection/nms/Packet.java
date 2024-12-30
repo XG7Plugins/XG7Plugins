@@ -15,8 +15,10 @@ public class Packet {
             classes[i] = args[i].getClass();
         }
         this.packet = packetClass.getReflectionClass().getConstructor(classes).newInstance(args);
+        this.packetClass = packetClass;
     }
     public Packet(PacketClass packetClass, Class<?>[] classes, Object... args) {
+        this.packetClass = packetClass;
         this.packet = packetClass.getReflectionClass().getConstructor(classes).newInstance(args);
     }
     public Packet(Object packet) {
@@ -24,6 +26,10 @@ public class Packet {
             throw new IllegalArgumentException("The object is not an instance of Packet");
         }
         this.packet = ReflectionObject.of(packet);
+
+        String packetName = packet.getClass().getName().split("\\.")[packet.getClass().getName().split("\\.").length - 1];
+
+        this.packetClass = new PacketClass(packetName);
     }
 
     public <T> T getField(String name) {
