@@ -94,10 +94,6 @@ public class Text {
 
         text = XG7Plugins.isPlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, text) : text;
 
-        text = Condition.processCondition(text,plugin,player);
-
-        if (text.isEmpty()) return "";
-
         if (langManager == null) {
 
             langConfig = plugin.getConfigsManager().getConfig("messages");
@@ -107,7 +103,7 @@ public class Text {
                 text = text.replace(text.substring(matcher.start(), matcher.end()), langConfig.get(lang, String.class).orElse("Cannot found path \"" + lang + "\" in langs"));
             }
 
-            return text;
+            return ChatColor.translateAlternateColorCodes('&', text);
 
         }
 
@@ -120,7 +116,12 @@ public class Text {
                 text = text.replace(text.substring(matcher.start(), matcher.end()), langConfig.get(lang,String.class).orElse("Cannot found path \"" + lang + "\" in " + langConfig.get("formated-name", String.class).orElse("langs")));
             }
 
-        return text;
+
+        text = Condition.processCondition(text,plugin,player);
+
+        if (text.isEmpty()) return "";
+
+        return ChatColor.translateAlternateColorCodes('&', text);
     }
 
     public Text replace(String placeholder, String replacement) {
@@ -147,7 +148,7 @@ public class Text {
             return;
         }
 
-        String textToTraslate = text;
+        String textToTraslate = getText();
 
         Matcher matcher = LANG_PATTERN.matcher(textToTraslate);
 

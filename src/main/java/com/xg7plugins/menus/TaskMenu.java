@@ -43,6 +43,7 @@ public class TaskMenu extends PageMenu {
             builder.setBuildPlaceholders(new HashMap<String, String>() {{
                 put("[PLUGIN]", task.getPlugin().getName());
                 put("[ID]", task.getPlugin().getName() + ":" + task.getName());
+                put("[STATE]", task.getState().name());
                 put("%task_is_running%", String.valueOf(task.getState() == TaskState.RUNNING));
                 put("%task_is_not_running%", String.valueOf(task.getState() == TaskState.IDLE));
             }});
@@ -56,6 +57,7 @@ public class TaskMenu extends PageMenu {
                         .setBuildPlaceholders(new HashMap<String, String>() {{
                             put("[PLUGIN]", "XG7Plugins");
                             put("[ID]", "TPS calculator");
+                            put("[STATE]", XG7Plugins.getInstance().getTpsCalculator().getState().name());
                             put("%task_is_running%", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getState() == TaskState.RUNNING));
                             put("%task_is_not_running%", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getState() == TaskState.IDLE));
                         }}).setNBTTag("task-id", "TPS calculator")
@@ -80,12 +82,12 @@ public class TaskMenu extends PageMenu {
         return Arrays.asList(
                 Item.from(XMaterial.ARROW).name("lang:[go-back-item]").slot(45),
                 Item.from(XMaterial.ARROW).name("lang:[go-next-item]").slot(53),
-                Item.from(XMaterial.ARROW).name("lang:[refresh-item]").slot(0),
+                Item.from(XMaterial.ENDER_PEARL).name("lang:[refresh-item]").slot(0),
                 Item.from(Material.PAPER).name(" ").lore(lang.get("tasks-menu.notes", List.class).orElse(Collections.emptyList()))
                         .setBuildPlaceholders(new HashMap<String, String>() {{
                             put("[TASKS]", String.valueOf(XG7Plugins.taskManager().getTasks().size()));
                             put("[RAM]", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + " / " + Runtime.getRuntime().totalMemory() / 1024 / 1024);
-                            put("[TPS]", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getTPS()));
+                            put("[TPS]", String.format("%.2f", XG7Plugins.getInstance().getTpsCalculator().getTPS()));
                         }}).slot(49));
     }
 
@@ -115,7 +117,9 @@ public class TaskMenu extends PageMenu {
                 String taskId = clickEvent.getClickedItem().getTag("task-id", String.class).orElse(null);
                 TaskState taskState = clickEvent.getClickedItem().getTag("task-state", TaskState.class).orElse(null);
 
-                if (!XG7Plugins.taskManager().getTasks().containsKey(taskId)) {
+                if (taskId == null) return;
+
+                if (!XG7Plugins.taskManager().getTasks().containsKey(taskId) && !taskId.equals("TPS calculator")) {
                     Text.format("lang:[task-command.not-found]", plugin).send(player);
                     return;
                 }
@@ -125,19 +129,25 @@ public class TaskMenu extends PageMenu {
                         if (taskId.equals("TPS calculator")) {
                             XG7Plugins.getInstance().getTpsCalculator().cancel();
                             Text.format("lang:[task-command.stopped]", plugin).send(player);
+                            refresh(holder);
                             return;
                         }
                         XG7Plugins.taskManager().cancelTask(taskId);
                         Text.format("lang:[task-command.stopped]", plugin).send(player);
+                        refresh(holder);
                         return;
                     }
                     if (taskId.equals("TPS calculator")) {
                         XG7Plugins.getInstance().getTpsCalculator().start();
-                        Text.format("lang:[task-command.stopped]", plugin).send(player);
+                        Text.format("lang:[task-command.restarted]", plugin).send(player);
+                        refresh(holder);
                         return;
                     }
                     XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get(taskId));
                     Text.format("lang:[task-command.restarted]", plugin).send(player);
+
+                    refresh(holder);
+                    return;
                 }
                 if (clickEvent.getClickAction().isLeftClick()) {
                     Text.formatComponent("lang:[tasks-menu.copy-to-clipboard]", plugin).replace("[ID]", taskId).send(player);

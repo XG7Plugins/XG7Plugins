@@ -13,9 +13,20 @@ public class Packet {
         Class<?>[] classes = new Class[args.length];
         for (int i = 0; i < args.length; i++) {
             classes[i] = args[i].getClass();
+            if (args[i] instanceof Integer) classes[i] = int.class;
+            if (args[i] instanceof Byte) classes[i] = byte.class;
+            if (args[i] instanceof Boolean) classes[i] = boolean.class;
+            if (args[i] instanceof Float) classes[i] = float.class;
+            if (args[i] instanceof Double) classes[i] = double.class;
+            if (args[i] instanceof Long) classes[i] = long.class;
+            if (args[i] instanceof Short) classes[i] = short.class;
+            if (args[i] instanceof Character) classes[i] = char.class;
         }
         this.packet = packetClass.getReflectionClass().getConstructor(classes).newInstance(args);
         this.packetClass = packetClass;
+    }
+    public Packet(PacketClass packetClass) {
+        this(packetClass, new Class<?>[0], new Object[0]);
     }
     public Packet(PacketClass packetClass, Class<?>[] classes, Object... args) {
         this.packetClass = packetClass;

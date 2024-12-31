@@ -232,7 +232,7 @@ public class NPC1_17_1_XX extends NPC {
     public void destroy(Player player) {
         if (!npcIDS.containsKey(player.getUniqueId())) return;
 
-        Packet packetPlayOutEntityDestroy = new Packet(packetPlayOutEntityDestroyClass, new int[]{npcIDS.get(player.getUniqueId())});
+        Packet packetPlayOutEntityDestroy = new Packet(packetPlayOutEntityDestroyClass, new Class[]{int[].class}, new int[]{npcIDS.get(player.getUniqueId())});
 
         PlayerNMS playerNMS = PlayerNMS.cast(player);
         playerNMS.sendPacket(packetPlayOutEntityDestroy);

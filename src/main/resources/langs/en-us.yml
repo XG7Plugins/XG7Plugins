@@ -57,10 +57,11 @@ tasks-menu:
   task-item:
     - "&fTask id: &b[ID]"
     - "&fTask plugin: &e[PLUGIN]"
+    - "&fTask state: &9[STATE]"
     - " "
     - "&fLeft click -> &aCopy id"
     - "[IF: %task_is_running%] &fRight click -> &cStop Task"
-    - "[IF: %task_is_not_running%] &fRight click -> &aRestart task"
+    - "[IF: %task_is_not_running%] &fRight click -> &aStart task"
 
   copy-to-clipboard: "Click [CLICK action=%COPY_TO_CLICKBOARD% value=%[ID]%]&bhere&r[/CLICK] to copy the task id!"
 
@@ -74,6 +75,9 @@ task-command:
   deleted: "Task deleted!"
   stopped: "Task stopped!"
   restarted: "Task restarted!"
+
+  already-running: "Task already running!"
+  already-stopped: "Task already stopped!"
 
 commands-menu:
 

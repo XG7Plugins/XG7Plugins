@@ -10,10 +10,7 @@ import com.xg7plugins.libs.xg7menus.menus.simple.SimpleMenu;
 import com.xg7plugins.utils.Builder;
 import org.bukkit.event.inventory.InventoryType;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class MenuBuilder<M extends Menu> extends Builder<M> {
@@ -78,11 +75,14 @@ public class MenuBuilder<M extends Menu> extends Builder<M> {
     }
 
     public MenuBuilder prevent(MenuPrevents prevent) {
+        if (this.prevents == null) this.prevents = new HashSet<>();
         this.prevents.add(prevent);
         return this;
     }
 
     public MenuBuilder prevent(MenuPrevents... prevents) {
+        if (this.prevents == null) this.prevents = new HashSet<>();
+
         this.prevents.addAll(Arrays.asList(prevents));
         return this;
     }

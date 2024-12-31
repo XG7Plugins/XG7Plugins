@@ -36,6 +36,7 @@ import com.xg7plugins.data.database.DBManager;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager1_7;
+import com.xg7plugins.libs.xg7scores.builder.BossBarBuilder;
 import com.xg7plugins.libs.xg7scores.builder.ScoreBoardBuilder;
 import com.xg7plugins.menus.LangForm;
 import com.xg7plugins.menus.LangMenu;
@@ -125,7 +126,7 @@ public final class XG7Plugins extends Plugin {
         taskManager().registerExecutor("files", Executors.newCachedThreadPool());
         taskManager().registerExecutor("menus", Executors.newCachedThreadPool());
         this.databaseManager = new DBManager(this);
-        this.langManager = config.get("enable-langs", Boolean.class).orElse(false) ? new LangManager(this, new String[]{"en-us", "pt-br"}) : null;
+        this.langManager = config.get("enable-langs", Boolean.class).orElse(false) ? new LangManager(this, new String[]{"en-us", "pt-br", "sp-sp"}) : null;
         if (langManager == null) config.getConfigManager().putConfig("messages", new Config(this, "langs/" + config.get("main-lang", String.class).get()));
         else langManager.loadLangsFrom(this);
         this.jsonManager = new JsonManager();
@@ -168,6 +169,7 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void onDisable() {
         tpsCalculator.cancel();
+        scoreManager.cancelTask();
         scoreManager.removePlayers();
         this.plugins.forEach((name, plugin) -> unregister(plugin));
         Bukkit.getOnlinePlayers().forEach(player -> {
@@ -209,18 +211,10 @@ public final class XG7Plugins extends Plugin {
 
     @Override
     public Score[] loadScores() {
-        return new Score[]{ScoreBoardBuilder.scoreBoard("teste")
-                .title(Arrays.asList("§bTeste", "§7Teste", "§9Teste", "§1Teste", "§3Teste", "§5Teste", "§dTeste", "§fTeste"))
-                .delay(500)
-                .addLine("§bTeste")
-                .addLine("§7Teste")
-                .addLine("§9Teste")
-                .addLine("§1Teste")
-                .addLine("§aTeste looooooooooooooooooooooooooongo Nome %player_name% Direção: %player_direction%")
-                .addLine("§5Teste")
-                .addLine("§dTeste")
-                .addLine("§fTeste fino senhores")
-                .build(this)
+        return new Score[]{BossBarBuilder.bossBar("test")
+                .title(Arrays.asList("Teste", "tEste", "teSte", "tesTe", "testE", "teste"))
+                .delay(200L)
+                .progress(50f).build(this)
         };
     }
 

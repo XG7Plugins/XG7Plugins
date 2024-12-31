@@ -3,6 +3,7 @@ package com.xg7plugins.libs.xg7menus.menus;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7menus.MenuPrevents;
+import com.xg7plugins.libs.xg7menus.events.ClickEvent;
 import com.xg7plugins.libs.xg7menus.events.MenuEvent;
 import com.xg7plugins.libs.xg7menus.item.ClickableItem;
 import com.xg7plugins.libs.xg7menus.item.Item;
@@ -43,13 +44,13 @@ public abstract class BaseMenu {
             prevents.add(MenuPrevents.PLAYER_PICKUP);
             prevents.add(MenuPrevents.PLAYER_BREAK_BLOCKS);
             prevents.add(MenuPrevents.PLAYER_PLACE_BLOCKS);
-            setMenuPrevents(prevents);
+            this.menuPrevents = prevents;
         }
 
     }
 
     protected BaseMenu(Plugin plugin, String id) {
-        this(plugin, id, new HashSet<>());
+        this(plugin, id, null);
     }
 
     public abstract boolean isEnabled();
@@ -58,6 +59,15 @@ public abstract class BaseMenu {
 
     public <T extends MenuEvent> void onClick(T event) {
         event.setCancelled(true);
+        if (event instanceof ClickEvent) {
+            ClickEvent clickEvent = (ClickEvent) event;
+            items((Player) clickEvent.getWhoClicked()).stream().filter(item -> item.getSlot() == clickEvent.getClickedSlot()).findFirst().ifPresent(item -> {
+                if (item instanceof ClickableItem) {
+                    ClickableItem clickableItem = (ClickableItem) item;
+                    clickableItem.getOnClick().accept(clickEvent);
+                }
+            });
+        }
     };
     public void onOpen(MenuEvent event) {}
     public void onClose(MenuEvent event) {}

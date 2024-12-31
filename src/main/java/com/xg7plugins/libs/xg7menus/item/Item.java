@@ -205,7 +205,7 @@ public class Item {
 
         if (tag != null) {
             String jsonValue = tag.getMethod("getString", String.class).invoke(key);
-            return Optional.of(gson.fromJson(jsonValue, clazz));
+            return Optional.ofNullable(gson.fromJson(jsonValue, clazz));
         }
         return Optional.empty();
     }

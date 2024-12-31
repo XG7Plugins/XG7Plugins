@@ -47,7 +47,6 @@ public class TextComponent {
     }
 
     public void send(CommandSender sender) {
-        System.out.println(replacements);
         if (sender == null) return;
         if (!(sender instanceof Player)) {
             // Envia texto centralizado simples para não-jogadores

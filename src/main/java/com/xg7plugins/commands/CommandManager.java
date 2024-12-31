@@ -78,6 +78,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                     for (String plAlias : plConfig.mainCommandAliases()) {
                         newAliases.add(plAlias + alias);
                     }
+                    newAliases.add(alias);
                 }
 
 
@@ -105,9 +106,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         ICommand command = commands.get(cmd.getName());
 
-        System.out.println(cmd.getName());
-        System.out.println(commands);
-
         if (command instanceof MainCommand) {
             if (strings.length == 0) {
                 Text.format("lang:[commands.syntax-error]", XG7Plugins.getInstance())
@@ -125,14 +123,19 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             command = commands.get(plConfig.mainCommandName() + strings[0]);
 
-            strings = Arrays.copyOfRange(strings, Math.min(strings.length - 1, 1), strings.length - 1);
+            strings = Arrays.copyOfRange(strings, Math.min(strings.length - 1, 1), strings.length);
 
 
         }
 
 
         if (processSubCommands(command, commandSender, strings, 0)) return true;
-
+        if (command == null) {
+                Text.format("lang:[commands.syntax-error]", XG7Plugins.getInstance())
+                        .replace("[SYNTAX]", cmd.getUsage())
+                        .send(commandSender);
+                return true;
+        }
         Command commandConfig = command.getClass().getAnnotation(Command.class);
 
         if (!commandSender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
@@ -176,7 +179,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     public boolean processSubCommands(ICommand command, CommandSender sender, String[] args, int index) {
-
+        if (command == null) return false;
         if (args.length == index) return false;
 
         ICommand[] subCommands = command.getSubCommands();
@@ -188,7 +191,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         for (ICommand subCommand : subCommands) {
             Command configs = subCommand.getClass().getAnnotation(Command.class);
 
-            if (configs.name().equalsIgnoreCase(args[index]) || plugin.getConfigsManager().getConfig("commands").get(configs.name(), List.class).orElse(null).contains(args[index])) {
+            if (configs.name().equalsIgnoreCase(args[index])) {
                 subCommandChosen = subCommand;
                 break;
             }
@@ -220,7 +223,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
         }
 
-        CommandArgs commandArgs = new CommandArgs(Arrays.copyOfRange(args, index, args.length - 1));
+        CommandArgs commandArgs = new CommandArgs(Arrays.copyOfRange(args, index + 1, args.length));
 
         if (commandConfig.isAsync()) {
 
@@ -255,10 +258,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
 
             if (strings.length > 1) {
+                command = commands.get(plConfig.mainCommandName() + strings[0]);
 
-                command = commands.get(plConfig + strings[0]);
+                strings = Arrays.copyOfRange(strings, 1, strings.length);
 
-                strings = Arrays.copyOfRange(strings, 1, strings.length - 1);
             }
 
         }

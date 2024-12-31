@@ -31,6 +31,7 @@ public class Hologram1_8_1_16 extends Hologram {
             packetMetadataClass = new PacketClass("PacketPlayOutEntityMetadata");
             packetDestroyClass = new PacketClass("PacketPlayOutEntityDestroy");
         } catch (Exception ignored) {
+            ignored.printStackTrace();
         }
     }
 
@@ -62,9 +63,12 @@ public class Hologram1_8_1_16 extends Hologram {
 
             playerNMS.sendPacket(spawnPacket);
 
-            Packet packetMetadata = new Packet(packetMetadataClass, (int) armorStand.getMethod("getId").invoke(), dataWatcher.getWatcher().getObject(), true);
+            Packet packetPlayOutEntityMetadata = new Packet(packetMetadataClass);
 
-            playerNMS.sendPacket(packetMetadata);
+            packetPlayOutEntityMetadata.setField("a", armorStand.getMethod("getId").invoke());
+            packetPlayOutEntityMetadata.setField("b", dataWatcher.getWatcher().getMethod("c").invoke());
+
+            playerNMS.sendPacket(packetPlayOutEntityMetadata);
 
             ids.putIfAbsent(player.getUniqueId(), new ArrayList<>());
 
@@ -78,7 +82,7 @@ public class Hologram1_8_1_16 extends Hologram {
 
         if (!ids.containsKey(player.getUniqueId())) return;
 
-        Packet packet = new Packet(packetDestroyClass, (int[]) ids.get(player.getUniqueId()).stream().mapToInt(i -> i).toArray());
+        Packet packet = new Packet(packetDestroyClass, new Class[]{int[].class}, (int[]) ids.get(player.getUniqueId()).stream().mapToInt(i -> i).toArray());
         PlayerNMS playerNMS = PlayerNMS.cast(player);
         playerNMS.sendPacket(packet);
         ids.remove(player.getUniqueId());
@@ -93,10 +97,12 @@ public class Hologram1_8_1_16 extends Hologram {
 
             dataWatcher.watch(2, Text.format(lines.get(i), XG7Plugins.getInstance().getPlugins().getOrDefault(pluginName, XG7Plugins.getInstance())).getWithPlaceholders(player));
 
-            Packet packetMetadata = new Packet(packetMetadataClass, ids.get(player.getUniqueId()).get(i), dataWatcher.getWatcher().getObject(), true);
+            Packet packetPlayOutEntityMetadata = new Packet(packetMetadataClass);
 
+            packetPlayOutEntityMetadata.setField("a", ids.get(player.getUniqueId()).get(i));
+            packetPlayOutEntityMetadata.setField("b", dataWatcher.getWatcher().getMethod("c").invoke());
             PlayerNMS playerNMS = PlayerNMS.cast(player);
-            playerNMS.sendPacket(packetMetadata);
+            playerNMS.sendPacket(packetPlayOutEntityMetadata);
 
         }
 

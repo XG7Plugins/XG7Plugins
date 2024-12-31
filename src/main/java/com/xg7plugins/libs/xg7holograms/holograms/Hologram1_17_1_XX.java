@@ -118,7 +118,7 @@ public class Hologram1_17_1_XX extends Hologram {
     public void destroy(Player player) {
         if (!ids.containsKey(player.getUniqueId())) return;
 
-        Packet destroy = new Packet(packetPlayOutEntityDestroyClass, (int[]) ids.get(player.getUniqueId()).stream().mapToInt(i -> i).toArray());
+        Packet destroy = new Packet(packetPlayOutEntityDestroyClass, new Class[]{int[].class}, (int[]) ids.get(player.getUniqueId()).stream().mapToInt(i -> i).toArray());
 
         PlayerNMS playerNMS = PlayerNMS.cast(player);
         playerNMS.sendPacket(destroy);

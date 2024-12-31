@@ -11,10 +11,10 @@ public class EntityDataWatcher {
 
     private final ReflectionObject dataWatcher;
 
-    private static final ReflectionClass dataWatcherObjectClass = NMSUtil.getNMSClassViaVersion(17 , "DataWatcherObject", "network.syncher.DataWatcherObject");
-    private static final ReflectionClass dataWatcherRegistryClass = NMSUtil.getNMSClassViaVersion(17 , "DataWatcherRegistry", "network.syncher.DataWatcherRegistry");
-    private static final ReflectionClass dataWatcherSerializerClass = NMSUtil.getNMSClassViaVersion(17 , "DataWatcherSerializer", "network.syncher.DataWatcherSerializer");
-    private static final ReflectionClass dataWatcherItemClass = NMSUtil.getNMSClassViaVersion(17 , "DataWatcher$Item", "network.syncher.DataWatcher$Item");
+    private static final ReflectionClass dataWatcherObjectClass = XG7Plugins.getMinecraftVersion() < 9 ? null : NMSUtil.getNMSClassViaVersion(17 , "DataWatcherObject", "network.syncher.DataWatcherObject");
+    private static final ReflectionClass dataWatcherRegistryClass = XG7Plugins.getMinecraftVersion() < 9 ? null : NMSUtil.getNMSClassViaVersion(17 , "DataWatcherRegistry", "network.syncher.DataWatcherRegistry");
+    private static final ReflectionClass dataWatcherSerializerClass = XG7Plugins.getMinecraftVersion() < 9 ? null : NMSUtil.getNMSClassViaVersion(17 , "DataWatcherSerializer", "network.syncher.DataWatcherSerializer");
+    private static final ReflectionClass dataWatcherItemClass = XG7Plugins.getMinecraftVersion() < 9 ? null : NMSUtil.getNMSClassViaVersion(17 , "DataWatcher$Item", "network.syncher.DataWatcher$Item");
     private static final ReflectionClass dataWatcherClass = NMSUtil.getNMSClassViaVersion(17 , "DataWatcher", "network.syncher.DataWatcher");
     private static final ReflectionClass entityClass = XG7Plugins.getMinecraftVersion() > 20 ? NMSUtil.getNewerNMSClass("network.syncher.SyncedDataHolder") : NMSUtil.getNMSClassViaVersion(17 , "Entity", "world.entity.Entity");
 

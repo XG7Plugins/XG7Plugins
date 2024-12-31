@@ -24,7 +24,7 @@ public class Query {
     public static CompletableFuture<Query> create(Plugin plugin, String sql, Object... params) {
         return XG7Plugins.getInstance().getDatabaseManager().executeQuery(plugin, sql,params);
     }
-    public static <T extends Entity> CompletableFuture<T> getEntity(Plugin plugin, String sql, Object id, Class<T> clazz) {
+    public static <T extends Entity> CompletableFuture<T> getEntity(Plugin plugin, String sql, String id, Class<T> clazz) {
 
         DBManager manager = XG7Plugins.getInstance().getDatabaseManager();
 
@@ -105,8 +105,7 @@ public class Query {
 
                 if (value == null) continue;
 
-                Entity.PKey pKey = f.getAnnotation(Entity.PKey.class);
-                if (pKey != null) {
+                if (f.isAnnotationPresent(Entity.PKey.class)) {
                     if (dbManager.getEntitiesCached().asMap().containsKey(value.toString())) return (T) dbManager.getEntitiesCached().asMap().get(value);
                     id = value;
                 }

@@ -7,6 +7,7 @@ import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
 import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.tasks.TaskManager;
+import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -30,6 +31,13 @@ public class StopTaskSubCommand implements ICommand {
 
         if (!manager.getTasks().containsKey(id)) {
             Text.format("lang:[task-command.not-found]", XG7Plugins.getInstance()).send(sender);
+            return;
+        }
+
+        TaskState state = manager.getTasks().get(id).getState();
+
+        if (state == TaskState.IDLE) {
+            Text.format("lang:[task-command.already-stopped]", XG7Plugins.getInstance()).send(sender);
             return;
         }
 

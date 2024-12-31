@@ -22,7 +22,7 @@ public class SimplePlayerMenu extends PlayerMenu {
         this.items = items;
         this.onOpen = onOpen;
         this.onClose = onClose;
-        setMenuPrevents(prevents);
+        if (menuPrevents != null) setMenuPrevents(prevents);
     }
 
     @Override

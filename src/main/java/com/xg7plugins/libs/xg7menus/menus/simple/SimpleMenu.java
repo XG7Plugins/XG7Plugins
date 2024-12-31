@@ -23,7 +23,7 @@ public class SimpleMenu extends Menu {
         this.items = items;
         this.onOpen = onOpen;
         this.onClose = onClose;
-        setMenuPrevents(prevents);
+        if (prevents != null) setMenuPrevents(prevents);
     }
 
     public SimpleMenu(Plugin plugin, String id, String title, int size, List<Item> items, Consumer<MenuEvent> onOpen, Consumer<MenuEvent> onClose, Set<MenuPrevents> prevents) {
@@ -31,7 +31,7 @@ public class SimpleMenu extends Menu {
         this.items = items;
         this.onOpen = onOpen;
         this.onClose = onClose;
-        setMenuPrevents(prevents);
+        if (prevents != null) setMenuPrevents(prevents);
     }
 
     @Override

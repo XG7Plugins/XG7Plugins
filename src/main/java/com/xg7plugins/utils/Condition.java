@@ -17,14 +17,14 @@ public enum Condition {
 
     IF((conditionPack) -> {
         try {
-            return Parser.BOOLEAN.convert(Text.format(conditionPack.conditionValue, conditionPack.getPlugin()).getWithPlaceholders(conditionPack.getPlayer()));
+            return Parser.BOOLEAN.convert(conditionPack.conditionValue);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }),
     IF_NOT((conditionPack) -> {
         try {
-            return !((boolean) Parser.BOOLEAN.convert(Text.format(conditionPack.getConditionValue(), conditionPack.getPlugin()).getWithPlaceholders(conditionPack.getPlayer())));
+            return !((boolean) Parser.BOOLEAN.convert(conditionPack.conditionValue));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -38,7 +38,7 @@ public enum Condition {
         return condition.apply(pack);
     }
 
-    private static final Pattern conditionPattern = Pattern.compile("\\[(.*?): (.*?)\\]");
+    private static final Pattern conditionPattern = Pattern.compile("\\[(.*?): (.*?)\\] ");
 
     public static Pair<Condition, String> extractCondition(String condition) {
         Matcher matcher = conditionPattern.matcher(condition);

@@ -6,7 +6,9 @@ import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
 import com.xg7plugins.libs.xg7menus.item.Item;
+import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
+import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -33,7 +35,15 @@ public class RestartTaskSubCommand implements ICommand {
             Text.format("lang:[task-command.not-found]", XG7Plugins.getInstance()).send(sender);
             return;
         }
-        manager.runTask(manager.getTasks().get(id));
+
+        Task task = manager.getTasks().get(id);
+
+        if (task.getState() == TaskState.RUNNING) {
+            Text.format("lang:[task-command.already-running]", XG7Plugins.getInstance()).send(sender);
+            return;
+        }
+
+        manager.runTask(task);
 
         XG7Plugins.getInstance().getLog().warn("Task " + id + " was restarted by " + sender.getName());
 

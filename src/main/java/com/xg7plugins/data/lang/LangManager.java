@@ -95,8 +95,13 @@ public class LangManager {
 
             if (XG7Plugins.getInstance().getConfig("config").get("auto-chose-lang", Boolean.class).orElse(false)){
                 String playerLocale = XG7Plugins.getMinecraftVersion() >= 12 ? player.getLocale() : PlayerNMS.cast(player).getCraftPlayerHandle().getField("locale");
-                System.out.println("Player locale " + playerLocale);
-                if (langs.asMap().containsKey(playerLocale)) langId = playerLocale;
+                plugin.getLog().info(player.getName() + " language: " + playerLocale);
+                for (Map.Entry<String, YamlConfiguration> entry : langs.asMap().entrySet()) {
+                    if (entry.getValue().getString("locale").equals(playerLocale)) {
+                        langId = entry.getKey();
+                        break;
+                    }
+                }
             }
             PlayerLanguage newLang = new PlayerLanguage(player.getUniqueId(), langId);
             try {

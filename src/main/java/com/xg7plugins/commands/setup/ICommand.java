@@ -27,7 +27,7 @@ public interface ICommand {
     Item getIcon();
 
     default void syntaxError(CommandSender sender, String syntax) {
-        Text.format("lang:[commands.syntax-error]", XG7Plugins.getInstance())
+        Text.formatComponent("lang:[commands.syntax-error]", XG7Plugins.getInstance())
                 .replace("[SYNTAX]", syntax)
                 .send(sender);
     }

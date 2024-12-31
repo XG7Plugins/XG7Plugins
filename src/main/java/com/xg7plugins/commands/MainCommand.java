@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class MainCommand implements ICommand {
@@ -25,6 +26,6 @@ public class MainCommand implements ICommand {
     @Override
     public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
 
-        return new ArrayList<>(XG7Plugins.getInstance().getCommandManager().getCommands().keySet());
+        return XG7Plugins.getInstance().getCommandManager().getCommands().keySet().stream().map(s -> s.replace("xg7plugins", "")).collect(Collectors.toList());
     }
 }

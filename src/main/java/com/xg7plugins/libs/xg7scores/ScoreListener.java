@@ -5,13 +5,13 @@ import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.List;
+
 public class ScoreListener implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
-        Score score = XG7Plugins.getInstance().getScoreManager().getByPlayer(event.getPlayer());
-        if (score == null) return;
-        score.removePlayer(event.getPlayer());
+        XG7Plugins.getInstance().getScoreManager().removePlayer(event.getPlayer());
     }
 
 

@@ -40,6 +40,8 @@ public abstract class Score {
 
     public void removePlayer(Player player) {
 
+        if (!players.contains(player.getUniqueId())) return;
+
             players.remove(player.getUniqueId());
             if (players.isEmpty()) updating = false;
     }

@@ -90,10 +90,10 @@ public class LangMenu extends PageMenu {
                     double cooldownToToggle = XG7Plugins.getInstance().getCooldownManager().getReamingTime("lang-change", player);
 
                     Text.formatComponent("lang:[lang-menu.cooldown-to-toggle]", plugin)
-                            .replace("[MILLISECONDS]", String.valueOf((cooldownToToggle - System.currentTimeMillis())))
-                            .replace("[SECONDS]", String.valueOf((int) ((cooldownToToggle - System.currentTimeMillis()) / 1000)))
-                            .replace("[MINUTES]", String.valueOf((int) ((cooldownToToggle - System.currentTimeMillis()) / 60000)))
-                            .replace("[HOURS]", String.valueOf((int) ((cooldownToToggle - System.currentTimeMillis()) / 3600000)))
+                            .replace("[MILLISECONDS]", String.valueOf((cooldownToToggle)))
+                            .replace("[SECONDS]", String.valueOf((int) ((cooldownToToggle) / 1000)))
+                            .replace("[MINUTES]", String.valueOf((int) ((cooldownToToggle) / 60000)))
+                            .replace("[HOURS]", String.valueOf((int) ((cooldownToToggle) / 3600000)))
                             .send(player);
                     return;
                 }

@@ -4,6 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -13,7 +14,7 @@ public class JoinAndQuit implements Listener {
         return true;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
 
         XG7Plugins plugin = XG7Plugins.getInstance();
@@ -21,7 +22,6 @@ public class JoinAndQuit implements Listener {
         plugin.getPacketEventManager().create(event.getPlayer());
         if (XG7Plugins.getMinecraftVersion() > 7) plugin.getHologramsManager().addPlayer(event.getPlayer());
         plugin.getNpcManager().addPlayer(event.getPlayer());
-
 
     }
     @EventHandler

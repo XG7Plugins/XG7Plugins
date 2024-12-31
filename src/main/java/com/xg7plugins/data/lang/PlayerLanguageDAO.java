@@ -21,7 +21,7 @@ public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
     public CompletableFuture<PlayerLanguage> get(UUID uuid) {
         if (uuid == null) return null;
 
-        return Query.getEntity(XG7Plugins.getInstance(), "SELECT * FROM playerlanguage WHERE playeruuid = ?", uuid, PlayerLanguage.class);
+        return Query.getEntity(XG7Plugins.getInstance(), "SELECT * FROM playerlanguage WHERE playeruuid = ?", uuid.toString(), PlayerLanguage.class);
     }
     public CompletableFuture<Void> update(PlayerLanguage playerLanguage) {
         if (playerLanguage == null) return null;

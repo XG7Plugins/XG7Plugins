@@ -23,9 +23,6 @@ public class DBManager {
     @Getter
     private final Cache<String, Entity> entitiesCached;
 
-    private final Queue<String> queries = new LinkedList<>();
-
-
     @SneakyThrows
     public DBManager(XG7Plugins plugin) {
 
@@ -36,7 +33,8 @@ public class DBManager {
         entitiesCached = Caffeine.newBuilder().expireAfterAccess(config.getTime("sql.cache-expires").orElse(30 * 60 * 1000L), TimeUnit.MILLISECONDS).build();
     }
 
-    public void connectPlugin(Plugin plugin, Class<? extends Entity>... entityClasses) {
+    @SafeVarargs
+    public final void connectPlugin(Plugin plugin, Class<? extends Entity>... entityClasses) {
 
         if (entityClasses == null) return;
 
@@ -92,6 +90,12 @@ public class DBManager {
 
         plugin.getLog().loading("Successfully connected to database!");
 
+        try {
+            connections.get(plugin.getName()).setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         plugin.getLog().loading("Checking tables...");
 
         Arrays.stream(entityClasses).forEach(aClass -> EntityProcessor.createTableOf(plugin, aClass));
@@ -120,9 +124,7 @@ public class DBManager {
                 PreparedStatement ps = connection.prepareStatement(sql);
                 for (int i = 0; i < args.length; i++) ps.setObject(i + 1, args[i]);
 
-
                 ResultSet rs = ps.executeQuery();
-
                 List<Map<String, Object>> results = new ArrayList<>();
 
                 while (rs.next()) {
@@ -136,6 +138,8 @@ public class DBManager {
                 }
 
                 return new Query(results.iterator(), this);
+
+
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -164,7 +168,13 @@ public class DBManager {
                 Connection connection = connections.get(plugin.getName());
                 PreparedStatement ps = connection.prepareStatement(sql);
                 for (int i = 0; i < args.length; i++) ps.setObject(i + 1, args[i]);
-                ps.executeUpdate();
+                try {
+                    ps.executeUpdate();
+                    connection.commit();
+                } catch (SQLException e) {
+                    connection.rollback();
+                    throw new RuntimeException(e);
+                }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }

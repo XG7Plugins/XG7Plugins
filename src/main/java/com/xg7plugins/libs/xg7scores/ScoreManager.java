@@ -64,8 +64,8 @@ public class ScoreManager {
     public void registerScore(final Score score) {
         scoreboards.put(score.getId(), score);
     }
-    public Score getByPlayer(Player player) {
-        return scoreboards.values().stream().filter(sc -> sc.getPlayers().contains(player)).findFirst().orElse(null);
+    public List<Score> getByPlayer(Player player) {
+        return scoreboards.values().stream().filter(sc -> sc.getPlayers().contains(player.getUniqueId())).collect(Collectors.toList());
     }
     public void unregisterPlugin(Plugin plugin) {
 
@@ -86,6 +86,7 @@ public class ScoreManager {
     }
 
     public void cancelTask() {
+        Bukkit.getOnlinePlayers().forEach(this::removePlayer);
         XG7Plugins.taskManager().cancelTask(task);
     }
 

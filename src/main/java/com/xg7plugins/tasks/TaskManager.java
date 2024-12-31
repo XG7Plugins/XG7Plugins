@@ -64,9 +64,10 @@ public class TaskManager {
                 e.printStackTrace();
             }
 
-            task.setState(TaskState.IDLE);
-
-            if (!task.isRepeating()) return;
+            if (!task.isRepeating()) {
+                task.setState(TaskState.IDLE);
+                cancelTask(task);
+            }
 
         };
 
@@ -114,10 +115,12 @@ public class TaskManager {
     }
 
     public void cancelTask(Task task) {
-        if (task.isAsync()) {
-            task.getFuture().cancel(true);
-        } else {
-            Bukkit.getScheduler().cancelTask(task.getBukkitTaskId());
+        if (task.getState().equals(TaskState.RUNNING)) {
+            if (task.isAsync()) {
+                task.getFuture().cancel(true);
+            } else {
+                Bukkit.getScheduler().cancelTask(task.getBukkitTaskId());
+            }
         }
         if (!task.isRepeating()) tasks.remove(task.getPlugin().getName() + ":" + task.getName());
 

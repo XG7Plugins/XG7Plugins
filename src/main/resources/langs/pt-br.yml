@@ -1,16 +1,15 @@
-
-locale: portugues
-formated-name: "Portugu?s"
+locale: pt_BR
+formated-name: "Português"
 icon: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY2OGExZmI2YWY4MWIyMzFiYmNjNGRlNWY3Zjk1ODAzYmJkMTk0ZjU4MjdkYTAyN2ZhNzAzMjFjZjQ3YyJ9fX0="
 bedrock-icon: "URL, https://rondonia.ro.gov.br/wp-content/uploads/2020/09/Bandeira-Nacionals%C3%ADmbolo-maior-da-P%C3%A1tria-Brasileira-Foto-Divulga%C3%A7%C3%A3o.jpg"
 
 commands:
-  syntax-error: "Voc? digitou o comando de maneira errada! A maneira certa ? [SYNTAX]"
-  never-played: "Este jogador n?o existe ou nunca jogou antes!"
-  no-permission: "Voc? n?o tem permiss?o para executar este comando!"
-  disabled-world: "Voc? n?o pode executar o comando nesse mundo!"
-  not-a-player: "Voc? n?o pode executar este comando no console!"
-  is-a-player: "Voc? n?o pode executar este comando sendo um jogador!"
+  syntax-error: "Você digitou o comando de maneira errada! A maneira certa é [SYNTAX]"
+  never-played: "Este jogador não existe ou nunca jogou antes!"
+  no-permission: "Você não tem permissão para executar este comando!"
+  disabled-world: "Você não pode executar o comando nesse mundo!"
+  not-a-player: "Você não pode executar este comando no console!"
+  is-a-player: "Você não pode executar este comando sendo um jogador!"
 
 reload-message:
   config: "Configs de [PLUGIN] recarregados!"
@@ -20,19 +19,18 @@ reload-message:
   events: "Eventos de [PLUGIN] recarregados!"
   json: "Caches invalidados com sucesso!"
 
-
 #Plugin defaults
 
 go-back-item: "Voltar"
-go-next-item: "Avan?ar"
+go-next-item: "Avançar"
 close-item: "Fechar"
-refresh-item: "Recarregar p?gina"
+refresh-item: "Recarregar página"
 
 confirmation-menu:
   title: "&aTem certeza que deseja fazer isso?"
 
   yes-item: "&cSim"
-  no-item: "&aN?o"
+  no-item: "&aNão"
 
 lang-not-found: "&cLanguage not found!"
 
@@ -42,13 +40,13 @@ lang-menu:
   content: "Escolha um idioma para o servidor!"
 
   item-click:
-    - "Clique para trocar o idioma para portugu?s"
+    - "Clique para trocar o idioma para português"
 
-  already-selected: "Voc? j? est? com este idioma selecionado!"
+  already-selected: "Você já está com este idioma selecionado!"
 
-  toggle-success: "Voc? trocou o idioma para portugu?s!"
+  toggle-success: "Você trocou o idioma para português!"
 
-  cooldown-to-toggle: "Voc? precisa esperar [SECONDS] segundos para trocar o idioma novamente!"
+  cooldown-to-toggle: "Você precisa esperar [SECONDS] segundos para trocar o idioma novamente!"
 
 tasks-menu:
   title: "Tasks"
@@ -56,11 +54,11 @@ tasks-menu:
   task-item:
     - "&fTask id: &b[ID]"
     - "&fTask plugin: &e[PLUGIN]"
+    - "&fEstado da task: &9[STATE]"
     - " "
     - "&fClick esquerdo -> &aCopiar id"
     - "[IF: %task_is_running%] &fClick direito -> &cParar Task"
-    - "[IF: %task_is_running%] &fClick direito -> &cRecome?ar Task"
-
+    - "[IF: %task_is_not_running%] &fClick direito -> &eComeçar Task"
 
   copy-to-clipboard: "Clique [CLICK action=%COPY_TO_CLICKBOARD% value=%[ID]%]&baqui&r[/CLICK] para copiar o id!"
 
@@ -70,10 +68,13 @@ tasks-menu:
     - "&fTarefas rodando: &9[TASKS]"
 
 task-command:
-  not-found: "Task n?o encontrada!"
+  not-found: "Task não encontrada!"
   deleted: "Task deletada!"
   stopped: "Task parada!"
-  resumed: "Task recome?ada!"
+  restarted: "Task recomeçada!"
+
+  already-running: "A task já está em execução!"
+  already-stopped: "A task já está parada!"
 
 commands-menu:
 
@@ -83,6 +84,6 @@ commands-menu:
 
   command-item:
     usage: "&fUso: &a[SYNTAX]"
-    desc: "&fDescri??o: &e[DESCRIPTION]"
-    perm: "&fPermiss?o: &c[PERMISSION]"
-    player-only: "&fS? players podem usar: &b[PLAYER_ONLY]"
+    desc: "&fDescrição: &e[DESCRIPTION]"
+    perm: "&fPermissão: &c[PERMISSION]"
+    player-only: "&fSó players podem usar: &b[PLAYER_ONLY]"

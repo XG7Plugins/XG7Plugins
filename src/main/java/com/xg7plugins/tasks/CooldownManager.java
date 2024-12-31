@@ -1,16 +1,14 @@
 package com.xg7plugins.tasks;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
@@ -33,6 +31,7 @@ public class CooldownManager {
                 timeFactor,
                 TaskState.IDLE,
                 () -> {
+                    List<Pair<UUID, String>> toRemove = new ArrayList<>();
                     cooldowns.forEach((id, tasks) -> {
                         Player player = Bukkit.getPlayer(id);
 
@@ -48,22 +47,28 @@ public class CooldownManager {
                             if (task.getTick() != null) task.getTick().accept(player);
                             if (task.getTime() <= 0) {
                                 if (task.getOnFinish() != null) task.getOnFinish().accept(player, false);
-                                cooldowns.get(id).remove(task.getId());
-
-                                if (cooldowns.get(id).isEmpty()) cooldowns.remove(id);
+                                toRemove.add(new Pair<>(id, task.getId()));
                             }
                         });
                     });
+
+                    for (Pair<UUID, String> pair : toRemove) {
+                        cooldowns.get(pair.getFirst()).remove(pair.getSecond());
+
+                        if (cooldowns.get(pair.getFirst()).isEmpty()) cooldowns.remove(pair.getFirst());
+                    }
                 }
         );
 
     }
 
     public void addCooldown(Player player, CooldownTask task) {
+        XG7Plugins.taskManager().runTask(this.task);
         cooldowns.putIfAbsent(player.getUniqueId(), new HashMap<>());
         cooldowns.get(player.getUniqueId()).put(task.getId(), task);
     }
     public void addCooldown(Player player, String cooldownId, double time) {
+        XG7Plugins.taskManager().runTask(task);
         cooldowns.putIfAbsent(player.getUniqueId(), new HashMap<>());
         cooldowns.get(player.getUniqueId()).put(cooldownId, new CooldownTask(cooldownId, time, null, null));
     }
