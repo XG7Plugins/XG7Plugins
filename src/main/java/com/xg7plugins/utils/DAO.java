@@ -1,6 +1,6 @@
 package com.xg7plugins.utils;
 
-import com.xg7plugins.data.database.Entity;
+import com.xg7plugins.data.database.entity.Entity;
 import lombok.AllArgsConstructor;
 
 import java.util.concurrent.CompletableFuture;

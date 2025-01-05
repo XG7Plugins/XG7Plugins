@@ -8,11 +8,12 @@ import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
 import com.xg7plugins.commands.defaultCommands.TestCommand;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.database.Entity;
 import com.xg7plugins.data.JsonManager;
+import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.lang.LangItemTypeAdapter;
 import com.xg7plugins.data.lang.LangManager;
 import com.xg7plugins.data.lang.PlayerLanguage;
+import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.events.defaultevents.CommandAntiTab;
@@ -32,12 +33,10 @@ import com.xg7plugins.libs.xg7npcs.NPCManager;
 import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreListener;
 import com.xg7plugins.libs.xg7scores.ScoreManager;
-import com.xg7plugins.data.database.DBManager;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager1_7;
 import com.xg7plugins.libs.xg7scores.builder.BossBarBuilder;
-import com.xg7plugins.libs.xg7scores.builder.ScoreBoardBuilder;
 import com.xg7plugins.menus.LangForm;
 import com.xg7plugins.menus.LangMenu;
 import com.xg7plugins.menus.TaskMenu;
@@ -88,7 +87,7 @@ public final class XG7Plugins extends Plugin {
         minecraftVersion = matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
     }
 
-    private DBManager databaseManager;
+    private DatabaseManager databaseManager;
     private TPSCalculator tpsCalculator;
     private LangManager langManager;
     private EventManager eventManager;
@@ -105,6 +104,7 @@ public final class XG7Plugins extends Plugin {
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
     public XG7Plugins() {
+        super(null,null);
         getConfigsManager().registerAdapter(Item.class, new LangItemTypeAdapter());
     }
 
@@ -125,7 +125,7 @@ public final class XG7Plugins extends Plugin {
         taskManager().registerExecutor("database", Executors.newCachedThreadPool());
         taskManager().registerExecutor("files", Executors.newCachedThreadPool());
         taskManager().registerExecutor("menus", Executors.newCachedThreadPool());
-        this.databaseManager = new DBManager(this);
+        this.databaseManager = new DatabaseManager(this);
         this.langManager = config.get("enable-langs", Boolean.class).orElse(false) ? new LangManager(this, new String[]{"en-us", "pt-br", "sp-sp"}) : null;
         if (langManager == null) config.getConfigManager().putConfig("messages", new Config(this, "langs/" + config.get("main-lang", String.class).get()));
         else langManager.loadLangsFrom(this);

@@ -1,4 +1,3 @@
-
 prefix: "&b[XG&37P&9lu&1gins]&r"
 
 log-enabled: true
@@ -18,6 +17,7 @@ enable-geyser-forms: true
 enable-lang-form: true
 
 repeating-tasks-threads: 4
+database-tasks-threads: 4
 
 player-cooldown-task-delay: 1s
 
