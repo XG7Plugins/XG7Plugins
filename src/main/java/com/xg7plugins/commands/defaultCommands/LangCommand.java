@@ -4,9 +4,9 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.data.lang.PlayerLanguage;
-import com.xg7plugins.data.lang.PlayerLanguageDAO;
-import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
+import com.xg7plugins.lang.PlayerLanguage;
+import com.xg7plugins.lang.PlayerLanguageDAO;
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.libs.xg7menus.menus.holders.MenuHolder;
 import com.xg7plugins.utils.text.Text;
@@ -51,7 +51,7 @@ public class LangCommand implements ICommand {
         }
 
         OfflinePlayer target = args.get(0, Player.class);
-        String lang = args.get(1, String.class);
+        String lang = XG7Plugins.getInstance().getName() + ":" + args.get(1, String.class);
 
         if (!target.hasPlayedBefore()) {
             Text.format("lang:[commands.player-not-found]",XG7Plugins.getInstance()).send(sender);
@@ -60,14 +60,16 @@ public class LangCommand implements ICommand {
 
         XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
 
-        if (!XG7Plugins.getInstance().getLangManager().getLangs().asMap().containsKey(lang)) {
+        if (!XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().containsKey(lang)) {
             Text.format("lang:[lang-not-found]",XG7Plugins.getInstance()).send(sender);
             return;
         }
 
         PlayerLanguageDAO dao = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO();
 
-        dao.update(new PlayerLanguage(target.getUniqueId(), lang)).thenAccept(r -> {
+        String dbLang = args.get(1, String.class);
+
+        dao.update(new PlayerLanguage(target.getUniqueId(), dbLang)).thenAccept(r -> {
             XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
             Text.formatComponent("lang:[lang-menu.toggle-success]", XG7Plugins.getInstance()).send(sender);
             if (target.isOnline()) {

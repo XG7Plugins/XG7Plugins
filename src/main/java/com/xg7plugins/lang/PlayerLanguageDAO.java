@@ -1,4 +1,4 @@
-package com.xg7plugins.data.lang;
+package com.xg7plugins.lang;
 
 import com.xg7plugins.XG7Plugins;
 
@@ -24,7 +24,7 @@ public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
                         XG7Plugins.getInstance(),
                         playerLanguage,
                         Transaction.Type.INSERT
-                ).queue().waitForResult();
+                ).waitForResult();
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -36,18 +36,16 @@ public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
     public CompletableFuture<PlayerLanguage> get(UUID uuid) {
         if (uuid == null) return null;
 
-        if (XG7Plugins.getInstance().getDatabaseManager().containsCachedEntity(uuid.toString())) {
-            return CompletableFuture.completedFuture(XG7Plugins.getInstance().getDatabaseManager().getCachedEntity(uuid.toString()));
-        }
+        return XG7Plugins.getInstance().getDatabaseManager().containsCachedEntity(uuid.toString()).thenComposeAsync(exists -> {
+            if (exists) return XG7Plugins.getInstance().getDatabaseManager().getCachedEntity(uuid.toString());
 
-        return CompletableFuture.supplyAsync(() -> {
             try {
-                Query.selectFrom(XG7Plugins.getInstance(), PlayerLanguage.class, uuid).onError(Throwable::printStackTrace).queue().waitForResult().get(PlayerLanguage.class);
+                return CompletableFuture.completedFuture(Query.selectFrom(XG7Plugins.getInstance(), PlayerLanguage.class, uuid).onError(Throwable::printStackTrace).waitForResult().get(PlayerLanguage.class));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            return null;
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("database"));
+        } ,XG7Plugins.taskManager().getAsyncExecutors().get("database"));
+
 
     }
     public CompletableFuture<Void> update(PlayerLanguage playerLanguage) {
@@ -55,7 +53,8 @@ public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
 
         return CompletableFuture.runAsync(() -> {
             try {
-                Transaction.update(XG7Plugins.getInstance(), playerLanguage).onError(Throwable::printStackTrace).queue().waitForResult();
+                Transaction.update(XG7Plugins.getInstance(), playerLanguage).onError(Throwable::printStackTrace).waitForResult();
+                XG7Plugins.getInstance().getDatabaseManager().cacheEntity(playerLanguage.getPlayerUUID().toString(), playerLanguage);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

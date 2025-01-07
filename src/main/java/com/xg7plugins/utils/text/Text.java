@@ -3,7 +3,7 @@ package com.xg7plugins.utils.text;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.lang.LangManager;
+import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.utils.Condition;
 import com.xg7plugins.utils.reflection.nms.*;
 import lombok.Getter;
@@ -106,17 +106,19 @@ public class Text {
 
         }
 
-            //This method must be synchronized, the Future will block until the result is returned
+        //This method must be synchronized, the Future will block until the result is returned
+        //Sorry for the inconvenience
+        //If you have a better solution, please let me know
 
-            langConfig = Config.of(plugin, langManager.getLangByPlayer(plugin,player).join());
+        langConfig = Config.of(plugin, langManager.getLangByPlayer(plugin, player).join());
 
-            while (matcher.find()) {
-                String lang = matcher.group(1);
-                text = text.replace(text.substring(matcher.start(), matcher.end()), langConfig.get(lang,String.class).orElse("Cannot found path \"" + lang + "\" in " + langConfig.get("formated-name", String.class).orElse("langs")));
-            }
+        while (matcher.find()) {
+            String lang = matcher.group(1);
+            text = text.replace(text.substring(matcher.start(), matcher.end()), langConfig.get(lang, String.class).orElse("Cannot found path \"" + lang + "\" in " + langConfig.get("formated-name", String.class).orElse("langs")));
+        }
 
 
-        text = Condition.processCondition(text,plugin,player);
+        text = Condition.processCondition(text, plugin, player);
 
         if (text.isEmpty()) return "";
 

@@ -8,7 +8,6 @@ import com.xg7plugins.libs.xg7menus.item.Item;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

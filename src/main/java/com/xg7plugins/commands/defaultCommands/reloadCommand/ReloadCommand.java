@@ -3,7 +3,7 @@ package com.xg7plugins.commands.defaultCommands.reloadCommand;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.subcommands.*;
 import com.xg7plugins.commands.setup.*;
-import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.libs.xg7menus.item.Item;
 import org.bukkit.command.CommandSender;
 

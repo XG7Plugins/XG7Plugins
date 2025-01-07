@@ -33,13 +33,12 @@ dependencies {
     compileOnly 'io.netty:netty-all:4.1.111.Final'
     implementation 'com.mojang:authlib:1.5.25'
 
+    compileOnly 'redis.clients:jedis:5.2.0'
 
-    implementation 'com.github.ben-manes.caffeine:caffeine:2.8.0'
+    implementation "com.github.cryptomorin:XSeries:13.0.0"
 
     compileOnly 'org.geysermc.floodgate:api:2.2.3-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.6'
-
-    implementation 'org.javassist:javassist:3.28.0-GA'
 
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
@@ -49,7 +48,7 @@ dependencies {
 
     compileOnly 'org.jetbrains:annotations:24.1.0'
 
-    implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
+    compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
 
 
 }

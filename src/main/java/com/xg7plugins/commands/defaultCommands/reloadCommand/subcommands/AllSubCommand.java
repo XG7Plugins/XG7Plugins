@@ -5,8 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
-import com.xg7plugins.libs.xg7menus.item.Item;
+import com.cryptomorin.xseries.XMaterial;import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -29,7 +28,7 @@ public class AllSubCommand implements ICommand {
             XG7Plugins.getInstance().getEventManager().registerPlugin(plugin, plugin.loadEvents());
             XG7Plugins.getInstance().getPacketEventManager().unregisterPlugin(plugin);
             XG7Plugins.getInstance().getPacketEventManager().registerPlugin(plugin, plugin.loadPacketEvents());
-            XG7Plugins.getInstance().getLangManager().getLangs().invalidateAll();
+            XG7Plugins.getInstance().getLangManager().getLangs().clear().join();
             XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin);
             XG7Plugins.getInstance().getDatabaseManager().disconnectPlugin(plugin);
             XG7Plugins.getInstance().getDatabaseManager().connectPlugin(plugin, plugin.loadEntites());

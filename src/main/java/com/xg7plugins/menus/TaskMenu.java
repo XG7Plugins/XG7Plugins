@@ -4,7 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.libs.xg7menus.Slot;
-import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.libs.xg7menus.events.ClickEvent;
 import com.xg7plugins.libs.xg7menus.events.MenuEvent;
 import com.xg7plugins.libs.xg7menus.item.Item;

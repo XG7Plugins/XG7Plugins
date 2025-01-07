@@ -2,10 +2,10 @@ package com.xg7plugins.menus;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.lang.PlayerLanguage;
-import com.xg7plugins.data.lang.PlayerLanguageDAO;
+import com.xg7plugins.lang.PlayerLanguage;
+import com.xg7plugins.lang.PlayerLanguageDAO;
 import com.xg7plugins.libs.xg7menus.Slot;
-import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.libs.xg7menus.events.ClickEvent;
 import com.xg7plugins.libs.xg7menus.events.MenuEvent;
 import com.xg7plugins.libs.xg7menus.item.Item;
@@ -32,7 +32,7 @@ public class LangMenu extends PageMenu {
 
         List<Item> pagedItems = new ArrayList<>();
 
-        XG7Plugins.getInstance().getLangManager().getLangs().asMap().forEach((s, c)-> {
+        XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().forEach((s, c)-> {
             boolean selected = language != null && language.getLangId().equals(s);
 
             pagedItems.add(Config.of(XG7Plugins.getInstance(), c).get("", Item.class, selected, s).orElse(null));
@@ -50,7 +50,7 @@ public class LangMenu extends PageMenu {
     protected List<Item> items(Player player) {
         return Arrays.asList(
                 Item.from(XMaterial.ARROW).name("lang:[go-back-item]").slot(45),
-                Item.from(XMaterial.BARRIER).name("lang:[close-item]").slot(49),
+                Item.from(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR)).name("lang:[close-item]").slot(49),
                 Item.from(XMaterial.ARROW).name("lang:[go-next-item]").slot(53)
         );
     }
@@ -100,7 +100,9 @@ public class LangMenu extends PageMenu {
 
                 PlayerLanguageDAO dao = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO();
 
-                dao.update(new PlayerLanguage(player.getUniqueId(), langName)).thenAccept(r -> {
+                String dbLang = langName.split(":")[1];
+
+                dao.update(new PlayerLanguage(player.getUniqueId(), dbLang)).thenAccept(r -> {
                     XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
                     Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
                     player.closeInventory();

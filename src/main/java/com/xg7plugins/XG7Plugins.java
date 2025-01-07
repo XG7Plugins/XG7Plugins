@@ -2,6 +2,7 @@ package com.xg7plugins;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginConfigurations;
+import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.defaultCommands.LangCommand;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
@@ -10,9 +11,9 @@ import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.database.entity.Entity;
-import com.xg7plugins.data.lang.LangItemTypeAdapter;
-import com.xg7plugins.data.lang.LangManager;
-import com.xg7plugins.data.lang.PlayerLanguage;
+import com.xg7plugins.lang.LangItemTypeAdapter;
+import com.xg7plugins.lang.LangManager;
+import com.xg7plugins.lang.PlayerLanguage;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
@@ -88,6 +89,7 @@ public final class XG7Plugins extends Plugin {
     }
 
     private DatabaseManager databaseManager;
+    private CacheManager cacheManager;
     private TPSCalculator tpsCalculator;
     private LangManager langManager;
     private EventManager eventManager;
@@ -125,11 +127,13 @@ public final class XG7Plugins extends Plugin {
         taskManager().registerExecutor("database", Executors.newCachedThreadPool());
         taskManager().registerExecutor("files", Executors.newCachedThreadPool());
         taskManager().registerExecutor("menus", Executors.newCachedThreadPool());
+        taskManager().registerExecutor("cache", Executors.newSingleThreadExecutor());
+        this.cacheManager = new CacheManager(this);
         this.databaseManager = new DatabaseManager(this);
         this.langManager = config.get("enable-langs", Boolean.class).orElse(false) ? new LangManager(this, new String[]{"en-us", "pt-br", "sp-sp"}) : null;
         if (langManager == null) config.getConfigManager().putConfig("messages", new Config(this, "langs/" + config.get("main-lang", String.class).get()));
         else langManager.loadLangsFrom(this);
-        this.jsonManager = new JsonManager();
+        this.jsonManager = new JsonManager(this);
         this.hologramsManager = minecraftVersion < 8 ? null : new HologramsManager(this);
         this.npcManager = new NPCManager(this);
         this.menuManager = new MenuManager();

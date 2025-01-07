@@ -1,6 +1,5 @@
 package com.xg7plugins.commands.setup;
 
-import com.xg7plugins.data.lang.PlayerLanguage;
 import com.xg7plugins.utils.Parser;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
@@ -23,7 +22,7 @@ public class CommandArgs {
             throw new IllegalArgumentException("Index " + index + " is out of bounds!");
         }
 
-        if (type.isAssignableFrom(OfflinePlayer.class)) {
+        if (OfflinePlayer.class.isAssignableFrom(type)) {
             return (T) Bukkit.getOfflinePlayer( args[index]);
         }
 

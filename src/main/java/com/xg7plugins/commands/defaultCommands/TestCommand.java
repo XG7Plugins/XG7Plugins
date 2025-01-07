@@ -74,7 +74,7 @@ public class TestCommand implements ICommand {
             Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).forEach(suggestions::add);
         }
         if (args.len() == 2) {
-            suggestions.addAll(XG7Plugins.getInstance().getLangManager().getLangs().asMap().keySet());
+            suggestions.addAll(XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().keySet());
         }
         return suggestions;
     }

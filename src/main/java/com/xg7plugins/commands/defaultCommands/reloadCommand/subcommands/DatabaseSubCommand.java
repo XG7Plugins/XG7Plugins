@@ -5,8 +5,8 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.data.database.DBManager;
-import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
+import com.xg7plugins.data.database.DatabaseManager;
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
@@ -25,7 +25,7 @@ public class DatabaseSubCommand implements ICommand {
 
         if (args.len() != 0) plugin = XG7Plugins.getInstance().getPlugins().get(args.get(0, String.class));
 
-        DBManager dbManager = XG7Plugins.getInstance().getDatabaseManager();
+        DatabaseManager dbManager = XG7Plugins.getInstance().getDatabaseManager();
 
         dbManager.disconnectPlugin(plugin);
         dbManager.connectPlugin(plugin, plugin.loadEntites());

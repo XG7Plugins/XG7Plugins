@@ -146,8 +146,8 @@ public class TaskManager {
 
 
     public void shutdown() {
-        repeatingAsyncTasksExecutor.shutdown();
-        asyncExecutors.values().forEach(ExecutorService::shutdown);
+        repeatingAsyncTasksExecutor.shutdownNow();
+        asyncExecutors.values().forEach(ExecutorService::shutdownNow);
     }
 
 }

@@ -5,7 +5,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.libs.xg7menus.builders.MenuBuilder;
 import com.xg7plugins.libs.xg7menus.item.ClickableItem;
 import com.xg7plugins.libs.xg7menus.item.Item;

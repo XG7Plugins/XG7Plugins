@@ -17,7 +17,6 @@ enable-geyser-forms: true
 enable-lang-form: true
 
 repeating-tasks-threads: 4
-database-tasks-threads: 4
 
 player-cooldown-task-delay: 1s
 
@@ -29,8 +28,6 @@ npcs-look-at-player: true
 
 sql:
 
-  cache-expires: 30m
-
   type: "sqlite"
 
   host: ""
@@ -40,3 +37,28 @@ sql:
 
   username: ""
   password: ""
+
+  cache-expires: 30m
+
+  query-processor-threads: 4
+  sql-command-processing-interval: 20ms
+
+redis-cache:
+
+  enabled: false
+
+  host: "localhost"
+  port: 6379
+
+  user-auth-enabled: false
+
+  username: ""
+  password: ""
+
+  cache-expires: true
+
+  min-idle-connections: 1
+  max-idle-connections: 5
+  max-connections: 10
+
+  max-wait-time: 10s

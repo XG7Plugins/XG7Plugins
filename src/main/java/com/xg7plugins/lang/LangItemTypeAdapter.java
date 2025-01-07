@@ -1,4 +1,4 @@
-package com.xg7plugins.data.lang;
+package com.xg7plugins.lang;
 
 import com.sun.jna.platform.unix.solaris.LibKstat;
 import com.xg7plugins.data.config.ConfigTypeAdapter;

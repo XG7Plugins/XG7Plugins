@@ -1,14 +1,13 @@
 package com.xg7plugins.libs.xg7menus.item;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
+import com.xg7plugins.cache.ObjectCache;
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -26,7 +25,9 @@ import java.util.concurrent.TimeUnit;
 
 public class SkullItem extends Item {
 
-    private static final Cache<String, ItemMeta> cachedSkulls = Caffeine.newBuilder().expireAfterWrite(15, TimeUnit.MINUTES).build();
+    private static final ObjectCache<String, ItemMeta> cachedSkulls = new ObjectCache<>(
+            XG7Plugins.getInstance(), 15, true, "skulls", true, String.class, ItemMeta.class
+    );
 
     private boolean renderSkullPlayer = false;
 
@@ -58,8 +59,8 @@ public class SkullItem extends Item {
         if (XG7Plugins.getMinecraftVersion() < 8) {
             return this;
         }
-        if (cachedSkulls.asMap().containsKey(value)) {
-            this.itemStack.setItemMeta(cachedSkulls.getIfPresent(value));
+        if (cachedSkulls.containsKey(value).join()) {
+            this.itemStack.setItemMeta(cachedSkulls.get(value).join());
             return this;
         }
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "null");
@@ -92,8 +93,8 @@ public class SkullItem extends Item {
             setPlayerSkinValue(Bukkit.getPlayer(owner).getUniqueId());
             return this;
         }
-        if (cachedSkulls.asMap().containsKey(owner)) {
-            meta(cachedSkulls.getIfPresent(owner));
+        if (cachedSkulls.containsKey(owner).join()) {
+            meta(cachedSkulls.get(owner).join());
             return this;
         }
         SkullMeta meta = (SkullMeta) this.itemStack.getItemMeta();
@@ -112,8 +113,8 @@ public class SkullItem extends Item {
         if (XG7Plugins.getMinecraftVersion() < 8) {
             return this;
         }
-        if (cachedSkulls.asMap().containsKey(player.toString())) {
-            this.itemStack.setItemMeta(cachedSkulls.getIfPresent(player.toString()));
+        if (cachedSkulls.containsKey(player.toString()).join()) {
+            this.itemStack.setItemMeta(cachedSkulls.get(player.toString()).join());
             return this;
         }
         try {

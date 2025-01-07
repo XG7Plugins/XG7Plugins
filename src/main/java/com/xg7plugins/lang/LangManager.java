@@ -1,9 +1,8 @@
-package com.xg7plugins.data.lang;
+package com.xg7plugins.lang;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import lombok.Getter;
@@ -15,14 +14,13 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 
 @Getter
 public class LangManager {
 
     private final XG7Plugins plugin;
-    private final Cache<String, YamlConfiguration> langs;
+    private final ObjectCache<String, YamlConfiguration> langs;
     private final String mainLang;
     private final String[] defLangs;
     private final PlayerLanguageDAO playerLanguageDAO;
@@ -35,9 +33,15 @@ public class LangManager {
         Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
 
         this.mainLang = config.get("main-lang", String.class).orElse("en-us");
-        this.langs = Caffeine.newBuilder()
-                .expireAfterAccess(config.getTime("lang-cache-expires").orElse(30 * 60 * 1000L), TimeUnit.MILLISECONDS)
-                .build();
+        this.langs = new ObjectCache<>(
+                plugin,
+                config.getTime("lang-cache-expires").orElse(60 * 10 * 1000L),
+                true,
+                "langs",
+                true,
+                String.class,
+                YamlConfiguration.class
+        );
 
         plugin.getLog().loading("Loaded!");
     }
@@ -51,23 +55,23 @@ public class LangManager {
                         Arrays.stream(dir.listFiles()).forEach(file -> langs.put(plugin.getName() + ":" + file.getName().substring(0, file.getName().length() - 4), YamlConfiguration.loadConfiguration(file)));
                     }
                     for (String lang : defLangs) {
-                        if (langs.asMap().containsKey(lang)) continue;
+                        if (langs.containsKey(lang).join()) continue;
                         File file = new File(dir, lang + ".yml");
                         if (!file.exists()) plugin.saveResource("langs/" + lang + ".yml", false);
                         langs.put(plugin.getName() + ":" + lang, YamlConfiguration.loadConfiguration(file));
                     }
                 }
-        );
+        , XG7Plugins.taskManager().getAsyncExecutors().get("files"));
 
     }
 
-    public CompletableFuture<YamlConfiguration> getLang(Plugin plugin, String lang) {
-        if (lang == null) lang = mainLang;
-        YamlConfiguration config = langs.getIfPresent(plugin.getName() + ":" + lang);
-        if (config != null) return CompletableFuture.completedFuture(config);
-
-        String finalLang = lang;
+    public CompletableFuture<YamlConfiguration> getLang(Plugin plugin, final String lang) {
         return CompletableFuture.supplyAsync(() -> {
+            String finalLang = lang;
+            if (finalLang == null) finalLang = mainLang;
+            YamlConfiguration config = langs.get(plugin.getName() + ":" + finalLang).join();
+            if (config != null) return config;
+
             File file = new File(plugin.getDataFolder(), "langs/" + finalLang.split(":")[1] + ".yml");
             if (!file.exists()) plugin.saveResource("langs/" + finalLang.split(":")[1] + ".yml", false);
 
@@ -96,7 +100,7 @@ public class LangManager {
             if (XG7Plugins.getInstance().getConfig("config").get("auto-chose-lang", Boolean.class).orElse(false)){
                 String playerLocale = XG7Plugins.getMinecraftVersion() >= 12 ? player.getLocale() : PlayerNMS.cast(player).getCraftPlayerHandle().getField("locale");
                 plugin.getLog().info(player.getName() + " language: " + playerLocale);
-                for (Map.Entry<String, YamlConfiguration> entry : langs.asMap().entrySet()) {
+                for (Map.Entry<String, YamlConfiguration> entry : langs.asMap().join().entrySet()) {
                     if (entry.getValue().getString("locale").equals(playerLocale)) {
                         langId = entry.getKey();
                         break;

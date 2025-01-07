@@ -1,28 +1,36 @@
 package com.xg7plugins.data;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.cache.ObjectCache;
 
 import java.io.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 public class JsonManager {
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private final Cache<String, Object> cache = Caffeine.newBuilder().expireAfterAccess(XG7Plugins.getInstance().getConfigsManager().getConfig("config").getTime("json-cache-expires").orElse(60 * 10 * 1000L), TimeUnit.MINUTES).build();
+    private final ObjectCache<String, Object> cache;
+    public JsonManager(XG7Plugins plugin) {
+        cache = new ObjectCache<>(
+                plugin,
+                XG7Plugins.getInstance().getConfigsManager().getConfig("config").getTime("json-cache-expires").orElse(60 * 10 * 1000L),
+                false,
+                "json-cache",
+                false,
+                String.class,
+                Object.class);
+    }
 
     public void registerAdapter(Class<?> type, Object adapter) {
         gson = new GsonBuilder().registerTypeAdapter(type, adapter).setPrettyPrinting().create();
     }
 
-    public void invalidateCache() {
-        cache.invalidateAll();
+    public CompletableFuture<Void> invalidateCache() {
+        return cache.clear();
     }
 
     public <T> CompletableFuture<Void> saveJson(Plugin plugin, String path, T object) {
@@ -55,9 +63,12 @@ public class JsonManager {
     }
 
 
+    @SuppressWarnings("unchecked")
     public <T> CompletableFuture<T> load(Plugin plugin, String path, Class<T> clazz) {
-        if (cache.asMap().containsKey(path)) return CompletableFuture.completedFuture((T) cache.getIfPresent(path));
-        return CompletableFuture.supplyAsync(() -> {
+        return (CompletableFuture<T>) CompletableFuture.supplyAsync(() -> {
+            if (cache.containsKey(path).join()) {
+                return cache.get(path).join();
+            }
             File file = new File(plugin.getDataFolder(), path);
             if (!file.exists()) saveJson(plugin, path, new Object()).join();
             T t;

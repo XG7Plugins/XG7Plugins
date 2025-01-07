@@ -1,5 +1,6 @@
 package com.xg7plugins.libs.xg7menus.item;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -7,7 +8,6 @@ import com.google.gson.JsonParser;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.libs.xg7menus.XSeries.XMaterial;
 import com.xg7plugins.utils.reflection.nms.NMSUtil;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
@@ -69,7 +69,9 @@ public class Item {
         return new Item(new ItemStack(material, amount));
     }
     public static Item from(XMaterial material, int amount) {
-        return new Item(material.parseItem(amount));
+        ItemStack stack = material.parseItem();
+        stack.setAmount(amount);
+        return new Item(stack);
     }
     public static Item from(MaterialData data) {
         return new Item(data.toItemStack());

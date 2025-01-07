@@ -2,8 +2,8 @@ package com.xg7plugins.menus;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.lang.PlayerLanguage;
-import com.xg7plugins.data.lang.PlayerLanguageDAO;
+import com.xg7plugins.lang.PlayerLanguage;
+import com.xg7plugins.lang.PlayerLanguageDAO;
 import com.xg7plugins.libs.xg7geyserforms.forms.SimpleForm;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ public class LangForm extends SimpleForm {
 
         XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin).join();
 
-        XG7Plugins.getInstance().getLangManager().getLangs().asMap().forEach((s, c)-> {
+        XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().forEach((s, c)-> {
 
             PlayerLanguage language = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).join();
 
@@ -65,7 +65,7 @@ public class LangForm extends SimpleForm {
 
         XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin).thenRun(() -> XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).thenAccept(language -> {
 
-            String lang = XG7Plugins.getInstance().getLangManager().getLangs().asMap().keySet().toArray(new String[0])[result.clickedButtonId()];
+            String lang = XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().keySet().toArray(new String[0])[result.clickedButtonId()];
             if (language != null && language.getLangId().equals(lang)) {
                 Text.formatComponent("lang:[lang-menu.already-selected]", plugin).send(player);
                 return;
@@ -84,7 +84,9 @@ public class LangForm extends SimpleForm {
 
             PlayerLanguageDAO dao = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO();
 
-            dao.update(new PlayerLanguage(player.getUniqueId(), lang)).thenAccept(r -> {
+            String dbLang = lang.split(":")[1];
+
+            dao.update(new PlayerLanguage(player.getUniqueId(), dbLang)).thenAccept(r -> {
                 XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
                 Text.formatComponent("lang:[lang-menu.changed]", plugin).send(player);
                 send(player);

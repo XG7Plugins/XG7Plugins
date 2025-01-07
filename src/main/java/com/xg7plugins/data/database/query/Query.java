@@ -213,6 +213,7 @@ public class Query {
 
     public QueryResult waitForResult() {
         try {
+            queue();
             latch.await();
             return finishedResult;
         } catch (InterruptedException e) {
