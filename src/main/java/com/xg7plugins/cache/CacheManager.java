@@ -22,7 +22,7 @@ public class CacheManager {
 
     private boolean cacheExpires = true;
 
-    private HashMap<String, Cache<Object, Object>> caches;
+    private final HashMap<String, Cache<Object, Object>> caches;
 
     public CacheManager(XG7Plugins plugin) {
 
