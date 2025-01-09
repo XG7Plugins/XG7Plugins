@@ -13,12 +13,12 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class SimpleForm extends Form<org.geysermc.cumulus.form.SimpleForm, SimpleFormResponse> {
 
-    private final String content;
 
-    public SimpleForm(String id, String title, Plugin plugin, String content) {
+    public SimpleForm(String id, String title, Plugin plugin) {
         super(id, title, plugin);
-        this.content = content;
     }
+
+    public abstract String content(Player player);
 
     public abstract List<ButtonComponent> buttons(Player player);
 
@@ -29,7 +29,7 @@ public abstract class SimpleForm extends Form<org.geysermc.cumulus.form.SimpleFo
             org.geysermc.cumulus.form.SimpleForm.Builder builder = org.geysermc.cumulus.form.SimpleForm.builder();
 
             builder.title(Text.format(title, plugin).getWithPlaceholders(player));
-            builder.content(Text.format(content, plugin).getWithPlaceholders(player));
+            builder.content(Text.format(content(player), plugin).getWithPlaceholders(player));
 
             buttons(player).forEach(builder::button);
 

@@ -10,8 +10,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
+public class PlayerLanguageDAO implements DAO<UUID, PlayerLanguage> {
 
+    @Override
     public CompletableFuture<Void> add(PlayerLanguage playerLanguage) throws ExecutionException, InterruptedException {
         if(playerLanguage == null || playerLanguage.getPlayerUUID() == null) return CompletableFuture.completedFuture(null);
 
@@ -33,6 +34,7 @@ public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
 
     }
 
+    @Override
     public CompletableFuture<PlayerLanguage> get(UUID uuid) {
         if (uuid == null) return null;
 
@@ -48,6 +50,8 @@ public class PlayerLanguageDAO extends DAO<UUID, PlayerLanguage> {
 
 
     }
+
+    @Override
     public CompletableFuture<Void> update(PlayerLanguage playerLanguage) {
         if (playerLanguage == null) return null;
 

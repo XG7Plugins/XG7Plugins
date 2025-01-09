@@ -19,7 +19,7 @@ public enum Parser {
         this.converter = converter;
     }
 
-    public <T> T convert(String value) throws Exception {
+    public <T> T convert(String value) {
         return (T) converter.apply(value);
     }
 }

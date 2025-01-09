@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class NPCBuilder extends Builder<NPC> {
+public class NPCBuilder implements Builder<NPC> {
 
     private Object name;
     private Object skin;

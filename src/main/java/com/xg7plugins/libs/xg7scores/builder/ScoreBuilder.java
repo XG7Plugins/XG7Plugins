@@ -3,7 +3,7 @@ package com.xg7plugins.libs.xg7scores.builder;
 import com.xg7plugins.libs.xg7scores.ScoreCondition;
 import com.xg7plugins.utils.Builder;
 
-public abstract class ScoreBuilder<S,B> extends Builder<S> {
+public abstract class ScoreBuilder<S,B> implements Builder<S> {
 
     protected String id;
     protected long delayToUpdate;

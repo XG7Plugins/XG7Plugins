@@ -34,6 +34,14 @@ public class BookItem extends Item {
         author("None");
     }
 
+    public static BookItem newBook() {
+        return new BookItem();
+    }
+
+    public static BookItem from(ItemStack book) {
+        return new BookItem(book);
+    }
+
     public BookItem title(String title) {
         BookMeta meta = (BookMeta) this.itemStack.getItemMeta();
         meta.setTitle(title);

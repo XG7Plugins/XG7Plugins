@@ -13,7 +13,7 @@ import org.bukkit.event.inventory.InventoryType;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class MenuBuilder<M extends Menu> extends Builder<M> {
+public class MenuBuilder<M extends Menu> implements Builder<M> {
 
     private final Plugin plugin;
     private final String id;

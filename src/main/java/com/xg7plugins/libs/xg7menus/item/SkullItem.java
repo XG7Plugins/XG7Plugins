@@ -38,7 +38,7 @@ public class SkullItem extends Item {
         super(itemStack);
     }
 
-    public SkullItem renderSkullPlayer(boolean render) {
+    public SkullItem renderPlayerSkull(boolean render) {
         this.renderSkullPlayer = render;
         return this;
     }

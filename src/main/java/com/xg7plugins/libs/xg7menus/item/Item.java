@@ -58,12 +58,12 @@ public class Item {
     public static Item from(String material) {
         if (material == null) return Item.from(Material.STONE);
         if (material.startsWith("eyJ0")) return SkullItem.newSkull().setValue(material);
-        if (material.equals("THIS_PLAYER")) return SkullItem.newSkull().renderSkullPlayer(true);
+        if (material.equals("THIS_PLAYER")) return SkullItem.newSkull().renderPlayerSkull(true);
         if (material.split(", ").length == 2) {
             String[] args = material.split(", ");
             return Item.from(new MaterialData(Material.getMaterial(args[0]), Byte.parseByte(args[1])));
         }
-        return Item.from(XMaterial.valueOf(material));
+        return Item.from(XMaterial.matchXMaterial(material).orElse(XMaterial.STONE));
     }
     public static Item from(Material material) {
         return new Item(new ItemStack(material));
@@ -91,11 +91,11 @@ public class Item {
         Command commandConfig = command.getClass().getAnnotation(com.xg7plugins.commands.setup.Command.class);
         item.name("&b/&f" + commandConfig.name());
         item.lore(
-                "lang:[commands-menu.command-item.usage]",
-                "lang:[commands-menu.command-item.description]",
-                "lang:[commands-menu.command-item.permission]",
-                "lang:[commands-menu.command-item.player-only]",
-                "lang:[commands-menu.if-subcommand]"
+                "lang:[commands-display.command-item.usage]",
+                "lang:[commands-display.command-item.desc]",
+                "lang:[commands-display.command-item.perm]",
+                "lang:[commands-display.command-item.player-only]",
+                command.getSubCommands().length == 0 ? "" : "lang:[commands-menu.if-subcommand]"
         );
         item.setBuildPlaceholders(
                 new HashMap<String, String>() {
@@ -309,7 +309,7 @@ public class Item {
     }
 
     public boolean isAir() {
-        return this.itemStack.getType().equals(Material.AIR);
+        return this.itemStack == null || this.itemStack.getType().equals(Material.AIR);
     }
 
 

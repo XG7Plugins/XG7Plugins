@@ -2,6 +2,8 @@ package com.xg7plugins.utils.text;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import lombok.Getter;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -22,6 +24,7 @@ public class TextComponent {
 
 
     private final String text;
+    @Getter
     private final String rawText;
 
     private final Plugin plugin;
@@ -46,31 +49,11 @@ public class TextComponent {
         return this;
     }
 
-    public void send(CommandSender sender) {
-        if (sender == null) return;
-        if (!(sender instanceof Player)) {
-            // Envia texto centralizado simples para não-jogadores
-            sender.sendMessage(rawText.startsWith("[CENTER] ")
-                    ? Text.getSpacesCentralized(Text.PixelsSize.CHAT.getPixels(), rawText) +
-                    Text.format(rawText.substring(9), plugin).getText()
-                    : Text.format(rawText, plugin).getText());
-            return;
-        }
-
-        Player player = (Player) sender;
+    public BaseComponent[] getText(Player player) {
 
         String translatedRawText = Text.getWithPlaceholders(plugin, rawText, player);
 
-        for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            translatedRawText = translatedRawText.replace(entry.getKey(), entry.getValue());
-        }
-
         String spaces = Text.getSpacesCentralized(Text.PixelsSize.CHAT.getPixels(), translatedRawText);
-
-        if (XG7Plugins.getMinecraftVersion() < 8) {
-            player.sendMessage(spaces + translatedRawText);
-            return;
-        }
 
         String finalText = text.startsWith("[CENTER] ") ? Text.getWithPlaceholders(plugin, text.substring(9), player) : Text.getWithPlaceholders(plugin, text, player);
         for (Map.Entry<String, String> entry : replacements.entrySet()) {
@@ -100,7 +83,7 @@ public class TextComponent {
                 case "CLICK":
                     if (!valMatch.find() || !actionMatch.find()) {
                         XG7Plugins.getInstance().getLog().warn("Click tag with content " + content + " has a syntax error!");
-                        return;
+                        return null;
                     }
                     try {
                         builder.event(new ClickEvent(
@@ -116,7 +99,7 @@ public class TextComponent {
                 case "HOVER":
                     if (!textMatch.find()) {
                         XG7Plugins.getInstance().getLog().warn("Hover tag with content " + content + " has a syntax error!");
-                        return;
+                        return null;
                     }
                     builder.event(new HoverEvent(
                             HoverEvent.Action.SHOW_TEXT,
@@ -126,7 +109,7 @@ public class TextComponent {
                 case "CLICKHOVER":
                     if (!valMatch.find() || !actionMatch.find() || !textMatch.find()) {
                         XG7Plugins.getInstance().getLog().warn("Click and hover tag with content " + content + " has a syntax error!");
-                        return;
+                        return null;
                     }
                     builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(textMatch.group(1)).create()));
                     try {
@@ -149,7 +132,36 @@ public class TextComponent {
             builder.append(remainingText).reset();
         }
 
-        player.spigot().sendMessage(builder.create());
+        return builder.create();
+    }
+
+    public void send(CommandSender sender) {
+        if (sender == null) return;
+        if (!(sender instanceof Player)) {
+            // Envia texto centralizado simples para não-jogadores
+            sender.sendMessage(rawText.startsWith("[CENTER] ")
+                    ? Text.getSpacesCentralized(Text.PixelsSize.CHAT.getPixels(), rawText) +
+                    Text.format(rawText.substring(9), plugin).getText()
+                    : Text.format(rawText, plugin).getText());
+            return;
+        }
+
+        Player player = (Player) sender;
+
+        String translatedRawText = Text.getWithPlaceholders(plugin, rawText, player);
+
+        for (Map.Entry<String, String> entry : replacements.entrySet()) {
+            translatedRawText = translatedRawText.replace(entry.getKey(), entry.getValue());
+        }
+
+        String spaces = Text.getSpacesCentralized(Text.PixelsSize.CHAT.getPixels(), translatedRawText);
+
+        if (XG7Plugins.getMinecraftVersion() < 8) {
+            player.sendMessage(spaces + translatedRawText);
+            return;
+        }
+
+        player.spigot().sendMessage(getText(player));
     }
 
 

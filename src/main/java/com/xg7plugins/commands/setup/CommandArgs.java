@@ -27,7 +27,7 @@ public class CommandArgs {
         }
 
         if (type == Integer.class || type == int.class) return Parser.INTEGER.convert(args[index]);
-        if (type == String.class) return (T) args[index];
+        if (type == String.class) return Parser.STRING.convert(args[index]);
         if (type == Boolean.class || type == boolean.class) return Parser.BOOLEAN.convert(args[index]);
         if (type == Long.class || type == long.class) return Parser.LONG.convert(args[index]);
         if (type == Double.class || type == double.class) return Parser.DOUBLE.convert(args[index]);

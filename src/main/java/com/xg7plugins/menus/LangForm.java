@@ -18,7 +18,12 @@ import java.util.List;
 public class LangForm extends SimpleForm {
 
     public LangForm() {
-        super("lang-form", "lang:[lang-menu.title]", XG7Plugins.getInstance(), "lang:[lang-menu.content]");
+        super("lang-form", "lang:[lang-menu.title]", XG7Plugins.getInstance());
+    }
+
+    @Override
+    public String content(Player player) {
+        return "lang:[lang-menu.content]";
     }
 
     @Override

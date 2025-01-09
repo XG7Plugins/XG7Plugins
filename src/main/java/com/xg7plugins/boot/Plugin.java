@@ -8,8 +8,9 @@ import com.xg7plugins.data.config.ConfigManager;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
-import com.xg7plugins.help.HelpCommandForm;
-import com.xg7plugins.help.HelpCommandGUI;
+import com.xg7plugins.help.formhelp.HelpCommandForm;
+import com.xg7plugins.help.chathelp.HelpInChat;
+import com.xg7plugins.help.guihelp.HelpCommandGUI;
 import com.xg7plugins.libs.xg7geyserforms.forms.Form;
 import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
 import com.xg7plugins.libs.xg7scores.Score;
@@ -31,17 +32,18 @@ public abstract class Plugin extends JavaPlugin {
     private final ConfigManager configsManager;
     private CommandManager commandManager;
     private final Log log;
-    private final HelpCommandGUI helpCommandGUI;
-    private final HelpCommandForm helpCommandForm;
+
+    protected HelpCommandGUI helpCommandGUI;
+    protected HelpInChat helpInChat;
+    protected HelpCommandForm helpCommandForm;
 
     @Setter
     private String customPrefix;
     @Setter
     private List<String> enabledWorlds = Collections.emptyList();
 
-    public Plugin(HelpCommandGUI helpCommandGUI, HelpCommandForm helpCommandForm) {
-        this.helpCommandGUI = helpCommandGUI;
-        this.helpCommandForm = helpCommandForm;
+    public Plugin() {
+
         PluginConfigurations configurations = getClass().getAnnotation(PluginConfigurations.class);
 
         if (configurations == null) throw new IllegalClassException("PluginConfigurations annotation not found in " + getClass().getName());
@@ -103,6 +105,8 @@ public abstract class Plugin extends JavaPlugin {
     public Score[] loadScores() {
         return null;
     }
+
+    public abstract void loadHelp();
 
     public Config getConfig(String name) {
         return configsManager.getConfig(name);

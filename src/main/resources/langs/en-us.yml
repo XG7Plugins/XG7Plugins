@@ -29,11 +29,8 @@ go-next-item: "Next"
 close-item: "Close"
 refresh-item: "Refresh page"
 
-confirmation-menu:
-  title: "&cAre you sure you want to do this?"
-
-  yes-item: "&cYes"
-  no-item: "&aNo"
+go-back-to-help: "Back to help"
+go-back-to-previous-commands: "Back to the previous commands"
 
 lang-not-found: "&cLanguage not found!"
 
@@ -79,9 +76,7 @@ task-command:
   already-running: "Task already running!"
   already-stopped: "Task already stopped!"
 
-commands-menu:
-
-  title: "Commands"
+commands-display:
 
   if-subcommand: "&aClick to see the subcommands!"
 
@@ -90,3 +85,69 @@ commands-menu:
     desc: "&fDescription: &e[DESCRIPTION]"
     perm: "&fPermission: &c[PERMISSION]"
     player-only: "&fOnly players can use: &b[PLAYER_ONLY]"
+
+commands-form:
+  content: "Click on an option to see its description and usage!"
+  subcommands-label: "Click to see the subcommands!"
+  no-subcommands: "There are no subcommands for this command!"
+
+  back: "Back to the help"
+  subcommands-back: "Back to previous commands"
+
+help-menu:
+
+  index:
+
+    title: "Help of XG7Plugins"
+
+    see-in-chat: "Click here to see the help in chat"
+
+    profile-item:
+      name: "Profile: %player_name%"
+      lang-chose: "%xg7plugins_player_selected_lang%"
+    lang-item:
+      name: "Languages"
+      lore: "Click here to change profile lang"
+    tasks-item:
+      name: "Tasks"
+      lore: "Click here to see the tasks"
+    about-item:
+      name: "About"
+      lore: "Click here to see the plugin information"
+    commands-item:
+      name: "Commands"
+      lore: "Click here to see the commands"
+
+  about:
+    - "About XG7Plugins"
+    - " "
+    - "&fVersion: &a[VERSION]"
+    - "&fWebsite: [CLICK action=%COPY_TO_CLICKBOARD% value=%[WEBSITE]%]&a&n[WEBSITE][/CLICK]"
+    - "&fGitHub: [CLICK action=%COPY_TO_CLICKBOARD% value=%[GITHUB]%]&a&n[GITHUB][/CLICK]"
+    - "&fDiscord: [CLICK action=%COPY_TO_CLICKBOARD% value=%[DISCORD]%]&a&n[DISCORD][/CLICK]"
+    - ""
+    - "This plugin was made"
+    - "for creating other plugins for XG7."
+    - "Its goal is to manage"
+    - "tasks, include libraries"
+    - "(such as menus, scores,"
+    - "etc.) and facilitate"
+    - "the creation of plugins."
+    - "It also has a language"
+    - "system for the inclusion"
+    - "of new languages."
+    - ""
+    - "&oDeveloped by DaviXG7"
+
+help-in-chat:
+
+  title: "&7Welcome to the &6XG7Plugins &7help page!"
+
+  content: "&eXG7Plugins is a plugin that aims to facilitate the creation of other plugins for other XG7Plugins. Click to see more information."
+
+  back: "&aClick to back to the help"
+
+  lang: "&aLanguages&f: &1click here to change profile lang"
+  tasks: "&aTasks&f: &1click here to see the tasks"
+  commands: "&aCommands&f: &1click here to see the commands"
+

@@ -11,7 +11,7 @@ import com.xg7plugins.utils.Location;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HologramBuilder extends Builder<Hologram> {
+public class HologramBuilder implements Builder<Hologram> {
 
     private List<String> lines;
     private Plugin plugin;

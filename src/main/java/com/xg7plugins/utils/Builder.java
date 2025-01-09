@@ -1,7 +1,7 @@
 package com.xg7plugins.utils;
 
-public abstract class Builder<T> {
+public interface Builder<T> {
 
-    public abstract T build(Object... args);
+    T build(Object... args);
 
 }

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class PlayerMenuBuilder<M extends SimplePlayerMenu> extends Builder<M> {
+public class PlayerMenuBuilder<M extends SimplePlayerMenu> implements Builder<M> {
 
     private final Plugin plugin;
     private final String id;

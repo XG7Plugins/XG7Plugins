@@ -26,6 +26,9 @@ go-next-item: "Avançar"
 close-item: "Fechar"
 refresh-item: "Recarregar página"
 
+go-back-to-help: "Voltar para ajuda"
+go-back-to-previous-commands: "Voltar para os comandos anteriores"
+
 confirmation-menu:
   title: "&aTem certeza que deseja fazer isso?"
 
@@ -76,9 +79,7 @@ task-command:
   already-running: "A task já está em execução!"
   already-stopped: "A task já está parada!"
 
-commands-menu:
-
-  title: "Comandos"
+commands-display:
 
   if-subcommand: "&aClique para ver os subcomandos!"
 
@@ -87,3 +88,60 @@ commands-menu:
     desc: "&fDescrição: &e[DESCRIPTION]"
     perm: "&fPermissão: &c[PERMISSION]"
     player-only: "&fSó players podem usar: &b[PLAYER_ONLY]"
+
+commands-form:
+  content: "Clique em uma opção para ver sua descrição e uso!"
+  subcommands-label: "Clique para ver os subcomandos!"
+  no-subcommands: "Não há subcomandos para este comando!"
+
+  back: "Voltar para a ajuda"
+  subcommands-back: "Voltar para os comandos anteriores"
+
+help-menu:
+
+  index:
+
+    title: "Ajuda do XG7Plugins"
+
+    see-in-chat: "Clique aqui para ver a ajuda no chat"
+
+    profile-item:
+      name: "Perfil: %player_name%"
+      lang-chose: "%xg7plugins_lang%"
+
+    lang-item:
+      name: "Idiomas"
+      lore: "Clique aqui para mudar o idioma do perfil"
+    tasks-item:
+      name: "Tarefas"
+      lore: "Clique aqui para ver as tarefas"
+    about-item:
+      name: "Sobre"
+      lore: "Clique aqui para ver as informações do plugin"
+    commands-item:
+      name: "Comandos"
+      lore: "Clique aqui para ver os comandos"
+
+
+
+  about:
+    - "Sobre o XG7Plugins"
+    - " "
+    - "&fVersão: &a[VERSION]"
+    - "&fSite: [CLICK action=%COPY_TO_CLICKBOARD% value=%[WEBSITE]%]&a&n[WEBSITE][/CLICK]"
+    - "&fGitHub: [CLICK action=%COPY_TO_CLICKBOARD% value=%[GITHUB]%]&a&n[GITHUB][/CLICK]"
+    - "&fDiscord: [CLICK action=%COPY_TO_CLICKBOARD% value=%[DISCORD]%]&a&n[DISCORD][/CLICK]"
+    - ""
+    - "Este plugin foi feito"
+    - "para a criação de"
+    - "outros plugins para o XG7."
+    - "Ele tem como objetivo"
+    - "gerenciar tarefas,"
+    - "incluir biliotecas (como"
+    - "menus, scores, etc) "
+    - "e facilitar a criação dos plugins."
+    - "Támbem tem sistema"
+    - "de linguagens para"
+    - "a inclusão de novos idiomas."
+    - ""
+    - "&oDesenvolvido por DaviXG7"

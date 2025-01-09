@@ -6,11 +6,15 @@ import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.defaultCommands.LangCommand;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
-import com.xg7plugins.commands.defaultCommands.TestCommand;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.database.entity.Entity;
+import com.xg7plugins.help.formhelp.HelpCommandForm;
+import com.xg7plugins.help.guihelp.HelpCommandGUI;
+import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpForm;
+import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpGUI;
+import com.xg7plugins.help.xg7pluginshelp.chathelp.XG7PluginsChatHelp;
 import com.xg7plugins.lang.LangItemTypeAdapter;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.lang.PlayerLanguage;
@@ -48,8 +52,6 @@ import com.xg7plugins.tasks.TaskManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.InvalidDescriptionException;
-import org.bukkit.plugin.InvalidPluginException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -83,6 +85,8 @@ public final class XG7Plugins extends Plugin {
     private static boolean floodgate;
     @Getter
     private static boolean placeholderAPI;
+    @Getter
+    private static boolean geyserFormEnabled = false;
 
     static {
         Pattern pattern = Pattern.compile("1\\.([0-9]?[0-9])");
@@ -108,7 +112,6 @@ public final class XG7Plugins extends Plugin {
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
     public XG7Plugins() {
-        super(null,null);
         getConfigsManager().registerAdapter(Item.class, new LangItemTypeAdapter());
     }
 
@@ -123,6 +126,8 @@ public final class XG7Plugins extends Plugin {
         getLog().loading("Enabling XG7Plugins...");
 
         Config config = getConfig("config");
+
+        geyserFormEnabled = config.get("enable-geyser-forms", Boolean.class).orElse(false);
 
         this.taskManager = new TaskManager(this);
         taskManager().registerExecutor("commands", Executors.newCachedThreadPool());
@@ -156,6 +161,7 @@ public final class XG7Plugins extends Plugin {
             else langManager.loadLangsFrom(plugin);
             if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
             plugin.getCommandManager().registerCommands(plugin.loadCommands());
+            loadHelp();
             eventManager.registerPlugin(plugin, plugin.loadEvents());
             packetEventManager.registerPlugin(plugin, plugin.loadPacketEvents());
             databaseManager.connectPlugin(plugin, plugin.loadEntites());
@@ -171,6 +177,7 @@ public final class XG7Plugins extends Plugin {
         getLog().loading("XG7Plugins enabled.");
 
     }
+
 
 
     @Override
@@ -195,7 +202,7 @@ public final class XG7Plugins extends Plugin {
     }
     @Override
     public ICommand[] loadCommands() {
-        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand(), new TestCommand()};
+        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand()};
     }
 
     @Override
@@ -226,6 +233,13 @@ public final class XG7Plugins extends Plugin {
                 .style(org.bukkit.boss.BarStyle.SOLID)
                 .progress(50f).build(this)
         };
+    }
+
+    @Override
+    public void loadHelp() {
+        this.helpCommandGUI = new HelpCommandGUI(this, new XG7PluginsHelpGUI(this));
+        this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
+        this.helpInChat = new XG7PluginsChatHelp();
     }
 
     @Override

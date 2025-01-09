@@ -107,6 +107,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         ICommand command = commands.get(cmd.getName());
 
         if (command instanceof MainCommand) {
+            if (!commandSender.hasPermission("xg7plugins.commands")) {
+                Text.format("lang:[commands.no-permission]",XG7Plugins.getInstance()).send(commandSender);
+                return true;
+            }
             if (strings.length == 0) {
                 Text.format("lang:[commands.syntax-error]", XG7Plugins.getInstance())
                         .replace("[SYNTAX]", cmd.getUsage())
@@ -115,9 +119,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
 
             if (strings[0].equalsIgnoreCase("help")) {
-                Text.format("lang:[commands.help]", XG7Plugins.getInstance())
-                        .replace("[COMMANDS]", String.join(", ", commands.keySet()))
-                        .send(commandSender);
+                command.onCommand(commandSender,new CommandArgs(strings));
                 return true;
             }
 

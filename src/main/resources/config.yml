@@ -26,6 +26,9 @@ holograms-update-delay: 1s
 npcs-update-delay: 5s
 npcs-look-at-player: true
 
+help-command-in-gui: true
+help-command-form: true
+
 sql:
 
   type: "sqlite"
