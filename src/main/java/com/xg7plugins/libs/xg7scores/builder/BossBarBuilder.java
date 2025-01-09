@@ -38,7 +38,7 @@ public class BossBarBuilder extends ScoreBuilder<Score, BossBarBuilder> {
     }
 
     public BossBarBuilder progress(float progress) {
-        this.progress = progress;
+        this.progress = progress / 100f;
         return this;
     }
 

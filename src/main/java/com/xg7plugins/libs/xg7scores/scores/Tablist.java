@@ -62,7 +62,10 @@ public class Tablist extends Score {
         ChatComponent headerComponent = new ChatComponent(header);
         ChatComponent footerComponent = new ChatComponent(footer);
 
-        Packet packetPlayOutListHeaderFooter = new Packet(packetTabClass, new Class<?>[]{ChatComponent.iChatClass, ChatComponent.iChatClass}, headerComponent, footerComponent);
+        Packet packetPlayOutListHeaderFooter = new Packet(packetTabClass);
+        packetPlayOutListHeaderFooter.setField("a", headerComponent.getChatComponent());
+        packetPlayOutListHeaderFooter.setField("b", footerComponent.getChatComponent());
+
 
         PlayerNMS.cast(player).sendPacket(packetPlayOutListHeaderFooter);
     }
@@ -71,12 +74,12 @@ public class Tablist extends Score {
     public void removePlayer(Player player) {
         super.removePlayer(player);
         send(player,"","");
-        player.setPlayerListName(player.getName());
+        if (XG7Plugins.getMinecraftVersion() > 7) player.setPlayerListName(player.getName());
 
     }
 
     @Override
-    public void addPlayer(Player player) {
+    public synchronized void addPlayer(Player player) {
         super.addPlayer(player);
     }
 }

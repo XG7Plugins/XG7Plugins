@@ -58,7 +58,7 @@ public class LegacyBossBar extends Score {
     }
 
     @Override
-    public void addPlayer(Player player) {
+    public synchronized void addPlayer(Player player) {
         if (super.getPlayers().contains(player.getUniqueId())) return;
 
 
@@ -103,9 +103,10 @@ public class LegacyBossBar extends Score {
 
     @SneakyThrows
     @Override
-    public void removePlayer(Player player) {
+    public synchronized void removePlayer(Player player) {
 
         if (!super.getPlayers().contains(player.getUniqueId())) return;
+        if (!entities.containsKey(player.getUniqueId())) return;
 
         Packet packet = new Packet(packetPlayOutEntityDestroyClass, new Class<?>[]{int[].class}, new int[] {entities.get(player.getUniqueId())});
 

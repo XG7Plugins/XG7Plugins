@@ -32,6 +32,7 @@ public class TaskManager {
 
     public void registerTasks(Task... tasks) {
         Arrays.stream(tasks).forEach(task -> {
+            if (task == null) return;
             if (task.getState() == TaskState.RUNNING) {
                 task.setState(TaskState.IDLE);
                 runTask(task);

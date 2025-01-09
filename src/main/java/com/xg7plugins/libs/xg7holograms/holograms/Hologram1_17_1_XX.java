@@ -45,8 +45,8 @@ public class Hologram1_17_1_XX extends Hologram {
                      spawnLocation.getX(),
                      spawnLocation.getY(),
                      spawnLocation.getZ(),
-                     0,
-                     0,
+                     0f,
+                     0f,
                      entityTypesClass.getStaticField("c"),
                      0,
                      vector3dClass.getConstructor(double.class, double.class, double.class).newInstance(0, 0, 0).getObject()
@@ -57,12 +57,12 @@ public class Hologram1_17_1_XX extends Hologram {
                              spawnLocation.getX(),
                              spawnLocation.getY(),
                              spawnLocation.getZ(),
-                             0,
-                             0,
-                             entityTypesClass.getStaticField("c"),
+                             0f,
+                             0f,
+                             entityTypesClass.getStaticField("d"),
                              0,
                              vector3dClass.getConstructor(double.class, double.class, double.class).newInstance(0, 0, 0).getObject(),
-                             0
+                             0.0
                      );
 
              Packet metadataPacket = XG7Plugins.getMinecraftVersion() < 19 ?
@@ -72,6 +72,7 @@ public class Hologram1_17_1_XX extends Hologram {
                      true
              ) :
                      new Packet(packetPlayOutEntityMetadataClass,
+                             new Class[]{int.class, List.class},
                              entityID,
                              dataWatcher.getWatcher().getMethod("b").invoke()
                      );
@@ -104,6 +105,7 @@ public class Hologram1_17_1_XX extends Hologram {
                             true
                     ) :
                     new Packet(packetPlayOutEntityMetadataClass,
+                            new Class[]{int.class, List.class},
                             ids.get(player.getUniqueId()).get(i),
                             dataWatcher.getWatcher().getMethod("b").invoke()
                     );

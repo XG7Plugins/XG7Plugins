@@ -9,14 +9,14 @@ anti-tab: true
 
 lang-cache-expires: 30m
 auto-chose-lang: true
-cooldown-to-toggle-lang: 15s
+cooldown-to-toggle-lang: 5s
 
 json-cache-expires: 10m
 
 enable-geyser-forms: true
 enable-lang-form: true
 
-repeating-tasks-threads: 4
+repeating-tasks-threads: 8
 
 player-cooldown-task-delay: 1s
 
@@ -38,6 +38,8 @@ sql:
   username: ""
   password: ""
 
+  additional-url-args: "characterEncoding=utf8"
+
   cache-expires: 30m
 
   query-processor-threads: 4
@@ -57,8 +59,8 @@ redis-cache:
 
   cache-expires: true
 
-  min-idle-connections: 1
-  max-idle-connections: 5
-  max-connections: 10
+  min-idle-connections: 10
+  max-idle-connections: 50
+  max-connections: 100
 
   max-wait-time: 10s

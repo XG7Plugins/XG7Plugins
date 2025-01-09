@@ -38,7 +38,7 @@ public class Config {
 
     public Config(Plugin plugin, YamlConfiguration config) {
         this.plugin = plugin;
-        this.name = null;
+        this.name = config.getName();
         this.configManager = plugin.getConfigsManager();
         this.config = config;
     }

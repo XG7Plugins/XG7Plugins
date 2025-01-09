@@ -28,7 +28,7 @@ public class PublicBossBar extends Score {
 
     @SneakyThrows
     @Override
-    public void addPlayer(Player player) {
+    public synchronized void addPlayer(Player player) {
         super.addPlayer(player);
         if (!bossBar.getPlayers().contains(player)) bossBar.addPlayer(player);
 
@@ -36,7 +36,7 @@ public class PublicBossBar extends Score {
 
     @SneakyThrows
     @Override
-    public void removePlayer(Player player) {
+    public synchronized void removePlayer(Player player) {
         super.removePlayer(player);
         bossBar.removePlayer(player);
     }

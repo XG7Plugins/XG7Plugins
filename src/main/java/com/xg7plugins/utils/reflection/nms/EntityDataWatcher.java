@@ -57,7 +57,7 @@ public class EntityDataWatcher {
 
         String fieldType = getFieldByType(value.getClass());
 
-        if (Objects.equals(fieldType, "f")) value = ChatComponent.of(value.toString()).getChatComponent();
+        if (Objects.equals(fieldType, "f") || Objects.equals(fieldType, "g")) value = ChatComponent.of(value.toString()).getChatComponent();
 
 
         ReflectionObject dataWatcherObject = dataWatcherObjectClass

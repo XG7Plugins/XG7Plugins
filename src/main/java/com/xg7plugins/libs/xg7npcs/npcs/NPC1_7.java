@@ -9,15 +9,15 @@ import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.nms.NMSUtil;
 import com.xg7plugins.utils.reflection.nms.Packet;
+import com.xg7plugins.utils.reflection.nms.PacketClass;
 import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.text.Text;
-import net.minecraft.server.v1_7_R3.*;
+import net.minecraft.server.v1_7_R3.PacketPlayOutEntityLook;
+import net.minecraft.server.v1_7_R3.PacketPlayOutRelEntityMoveLook;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_7_R3.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -25,12 +25,51 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class NPC1_7 extends NPC {
+
+    private static ReflectionClass craftWorldClass;
+    private static ReflectionClass playerInteractManager;
+    private static ReflectionClass worldClass;
+    private static ReflectionClass worldServer;
+    private static ReflectionClass entityPlayerClass;
+    private static ReflectionClass entityClass;
+    private static ReflectionClass entityHumanClass;
+    private static ReflectionClass minecraftClass;
+    private static ReflectionClass craftItemStackClass;
+
+    private static PacketClass packetPlayOutPlayerInfoClass;
+    private static PacketClass packetPlayOutNamedEntitySpawnClass;
+    private static PacketClass packetPlayOutEntityHeadRotationClass;
+    private static PacketClass packetPlayOutEntityLookClass;
+    private static PacketClass packetPlayOutEntityEquipmentClass;
+    private static PacketClass packetPlayOutEntityDestroyClass;
+
+    static {
+        try {
+            craftWorldClass = NMSUtil.getCraftBukkitClass("CraftWorld");
+            playerInteractManager = NMSUtil.getNMSClass("PlayerInteractManager");
+            worldClass = NMSUtil.getNMSClass("World");
+            worldServer = NMSUtil.getNMSClass("WorldServer");
+            entityPlayerClass = NMSUtil.getNMSClass("EntityPlayer");
+            minecraftClass = NMSUtil.getNMSClass("MinecraftServer");
+            craftItemStackClass = NMSUtil.getCraftBukkitClass("inventory.CraftItemStack");
+            entityHumanClass = NMSUtil.getNMSClass("EntityHuman");
+            entityClass = NMSUtil.getNMSClass("Entity");
+
+            packetPlayOutPlayerInfoClass = new PacketClass("PacketPlayOutPlayerInfo");
+            packetPlayOutNamedEntitySpawnClass = new PacketClass("PacketPlayOutNamedEntitySpawn");
+            packetPlayOutEntityHeadRotationClass = new PacketClass("PacketPlayOutEntityHeadRotation");
+            packetPlayOutEntityLookClass = new PacketClass("PacketPlayOutRelEntityMoveLook");
+            packetPlayOutEntityEquipmentClass = new PacketClass("PacketPlayOutEntityEquipment");
+            packetPlayOutEntityDestroyClass = new PacketClass("PacketPlayOutEntityDestroy");
+        } catch (Exception ignored) {
+
+        }
+
+    }
+
     public NPC1_7(Plugin plugin, String id, String name, Location location) {
         super(plugin, id, Collections.singletonList(name), location);
     }
@@ -38,18 +77,18 @@ public class NPC1_7 extends NPC {
     @Override
     public void spawn(Player player) {
 
-        EntityPlayer playerNMS = (EntityPlayer) PlayerNMS.cast(player).getCraftPlayerHandle().getObject();
+        PlayerNMS playerNMS = PlayerNMS.cast(player);
 
-        WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
+        ReflectionObject world = craftWorldClass.castToRObject(location.getWorld()).getMethod("getHandle").invokeToRObject();
 
-        PlayerInteractManager interactManager = new PlayerInteractManager(world);
+        ReflectionObject interactManager = playerInteractManager.getConstructor(worldClass.getAClass()).newInstance(world.getObject());
 
 
         GameProfile npcSkin = (GameProfile) skin;
 
         if (playerSkin) {
 
-            GameProfile playerGameProfile = playerNMS.getProfile();
+            GameProfile playerGameProfile = playerNMS.getCraftPlayerHandle().getMethod("getProfile").invoke();
 
             npcSkin = new GameProfile(UUID.randomUUID(), (String) name);
 
@@ -61,9 +100,17 @@ public class NPC1_7 extends NPC {
 
         npcSkinNameReplaced.getProperties().putAll(npcSkin.getProperties());
 
-        EntityPlayer npc = new EntityPlayer(playerNMS.server, world, npcSkinNameReplaced, interactManager);
+        ReflectionObject npc = entityPlayerClass
+                .getConstructor(minecraftClass.getAClass(), worldServer.getAClass(), GameProfile.class, playerInteractManager.getAClass())
+                .newInstance(playerNMS.getCraftPlayerHandle().getField("server"), world.getObject(), npcSkinNameReplaced, interactManager.getObject());
 
-        npc.setPositionRotation(
+        npc.getMethod("setPositionRotation",
+               double.class,
+                double.class,
+                double.class,
+                float.class,
+                float.class
+                ).invoke(
                 location.getX(),
                 location.getY(),
                 location.getZ(),
@@ -71,46 +118,56 @@ public class NPC1_7 extends NPC {
                 location.getPitch()
         );
 
-        PacketPlayOutPlayerInfo packetPlayOutPlayerInfo = ReflectionClass.of(PacketPlayOutPlayerInfo.class)
-                .getMethod("addPlayer", EntityPlayer.class)
-                .invoke(npc);
+        Packet packetPlayOutPlayerInfo  = new Packet(packetPlayOutPlayerInfoClass.getReflectionClass()
+                .getMethod("addPlayer", entityPlayerClass.getAClass())
+                .invoke(npc.getObject())
+        );
 
-        PacketPlayOutNamedEntitySpawn packetPlayOutNamedEntitySpawn = new PacketPlayOutNamedEntitySpawn(npc);
+        Packet packetPlayOutNamedEntitySpawn = new Packet(packetPlayOutNamedEntitySpawnClass, new Class[]{entityHumanClass.getAClass()}, npc.getObject());
 
         float yaw = location.getYaw();
         float pitch = location.getPitch();
 
-        PacketPlayOutEntityHeadRotation packetPlayOutEntityHeadRotation = new PacketPlayOutEntityHeadRotation(npc, (byte) ((yaw % 360) * 256 / 360));
+        Packet packetPlayOutEntityHeadRotation = new Packet(packetPlayOutEntityHeadRotationClass, new Class<?>[]{entityClass.getAClass(),byte.class}, npc.getObject(), (byte) ((yaw % 360) * 256 / 360));
 
-        PacketPlayOutRelEntityMoveLook packetPlayOutEntityLook = new PacketPlayOutRelEntityMoveLook(npc.getId(), (byte) 0, (byte) 0, (byte) 0, (byte) ((yaw % 360) * 256 / 360), (byte) ((pitch % 360) * 256 / 360));
+        Packet packetPlayOutEntityLook;
 
-        PacketPlayOutPlayerInfo packetPlayOutPlayerInfo2 = ReflectionClass.of(PacketPlayOutPlayerInfo.class)
-                .getMethod("removePlayer", EntityPlayer.class)
-                .invoke(npc);
+        try {
+            packetPlayOutEntityLook = new Packet(packetPlayOutEntityLookClass, (int) npc.getMethod("getId").invoke(), (byte) 0, (byte) 0, (byte) 0, (byte) ((yaw % 360) * 256 / 360), (byte) ((pitch % 360) * 256 / 360),false);
+        } catch (Exception ignored) {
+            packetPlayOutEntityLook = new Packet(packetPlayOutEntityLookClass, (int) npc.getMethod("getId").invoke(), (byte) 0, (byte) 0, (byte) 0, (byte) ((yaw % 360) * 256 / 360), (byte) ((pitch % 360) * 256 / 360));
+        };
 
+        Packet packetPlayOutPlayerInfo2  = new Packet(packetPlayOutPlayerInfoClass.getReflectionClass()
+                .getMethod("removePlayer", entityPlayerClass.getAClass())
+                .invoke(npc.getObject())
+        );
+
+
+        Packet finalPacketPlayOutEntityLook = packetPlayOutEntityLook;
         Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> {
 
-            playerNMS.playerConnection.sendPacket(packetPlayOutPlayerInfo);
-            playerNMS.playerConnection.sendPacket(packetPlayOutNamedEntitySpawn);
-            playerNMS.playerConnection.sendPacket(packetPlayOutEntityHeadRotation);
-            playerNMS.playerConnection.sendPacket(packetPlayOutEntityLook);
+            playerNMS.sendPacket(packetPlayOutPlayerInfo);
+            playerNMS.sendPacket(packetPlayOutNamedEntitySpawn);
+            playerNMS.sendPacket(packetPlayOutEntityHeadRotation);
+            playerNMS.sendPacket(finalPacketPlayOutEntityLook);
 
             if (!equipments.isEmpty()) {
 
                 for (Pair<?, ?> pair : equipments) {
 
-                    PacketPlayOutEntityEquipment packetPlayOutEntityEquipment = new PacketPlayOutEntityEquipment(npc.getId(), (int) pair.getFirst(), (net.minecraft.server.v1_7_R3.ItemStack) pair.getSecond());
+                    Packet packetPlayOutEntityEquipment = new Packet(packetPlayOutEntityEquipmentClass, (int) npc.getMethod("getId").invoke(), pair.getFirst(), pair.getSecond());
 
-                    playerNMS.playerConnection.sendPacket(packetPlayOutEntityEquipment);
+                    playerNMS.sendPacket(packetPlayOutEntityEquipment);
                 }
 
             }
 
-            Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> playerNMS.playerConnection.sendPacket(packetPlayOutPlayerInfo2), 20L);
+            Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> playerNMS.sendPacket(packetPlayOutPlayerInfo2), 20L);
         });
 
-        npcIDS.put(player.getUniqueId(), npc.getId());
-        if (lookAtPlayer) XG7Plugins.getInstance().getNpcManager().registerLookingNPC(npc.getId(), npc);
+        npcIDS.put(player.getUniqueId(), npc.getMethod("getId").invoke());
+        if (lookAtPlayer) XG7Plugins.getInstance().getNpcManager().registerLookingNPC(npc.getMethod("getId").invoke(), npc);
 
 
     }
@@ -120,9 +177,9 @@ public class NPC1_7 extends NPC {
     public void destroy(Player player) {
         if (!npcIDS.containsKey(player.getUniqueId())) return;
 
-        PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(npcIDS.get(player.getUniqueId()));
+        Packet packetPlayOutEntityDestroy = new Packet(packetPlayOutEntityDestroyClass, new Class[]{int[].class}, new int[]{npcIDS.get(player.getUniqueId())});
 
-        PlayerNMS.cast(player).sendPacket(new Packet(packet));
+        PlayerNMS.cast(player).sendPacket(packetPlayOutEntityDestroy);
 
         if (lookAtPlayer) XG7Plugins.getInstance().getNpcManager().unregisterLookingNPC(npcIDS.get(player.getUniqueId()));
 
@@ -142,14 +199,14 @@ public class NPC1_7 extends NPC {
         float pitch = (float) Math.toDegrees(-Math.atan(deltaY / distanceXZ));
 
 
-        PacketPlayOutEntityHeadRotation packetPlayOutEntityHeadRotation = new PacketPlayOutEntityHeadRotation((Entity) npc, (byte) ((yaw % 360) * 256 / 360));
+        Packet packetPlayOutEntityHeadRotation = new Packet(packetPlayOutEntityHeadRotationClass, npc, (byte) ((yaw % 360) * 256 / 360));
 
-        PacketPlayOutRelEntityMoveLook packetPlayOutEntityLook = new PacketPlayOutRelEntityMoveLook(id, (byte) 0, (byte) 0, (byte) 0, (byte) ((yaw % 360) * 256 / 360), (byte) ((pitch % 360) * 256 / 360));
+        Packet packetPlayOutEntityLook = new Packet(packetPlayOutEntityLookClass, new Class<?>[]{int.class,byte.class,byte.class,byte.class,byte.class,byte.class}, ReflectionObject.of(npc).getMethod("getId").invoke(), (byte) 0, (byte) 0, (byte) 0, (byte) ((yaw % 360) * 256 / 360), (byte) ((pitch % 360) * 256 / 360));
 
-        EntityPlayer playerNMS = (EntityPlayer) PlayerNMS.cast(player).getCraftPlayerHandle().getObject();
+        PlayerNMS playerNMS = PlayerNMS.cast(player);
 
-        playerNMS.playerConnection.sendPacket(packetPlayOutEntityHeadRotation);
-        playerNMS.playerConnection.sendPacket(packetPlayOutEntityLook);
+        playerNMS.sendPacket(packetPlayOutEntityHeadRotation);
+        playerNMS.sendPacket(packetPlayOutEntityLook);
 
     }
 
@@ -158,11 +215,11 @@ public class NPC1_7 extends NPC {
 
         List<Pair<?, ?>> equipmentList = new ArrayList<>();
 
-        if (mainHand != null) equipmentList.add(new Pair<>(0, CraftItemStack.asNMSCopy(mainHand)));
-        if (helmet != null) equipmentList.add(new Pair<>(4, CraftItemStack.asNMSCopy(helmet)));
-        if (chestplate != null) equipmentList.add(new Pair<>(3, CraftItemStack.asNMSCopy(chestplate)));
-        if (leggings != null) equipmentList.add(new Pair<>(2, CraftItemStack.asNMSCopy(leggings)));
-        if (boots != null) equipmentList.add(new Pair<>(1, CraftItemStack.asNMSCopy(boots)));
+        if (mainHand != null) equipmentList.add(new Pair<>(0, craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invoke(mainHand)));
+        if (helmet != null) equipmentList.add(new Pair<>(4, craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invoke(helmet)));
+        if (chestplate != null) equipmentList.add(new Pair<>(3, craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invoke(chestplate)));
+        if (leggings != null) equipmentList.add(new Pair<>(2, craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invoke(leggings)));
+        if (boots != null) equipmentList.add(new Pair<>(1, craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invoke(boots)));
 
         this.equipments = equipmentList;
 

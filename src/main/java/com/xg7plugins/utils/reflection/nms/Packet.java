@@ -3,6 +3,8 @@ package com.xg7plugins.utils.reflection.nms;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public class Packet {
 
@@ -25,14 +27,16 @@ public class Packet {
         this.packet = packetClass.getReflectionClass().getConstructor(classes).newInstance(args);
         this.packetClass = packetClass;
     }
-    public Packet(PacketClass packetClass) {
-        this(packetClass, new Class<?>[0], new Object[0]);
-    }
     public Packet(PacketClass packetClass, Class<?>[] classes, Object... args) {
         this.packetClass = packetClass;
         this.packet = packetClass.getReflectionClass().getConstructor(classes).newInstance(args);
     }
     public Packet(Object packet) {
+        if (packet instanceof PacketClass) {
+            this.packetClass = (PacketClass) packet;
+            this.packet = packetClass.getReflectionClass().newInstance();
+            return;
+        }
         if (!NMSUtil.getNMSClassViaVersion(17, "Packet", "network.protocol.Packet").isInstance(packet)) {
             throw new IllegalArgumentException("The object is not an instance of Packet");
         }

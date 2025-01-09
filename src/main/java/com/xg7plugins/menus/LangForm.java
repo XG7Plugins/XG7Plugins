@@ -88,11 +88,11 @@ public class LangForm extends SimpleForm {
 
             dao.update(new PlayerLanguage(player.getUniqueId(), dbLang)).thenAccept(r -> {
                 XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
-                Text.formatComponent("lang:[lang-menu.changed]", plugin).send(player);
+                Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
                 send(player);
             });
 
-            XG7Plugins.getInstance().getCooldownManager().addCooldown(player, "lang-change", XG7Plugins.getInstance().getConfig("config").getTime("cooldown-to-toggle-lang").orElse(10000L));
+            XG7Plugins.getInstance().getCooldownManager().addCooldown(player, "lang-change", XG7Plugins.getInstance().getConfig("config").getTime("cooldown-to-toggle-lang").orElse(5000L));
 
 
         }));

@@ -48,6 +48,8 @@ import com.xg7plugins.tasks.TaskManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.InvalidPluginException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -167,6 +169,7 @@ public final class XG7Plugins extends Plugin {
         });
 
         getLog().loading("XG7Plugins enabled.");
+
     }
 
 
@@ -184,6 +187,7 @@ public final class XG7Plugins extends Plugin {
         if (minecraftVersion > 7) hologramsManager.cancelTask();
         npcManager.cancelTask();
         taskManager.shutdown();
+        cacheManager.shutdown();
     }
 
     public Class<? extends Entity>[] loadEntites() {
@@ -210,7 +214,7 @@ public final class XG7Plugins extends Plugin {
     }
 
     public Task[] loadRepeatingTasks() {
-        return new Task[]{hologramsManager.getTask(), npcManager.getTask(), scoreManager.getTask(), cooldownManager.getTask()};
+        return new Task[]{hologramsManager == null ? null : hologramsManager.getTask(), npcManager.getTask(), scoreManager.getTask(), cooldownManager.getTask()};
     }
 
     @Override
@@ -218,6 +222,8 @@ public final class XG7Plugins extends Plugin {
         return new Score[]{BossBarBuilder.bossBar("test")
                 .title(Arrays.asList("Teste", "tEste", "teSte", "tesTe", "testE", "teste"))
                 .delay(200L)
+                .color(org.bukkit.boss.BarColor.BLUE)
+                .style(org.bukkit.boss.BarStyle.SOLID)
                 .progress(50f).build(this)
         };
     }

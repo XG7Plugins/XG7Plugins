@@ -33,17 +33,17 @@ public abstract class Score {
         this.plugin = plugin;
     }
 
-    public void addPlayer(Player player) {
+    public synchronized void addPlayer(Player player) {
         players.add(player.getUniqueId());
         updating = true;
     }
 
-    public void removePlayer(Player player) {
+    public synchronized void removePlayer(Player player) {
 
         if (!players.contains(player.getUniqueId())) return;
 
-            players.remove(player.getUniqueId());
-            if (players.isEmpty()) updating = false;
+        players.remove(player.getUniqueId());
+        if (players.isEmpty()) updating = false;
     }
 
     public void removeAllPlayers() {

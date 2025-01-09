@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -18,16 +19,13 @@ public class ScoreManager {
 
     private final XG7Plugins plugin;
 
-    private final HashMap<String, Score> scoreboards = new HashMap<>();
+    private final ConcurrentHashMap<String, Score> scoreboards = new ConcurrentHashMap<>();
     private final List<UUID> sendActionBlackList = new ArrayList<>();
 
-    private Task task;
+    private final Task task;
 
     public ScoreManager(XG7Plugins plugin) {
         this.plugin = plugin;
-    }
-    public void registerScores(final Score[] scores) {
-        if (scores == null) return;
         AtomicLong counter = new AtomicLong();
         this.task = new Task(
                 plugin,
@@ -36,28 +34,37 @@ public class ScoreManager {
                 true,
                 1,
                 TaskState.IDLE,
-                () -> scoreboards.values().forEach(score -> {
-                    Bukkit.getOnlinePlayers().forEach(p -> {
-                        try {
-                            if (p == null) return;
-                            if (score.getCondition().verify(p)) score.addPlayer(p);
-                            else if (score.getPlayers().contains(p.getUniqueId())) score.removePlayer(p);
+                () -> {
+                    scoreboards.values().forEach(score -> {
+                        Bukkit.getOnlinePlayers().forEach(p -> {
+                            try {
+                                if (p == null) return;
+                                if (score.getCondition().verify(p)) score.addPlayer(p);
+                                else if (score.getPlayers().contains(p.getUniqueId())) score.removePlayer(p);
 
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        try {
+                            if (counter.get() % score.getDelay() == 0) {
+                                score.update();
+                                score.incrementIndex();
+                            }
+
+                            if (counter.get() == Long.MAX_VALUE) counter.set(0);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+
+
                     });
-
-                    if (counter.get() % score.getDelay() == 0) {
-                        score.update();
-                        score.incrementIndex();
-                    }
                     counter.incrementAndGet();
-
-                    if (counter.get() == Long.MAX_VALUE) counter.set(0);
-
-                })
+                }
         );
+    }
+    public void registerScores(final Score[] scores) {
+        if (scores == null) return;
         scoreboards.putAll(Arrays.stream(scores).map(sc -> new AbstractMap.SimpleEntry<>(sc.getId(), sc)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
     }
 

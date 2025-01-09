@@ -31,7 +31,7 @@ public class BossBar extends Score {
         XG7Plugins.getInstance().getScoreManager().registerScore(this);
     }
     @Override
-    public void addPlayer(Player player) {
+    public synchronized void addPlayer(Player player) {
         super.addPlayer(player);
         if (!bossBars.containsKey(player.getUniqueId())) {
             bossBars.put(player.getUniqueId(), Bukkit.createBossBar(updateText.get(0),color,style));
@@ -43,6 +43,7 @@ public class BossBar extends Score {
 
     @Override
     public void removePlayer(Player player) {
+        if (!bossBars.containsKey(player.getUniqueId())) return;
         super.removePlayer(player);
         bossBars.get(player.getUniqueId()).removePlayer(player);
         bossBars.remove(player.getUniqueId());
@@ -54,8 +55,8 @@ public class BossBar extends Score {
         for (UUID id : super.getPlayers()) {
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
-            if (!bossBars.get(id).getTitle().equals(Text.format(updateText.get(0), plugin).getWithPlaceholders(player))) {
-                bossBars.get(player.getUniqueId()).setTitle(Text.format(updateText.get(0), plugin).getWithPlaceholders(player));
+            if (!bossBars.get(id).getTitle().equals(Text.format(updateText.get(indexUpdating), plugin).getWithPlaceholders(player))) {
+                bossBars.get(player.getUniqueId()).setTitle(Text.format(updateText.get(indexUpdating), plugin).getWithPlaceholders(player));
             }
         }
     }

@@ -45,7 +45,7 @@ public class ScoreBoard extends Score {
     }
 
     @Override
-    public void addPlayer(Player player) {
+    public synchronized void addPlayer(Player player) {
         if (!super.getPlayers().contains(player.getUniqueId())) {
             super.addPlayer(player);
             playerBoards.put(player.getUniqueId(), new PlayerBoard(player, super.updateText, lines));
@@ -53,7 +53,7 @@ public class ScoreBoard extends Score {
     }
 
     @Override
-    public void removePlayer(Player player) {
+    public synchronized void removePlayer(Player player) {
         super.removePlayer(player);
         playerBoards.remove(player.getUniqueId());
 
@@ -93,16 +93,13 @@ public class ScoreBoard extends Score {
                 }
                 player.setScoreboard(scoreboard);
 
-                System.out.println("Criado");
-
-                System.out.println("Atualizar");
-
                 update();
             });
 
         }
 
         public void update() {
+            if (scoreboard == null) return;
             List<String> lastEntries = new ArrayList<>();
             for (int i = 0; i < lines.size(); i++) {
                 String translatedText = Text.format(lines.get(i), XG7Plugins.getInstance()).getWithPlaceholders(player);

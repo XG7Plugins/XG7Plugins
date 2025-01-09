@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
@@ -15,6 +16,7 @@ import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
@@ -23,6 +25,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -187,6 +190,21 @@ public class Item {
     public Item setNBTTag(String key, Object value) {
         Gson gson = new Gson();
 
+
+        if (this.itemStack.getType().equals(Material.AIR)) return this;
+        if (XG7Plugins.getMinecraftVersion() > 13) {
+
+            NamespacedKey namespacedKey = new NamespacedKey(XG7Plugins.getInstance(), key);
+
+            ItemMeta meta = this.itemStack.getItemMeta();
+
+            meta.getPersistentDataContainer().set(namespacedKey, PersistentDataType.STRING, gson.toJson(value));
+
+            this.itemStack.setItemMeta(meta);
+            return this;
+        }
+
+
         ReflectionObject nmsItem = craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invokeToRObject(this.itemStack);
         ReflectionObject tag = nmsItem.getMethod("getTag").invokeToRObject();
 
@@ -202,6 +220,20 @@ public class Item {
     }
     public static <T> Optional<T> getTag(String key, ItemStack item, Class<T> clazz) {
         Gson gson = new Gson();
+
+        if (item.getType().equals(Material.AIR)) return Optional.empty();
+
+        if (XG7Plugins.getMinecraftVersion() > 13) {
+
+            NamespacedKey namespacedKey = new NamespacedKey(XG7Plugins.getInstance(), key);
+
+            ItemMeta meta = item.getItemMeta();
+
+            if (!meta.getPersistentDataContainer().has(namespacedKey, PersistentDataType.STRING)) return Optional.empty();
+
+            return Optional.ofNullable(gson.fromJson(meta.getPersistentDataContainer().get(namespacedKey, PersistentDataType.STRING), clazz));
+        }
+
         ReflectionObject nmsItem = craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invokeToRObject(item);
         ReflectionObject tag = nmsItem.getMethod("getTag").invokeToRObject();
 

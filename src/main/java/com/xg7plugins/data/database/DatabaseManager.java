@@ -75,6 +75,8 @@ public class DatabaseManager {
         String username = pluginConfig.get("sql.username", String.class).orElse(null);
         String password = pluginConfig.get("sql.password", String.class).orElse(null);
 
+        String additionalArgs = pluginConfig.get("sql.additional-url-args", String.class).orElse("");
+
         plugin.getLog().loading("Connection type: " + connectionType);
 
         try {
@@ -91,12 +93,12 @@ public class DatabaseManager {
                     break;
                 case MARIADB:
 
-                    connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mariadb://" + host + ":" + port + "/" + database, username, password));
+                    connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mariadb://" + host + ":" + port + "/" + database + "?" + additionalArgs, username, password));
 
                     break;
                 case MYSQL:
 
-                    connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password));
+                    connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + additionalArgs, username, password));
 
                     break;
             }
