@@ -119,7 +119,7 @@ public class Text {
 
             if (lang == null) lang = Config.of(plugin, langManager.getLangByPlayer(plugin, (sender instanceof Player) ? (Player) sender : null).join());
 
-            return Text.format(lang.get(langPath, String.class).orElse("Cannot found path \"" + lang + "\" in " + lang.get("formated-name", String.class).orElse("langs"))).textFor(sender);
+            return Text.format(lang.get(langPath, String.class).orElse("Cannot found path \"" + lang + "\" in " + lang.get("formated-name", String.class).orElse("langs")).replace("[PREFIX]", plugin.getCustomPrefix())).textFor(sender);
 
         });
 
@@ -155,7 +155,7 @@ public class Text {
                     finalText = result.toString();
                 }
 
-                return Text.format(finalText).textFor(sender);
+                return Text.format(finalText.replace("[PREFIX]", plugin.getCustomPrefix())).textFor(sender);
             } catch (Throwable e) {
                 e.printStackTrace();
             }
