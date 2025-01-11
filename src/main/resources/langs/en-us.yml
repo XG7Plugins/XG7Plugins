@@ -11,6 +11,7 @@ commands:
   disabled-world: "You cannot execute this command in a disabled world!"
   not-a-player: "You cannot execute this command in console!"
   is-a-player: "You cannot execute this command being a player!"
+  command-not-found: "Command not found!"
 
 
 reload-message:
@@ -105,7 +106,7 @@ help-menu:
 
     profile-item:
       name: "Profile: %player_name%"
-      lang-chose: "%xg7plugins_player_selected_lang%"
+      lang-chose: "%xg7plugins_player_lang%"
     lang-item:
       name: "Languages"
       lore: "Click here to change profile lang"
@@ -120,12 +121,12 @@ help-menu:
       lore: "Click here to see the commands"
 
   about:
-    - "About XG7Plugins"
+    - "About &9XG7Plugins"
     - ""
-    - "Version: &a[VERSION]"
-    - "Website: &a&n[WEBSITE]"
-    - "GitHub: &a&n[GITHUB]"
-    - "Discord: &a&n[DISCORD]"
+    - "Version: &a[VERSION]&r"
+    - "Website: &a&n[WEBSITE]&r"
+    - "GitHub: &a&n[GITHUB]&r"
+    - "Discord: &a&n[DISCORD]&r"
     - ""
     - "This plugin was made"
     - "for creating other"

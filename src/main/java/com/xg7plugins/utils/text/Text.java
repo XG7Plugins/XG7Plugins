@@ -26,9 +26,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Getter
 public class Text {
 
-    @Getter
     private String text;
 
     private static final PacketClass packetPlayOutChat = XG7Plugins.getMinecraftVersion() == 8 ? new PacketClass("PacketPlayOutChat") : null;
@@ -85,10 +85,14 @@ public class Text {
     }
 
     public String getTextCentralized(TextCentralizer.PixelsSize pixelsSize) {
+        if (!text.startsWith("[CENTER] ")) return text;
+        text = text.substring(9);
         return TextCentralizer.getCentralizedText(pixelsSize, text);
     }
 
     public String getTextForCentralized(TextCentralizer.PixelsSize pixelsSize, CommandSender sender) {
+        if (!text.startsWith("[CENTER] ")) return text;
+        text = text.substring(9);
         if (sender instanceof Player) {
             return TextCentralizer.getCentralizedText(pixelsSize, setPlaceholders((Player) sender).condition((Player) sender).getText());
         }
@@ -125,39 +129,40 @@ public class Text {
 
         return CompletableFuture.supplyAsync(() -> {
 
-            String finalText = text;
+            try {
+                String finalText = text;
 
-            Matcher matcher = LANG_PATTERN.matcher(finalText);
+                Matcher matcher = LANG_PATTERN.matcher(finalText);
 
-            while (matcher.find()) {
-                Config lang = null;
-
-                LangManager langManager = XG7Plugins.getInstance().getLangManager();
-
-                if (langManager == null) lang = XG7Plugins.getInstance().getConfigsManager().getConfig("messages");
-
-                if (lang == null) lang = Config.of(plugin, langManager.getLangByPlayer(plugin, (sender instanceof Player) ? (Player) sender : null).join());
-
-                StringBuilder result = new StringBuilder(finalText);
-                int offset = 0;
 
                 while (matcher.find()) {
+                    Config lang = null;
+
+                    LangManager langManager = XG7Plugins.getInstance().getLangManager();
+
+                    if (langManager == null) lang = XG7Plugins.getInstance().getConfigsManager().getConfig("messages");
+
+                    if (lang == null)
+                        lang = Config.of(plugin, langManager.getLangByPlayer(plugin, (sender instanceof Player) ? (Player) sender : null).join());
+                    StringBuilder result = new StringBuilder(finalText);
+
                     String langPath = matcher.group(1);
                     String replacement = lang.get(langPath, String.class)
                             .orElse("Cannot found path \"" + langPath + "\" in " + lang.get("formated-name", String.class).orElse("langs"));
 
-                    int start = matcher.start() + offset;
-                    int end = matcher.end() + offset;
+                    result.replace(matcher.start(), matcher.end(), replacement);
 
-                    result.replace(start, end, replacement);
-
-                    offset += replacement.length() - (end - start);
+                    finalText = result.toString();
                 }
 
-                finalText = result.toString();
+                return Text.format(finalText).textFor(sender);
+            } catch (Throwable e) {
+                e.printStackTrace();
             }
 
-            return Text.format(finalText).textFor(sender);
+            return null;
+
+
         });
 
     }

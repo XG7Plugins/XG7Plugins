@@ -128,6 +128,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             command = commands.get(plConfig.mainCommandName() + strings[0]);
 
+            if (command == null) {
+                Text.formatLang(XG7Plugins.getInstance(), commandSender, "commands.command-not-found")
+                        .thenAccept(text -> text.send(commandSender));
+                return true;
+            }
+
             strings = Arrays.copyOfRange(strings, 1, strings.length);
 
             commandConfig = command.getClass().getAnnotation(Command.class);
@@ -270,6 +276,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 }
 
                 command = commands.get(plConfig.mainCommandName() + strings[0]);
+
+                if (command == null) {
+                    return new ArrayList<>();
+                }
 
                 strings = Arrays.copyOfRange(strings, 1, strings.length);
 

@@ -84,9 +84,7 @@ public class XG7PluginsHelpGUI extends Menu {
                             .replace("[VERSION]", XG7Plugins.getInstance().getDescription().getVersion())
                             .getText());
                     if (currentPage.size() == 10) {
-                        System.out.println("Adding page");
                         pages.add(new ArrayList<>(currentPage));
-                        System.out.println(pages);
                         currentPage.clear();
                     }
                 }

@@ -6,6 +6,7 @@ import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
+import org.bukkit.UnsafeValues;
 
 import java.lang.reflect.Field;
 
@@ -15,18 +16,8 @@ public class NMSUtil {
     private static String version;
 
     static {
-        String bukkitVersion = Bukkit.getBukkitVersion();
-        String[] parts = bukkitVersion.split("-");
-        if (parts.length >= 2) {
-            String versionPart = parts[0];
-            String revisionPart = parts[1];
-
-            String[] versionNumbers = versionPart.split("\\.");
-            String revision = revisionPart.split("\\.")[1].substring(0,1);
-            version = "v" + versionNumbers[0] + "_" + versionNumbers[1] + "_R" + revision;
-
-            System.out.println(version);
-        }
+        UnsafeValues unsafe = Bukkit.getUnsafe();
+        version = unsafe.getClass().getName().split("\\.")[3];
     }
 
     public static ReflectionClass getNMSClass(String className) {

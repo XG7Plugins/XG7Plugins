@@ -25,7 +25,6 @@ public class CommandMenu extends PageMenu {
 
     public CommandMenu(List<ICommand> commands, String customTitle, CommandMenu superMenu, HelpCommandGUI guiOrigin) {
         super(XG7Plugins.getInstance(), "command_menu" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, 54, new Slot(2, 2), new Slot(5, 8));
-        System.out.println(commands);
         this.commands = commands.stream().collect(
                 Collectors.toMap(
                         command -> command.getClass().getAnnotation(Command.class).name(),
@@ -39,8 +38,6 @@ public class CommandMenu extends PageMenu {
 
     @Override
     public List<Item> pagedItems(Player player) {
-
-        System.out.println(commands);
 
         return commands
                 .values()

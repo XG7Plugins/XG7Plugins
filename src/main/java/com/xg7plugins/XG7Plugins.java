@@ -92,8 +92,6 @@ public final class XG7Plugins extends Plugin {
     private static final boolean paper = Bukkit.getServer().getName().contains("Paper");
 
     static {
-        System.out.println(Bukkit.getServer().getName());
-        System.out.println(Bukkit.getServer().getName().contains("Paper"));
         Pattern pattern = Pattern.compile("1\\.([0-9]?[0-9])");
         Matcher matcher = pattern.matcher(Bukkit.getServer().getVersion());
         minecraftVersion = matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
@@ -232,17 +230,6 @@ public final class XG7Plugins extends Plugin {
 
     public Task[] loadRepeatingTasks() {
         return new Task[]{hologramsManager == null ? null : hologramsManager.getTask(), npcManager.getTask(), scoreManager.getTask(), cooldownManager.getTask()};
-    }
-
-    @Override
-    public Score[] loadScores() {
-        return new Score[]{BossBarBuilder.bossBar("test")
-                .title(Arrays.asList("Teste", "tEste", "teSte", "tesTe", "testE", "teste"))
-                .delay(200L)
-                .color(org.bukkit.boss.BarColor.BLUE)
-                .style(org.bukkit.boss.BarStyle.SOLID)
-                .progress(50f).build(this)
-        };
     }
 
     @Override

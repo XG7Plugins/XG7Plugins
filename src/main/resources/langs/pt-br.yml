@@ -10,6 +10,8 @@ commands:
   disabled-world: "Você não pode executar o comando nesse mundo!"
   not-a-player: "Você não pode executar este comando no console!"
   is-a-player: "Você não pode executar este comando sendo um jogador!"
+  command-not-found: "Comando não encontrado!"
+
 
 reload-message:
   config: "Configs de [PLUGIN] recarregados!"
@@ -108,7 +110,7 @@ help-menu:
 
     profile-item:
       name: "Perfil: %player_name%"
-      lang-chose: "%xg7plugins_lang%"
+      lang-chose: "%xg7plugins_player_lang%"
 
     lang-item:
       name: "Idiomas"
@@ -126,12 +128,12 @@ help-menu:
 
 
   about:
-    - "Sobre o XG7Plugins"
+    - "Sobre o &9XG7Plugins"
     - " "
-    - "Versão: &a[VERSION]"
-    - "Site: &a&n[WEBSITE]"
-    - "GitHub: &a&n[GITHUB]"
-    - "Discord: &a&n[DISCORD]"
+    - "Versão: &a[VERSION]&r"
+    - "Site: &a&n[WEBSITE]&r"
+    - "GitHub: &a&n[GITHUB]&r"
+    - "Discord: &a&n[DISCORD]&r"
     - ""
     - "Este plugin foi feito"
     - "para a criação de"
@@ -147,3 +149,17 @@ help-menu:
     - "a inclusão de novos idiomas."
     - ""
     - "&oDesenvolvido por DaviXG7"
+
+help-in-chat:
+
+  title: "&7Bem-vindo à página de ajuda do &6XG7Plugins&7!"
+
+  content: "&eXG7Plugins é um plugin que visa facilitar a criação\n de outros plugins para outros XG7Plugins.\n Clique para ver mais informações."
+
+  back: "&aClique para voltar à ajuda"
+
+  lang: "&aIdiomas&f: &1clique aqui para mudar o idioma do perfil"
+  tasks: "&aTarefas&f: &1clique aqui para ver as tarefas"
+  commands: "&aComandos&f: &1clique aqui para ver os comandos"
+
+  commands-title: "&7Comandos do &6XG7Plugins &8(&7[PAGES]&8/&7[MAX_PAGES]&8)"
