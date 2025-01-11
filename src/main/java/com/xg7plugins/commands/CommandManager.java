@@ -5,14 +5,12 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.reflection.ReflectionClass;
-import com.xg7plugins.utils.reflection.ReflectionMethod;
 import com.xg7plugins.utils.reflection.ReflectionObject;
+import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.*;
 
 import org.bukkit.entity.Player;
@@ -111,13 +109,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         if (command instanceof MainCommand) {
             if (!commandSender.hasPermission(commandConfig.permission())) {
-                Text.format("lang:[commands.no-permission]",XG7Plugins.getInstance()).send(commandSender);
+                Text.formatLang(XG7Plugins.getInstance(),commandSender,"commands.no-permission").thenAccept(text -> text.send(commandSender));
                 return true;
             }
             if (strings.length == 0) {
-                Text.format("lang:[commands.syntax-error]", XG7Plugins.getInstance())
-                        .replace("[SYNTAX]", command.getClass().getAnnotation(Command.class).syntax())
-                        .send(commandSender);
+                ICommand finalCommand1 = command;
+                Text.formatLang(XG7Plugins.getInstance(), commandSender, "commands.syntax-error").thenAccept(text -> {
+                        text.replace("[SYNTAX]", finalCommand1.getClass().getAnnotation(Command.class).syntax())
+                            .send(commandSender);
+                });
                 return true;
             }
 
@@ -136,29 +136,23 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
 
         if (processSubCommands(command, commandSender, strings, 0)) return true;
-        if (command == null) {
-                Text.format("lang:[commands.syntax-error]", XG7Plugins.getInstance())
-                        .replace("[SYNTAX]", command.getClass().getAnnotation(Command.class).syntax())
-                        .send(commandSender);
-                return true;
-        }
 
         if (!commandSender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
-            Text.format("lang:[commands.no-permission]",XG7Plugins.getInstance()).send(commandSender);
+            Text.formatLang(XG7Plugins.getInstance(), commandSender, "commands.no-permission").thenAccept(text -> text.send(commandSender));
             return true;
         }
 
         if (commandConfig.isPlayerOnly() && !(commandSender instanceof Player)) {
-            Text.format("lang:[commands.not-a-player]",XG7Plugins.getInstance()).send(commandSender);
+            Text.formatLang(XG7Plugins.getInstance(), commandSender, "commands.not-a-player").thenAccept(text -> text.send(commandSender));
             return true;
         }
         if (commandConfig.isConsoleOnly() && commandSender instanceof Player) {
-            Text.format("lang:[commands.is-a-player]",XG7Plugins.getInstance()).send(commandSender);
+            Text.formatLang(XG7Plugins.getInstance(), commandSender, "commands.is-a-player").thenAccept(text -> text.send(commandSender));
             return true;
         }
         if (commandSender instanceof Player) {
             if (!commandConfig.isInEnabledWorldOnly() && plugin.getEnabledWorlds().contains(((Player) commandSender).getWorld().getName()) && !plugin.getEnabledWorlds().isEmpty()) {
-                Text.format("lang:[commands.disabled-world]",XG7Plugins.getInstance()).send(commandSender);
+                Text.formatLang(XG7Plugins.getInstance(), commandSender, "commands.disabled-world").thenAccept(text -> text.send(commandSender));
                 return true;
             }
         }
@@ -209,21 +203,21 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         Command commandConfig = subCommandChosen.getClass().getAnnotation(Command.class);
 
         if (!sender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
-            Text.format("lang:[commands.no-permission]",XG7Plugins.getInstance()).send(sender);
+            Text.formatLang(XG7Plugins.getInstance(), sender, "commands.no-permission").thenAccept(text -> text.send(sender));
             return true;
         }
 
         if (commandConfig.isPlayerOnly() && !(sender instanceof Player)) {
-            Text.format("lang:[commands.not-a-player]",XG7Plugins.getInstance()).send(sender);
+            Text.formatLang(XG7Plugins.getInstance(), sender, "commands.not-a-player").thenAccept(text -> text.send(sender));
             return true;
         }
         if (commandConfig.isConsoleOnly() && sender instanceof Player) {
-            Text.format("lang:[commands.is-a-player]",XG7Plugins.getInstance()).send(sender);
+            Text.formatLang(XG7Plugins.getInstance(), sender, "commands.is-a-player").thenAccept(text -> text.send(sender));
             return true;
         }
         if (sender instanceof Player) {
             if (!commandConfig.isInEnabledWorldOnly() && plugin.getEnabledWorlds().contains(((Player) sender).getWorld().getName()) && !plugin.getEnabledWorlds().isEmpty()) {
-                Text.format("lang:[commands.disabled-world]",XG7Plugins.getInstance()).send(sender);
+                Text.formatLang(XG7Plugins.getInstance(), sender, "commands.disabled-world").thenAccept(text -> text.send(sender));
                 return true;
             }
         }
@@ -286,8 +280,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         if (commandSender.hasPermission(commandConfig.permission()) && !commandSender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
             return new ArrayList<>();
         }
-
-
 
         return command.onTabComplete(commandSender,new CommandArgs(strings));
     }

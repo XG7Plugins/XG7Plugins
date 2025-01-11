@@ -10,6 +10,8 @@ import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.database.entity.Entity;
+import com.xg7plugins.data.playerdata.PlayerData;
+import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.help.formhelp.HelpCommandForm;
 import com.xg7plugins.help.guihelp.HelpCommandGUI;
 import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpForm;
@@ -17,7 +19,6 @@ import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpGUI;
 import com.xg7plugins.help.xg7pluginshelp.chathelp.XG7PluginsChatHelp;
 import com.xg7plugins.lang.LangItemTypeAdapter;
 import com.xg7plugins.lang.LangManager;
-import com.xg7plugins.lang.PlayerLanguage;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
@@ -113,6 +114,8 @@ public final class XG7Plugins extends Plugin {
     private HologramsManager hologramsManager;
     private NPCManager npcManager;
 
+    private PlayerDataDAO playerDataDAO;
+
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
     public XG7Plugins() {
@@ -141,6 +144,7 @@ public final class XG7Plugins extends Plugin {
         taskManager().registerExecutor("cache", Executors.newSingleThreadExecutor());
         this.cacheManager = new CacheManager(this);
         this.databaseManager = new DatabaseManager(this);
+        this.playerDataDAO = new PlayerDataDAO();
         this.langManager = config.get("enable-langs", Boolean.class).orElse(false) ? new LangManager(this, new String[]{"en-us", "pt-br", "sp-sp"}) : null;
         if (langManager == null) config.getConfigManager().putConfig("messages", new Config(this, "langs/" + config.get("main-lang", String.class).get()));
         else langManager.loadLangsFrom(this);
@@ -178,6 +182,8 @@ public final class XG7Plugins extends Plugin {
             taskManager.registerTasks(plugin.loadRepeatingTasks());
         });
 
+        if (placeholderAPI) new XG7PluginsPlaceholderExpansion().register();
+
         getLog().loading("XG7Plugins enabled.");
 
     }
@@ -202,7 +208,7 @@ public final class XG7Plugins extends Plugin {
     }
 
     public Class<? extends Entity>[] loadEntites() {
-        return new Class[]{PlayerLanguage.class};
+        return new Class[]{PlayerData.class};
     }
     @Override
     public ICommand[] loadCommands() {

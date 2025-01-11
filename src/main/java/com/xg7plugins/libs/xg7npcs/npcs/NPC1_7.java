@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.utils.Location;
+import com.xg7plugins.utils.location.Location;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.nms.NMSUtil;
@@ -13,8 +13,6 @@ import com.xg7plugins.utils.reflection.nms.PacketClass;
 import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.text.Text;
-import net.minecraft.server.v1_7_R3.PacketPlayOutEntityLook;
-import net.minecraft.server.v1_7_R3.PacketPlayOutRelEntityMoveLook;
 import net.minecraft.util.com.mojang.authlib.GameProfile;
 import net.minecraft.util.com.mojang.authlib.properties.Property;
 import org.bukkit.Bukkit;
@@ -95,7 +93,7 @@ public class NPC1_7 extends NPC {
             npcSkin.getProperties().putAll(playerGameProfile.getProperties());
 
         }
-        String newName = Text.format((String) name, plugin).getWithPlaceholders(player);
+        String newName = Text.format((String) name).getTextFor(player);
         GameProfile npcSkinNameReplaced = new GameProfile(UUID.randomUUID(), newName.substring(0, Math.min(newName.length(), 16)));
 
         npcSkinNameReplaced.getProperties().putAll(npcSkin.getProperties());

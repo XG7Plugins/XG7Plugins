@@ -29,9 +29,11 @@ public class LangSubCommand implements ICommand {
         langManager.getLangs().clear().join();
         langManager.loadLangsFrom(plugin);
 
-        Text.format("lang:[reload-message.lang]", XG7Plugins.getInstance())
-                .replace("[PLUGIN]", plugin.getName())
-                .send(sender);
+        Plugin finalPlugin = plugin;
+        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.lang").thenAccept(text ->
+                text.replace("[PLUGIN]", finalPlugin.getName())
+                        .send(sender)
+        );
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.xg7plugins.libs.xg7holograms.holograms;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.utils.Location;
+import com.xg7plugins.utils.location.Location;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

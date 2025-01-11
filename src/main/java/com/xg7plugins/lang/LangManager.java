@@ -4,6 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -23,12 +24,10 @@ public class LangManager {
     private final ObjectCache<String, YamlConfiguration> langs;
     private final String mainLang;
     private final String[] defLangs;
-    private final PlayerLanguageDAO playerLanguageDAO;
 
     public LangManager(XG7Plugins plugin, String[] defaultLangs) {
         this.plugin = plugin;
         this.defLangs = defaultLangs;
-        this.playerLanguageDAO = new PlayerLanguageDAO();
 
         Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
 
@@ -36,7 +35,7 @@ public class LangManager {
         this.langs = new ObjectCache<>(
                 plugin,
                 config.getTime("lang-cache-expires").orElse(60 * 10 * 1000L),
-                true,
+                false,
                 "langs",
                 true,
                 String.class,
@@ -91,7 +90,7 @@ public class LangManager {
     public CompletableFuture<YamlConfiguration> getLangByPlayer(Plugin plugin, Player player) {
         if (player == null) return getLang(plugin, mainLang);
 
-        return playerLanguageDAO.get(player.getUniqueId()).thenCompose(lang -> {
+        return XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).thenCompose(lang -> {
 
             if (lang != null) return getLang(plugin, lang.getLangId());
 
@@ -107,10 +106,10 @@ public class LangManager {
                     }
                 }
             }
-            PlayerLanguage newLang = new PlayerLanguage(player.getUniqueId(), langId);
+            PlayerData newLang = new PlayerData(player.getUniqueId(), langId);
             try {
                 final String finalLangID = langId;
-                return playerLanguageDAO.add(newLang).thenCompose(v -> getLang(plugin, finalLangID));
+                return XG7Plugins.getInstance().getPlayerDataDAO().add(newLang).thenCompose(v -> getLang(plugin, finalLangID));
             } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException(e);
             }

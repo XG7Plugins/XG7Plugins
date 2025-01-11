@@ -3,7 +3,6 @@ package com.xg7plugins.libs.xg7geyserforms.forms;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.text.Text;
-import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.response.ModalFormResponse;
 import org.geysermc.floodgate.api.FloodgateApi;
@@ -28,10 +27,10 @@ public abstract class ModalForm extends Form<org.geysermc.cumulus.form.ModalForm
         return CompletableFuture.supplyAsync(() -> {
             org.geysermc.cumulus.form.ModalForm.Builder builder = org.geysermc.cumulus.form.ModalForm.builder();
 
-            builder.title(Text.format(title, plugin).getWithPlaceholders(player));
-            builder.content(Text.format(content, plugin).getWithPlaceholders(player));
-            builder.button1(Text.format(button1, plugin).getWithPlaceholders(player));
-            builder.button2(Text.format(button2, plugin).getWithPlaceholders(player));
+            builder.title(Text.detectLangOrText(plugin,player,title).join().getText());
+            builder.content(Text.detectLangOrText(plugin,player,content).join().getText());
+            builder.button1(Text.detectLangOrText(plugin,player,button1).join().getText());
+            builder.button2(Text.detectLangOrText(plugin,player,button2).join().getText());
 
             builder.invalidResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(), "menus", () -> onError(form, response, player)));
             builder.validResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onFinish(form, response, player)));

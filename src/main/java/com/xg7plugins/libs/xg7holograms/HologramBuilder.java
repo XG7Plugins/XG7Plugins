@@ -6,7 +6,7 @@ import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram1_17_1_XX;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram1_8_1_16;
 import com.xg7plugins.utils.Builder;
-import com.xg7plugins.utils.Location;
+import com.xg7plugins.utils.location.Location;
 
 import java.util.ArrayList;
 import java.util.List;

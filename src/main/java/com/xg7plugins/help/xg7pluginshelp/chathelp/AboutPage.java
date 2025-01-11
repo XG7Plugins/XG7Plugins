@@ -5,7 +5,6 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.help.chathelp.HelpComponent;
 import com.xg7plugins.help.chathelp.HelpPage;
 import com.xg7plugins.utils.text.Text;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
@@ -51,15 +50,15 @@ public class AboutPage extends HelpPage {
                     XG7Plugins.getInstance().getConfig("messages") :
                     Config.of(XG7Plugins.getInstance(), XG7Plugins.getInstance().getLangManager().getLangByPlayer(XG7Plugins.getInstance(), player).join());
 
-            String about = Text.formatComponent((String) lang.get("help-menu.about", List.class).orElse(new ArrayList<String>()).stream().collect(Collectors.joining("\n")), XG7Plugins.getInstance()).getRawText();
+            String about = (String) lang.get("help-menu.about", List.class).orElse(new ArrayList<String>()).stream().collect(Collectors.joining("\n"));
 
             return new TextComponent(
-                    Text.format(about, XG7Plugins.getInstance())
-                            .replace("[DISCORD]", "https://discord.gg/jfrn8w92kF")
-                            .replace("[GITHUB]", "https://github.com/DaviXG7")
-                            .replace("[WEBSITE]", "https://xg7plugins.com")
-                            .replace("[VERSION]", XG7Plugins.getInstance().getDescription().getVersion())
-                            .getWithPlaceholders(player)
+                    Text.detectLangOrText(XG7Plugins.getInstance(),player,about).join()
+                    .replace("[DISCORD]", "discord.gg/jfrn8w92kF")
+                    .replace("[GITHUB]", "github.com/DaviXG7")
+                    .replace("[WEBSITE]", "xg7plugins.com")
+                    .replace("[VERSION]", XG7Plugins.getInstance().getDescription().getVersion())
+                    .getText()
             );
 
         }

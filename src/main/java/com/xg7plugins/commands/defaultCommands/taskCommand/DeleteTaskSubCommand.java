@@ -30,7 +30,7 @@ public class DeleteTaskSubCommand implements ICommand {
         String id = args.get(0, String.class);
 
         if (!manager.getTasks().containsKey(id)) {
-            Text.format("lang:[task-command.not-found]", XG7Plugins.getInstance()).send(sender);
+            Text.formatLang(XG7Plugins.getInstance(),sender,"task-command.not-found").thenAccept(text -> text.send(sender));
             return;
         }
         manager.deleteTask(id);
@@ -38,7 +38,7 @@ public class DeleteTaskSubCommand implements ICommand {
         XG7Plugins.getInstance().getLog().warn("Task " + id + " was deleted by " + sender.getName());
         XG7Plugins.getInstance().getLog().warn("To back up the task, you need to restart the plugin of the task!");
 
-        Text.format("lang:[task-command.deleted]", XG7Plugins.getInstance()).send(sender);
+        Text.formatLang(XG7Plugins.getInstance(),sender,"task-command.deleted").thenAccept(text -> text.send(sender));
     }
 
     @Override

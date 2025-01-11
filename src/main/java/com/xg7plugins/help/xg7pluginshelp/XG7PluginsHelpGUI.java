@@ -11,13 +11,10 @@ import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.libs.xg7menus.item.SkullItem;
 import com.xg7plugins.libs.xg7menus.menus.gui.Menu;
 import com.xg7plugins.utils.text.Text;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,12 +77,12 @@ public class XG7PluginsHelpGUI extends Menu {
 
                 for (String line : about) {
 
-                    currentPage.add(Text.format(line, XG7Plugins.getInstance())
+                    currentPage.add(Text.detectLangOrText(XG7Plugins.getInstance(),player,line).join()
                             .replace("[DISCORD]", "discord.gg/jfrn8w92kF")
                             .replace("[GITHUB]", "github.com/DaviXG7")
                             .replace("[WEBSITE]", "xg7plugins.com")
                             .replace("[VERSION]", XG7Plugins.getInstance().getDescription().getVersion())
-                            .getWithPlaceholders(player));
+                            .getText());
                     if (currentPage.size() == 10) {
                         System.out.println("Adding page");
                         pages.add(new ArrayList<>(currentPage));

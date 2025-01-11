@@ -5,7 +5,7 @@ import com.mojang.authlib.GameProfile;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
-import com.xg7plugins.utils.Location;
+import com.xg7plugins.utils.location.Location;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.reflection.*;
 import com.xg7plugins.utils.reflection.nms.*;

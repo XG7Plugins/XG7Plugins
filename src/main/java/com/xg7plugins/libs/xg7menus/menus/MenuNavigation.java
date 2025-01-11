@@ -11,9 +11,12 @@ import java.util.HashMap;
 @Getter
 public class MenuNavigation {
 
-    private final HashMap<String, Menu> menus;
+    protected final HashMap<String, Menu> menus;
 
     public void openMenu(String id, Player player) {
         menus.get(id).open(player);
+    }
+    public Menu getMenu(String id) {
+        return menus.get(id);
     }
 }

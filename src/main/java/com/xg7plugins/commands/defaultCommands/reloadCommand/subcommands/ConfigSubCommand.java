@@ -26,9 +26,11 @@ public class ConfigSubCommand implements ICommand {
 
         plugin.getConfigsManager().reloadConfigs();
 
-        Text.format("lang:[reload-message.config]", XG7Plugins.getInstance())
-                .replace("[PLUGIN]", plugin.getName())
-                .send(sender);
+        Plugin finalPlugin = plugin;
+        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.config").thenAccept(text ->
+                text.replace("[PLUGIN]", finalPlugin.getName())
+                        .send(sender)
+        );
     }
 
     @Override

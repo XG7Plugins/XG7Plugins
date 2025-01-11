@@ -4,11 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.libs.xg7geyserforms.forms.SimpleForm;
-import com.xg7plugins.libs.xg7menus.item.BookItem;
-import com.xg7plugins.tasks.Task;
 import com.xg7plugins.utils.text.Text;
-import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.response.SimpleFormResponse;
@@ -31,23 +27,23 @@ public class XG7PluginsHelpForm extends SimpleForm {
                 XG7Plugins.getInstance().getConfig("messages") :
                 Config.of(XG7Plugins.getInstance(), XG7Plugins.getInstance().getLangManager().getLangByPlayer(plugin, player).join());
 
-        String about = Text.formatComponent((String) lang.get("help-menu.about", List.class).orElse(new ArrayList<String>()).stream().collect(Collectors.joining("\n")), plugin).getRawText();
+        String about = (String) lang.get("help-menu.about", List.class).orElse(new ArrayList<String>()).stream().collect(Collectors.joining("\n"));
 
-        return Text.format(about, plugin)
-                .replace("[DISCORD]", "https://discord.gg/jfrn8w92kF")
-                .replace("[GITHUB]", "https://github.com/DaviXG7")
-                .replace("[WEBSITE]", "https://xg7plugins.com")
+        return Text.detectLangOrText(XG7Plugins.getInstance(),player,about).join()
+                .replace("[DISCORD]", "discord.gg/jfrn8w92kF")
+                .replace("[GITHUB]", "github.com/DaviXG7")
+                .replace("[WEBSITE]", "xg7plugins.com")
                 .replace("[VERSION]", XG7Plugins.getInstance().getDescription().getVersion())
-                .getWithPlaceholders(player);
+                .getText();
     }
 
     @Override
     public List<ButtonComponent> buttons(Player player) {
 
         List<ButtonComponent> buttons = new ArrayList<>();
-        buttons.add(ButtonComponent.of(Text.format("lang:[help-menu.index.lang-item.name]", plugin).getWithPlaceholders(player)));
-        buttons.add(ButtonComponent.of(Text.format("lang:[help-menu.index.tasks-item.name]", plugin).getWithPlaceholders(player)));
-        buttons.add(ButtonComponent.of(Text.format("lang:[help-menu.index.commands-item.name]", plugin).getWithPlaceholders(player)));
+        buttons.add(ButtonComponent.of(Text.formatLang(plugin,player,"help-menu.index.lang-item.name").join().getText()));
+        buttons.add(ButtonComponent.of(Text.formatLang(plugin,player,"help-menu.index.tasks-item.name").join().getText()));
+        buttons.add(ButtonComponent.of(Text.formatLang(plugin,player,"help-menu.index.commands-item.name").join().getText()));
 
         return buttons;
     }

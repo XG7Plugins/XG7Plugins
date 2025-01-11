@@ -40,7 +40,7 @@ public class SeeSubcommand implements ICommand {
         String id = args.get(0, String.class);
 
         if (!manager.getTasks().containsKey(id)) {
-            Text.format("lang:[task-command.not-found]", XG7Plugins.getInstance()).send(sender);
+            Text.formatLang(XG7Plugins.getInstance(),sender,"task-command.not-found").thenAccept(text -> text.send(sender));
             return;
         }
         Task task = manager.getTasks().get(id);
@@ -54,24 +54,28 @@ public class SeeSubcommand implements ICommand {
                 if (event.getClickAction().isRightClick()) {
                     if (task.getState() == TaskState.RUNNING) {
                         XG7Plugins.taskManager().cancelTask(task.getPlugin().getName() + ":" + task.getName());
-                        Text.format("lang:[task-command.stopped]", XG7Plugins.getInstance()).send(sender);
+                        Text.formatLang(XG7Plugins.getInstance(), sender,"task-command.stopped").thenAccept(text -> text.send(sender));
                         BaseMenu.refresh(event.getInventoryHolder());
                         return;
                     }
                     if ((task.getPlugin().getName() + ":" + task.getName()).equals("TPS calculator")) {
                         XG7Plugins.getInstance().getTpsCalculator().start();
-                        Text.format("lang:[task-command.stopped]", XG7Plugins.getInstance()).send(sender);
+                        Text.formatLang(XG7Plugins.getInstance(), sender,"task-command.stopped").thenAccept(text -> text.send(sender));
                         BaseMenu.refresh(event.getInventoryHolder());
                         return;
                     }
                     XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get(task.getPlugin().getName() + ":" + task.getName()));
-                    Text.format("lang:[task-command.restarted]", XG7Plugins.getInstance()).send(sender);
+                    Text.formatLang(XG7Plugins.getInstance(), sender,"task-command.restarted").thenAccept(text -> text.send(sender));
 
                     BaseMenu.refresh(event.getInventoryHolder());
                     return;
                 }
                 if (event.getClickAction().isLeftClick()) {
-                    Text.formatComponent("lang:[tasks-menu.copy-to-clipboard]", XG7Plugins.getInstance()).replace("[ID]", task.getPlugin().getName() + ":" + task.getName()).send(sender);
+                    Text.formatLang(XG7Plugins.getInstance(), sender,"tasks-menu.copy-to-clipboard")
+                            .thenAccept(text -> {
+                                text.replace("[ID]", task.getPlugin().getName() + ":" + task.getName())
+                                        .toComponent().send(sender);
+                            });
                 }
 
                 BaseMenu.refresh(event.getInventoryHolder());

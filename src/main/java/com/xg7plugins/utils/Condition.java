@@ -1,7 +1,5 @@
 package com.xg7plugins.utils;
 
-import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,11 +50,11 @@ public enum Condition {
         }
         return null;
     }
-    public static String processCondition(String line, Plugin plugin, Player player) {
+    public static String processCondition(String line, Player player) {
         Pair<Condition, String> extracted = extractCondition(line);
         if (extracted == null) return line;
 
-        if (!extracted.getFirst().apply(new ConditionPack(plugin, player, extracted.getSecond()))) return "";
+        if (!extracted.getFirst().apply(new ConditionPack(player, extracted.getSecond()))) return "";
 
         return conditionPattern.matcher(line).replaceAll("");
     }
@@ -65,8 +63,7 @@ public enum Condition {
     @Setter
     @AllArgsConstructor
     static
-    class ConditionPack {
-        private Plugin plugin;
+    public class ConditionPack {
         private Player player;
         private String conditionValue;
     }

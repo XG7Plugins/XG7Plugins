@@ -145,8 +145,10 @@ public class LegacyBossBar extends Score {
 
             EntityDataWatcher dataWatcher = new EntityDataWatcher();
 
-            dataWatcher.watch(10, Text.format(updateText.get(indexUpdating),plugin).getWithPlaceholders(player));
-            dataWatcher.watch(2, Text.format(updateText.get(indexUpdating),plugin).getWithPlaceholders(player));
+            String name = Text.detectLangOrText(plugin,player,updateText.get(indexUpdating)).join().getText();
+
+            dataWatcher.watch(10, name);
+            dataWatcher.watch(2, name);
 
             Packet packetPlayOutEntityMetadata = new Packet(packetPlayOutEntityMetadataClass);
 

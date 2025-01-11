@@ -120,7 +120,7 @@ public class TaskMenu extends PageMenu {
                 if (taskId == null) return;
 
                 if (!XG7Plugins.taskManager().getTasks().containsKey(taskId) && !taskId.equals("TPS calculator")) {
-                    Text.format("lang:[task-command.not-found]", plugin).send(player);
+                    Text.formatLang(XG7Plugins.getInstance(), player,"task-command.not-found").thenAccept(text -> text.send(player));
                     return;
                 }
 
@@ -128,29 +128,32 @@ public class TaskMenu extends PageMenu {
                     if (taskState == TaskState.RUNNING) {
                         if (taskId.equals("TPS calculator")) {
                             XG7Plugins.getInstance().getTpsCalculator().cancel();
-                            Text.format("lang:[task-command.stopped]", plugin).send(player);
+                            Text.formatLang(XG7Plugins.getInstance(), player,"task-command.stopped").thenAccept(text -> text.send(player));
                             refresh(holder);
                             return;
                         }
                         XG7Plugins.taskManager().cancelTask(taskId);
-                        Text.format("lang:[task-command.stopped]", plugin).send(player);
-                        refresh(holder);
+                        Text.formatLang(XG7Plugins.getInstance(), player,"task-command.stopped").thenAccept(text -> text.send(player));
                         return;
                     }
                     if (taskId.equals("TPS calculator")) {
                         XG7Plugins.getInstance().getTpsCalculator().start();
-                        Text.format("lang:[task-command.restarted]", plugin).send(player);
+                        Text.formatLang(XG7Plugins.getInstance(), player,"task-command.restarted").thenAccept(text -> text.send(player));
                         refresh(holder);
                         return;
                     }
                     XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get(taskId));
-                    Text.format("lang:[task-command.restarted]", plugin).send(player);
+                    Text.formatLang(XG7Plugins.getInstance(), player,"task-command.restarted").thenAccept(text -> text.send(player));
 
                     refresh(holder);
                     return;
                 }
                 if (clickEvent.getClickAction().isLeftClick()) {
-                    Text.formatComponent("lang:[tasks-menu.copy-to-clipboard]", plugin).replace("[ID]", taskId).send(player);
+                    Text.formatLang(XG7Plugins.getInstance(), player,"tasks-menu.copy-to-clipboard")
+                            .thenAccept(text -> {
+                                text.replace("[ID]", taskId)
+                                        .toComponent().send(player);
+                            });
                 }
 
                 refresh(holder);

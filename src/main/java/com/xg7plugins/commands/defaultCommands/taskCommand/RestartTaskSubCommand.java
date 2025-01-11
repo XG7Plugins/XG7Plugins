@@ -32,14 +32,14 @@ public class RestartTaskSubCommand implements ICommand {
         String id = args.get(0, String.class);
 
         if (!manager.getTasks().containsKey(id)) {
-            Text.format("lang:[task-command.not-found]", XG7Plugins.getInstance()).send(sender);
+            Text.formatLang(XG7Plugins.getInstance(),sender,"task-command.not-found").thenAccept(text -> text.send(sender));
             return;
         }
 
         Task task = manager.getTasks().get(id);
 
         if (task.getState() == TaskState.RUNNING) {
-            Text.format("lang:[task-command.already-running]", XG7Plugins.getInstance()).send(sender);
+            Text.formatLang(XG7Plugins.getInstance(),sender,"task-command.already-running").thenAccept(text -> text.send(sender));
             return;
         }
 
@@ -47,7 +47,7 @@ public class RestartTaskSubCommand implements ICommand {
 
         XG7Plugins.getInstance().getLog().warn("Task " + id + " was restarted by " + sender.getName());
 
-        Text.format("lang:[task-command.restarted]", XG7Plugins.getInstance()).send(sender);
+        Text.formatLang(XG7Plugins.getInstance(),sender,"task-command.restarted").thenAccept(text -> text.send(sender));
     }
 
     @Override

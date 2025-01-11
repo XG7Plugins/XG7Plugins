@@ -6,7 +6,7 @@ bedrock-icon: "URL, https://cdn.britannica.com/33/4833-050-F6E415FE/Flag-United-
 
 commands:
   syntax-error: "You are using the command incorrectly! The right way is [SYNTAX]"
-  never-played: "This player has never played before!"
+  player-not-found: "This player hasn't found or never played before!"
   no-permission: "You don't have permission to use this command!"
   disabled-world: "You cannot execute this command in a disabled world!"
   not-a-player: "You cannot execute this command in console!"
@@ -18,6 +18,7 @@ reload-message:
   database: "Database of [PLUGIN] reloaded!"
   all: "[PLUGIN] reloaded!"
   lang: "Languages of [PLUGIN] reloaded!"
+  tasks: "Tasks of [PLUGIN] reloaded!"
   events: "Events of [PLUGIN] reloaded!"
   json: "Successful invalidate json cache!"
 

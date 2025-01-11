@@ -30,14 +30,14 @@ public class StopTaskSubCommand implements ICommand {
         String id = args.get(0, String.class);
 
         if (!manager.getTasks().containsKey(id)) {
-            Text.format("lang:[task-command.not-found]", XG7Plugins.getInstance()).send(sender);
+            Text.formatLang(XG7Plugins.getInstance(),sender,"task-command.not-found").thenAccept(text -> text.send(sender));
             return;
         }
 
         TaskState state = manager.getTasks().get(id).getState();
 
         if (state == TaskState.IDLE) {
-            Text.format("lang:[task-command.already-stopped]", XG7Plugins.getInstance()).send(sender);
+            Text.formatLang(XG7Plugins.getInstance(), sender, "task-command.already-stoppe]").thenAccept(text -> text.send(sender));
             return;
         }
 
@@ -47,8 +47,7 @@ public class StopTaskSubCommand implements ICommand {
         XG7Plugins.getInstance().getLog().warn("It can cause errors in the plugin of the task!");
         XG7Plugins.getInstance().getLog().warn("To resume the task to execution use /xg7plugins tasks restart " + id + "!");
 
-        Text.format("lang:[task-command.stopped]", XG7Plugins.getInstance()).send(sender);
-
+        Text.formatLang(XG7Plugins.getInstance(), sender, "task-command.stopped").thenAccept(text -> text.send(sender));
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.xg7plugins.utils;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.text.Text;
+import org.bukkit.command.CommandSender;
 import org.bukkit.conversations.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +54,7 @@ public class Conversation {
             @NotNull
             @Override
             public String getPromptText(@NotNull ConversationContext conversationContext) {
-                return Text.format(prompt, plugin).getWithPlaceholders((Player) conversationContext.getForWhom());
+                return Text.detectLangOrText(plugin, (CommandSender) conversationContext.getForWhom(), prompt).join().getTextFor((Player) conversationContext.getForWhom());
             }
 
             @Override
@@ -67,7 +68,8 @@ public class Conversation {
                 try {
                     results.put(id, result.convert(s));
                 } catch (Exception e) {
-                    Text.formatComponent(errorMessage, plugin).send((Player) conversationContext.getForWhom());
+                    Player player = (Player) conversationContext.getForWhom();
+                    Text.detectLangOrText(plugin, player, errorMessage).join().toComponent().send(player);
                     return this;
                 }
 

@@ -7,7 +7,7 @@ import com.xg7plugins.libs.xg7npcs.npcs.NPC1_17_1_XX;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC1_7;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC1_8_1_16;
 import com.xg7plugins.utils.Builder;
-import com.xg7plugins.utils.Location;
+import com.xg7plugins.utils.location.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

@@ -1,4 +1,4 @@
-package com.xg7plugins.utils;
+package com.xg7plugins.utils.location;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 @AllArgsConstructor
 @Getter
-public class Location implements Cloneable{
+public class Location implements Cloneable {
 
     private String world;
     private double x;

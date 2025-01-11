@@ -5,7 +5,7 @@ bedrock-icon: "URL, data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANUAAACgCAMAAA
 
 commands:
   syntax-error: "¡Digitaste el comando de manera incorrecta! La manera correcta es [SYNTAX]"
-  never-played: "¡Este jugador no existe o nunca ha jugado antes!"
+  player-not-found: "¡Este jugador no existe o nunca ha jugado antes!"
   no-permission: "¡No tienes permiso para ejecutar este comando!"
   disabled-world: "¡No puedes ejecutar el comando en este mundo!"
   not-a-player: "¡No puedes ejecutar este comando en la consola!"
@@ -16,6 +16,7 @@ reload-message:
   database: "¡Base de datos de [PLUGIN] recargada!"
   all: "¡[PLUGIN] recargado!"
   lang: "¡Idiomas de [PLUGIN] recargados!"
+  tasks: "¡Tarefas de [PLUGIN] recargados!"
   events: "¡Eventos de [PLUGIN] recargados!"
   json: "¡Cachés invalidados con éxito!"
 

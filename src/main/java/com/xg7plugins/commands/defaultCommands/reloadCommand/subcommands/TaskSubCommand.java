@@ -27,9 +27,11 @@ public class TaskSubCommand implements ICommand {
         XG7Plugins.taskManager().cancelTasks(plugin);
         XG7Plugins.taskManager().registerTasks(plugin.loadRepeatingTasks());
 
-        Text.format("lang:[reload-message.lang]", XG7Plugins.getInstance())
-                .replace("[PLUGIN]", plugin.getName())
-                .send(sender);
+        Plugin finalPlugin = plugin;
+        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.tasks").thenAccept(text ->
+                text.replace("[PLUGIN]", finalPlugin.getName())
+                    .send(sender)
+        );
     }
 
     @Override

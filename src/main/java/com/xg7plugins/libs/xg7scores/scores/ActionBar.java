@@ -25,7 +25,7 @@ public class ActionBar extends Score {
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
             if (XG7Plugins.getInstance().getScoreManager().getSendActionBlackList().contains(player.getUniqueId())) continue;
-            Text.format(super.updateText.get(indexUpdating),plugin).sendScoreActionBar(player);
+            Text.detectLangOrText(plugin,player,super.updateText.get(indexUpdating)).join().sendScoreActionBar(player);
         }
     }
 

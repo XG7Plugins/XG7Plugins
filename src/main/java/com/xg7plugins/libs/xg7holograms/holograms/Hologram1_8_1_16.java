@@ -2,7 +2,7 @@ package com.xg7plugins.libs.xg7holograms.holograms;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.utils.Location;
+import com.xg7plugins.utils.location.Location;
 import com.xg7plugins.utils.reflection.*;
 import com.xg7plugins.utils.reflection.nms.*;
 import com.xg7plugins.utils.text.Text;
@@ -53,7 +53,7 @@ public class Hologram1_8_1_16 extends Hologram {
             EntityDataWatcher dataWatcher = new EntityDataWatcher();
 
             dataWatcher.watch(0, (byte) 0x20);
-            dataWatcher.watch(2, Text.format(lines.get(i), XG7Plugins.getInstance().getPlugins().getOrDefault(pluginName, XG7Plugins.getInstance())).getWithPlaceholders(player));
+            dataWatcher.watch(2, Text.detectLangOrText(XG7Plugins.getInstance().getPlugins().getOrDefault(pluginName, XG7Plugins.getInstance()), player, lines.get(i)).join().getText());
             dataWatcher.watch(3, XG7Plugins.getMinecraftVersion() >= 9 ? true : (byte) 1);
             dataWatcher.watch(5, XG7Plugins.getMinecraftVersion() >= 9 ? true : (byte) 1);
 
@@ -95,7 +95,7 @@ public class Hologram1_8_1_16 extends Hologram {
 
             EntityDataWatcher dataWatcher = new EntityDataWatcher();
 
-            dataWatcher.watch(2, Text.format(lines.get(i), XG7Plugins.getInstance().getPlugins().getOrDefault(pluginName, XG7Plugins.getInstance())).getWithPlaceholders(player));
+            dataWatcher.watch(2, Text.detectLangOrText(XG7Plugins.getInstance().getPlugins().getOrDefault(pluginName, XG7Plugins.getInstance()), player, lines.get(i)).join().getText());
 
             Packet packetPlayOutEntityMetadata = new Packet(packetMetadataClass);
 

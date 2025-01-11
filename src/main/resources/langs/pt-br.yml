@@ -5,7 +5,7 @@ bedrock-icon: "URL, https://rondonia.ro.gov.br/wp-content/uploads/2020/09/Bandei
 
 commands:
   syntax-error: "Você digitou o comando de maneira errada! A maneira certa é [SYNTAX]"
-  never-played: "Este jogador não existe ou nunca jogou antes!"
+  player-not-found: "Este jogador não existe ou nunca jogou antes!"
   no-permission: "Você não tem permissão para executar este comando!"
   disabled-world: "Você não pode executar o comando nesse mundo!"
   not-a-player: "Você não pode executar este comando no console!"
@@ -16,6 +16,7 @@ reload-message:
   database: "Banco de dados de [PLUGIN] recarregado!"
   all: "[PLUGIN] recarregado!"
   lang: "Idiomas de [PLUGIN] recarregados!"
+  tasks: "Tarefas de [PLUGIN] recarregados!"
   events: "Eventos de [PLUGIN] recarregados!"
   json: "Caches invalidados com sucesso!"
 

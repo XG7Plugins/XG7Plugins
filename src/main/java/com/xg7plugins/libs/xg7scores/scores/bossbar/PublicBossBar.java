@@ -43,6 +43,6 @@ public class PublicBossBar extends Score {
 
     @Override
     public void update() {
-        bossBar.setTitle(Text.format(updateText.get(indexUpdating),plugin).getText());
+        bossBar.setTitle(Text.format(updateText.get(indexUpdating)).getText());
     }
 }

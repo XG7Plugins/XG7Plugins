@@ -26,7 +26,7 @@ public abstract class CustomForm extends Form<org.geysermc.cumulus.form.CustomFo
         return CompletableFuture.supplyAsync(() -> {
             org.geysermc.cumulus.form.CustomForm.Builder builder = org.geysermc.cumulus.form.CustomForm.builder();
 
-            builder.title(Text.format(title, plugin).getWithPlaceholders(player));
+            builder.title(Text.detectLangOrText(plugin,player,title).join().getText());
 
             components(player).stream().map(component -> component.build(player, plugin)).forEach(builder::component);
 

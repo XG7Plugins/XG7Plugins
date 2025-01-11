@@ -33,18 +33,21 @@ public class AllSubCommand implements ICommand {
             XG7Plugins.getInstance().getDatabaseManager().disconnectPlugin(plugin);
             XG7Plugins.getInstance().getDatabaseManager().connectPlugin(plugin, plugin.loadEntites());
             plugin.getConfigsManager().reloadConfigs();
-            Text.format("lang:[reload-message.all]", XG7Plugins.getInstance())
-                    .replace("[PLUGIN]", plugin.getName())
-                    .send(sender);
+            Plugin finalPlugin = plugin;
+            Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.all").thenAccept(text ->
+                    text.replace("[PLUGIN]", finalPlugin.getName())
+                            .send(sender)
+            );
             return;
         }
 
         Plugin finalPlugin = plugin;
         XG7Plugins.taskManager().runSyncTask(XG7Plugins.getInstance(), () -> {
             XG7Plugins.reload(finalPlugin);
-            Text.format("lang:[reload-message.all]", XG7Plugins.getInstance())
-                    .replace("[PLUGIN]", finalPlugin.getName())
-                    .send(sender);
+            Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.all").thenAccept(text ->
+                    text.replace("[PLUGIN]", finalPlugin.getName())
+                            .send(sender)
+            );
         });
 
     }

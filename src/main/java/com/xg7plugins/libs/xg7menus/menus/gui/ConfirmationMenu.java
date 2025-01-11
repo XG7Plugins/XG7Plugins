@@ -5,6 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7menus.events.MenuEvent;
 import com.xg7plugins.libs.xg7menus.menus.holders.ConfirmationMenuHolder;
 import com.xg7plugins.utils.text.Text;
+import com.xg7plugins.utils.text.TextCentralizer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 
@@ -25,7 +26,7 @@ public abstract class ConfirmationMenu extends Menu {
 
     @Override
     public void open(Player player) {
-        ConfirmationMenuHolder holder = new ConfirmationMenuHolder(id, plugin, Text.format(title, XG7Plugins.getInstance()).getWithPlaceholders(player),size,type, this, player);
+        ConfirmationMenuHolder holder = new ConfirmationMenuHolder(id, plugin, Text.detectLangOrText(XG7Plugins.getInstance(),player,title).join().getTextCentralized(TextCentralizer.PixelsSize.INV),size,type, this, player);
         player.openInventory(holder.getInventory());
         putItems(player, holder);
 

@@ -2,7 +2,6 @@ package com.xg7plugins.libs.xg7geyserforms.forms;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.text.Text;
-import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.response.SimpleFormResponse;
@@ -28,8 +27,8 @@ public abstract class SimpleForm extends Form<org.geysermc.cumulus.form.SimpleFo
 
             org.geysermc.cumulus.form.SimpleForm.Builder builder = org.geysermc.cumulus.form.SimpleForm.builder();
 
-            builder.title(Text.format(title, plugin).getWithPlaceholders(player));
-            builder.content(Text.format(content(player), plugin).getWithPlaceholders(player));
+            builder.title(Text.detectLangOrText(plugin,player,title).join().getText());
+            builder.content(Text.detectLangOrText(plugin,player,content(player)).join().getText());
 
             buttons(player).forEach(builder::button);
 

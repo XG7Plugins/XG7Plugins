@@ -59,7 +59,7 @@ public class CommandForm extends SimpleForm {
                 command -> ButtonComponent.of(command.getClass().getAnnotation(Command.class).name())
         ).collect(Collectors.toList());
 
-        buttons.add(ButtonComponent.of(Text.format("lang:[commands-form.back]", plugin).getWithPlaceholders(player)));
+        buttons.add(ButtonComponent.of(Text.formatLang(plugin,player,"lang:[commands-form.back]").join().getText()));
 
         return buttons;
     }
@@ -152,24 +152,5 @@ public class CommandForm extends SimpleForm {
             origin.getGuiOrigin().getForm("index").send(player);
         }
 
-        @Override
-        public CompletableFuture<Boolean> send(Player player) {
-            return CompletableFuture.supplyAsync(() -> {
-                org.geysermc.cumulus.form.ModalForm.Builder builder = org.geysermc.cumulus.form.ModalForm.builder();
-
-                builder.title(Text.format(title, plugin).getWithPlaceholders(player));
-                builder.content(Text.format(content, plugin).setReplacements(command.getIcon().getBuildPlaceholders()).getWithPlaceholders(player));
-                builder.button1(Text.format(button1, plugin).getWithPlaceholders(player));
-                builder.button2(Text.format(button2, plugin).getWithPlaceholders(player));
-
-                builder.invalidResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(), "menus", () -> onError(form, response, player)));
-                builder.validResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onFinish(form, response, player)));
-                builder.closedResultHandler((form) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onClose(form, player)));
-
-                FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
-
-                return true;
-            }, XG7Plugins.taskManager().getAsyncExecutors().get("menus"));
-        }
     }
 }

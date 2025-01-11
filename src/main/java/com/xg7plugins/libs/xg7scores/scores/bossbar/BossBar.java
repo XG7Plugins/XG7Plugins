@@ -55,8 +55,11 @@ public class BossBar extends Score {
         for (UUID id : super.getPlayers()) {
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
-            if (!bossBars.get(id).getTitle().equals(Text.format(updateText.get(indexUpdating), plugin).getWithPlaceholders(player))) {
-                bossBars.get(player.getUniqueId()).setTitle(Text.format(updateText.get(indexUpdating), plugin).getWithPlaceholders(player));
+
+            String name = Text.detectLangOrText(plugin,player,updateText.get(indexUpdating)).join().getText();
+
+            if (!bossBars.get(id).getTitle().equals(name)) {
+                bossBars.get(player.getUniqueId()).setTitle(name);
             }
         }
     }

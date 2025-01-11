@@ -2,8 +2,8 @@ package com.xg7plugins.menus;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.lang.PlayerLanguage;
-import com.xg7plugins.lang.PlayerLanguageDAO;
+import com.xg7plugins.data.playerdata.PlayerData;
+import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.libs.xg7geyserforms.forms.SimpleForm;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
@@ -35,7 +35,7 @@ public class LangForm extends SimpleForm {
 
         XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().forEach((s, c)-> {
 
-            PlayerLanguage language = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).join();
+            PlayerData language = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();
 
             boolean selected = language != null && language.getLangId().equals(s.contains(":") ? s.split(":")[1] : s);
 
@@ -68,37 +68,39 @@ public class LangForm extends SimpleForm {
     @Override
     public void onFinish(org.geysermc.cumulus.form.SimpleForm form, SimpleFormResponse result, Player player) {
 
-        XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin).thenRun(() -> XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).thenAccept(language -> {
+        XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin).thenRun(() -> XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).thenAccept(language -> {
 
             String lang = XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().keySet().toArray(new String[0])[result.clickedButtonId()];
             if (language != null && language.getLangId().equals(lang)) {
-                Text.formatComponent("lang:[lang-menu.already-selected]", plugin).send(player);
+                Text.formatLang(plugin, player, "lang-menu.already-selected").thenAccept(text -> text.toComponent().send(player));
                 return;
             }
             if (XG7Plugins.getInstance().getCooldownManager().containsPlayer("lang-change", player)) {
 
                 double cooldownToToggle = XG7Plugins.getInstance().getCooldownManager().getReamingTime("lang-change", player);
 
-                Text.formatComponent("lang:[lang-menu.cooldown-to-toggle]",plugin)
-                        .replace("[MILLISECONDS]", String.valueOf((cooldownToToggle - System.currentTimeMillis())))
-                        .replace("[SECONDS]", String.valueOf((int)((cooldownToToggle - System.currentTimeMillis()) / 1000)))
-                        .replace("[MINUTES]", String.valueOf((int)((cooldownToToggle - System.currentTimeMillis()) / 60000)))
-                        .replace("[HOURS]", String.valueOf((int)((cooldownToToggle - System.currentTimeMillis()) / 3600000)))
-                        .send(player);
+                Text.formatLang(plugin,player, "lang-menu.cooldown-to-toggle").thenAccept(
+                        text -> text.replace("[MILLISECONDS]", String.valueOf((cooldownToToggle)))
+                                .replace("[SECONDS]", String.valueOf((int) ((cooldownToToggle) / 1000)))
+                                .replace("[MINUTES]", String.valueOf((int) ((cooldownToToggle) / 60000)))
+                                .replace("[HOURS]", String.valueOf((int) ((cooldownToToggle) / 3600000)))
+                                .send(player)
+                );
+
+                return;
             }
 
-            PlayerLanguageDAO dao = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO();
+            PlayerDataDAO dao = XG7Plugins.getInstance().getPlayerDataDAO();
 
             String dbLang = lang.split(":")[1];
 
-            dao.update(new PlayerLanguage(player.getUniqueId(), dbLang)).thenAccept(r -> {
+            dao.update(new PlayerData(player.getUniqueId(), dbLang)).thenAccept(r -> {
                 XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
-                Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
+                Text.formatLang(plugin, player, "lang-menu.toggle-success").thenAccept(text -> text.send(player));
                 send(player);
             });
 
             XG7Plugins.getInstance().getCooldownManager().addCooldown(player, "lang-change", XG7Plugins.getInstance().getConfig("config").getTime("cooldown-to-toggle-lang").orElse(5000L));
-
 
         }));
     }

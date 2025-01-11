@@ -2,8 +2,8 @@ package com.xg7plugins.menus;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.lang.PlayerLanguage;
-import com.xg7plugins.lang.PlayerLanguageDAO;
+import com.xg7plugins.data.playerdata.PlayerData;
+import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.libs.xg7menus.Slot;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.libs.xg7menus.events.ClickEvent;
@@ -28,7 +28,7 @@ public class LangMenu extends PageMenu {
 
         XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
 
-        PlayerLanguage language = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).join();
+        PlayerData language = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();
 
         List<Item> pagedItems = new ArrayList<>();
 
@@ -81,7 +81,7 @@ public class LangMenu extends PageMenu {
                 boolean selected = clickEvent.getClickedItem().getTag("selected", Boolean.class).orElse(false);
 
                 if (selected) {
-                    Text.formatComponent("lang:[lang-menu.already-selected]", plugin).send(player);
+                    Text.formatLang(plugin, player, "lang-menu.already-selected").thenAccept(text -> text.toComponent().send(player));
                     return;
                 }
 
@@ -89,22 +89,24 @@ public class LangMenu extends PageMenu {
 
                     double cooldownToToggle = XG7Plugins.getInstance().getCooldownManager().getReamingTime("lang-change", player);
 
-                    Text.formatComponent("lang:[lang-menu.cooldown-to-toggle]", plugin)
-                            .replace("[MILLISECONDS]", String.valueOf((cooldownToToggle)))
-                            .replace("[SECONDS]", String.valueOf((int) ((cooldownToToggle) / 1000)))
-                            .replace("[MINUTES]", String.valueOf((int) ((cooldownToToggle) / 60000)))
-                            .replace("[HOURS]", String.valueOf((int) ((cooldownToToggle) / 3600000)))
-                            .send(player);
+                    Text.formatLang(plugin,player, "lang-menu.cooldown-to-toggle").thenAccept(
+                            text -> text.replace("[MILLISECONDS]", String.valueOf((cooldownToToggle)))
+                                    .replace("[SECONDS]", String.valueOf((int) ((cooldownToToggle) / 1000)))
+                                    .replace("[MINUTES]", String.valueOf((int) ((cooldownToToggle) / 60000)))
+                                    .replace("[HOURS]", String.valueOf((int) ((cooldownToToggle) / 3600000)))
+                                    .send(player)
+                    );
+
                     return;
                 }
 
-                PlayerLanguageDAO dao = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO();
+                PlayerDataDAO dao = XG7Plugins.getInstance().getPlayerDataDAO();
 
                 String dbLang = langName.split(":")[1];
 
-                dao.update(new PlayerLanguage(player.getUniqueId(), dbLang)).thenAccept(r -> {
+                dao.update(new PlayerData(player.getUniqueId(), dbLang)).thenAccept(r -> {
                     XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
-                    Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
+                    Text.formatLang(plugin, player, "lang-menu.toggle-success").thenAccept(text -> text.send(player));
                     player.closeInventory();
                     open(player);
                     refresh(holder);

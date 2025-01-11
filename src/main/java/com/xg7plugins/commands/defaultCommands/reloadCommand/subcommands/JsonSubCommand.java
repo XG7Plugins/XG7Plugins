@@ -1,6 +1,7 @@
 package com.xg7plugins.commands.defaultCommands.reloadCommand.subcommands;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
@@ -20,7 +21,9 @@ public class JsonSubCommand implements ICommand {
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         XG7Plugins.getInstance().getJsonManager().invalidateCache();
-        Text.format("lang:[reload-message.json]", XG7Plugins.getInstance()).send(sender);
+        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.json").thenAccept(text ->
+                text.send(sender)
+        );
     }
 
     @Override

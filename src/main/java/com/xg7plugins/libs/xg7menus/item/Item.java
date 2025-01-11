@@ -286,7 +286,7 @@ public class Item {
             ItemStack prepared = this.itemStack.clone();
             ItemMeta meta = prepared.getItemMeta();
             if (meta.getDisplayName() != null) {
-                String newName = Text.format(meta.getDisplayName(), plugin).setReplacements(buildPlaceholders).getWithPlaceholders((Player) player);
+                String newName = Text.detectLangOrText(plugin,player,meta.getDisplayName()).join().replaceAll(buildPlaceholders).getText();
                 meta.setDisplayName(newName.isEmpty() ? " " : newName);
             }
 
@@ -294,7 +294,7 @@ public class Item {
                 List<String> lore = new ArrayList<>();
 
                 for (String line : meta.getLore()) {
-                    String formatted = Text.format(line, plugin).setReplacements(buildPlaceholders).getWithPlaceholders((Player) player);
+                    String formatted = Text.detectLangOrText(plugin,player,line).join().replaceAll(buildPlaceholders).getText();
                     if (formatted.isEmpty()) continue;
                     lore.add(formatted);
                 }

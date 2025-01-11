@@ -5,7 +5,6 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreCondition;
 import com.xg7plugins.utils.Pair;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

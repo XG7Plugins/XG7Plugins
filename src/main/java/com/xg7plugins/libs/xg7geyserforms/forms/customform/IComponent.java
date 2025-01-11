@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.*;
-import org.geysermc.cumulus.util.FormImage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,9 +23,9 @@ public interface IComponent {
         @Override
         public Component build(Player player, Plugin plugin) {
             return InputComponent.of(
-                    Text.format(label, plugin).getWithPlaceholders(player),
-                    Text.format(placeholder, plugin).getWithPlaceholders(player),
-                    Text.format(defText, plugin).getWithPlaceholders(player)
+                    Text.detectLangOrText(plugin,player,label).join().getText(),
+                    Text.detectLangOrText(plugin,player,placeholder).join().getText(),
+                    Text.detectLangOrText(plugin,player,defText).join().getText()
             );
         }
     }
@@ -43,8 +42,8 @@ public interface IComponent {
 
 
             return DropdownComponent.of(
-                    Text.format(label, plugin).getWithPlaceholders(player),
-                    options.stream().map(option -> Text.format(option, plugin).getWithPlaceholders(player)).collect(Collectors.toList()),
+                    Text.detectLangOrText(plugin,player,label).join().getText(),
+                    options.stream().map(option -> Text.detectLangOrText(plugin,player,option).join().getText()).collect(Collectors.toList()),
                     defOption
             );
         }
@@ -62,7 +61,7 @@ public interface IComponent {
         @Override
         public Component build(Player player, Plugin plugin) {
             return SliderComponent.of(
-                    Text.format(label, plugin).getWithPlaceholders(player),
+                    Text.detectLangOrText(plugin,player,label).join().getText(),
                     min,
                     max,
                     step,
@@ -80,7 +79,7 @@ public interface IComponent {
         @Override
         public Component build(Player player, Plugin plugin) {
             return ToggleComponent.of(
-                    Text.format(text, plugin).getWithPlaceholders(player),
+                    Text.detectLangOrText(plugin,player,text).join().getText(),
                     defaultVal
             );
         }

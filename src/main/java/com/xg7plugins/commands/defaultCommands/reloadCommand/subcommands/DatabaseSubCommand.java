@@ -30,9 +30,11 @@ public class DatabaseSubCommand implements ICommand {
         dbManager.disconnectPlugin(plugin);
         dbManager.connectPlugin(plugin, plugin.loadEntites());
 
-        Text.format("lang:[reload-message.database]", XG7Plugins.getInstance())
-                .replace("[PLUGIN]", plugin.getName())
-                .send(sender);
+        Plugin finalPlugin = plugin;
+        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.database").thenAccept(text ->
+                text.replace("[PLUGIN]", finalPlugin.getName())
+                        .send(sender)
+        );
     }
 
     @Override

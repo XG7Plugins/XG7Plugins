@@ -6,7 +6,6 @@ import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreCondition;
 import com.xg7plugins.utils.reflection.nms.*;
 import com.xg7plugins.utils.text.Text;
-import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -39,11 +38,11 @@ public class Tablist extends Score {
         for (UUID id : super.getPlayers()) {
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
-            player.setPlayerListName(Text.format(playerPrefix,plugin).getWithPlaceholders(player) + player.getName() + Text.format(playerSuffix,plugin).getWithPlaceholders(player));
+            player.setPlayerListName(Text.format(playerPrefix).getTextFor(player) + player.getName() + Text.format(playerSuffix).getTextFor(player));
             String headerl = header.size() <= indexUpdating ? header.get(header.size() - 1) : header.get(indexUpdating);
             String footerl = footer.size() <= indexUpdating ? footer.get(footer.size() - 1) : footer.get(indexUpdating);
 
-            send(player, Text.format(headerl,plugin).getText(), Text.format(footerl,plugin).getText());
+            send(player, Text.detectLangOrText(plugin,player,headerl).join().getText(), Text.detectLangOrText(plugin,player,footerl).join().getText());
         }
     }
 

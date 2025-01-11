@@ -3,12 +3,10 @@ package com.xg7plugins.help.chathelp;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.MainCommand;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;

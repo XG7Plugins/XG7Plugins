@@ -1,17 +1,13 @@
 package com.xg7plugins.utils.text;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
-import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,55 +18,41 @@ public class TextComponent {
     private static final Pattern textP = Pattern.compile("text=%(.*?)%");
     private static final Pattern action = Pattern.compile("action=%(.*?)%");
 
+    private String text;
 
-    private final String text;
-    @Getter
-    private final String rawText;
+    private String rawText;
 
-    private final Plugin plugin;
 
-    private final HashMap<String, String> replacements = new HashMap<>();
-
-    public TextComponent(String text, Plugin plugin) {
-
-        String rawText = text.replaceAll("\\[(CLICK|HOVER|CLICKHOVER) (.*?%)\\](.*?)\\[/\\1\\]", "$3");
-        if (!rawText.equals(text) && XG7Plugins.getMinecraftVersion() < 8) {
-            plugin.getLog().warn("Versions lower than 1.8 don't have support to clickable or hover tags!");
-        }
+    public TextComponent(String text) {
         this.text = text;
-        this.rawText = rawText;
-
-        this.plugin = plugin;
-
+        this.rawText = text.replaceAll("\\[(CLICK|HOVER|CLICKHOVER) (.*?%)\\](.*?)\\[/\\1\\]", "$3");
     }
 
-    public TextComponent replace(String placeholder, String replacement) {
-        replacements.put(placeholder,replacement);
-        return this;
+    public TextComponent(String text, HashMap<String, String> placeholders) {
+        this.text = text;
+        this.rawText = text.replaceAll("\\[(CLICK|HOVER|CLICKHOVER) (.*?%)\\](.*?)\\[/\\1\\]", "$3");
     }
 
-    public BaseComponent[] getText(Player player) {
+    public BaseComponent[] getComponents() {
 
-        String translatedRawText = Text.getWithPlaceholders(plugin, rawText, player);
-
-        for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            translatedRawText = translatedRawText.replace(entry.getKey(), entry.getValue());
+        if (XG7Plugins.getMinecraftVersion() < 8) {
+            XG7Plugins.getInstance().getLog().warn("Versions lower than 1.8 don't have support to clickable or hover tags!");
         }
 
-        String spaces = Text.getSpacesCentralized(Text.PixelsSize.CHAT.getPixels(), translatedRawText);
+        String spaces = "";
 
-        String finalText = text.startsWith("[CENTER] ") ? Text.getWithPlaceholders(plugin, text.substring(9), player) : Text.getWithPlaceholders(plugin, text, player);
-        for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            finalText = finalText.replace(entry.getKey(), entry.getValue());
+        if (rawText.startsWith("[CENTER]")) {
+            rawText = rawText.replace("[CENTER]", "");
+            spaces = TextCentralizer.getSpacesCentralized(TextCentralizer.PixelsSize.CHAT.getPixels(), rawText);
         }
 
-        Matcher matcher = pattern.matcher(finalText);
+        Matcher matcher = pattern.matcher(text);
         int lastIndex = 0;
         ComponentBuilder builder = new ComponentBuilder(spaces);
 
         while (matcher.find()) {
             if (matcher.start() > lastIndex) {
-                String outsideText = finalText.substring(lastIndex, matcher.start());
+                String outsideText = text.substring(lastIndex, matcher.start());
                 builder.append(outsideText).reset();
             }
 
@@ -92,11 +74,11 @@ public class TextComponent {
                     try {
                         builder.event(new ClickEvent(
                                 ClickEvent.Action.valueOf(actionMatch.group(1)),
-                                Text.format(valMatch.group(1), plugin).setReplacements(replacements).getWithPlaceholders(player)));
+                                Text.format(valMatch.group(1)).getText()));
                     } catch (IllegalArgumentException e) {
                         builder.event(new ClickEvent(
                                 ClickEvent.Action.SUGGEST_COMMAND,
-                                Text.format(valMatch.group(1), plugin).setReplacements(replacements).getWithPlaceholders(player)));
+                                Text.format(valMatch.group(1)).getText()));
                     }
                     break;
 
@@ -107,7 +89,7 @@ public class TextComponent {
                     }
                     builder.event(new HoverEvent(
                             HoverEvent.Action.SHOW_TEXT,
-                            new ComponentBuilder(Text.format(textMatch.group(1), plugin).setReplacements(replacements).getWithPlaceholders(player)).create()));
+                            new ComponentBuilder(Text.format(valMatch.group(1)).getText()).create()));
                     break;
 
                 case "CLICKHOVER":
@@ -118,12 +100,14 @@ public class TextComponent {
                     builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(textMatch.group(1)).create()));
                     try {
                         builder.event(new ClickEvent(
-                                ClickEvent.Action.valueOf(actionMatch.group(1)),
-                                Text.format(valMatch.group(1), plugin).setReplacements(replacements).getWithPlaceholders(player)));
+                                    ClickEvent.Action.valueOf(actionMatch.group(1)),
+                                    Text.format(valMatch.group(1)).getText()
+                                )
+                        );
                     } catch (IllegalArgumentException e) {
                         builder.event(new ClickEvent(
                                 ClickEvent.Action.SUGGEST_COMMAND,
-                                Text.format(valMatch.group(1), plugin).setReplacements(replacements).getWithPlaceholders(player)));
+                                Text.format(valMatch.group(1)).getText()));
                     }
                     break;
             }
@@ -131,8 +115,8 @@ public class TextComponent {
             lastIndex = matcher.end();
         }
 
-        if (lastIndex < finalText.length()) {
-            String remainingText = finalText.substring(lastIndex);
+        if (lastIndex < text.length()) {
+            String remainingText = text.substring(lastIndex);
             builder.append(remainingText).reset();
         }
 
@@ -141,33 +125,20 @@ public class TextComponent {
 
     public void send(CommandSender sender) {
         if (sender == null) return;
-        if (!(sender instanceof Player)) {
-            // Envia texto centralizado simples para não-jogadores
-            sender.sendMessage(rawText.startsWith("[CENTER] ")
-                    ? Text.getSpacesCentralized(Text.PixelsSize.CHAT.getPixels(), rawText) +
-                    Text.format(rawText.substring(9), plugin).getText()
-                    : Text.format(rawText, plugin).getText());
-            return;
-        }
 
-        Player player = (Player) sender;
-
-        String translatedRawText = Text.getWithPlaceholders(plugin, rawText, player);
-
-        for (Map.Entry<String, String> entry : replacements.entrySet()) {
-            translatedRawText = translatedRawText.replace(entry.getKey(), entry.getValue());
-        }
-
-        String spaces = Text.getSpacesCentralized(Text.PixelsSize.CHAT.getPixels(), translatedRawText);
+        if (text.isEmpty()) return;
 
         if (XG7Plugins.getMinecraftVersion() < 8) {
-            player.sendMessage(spaces + translatedRawText);
+            if (rawText.startsWith("[CENTER]")) {
+                rawText = rawText.replace("[CENTER]", "");
+                rawText = TextCentralizer.getSpacesCentralized(TextCentralizer.PixelsSize.CHAT.getPixels(), rawText);
+            }
+            sender.sendMessage(rawText);
             return;
         }
 
-        player.spigot().sendMessage(getText(player));
+        sender.spigot().sendMessage(getComponents());
+
     }
-
-
 
 }
