@@ -1,6 +1,7 @@
 package com.xg7plugins.help.chathelp;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -33,9 +34,9 @@ public class HelpComponent {
 
 
     public TextComponent build(Player player) {
-        TextComponent textComponent = new TextComponent(Text.format(content,XG7Plugins.getInstance()).setReplacements(placeholders).getWithPlaceholders(player));
+        TextComponent textComponent = new TextComponent(Text.detectLangOrText(XG7Plugins.getInstance(),player,content).join().replaceAll(placeholders).getText());
         if (clickEvent != null) {
-            ClickEvent transletedClickEvent = new ClickEvent(clickEvent.getAction(), Text.getWithPlaceholders(XG7Plugins.getInstance(), clickEvent.getValue(), player));
+            ClickEvent transletedClickEvent = new ClickEvent(clickEvent.getAction(), Text.detectLangOrText(XG7Plugins.getInstance(), player, clickEvent.getValue()).join().getText());
             textComponent.setClickEvent(transletedClickEvent);
         }
         if (hoverEvent != null) {
