@@ -3,6 +3,7 @@ package com.xg7plugins.help.chathelp;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.MainCommand;
 import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,7 +42,7 @@ public class HelpInChat {
         }
         if (!(sender instanceof Player)) {
             for (HelpComponent message : pages.get(page).getMessages()) {
-                Text.format(message.getContent(), plugin).setReplacements(message.getPlaceholders()).send(sender);
+                Text.detectLangOrText(plugin,sender,message.getContent()).thenAccept(text -> text.replaceAll(message.getPlaceholders()).send(sender));
             }
             return;
         }

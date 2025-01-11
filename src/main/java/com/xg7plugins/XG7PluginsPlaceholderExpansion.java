@@ -53,15 +53,15 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
 
                 switch (format) {
                     case "millis":
-                        return ( (int) playerData.getFirstJoin()) + "";
+                        return (playerData.getFirstJoin()) + "";
                     case "seconds":
-                        return ( (int) playerData.getFirstJoin() / 1000) + "";
+                        return ((int) (playerData.getFirstJoin() / 1000)) + "";
                     case "minutes":
-                        return ( (int) playerData.getFirstJoin() / 1000 / 60) + "";
+                        return ((int) (playerData.getFirstJoin() / 1000 / 60)) + "";
                     case "hours":
-                        return ( (int) playerData.getFirstJoin() / 1000 / 60 / 60) + "";
+                        return ((int) (playerData.getFirstJoin() / 1000 / 60 / 60)) + "";
                     case "days":
-                        return ( (int) playerData.getFirstJoin() / 1000 / 60 / 60 / 24) + "";
+                        return ((int) (playerData.getFirstJoin() / 1000 / 60 / 60 / 24)) + "";
                     default:
 
                         Matcher matcher = pattern.matcher(format);
