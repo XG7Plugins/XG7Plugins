@@ -6,7 +6,6 @@ import com.xg7plugins.utils.reflection.nms.NMSUtil;
 import com.xg7plugins.utils.reflection.nms.Packet;
 import com.xg7plugins.utils.reflection.nms.PacketClass;
 import com.xg7plugins.utils.reflection.nms.PlayerNMS;
-import com.xg7plugins.utils.reflection.ReflectionObject;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
@@ -18,9 +17,17 @@ import org.bukkit.inventory.meta.BookMeta;
 
 public class BookItem extends Item {
 
-    private static final PacketClass packetPlayOutCustomPayloadClass = new PacketClass("PacketPlayOutCustomPayload");
+    private static PacketClass packetPlayOutCustomPayloadClass;
 
-    private static final ReflectionClass packetDataSerializerClass = NMSUtil.getNMSClass("PacketDataSerializer");
+    private static ReflectionClass packetDataSerializerClass;
+
+    static {
+            if (XG7Plugins.getMinecraftVersion() < 14) {
+
+                packetPlayOutCustomPayloadClass = new PacketClass("PacketPlayOutCustomPayload");
+                packetDataSerializerClass = NMSUtil.getNMSClass("PacketDataSerializer");
+            }
+    }
 
     public BookItem() {
         super(new ItemStack(Material.WRITTEN_BOOK));

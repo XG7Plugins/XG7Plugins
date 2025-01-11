@@ -72,8 +72,8 @@ public class LangManager {
             YamlConfiguration config = langs.get(plugin.getName() + ":" + finalLang).join();
             if (config != null) return config;
 
-            File file = new File(plugin.getDataFolder(), "langs/" + finalLang.split(":")[1] + ".yml");
-            if (!file.exists()) plugin.saveResource("langs/" + finalLang.split(":")[1] + ".yml", false);
+            File file = new File(plugin.getDataFolder(), "langs/" + (finalLang.contains(":") ? finalLang.split(":")[1] : finalLang) + ".yml");
+            if (!file.exists()) plugin.saveResource("langs/" + (finalLang.contains(":") ? finalLang.split(":")[1] : finalLang) + ".yml", false);
 
             YamlConfiguration newConfig = YamlConfiguration.loadConfiguration(file);
 

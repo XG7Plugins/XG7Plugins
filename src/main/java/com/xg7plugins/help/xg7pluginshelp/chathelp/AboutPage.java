@@ -17,31 +17,30 @@ import java.util.stream.Collectors;
 public class AboutPage extends HelpPage {
     public AboutPage() {
         super("about");
+        addMessages(
+                new HelpComponent(
+                        "&m-&9&m-&6&m------------------&e*&6&m-----------------&9&m--&f&m-",
+                        null,null
+                ),
+                new AboutComponent(),
+                HelpComponent.empty(),
+                new HelpComponent(
+                        "lang:[help-in-chat.back]",
+                        new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "xg7plugins help"),
+                        null
+                ),
+                HelpComponent.empty(),
+                new HelpComponent(
+                        "&m-&9&m-&6&m------------------&e*&6&m-----------------&9&m--&f&m-",
+                        null,null
+                )
+
+        );
     }
 
     private class AboutComponent extends HelpComponent {
         public AboutComponent() {
             super(null, null, null);
-
-            addMessages(
-                    new HelpComponent(
-                            "&m-&6&m------------------&8*&8&m------------------&f&m-",
-                            null,null
-                    ),
-                    new AboutComponent(),
-                    HelpComponent.empty(),
-                    new HelpComponent(
-                            "lang:[help-in-chat.back]",
-                            new ClickEvent(ClickEvent.Action.RUN_COMMAND, "xg7plugins help about"),
-                            null
-                    ),
-                    HelpComponent.empty(),
-                    new HelpComponent(
-                            "&m-&6&m------------------&8*&8&m------------------&f&m-",
-                            null,null
-                    )
-
-            );
         }
 
 

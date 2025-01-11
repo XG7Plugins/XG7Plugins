@@ -55,7 +55,7 @@ public class CommandAntiTabOlder implements Listener, PacketListener {
         Player player = event.getPlayer();
         Packet packet = event.getPacket();
 
-        if (event.getPlayer().hasPermission("xg7plugins.command.anti-tab.bypass")) return;
+        if (event.getPlayer().hasPermission("xg7plugins.command.anti-tab-bypass")) return;
 
         List<String> suggestions = Arrays.stream((String[]) packet.getField("a")).collect(Collectors.toList());
 

@@ -1,14 +1,11 @@
 package com.xg7plugins.help.guihelp;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class HelpCommandGUI {
 
@@ -18,7 +15,7 @@ public class HelpCommandGUI {
 
     public HelpCommandGUI(Plugin plugin, BaseMenu index) {
         this.menus.put("index", index);
-        this.menus.put("commands", new CommandMenu(new ArrayList<>(plugin.getCommandManager().getCommands().values()), null, null));
+        this.menus.put("commands", new CommandMenu(new ArrayList<>(plugin.getCommandManager().getCommands().values()), null, null, this));
         this.plugin = plugin;
     }
 

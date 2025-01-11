@@ -12,7 +12,7 @@ public class Index extends HelpPage {
 
         addMessages(
                 new HelpComponent(
-                        "&m-&6&m------------------&8*&8&m------------------&f&m-",
+                        "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-",
                         null,null
                 ),
                 new HelpComponent(
@@ -22,27 +22,27 @@ public class Index extends HelpPage {
                 HelpComponent.empty(),
                 new HelpComponent(
                         "lang:[help-in-chat.content]",
-                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, "xg7plugins help about"),
+                        new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help about"),
                         new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Click to see about the plugins"))
                 ),
                 HelpComponent.empty(),
                 new HelpComponent(
                         "lang:[help-in-chat.lang]",
-                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, "xg7plugins lang"),
+                        new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins lang"),
                         null
                 ),
                 new HelpComponent(
                         "lang:[help-in-chat.tasks]",
-                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, "xg7plugins tasks"),
+                        new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins tasks"),
                         null
                 ),
                 new HelpComponent(
                         "lang:[help-in-chat.commands]",
-                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, "xg7plugins help commands1"),
+                        new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help command-page1"),
                         null
                 ),
                 new HelpComponent(
-                "&m-&6&m------------------&8*&8&m------------------&f&m-",
+                        "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-",
                 null,null
                 )
         );

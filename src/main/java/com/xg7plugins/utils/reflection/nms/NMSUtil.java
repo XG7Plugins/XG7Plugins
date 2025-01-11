@@ -11,10 +11,23 @@ import java.lang.reflect.Field;
 
 public class NMSUtil {
 
-    private static final String packageName = Bukkit.getServer().getClass().getPackage().getName();
     @Getter
-    private static final String version = packageName.substring(packageName.lastIndexOf('.') + 1);
+    private static String version;
 
+    static {
+        String bukkitVersion = Bukkit.getBukkitVersion();
+        String[] parts = bukkitVersion.split("-");
+        if (parts.length >= 2) {
+            String versionPart = parts[0];
+            String revisionPart = parts[1];
+
+            String[] versionNumbers = versionPart.split("\\.");
+            String revision = revisionPart.split("\\.")[1].substring(0,1);
+            version = "v" + versionNumbers[0] + "_" + versionNumbers[1] + "_R" + revision;
+
+            System.out.println(version);
+        }
+    }
 
     public static ReflectionClass getNMSClass(String className) {
         String fullName = "net.minecraft.server." + version + "." + className;

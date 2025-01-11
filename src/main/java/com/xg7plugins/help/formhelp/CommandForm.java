@@ -2,6 +2,7 @@ package com.xg7plugins.help.formhelp;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.commands.MainCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.libs.xg7geyserforms.forms.ModalForm;
@@ -20,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class CommandForm extends SimpleForm {
@@ -30,8 +32,8 @@ public class CommandForm extends SimpleForm {
     @Getter
     private final HelpCommandForm guiOrigin;
 
-    public CommandForm(List<ICommand> commands, String customTitle, CommandForm superForm) {
-        super("command-form" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, XG7Plugins.getInstance());
+    public CommandForm(Plugin plugin, List<ICommand> commands, String customTitle, CommandForm superForm, HelpCommandForm guiOrigin) {
+        super("command-form" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, plugin);
 
         this.commands = commands.stream().collect(
                 java.util.stream.Collectors.toMap(
@@ -40,7 +42,7 @@ public class CommandForm extends SimpleForm {
                 )
         );
 
-        this.guiOrigin = plugin.getHelpCommandForm();
+        this.guiOrigin = guiOrigin;
         this.superForm = superForm;
 
     }
@@ -53,7 +55,7 @@ public class CommandForm extends SimpleForm {
     @Override
     public List<ButtonComponent> buttons(Player player) {
 
-        List<ButtonComponent> buttons = commands.values().stream().map(
+        List<ButtonComponent> buttons = commands.values().stream().filter(cmd -> !(cmd instanceof MainCommand)).map(
                 command -> ButtonComponent.of(command.getClass().getAnnotation(Command.class).name())
         ).collect(Collectors.toList());
 
@@ -81,7 +83,7 @@ public class CommandForm extends SimpleForm {
             guiOrigin.getForm("index").send(player);
             return;
         }
-        CommandDescription commandDescription = new CommandDescription(this, command, command.getIcon());
+        CommandDescription commandDescription = new CommandDescription(this, command, command.getIcon(), guiOrigin);
         commandDescription.send(player);
 
     }
@@ -96,12 +98,13 @@ public class CommandForm extends SimpleForm {
         guiOrigin.getForm("index").send(player);
     }
 
-    private class CommandDescription extends ModalForm {
+    private static class CommandDescription extends ModalForm {
 
-        private CommandForm origin;
-        private ICommand command;
+        private final CommandForm origin;
+        private final HelpCommandForm guiOrigin;
+        private final ICommand command;
 
-        public CommandDescription(CommandForm origin, ICommand command, Item commandIcon) {
+        public CommandDescription(CommandForm origin, ICommand command, Item commandIcon,HelpCommandForm guiOrigin) {
             super(
                     "command-desc" + UUID.randomUUID(),
                     "Contents of command: " + command.getClass().getAnnotation(Command.class).name(),
@@ -117,6 +120,7 @@ public class CommandForm extends SimpleForm {
             );
             this.origin = origin;
             this.command = command;
+            this.guiOrigin = guiOrigin;
         }
 
         @Override
@@ -132,7 +136,7 @@ public class CommandForm extends SimpleForm {
                     return;
                 }
 
-                CommandForm commandMenu = new CommandForm(Arrays.asList(command.getSubCommands()), "Subcommands of: " + command.getClass().getAnnotation(Command.class).name(), origin);
+                CommandForm commandMenu = new CommandForm(plugin,Arrays.asList(command.getSubCommands()), "Subcommands of: " + command.getClass().getAnnotation(Command.class).name(), origin, guiOrigin);
                 commandMenu.send(player);
             } origin.send(player);
 
@@ -146,6 +150,26 @@ public class CommandForm extends SimpleForm {
         @Override
         public void onClose(org.geysermc.cumulus.form.ModalForm form, Player player) {
             origin.getGuiOrigin().getForm("index").send(player);
+        }
+
+        @Override
+        public CompletableFuture<Boolean> send(Player player) {
+            return CompletableFuture.supplyAsync(() -> {
+                org.geysermc.cumulus.form.ModalForm.Builder builder = org.geysermc.cumulus.form.ModalForm.builder();
+
+                builder.title(Text.format(title, plugin).getWithPlaceholders(player));
+                builder.content(Text.format(content, plugin).setReplacements(command.getIcon().getBuildPlaceholders()).getWithPlaceholders(player));
+                builder.button1(Text.format(button1, plugin).getWithPlaceholders(player));
+                builder.button2(Text.format(button2, plugin).getWithPlaceholders(player));
+
+                builder.invalidResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(), "menus", () -> onError(form, response, player)));
+                builder.validResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onFinish(form, response, player)));
+                builder.closedResultHandler((form) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onClose(form, player)));
+
+                FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
+
+                return true;
+            }, XG7Plugins.taskManager().getAsyncExecutors().get("menus"));
         }
     }
 }

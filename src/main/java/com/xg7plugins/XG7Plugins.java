@@ -75,7 +75,7 @@ import java.util.regex.Pattern;
                 "§9                                    |___/             "
         },
         mainCommandName = "xg7plugins",
-        mainCommandAliases = {"7plugins", "7pl", "7pls"}
+        mainCommandAliases = {"7plugins", "7pl", "7pls", "xg7pl"}
 )
 public final class XG7Plugins extends Plugin {
 
@@ -87,8 +87,12 @@ public final class XG7Plugins extends Plugin {
     private static boolean placeholderAPI;
     @Getter
     private static boolean geyserFormEnabled = false;
+    @Getter
+    private static final boolean paper = Bukkit.getServer().getName().contains("Paper");
 
     static {
+        System.out.println(Bukkit.getServer().getName());
+        System.out.println(Bukkit.getServer().getName().contains("Paper"));
         Pattern pattern = Pattern.compile("1\\.([0-9]?[0-9])");
         Matcher matcher = pattern.matcher(Bukkit.getServer().getVersion());
         minecraftVersion = matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
@@ -127,7 +131,7 @@ public final class XG7Plugins extends Plugin {
 
         Config config = getConfig("config");
 
-        geyserFormEnabled = config.get("enable-geyser-forms", Boolean.class).orElse(false);
+        geyserFormEnabled = floodgate && config.get("enable-geyser-forms", Boolean.class).orElse(false);
 
         this.taskManager = new TaskManager(this);
         taskManager().registerExecutor("commands", Executors.newCachedThreadPool());
@@ -238,7 +242,7 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void loadHelp() {
         this.helpCommandGUI = new HelpCommandGUI(this, new XG7PluginsHelpGUI(this));
-        this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
+        if (floodgate) this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
         this.helpInChat = new XG7PluginsChatHelp();
     }
 

@@ -12,9 +12,9 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class ModalForm extends Form<org.geysermc.cumulus.form.ModalForm, ModalFormResponse> {
 
-    private final String content;
-    private final String button1;
-    private final String button2;
+    protected final String content;
+    protected final String button1;
+    protected final String button2;
 
     public ModalForm(String id, String title, Plugin plugin, String content, String button1, String button2) {
         super(id, title, plugin);

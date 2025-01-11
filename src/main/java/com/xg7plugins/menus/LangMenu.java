@@ -33,7 +33,7 @@ public class LangMenu extends PageMenu {
         List<Item> pagedItems = new ArrayList<>();
 
         XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().forEach((s, c)-> {
-            boolean selected = language != null && language.getLangId().equals(s);
+            boolean selected = language != null && language.getLangId().equals(s.contains(":") ? s.split(":")[1] : s);
 
             pagedItems.add(Config.of(XG7Plugins.getInstance(), c).get("", Item.class, selected, s).orElse(null));
         });
@@ -107,6 +107,7 @@ public class LangMenu extends PageMenu {
                     Text.formatComponent("lang:[lang-menu.toggle-success]", plugin).send(player);
                     player.closeInventory();
                     open(player);
+                    refresh(holder);
                 });
 
                 XG7Plugins.getInstance().getCooldownManager().addCooldown(player, "lang-change", XG7Plugins.getInstance().getConfig("config").getTime("cooldown-to-toggle-lang").orElse(5000L));

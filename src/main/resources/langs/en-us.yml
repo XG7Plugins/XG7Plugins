@@ -120,14 +120,15 @@ help-menu:
 
   about:
     - "About XG7Plugins"
-    - " "
-    - "&fVersion: &a[VERSION]"
-    - "&fWebsite: [CLICK action=%COPY_TO_CLICKBOARD% value=%[WEBSITE]%]&a&n[WEBSITE][/CLICK]"
-    - "&fGitHub: [CLICK action=%COPY_TO_CLICKBOARD% value=%[GITHUB]%]&a&n[GITHUB][/CLICK]"
-    - "&fDiscord: [CLICK action=%COPY_TO_CLICKBOARD% value=%[DISCORD]%]&a&n[DISCORD][/CLICK]"
+    - ""
+    - "Version: &a[VERSION]"
+    - "Website: &a&n[WEBSITE]"
+    - "GitHub: &a&n[GITHUB]"
+    - "Discord: &a&n[DISCORD]"
     - ""
     - "This plugin was made"
-    - "for creating other plugins for XG7."
+    - "for creating other"
+    - "plugins for XG7."
     - "Its goal is to manage"
     - "tasks, include libraries"
     - "(such as menus, scores,"
@@ -143,11 +144,13 @@ help-in-chat:
 
   title: "&7Welcome to the &6XG7Plugins &7help page!"
 
-  content: "&eXG7Plugins is a plugin that aims to facilitate the creation of other plugins for other XG7Plugins. Click to see more information."
+  content: "&eXG7Plugins is a plugin that aims to facilitate the creation\n of other plugins for other XG7Plugins.\n Click to see more information."
 
   back: "&aClick to back to the help"
 
   lang: "&aLanguages&f: &1click here to change profile lang"
   tasks: "&aTasks&f: &1click here to see the tasks"
   commands: "&aCommands&f: &1click here to see the commands"
+
+  commands-title: "&7Commands of &6XG7Plugins &8(&7[PAGE]&8/&7[MAX_PAGE]&8)"
 

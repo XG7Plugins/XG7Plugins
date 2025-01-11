@@ -38,4 +38,9 @@ public class CommandArgs {
 
         return null;
     }
+
+    @Override
+    public String toString() {
+        return String.join(" ", args);
+    }
 }

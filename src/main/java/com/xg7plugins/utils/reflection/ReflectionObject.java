@@ -12,6 +12,9 @@ public class ReflectionObject {
     private final Class<?> objectClass;
 
     public ReflectionObject(Object object) {
+        if (object == null) {
+            throw new IllegalArgumentException("Object cannot be null");
+        }
         this.object = object;
         this.objectClass = object.getClass();
     }

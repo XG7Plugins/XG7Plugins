@@ -12,10 +12,12 @@ import com.xg7plugins.libs.xg7menus.item.SkullItem;
 import com.xg7plugins.libs.xg7menus.menus.gui.Menu;
 import com.xg7plugins.utils.text.Text;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,32 +71,34 @@ public class XG7PluginsHelpGUI extends Menu {
                       XG7Plugins.getInstance().getConfig("messages") :
                       Config.of(XG7Plugins.getInstance(), XG7Plugins.getInstance().getLangManager().getLangByPlayer(plugin, player).join());
 
-                String about = (String) lang.get("help-menu.about", List.class).orElse(new ArrayList<String>()).stream().collect(Collectors.joining("\n"));
+                List<String> about = lang.get("help-menu.about", List.class).orElse(new ArrayList<String>());
 
                 BookItem bookItem = BookItem.newBook();
 
-                List<BaseComponent[]> pages = new ArrayList<>();
-                List<BaseComponent> currentPage = new ArrayList<>();
+                List<List<String>> pages = new ArrayList<>();
+                List<String> currentPage = new ArrayList<>();
 
-                for (BaseComponent line : Text.formatComponent(about, XG7Plugins.getInstance())
-                        .replace("[DISCORD]", "https://discord.gg/jfrn8w92kF")
-                        .replace("[GITHUB]", "https://github.com/DaviXG7")
-                        .replace("[WEBSITE]", "https://xg7plugins.com")
-                        .replace("[VERSION]", XG7Plugins.getInstance().getDescription().getVersion())
-                        .getText(player))
-                {
-                    currentPage.add(line);
-                    if (currentPage.size() == 14) {
-                        pages.add(currentPage.toArray(new BaseComponent[0]));
+                for (String line : about) {
+
+                    currentPage.add(Text.format(line, XG7Plugins.getInstance())
+                            .replace("[DISCORD]", "discord.gg/jfrn8w92kF")
+                            .replace("[GITHUB]", "github.com/DaviXG7")
+                            .replace("[WEBSITE]", "xg7plugins.com")
+                            .replace("[VERSION]", XG7Plugins.getInstance().getDescription().getVersion())
+                            .getWithPlaceholders(player));
+                    if (currentPage.size() == 10) {
+                        System.out.println("Adding page");
+                        pages.add(new ArrayList<>(currentPage));
+                        System.out.println(pages);
                         currentPage.clear();
                     }
                 }
                 if (!currentPage.isEmpty()) {
-                    pages.add(currentPage.toArray(new BaseComponent[0]));
+                    pages.add(currentPage);
                 }
 
-                for (BaseComponent[] page : pages) {
-                    bookItem.addPage(page);
+                for (List<String> page : pages) {
+                    bookItem.addPage(page.stream().collect(Collectors.joining("\n")));
                 }
 
                 player.closeInventory();

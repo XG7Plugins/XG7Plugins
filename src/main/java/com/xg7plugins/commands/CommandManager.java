@@ -106,14 +106,17 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         ICommand command = commands.get(cmd.getName());
 
+        Command commandConfig = command.getClass().getAnnotation(Command.class);
+
+
         if (command instanceof MainCommand) {
-            if (!commandSender.hasPermission("xg7plugins.commands")) {
+            if (!commandSender.hasPermission(commandConfig.permission())) {
                 Text.format("lang:[commands.no-permission]",XG7Plugins.getInstance()).send(commandSender);
                 return true;
             }
             if (strings.length == 0) {
                 Text.format("lang:[commands.syntax-error]", XG7Plugins.getInstance())
-                        .replace("[SYNTAX]", cmd.getUsage())
+                        .replace("[SYNTAX]", command.getClass().getAnnotation(Command.class).syntax())
                         .send(commandSender);
                 return true;
             }
@@ -125,8 +128,9 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             command = commands.get(plConfig.mainCommandName() + strings[0]);
 
-            strings = Arrays.copyOfRange(strings, Math.min(strings.length - 1, 1), strings.length);
+            strings = Arrays.copyOfRange(strings, 1, strings.length);
 
+            commandConfig = command.getClass().getAnnotation(Command.class);
 
         }
 
@@ -134,11 +138,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         if (processSubCommands(command, commandSender, strings, 0)) return true;
         if (command == null) {
                 Text.format("lang:[commands.syntax-error]", XG7Plugins.getInstance())
-                        .replace("[SYNTAX]", cmd.getUsage())
+                        .replace("[SYNTAX]", command.getClass().getAnnotation(Command.class).syntax())
                         .send(commandSender);
                 return true;
         }
-        Command commandConfig = command.getClass().getAnnotation(Command.class);
 
         if (!commandSender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
             Text.format("lang:[commands.no-permission]",XG7Plugins.getInstance()).send(commandSender);
@@ -254,12 +257,24 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         ICommand command = commands.get(cmd.getName());
 
+        Command commandConfig = command.getClass().getAnnotation(Command.class);
+
         if (command instanceof MainCommand) {
             if (strings.length == 0) {
                 return new ArrayList<>();
             }
 
+            if (commandSender.hasPermission(commandConfig.permission()) && !commandSender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
+                return new ArrayList<>();
+            }
+
             if (strings.length > 1) {
+
+                if (strings[0].equalsIgnoreCase("help")) {
+
+                    return command.onTabComplete(commandSender,new CommandArgs(strings));
+                }
+
                 command = commands.get(plConfig.mainCommandName() + strings[0]);
 
                 strings = Arrays.copyOfRange(strings, 1, strings.length);
@@ -267,6 +282,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
 
         }
+
+        if (commandSender.hasPermission(commandConfig.permission()) && !commandSender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
+            return new ArrayList<>();
+        }
+
+
 
         return command.onTabComplete(commandSender,new CommandArgs(strings));
     }

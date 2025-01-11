@@ -95,7 +95,7 @@ public class Item {
                 "lang:[commands-display.command-item.desc]",
                 "lang:[commands-display.command-item.perm]",
                 "lang:[commands-display.command-item.player-only]",
-                command.getSubCommands().length == 0 ? "" : "lang:[commands-menu.if-subcommand]"
+                command.getSubCommands().length == 0 ? "" : "lang:[commands-display.if-subcommand]"
         );
         item.setBuildPlaceholders(
                 new HashMap<String, String>() {
@@ -103,7 +103,7 @@ public class Item {
                         put("[SYNTAX]", commandConfig.syntax());
                         put("[DESCRIPTION]", commandConfig.description());
                         put("[PERMISSION]", commandConfig.permission());
-                        put("[PLAYER-ONLY]", String.valueOf(commandConfig.isPlayerOnly()));
+                        put("[PLAYER_ONLY]", String.valueOf(commandConfig.isPlayerOnly()));
                     }
                 }
         );
@@ -139,13 +139,13 @@ public class Item {
     }
     public Item name(String name) {
         ItemMeta meta = this.itemStack.getItemMeta();
-        meta.setDisplayName(name);
+        meta.setDisplayName("&r" + name);
         this.itemStack.setItemMeta(meta);
         return this;
     }
     public Item lore(String... lore) {
         ItemMeta meta = this.itemStack.getItemMeta();
-        meta.setLore(Arrays.stream(lore).collect(Collectors.toList()));
+        meta.setLore(Arrays.stream(lore).map(l -> "&r" + l).collect(Collectors.toList()));
         this.itemStack.setItemMeta(meta);
         return this;
     }

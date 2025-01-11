@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
+
 
 @Getter
 @AllArgsConstructor
@@ -26,7 +28,8 @@ public class PlayerNMS {
         ReflectionObject handle = craftPlayer.getMethod("getHandle").invokeToRObject();
 
         if (XG7Plugins.getMinecraftVersion() >= 21) {
-            ReflectionObject connection = ReflectionObject.of(NMSUtil.getValueByFieldName(handle.getObject(), "PlayerConnection"));
+
+            ReflectionObject connection = ReflectionObject.of(NMSUtil.getValueByFieldName(handle.getObject(), XG7Plugins.isPaper() ? "ServerCommonPacketListenerImpl" : "PlayerConnection"));
             ReflectionObject networkManager = NMSUtil.getValueByFieldNameRObject(Class.forName("net.minecraft.server.network.ServerCommonPacketListenerImpl"), connection.getObject(), "NetworkManager");
             return new PlayerNMS(player, handle, connection, networkManager, craftPlayer);
         }

@@ -53,6 +53,10 @@ public class TextComponent {
 
         String translatedRawText = Text.getWithPlaceholders(plugin, rawText, player);
 
+        for (Map.Entry<String, String> entry : replacements.entrySet()) {
+            translatedRawText = translatedRawText.replace(entry.getKey(), entry.getValue());
+        }
+
         String spaces = Text.getSpacesCentralized(Text.PixelsSize.CHAT.getPixels(), translatedRawText);
 
         String finalText = text.startsWith("[CENTER] ") ? Text.getWithPlaceholders(plugin, text.substring(9), player) : Text.getWithPlaceholders(plugin, text, player);

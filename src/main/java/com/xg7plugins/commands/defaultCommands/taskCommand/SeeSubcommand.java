@@ -25,7 +25,6 @@ import java.util.List;
         name = "see",
         description = "See Task",
         syntax = "/xg7plugins tasks see <ID>",
-        isAsync = true,
         permission = "xg7plugins.command.tasks.see"
 )
 public class SeeSubcommand implements ICommand {
@@ -39,8 +38,6 @@ public class SeeSubcommand implements ICommand {
         TaskManager manager = XG7Plugins.getInstance().getTaskManager();
 
         String id = args.get(0, String.class);
-
-        System.out.println("Task-ID: " + id);
 
         if (!manager.getTasks().containsKey(id)) {
             Text.format("lang:[task-command.not-found]", XG7Plugins.getInstance()).send(sender);

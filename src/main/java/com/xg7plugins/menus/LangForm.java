@@ -37,7 +37,7 @@ public class LangForm extends SimpleForm {
 
             PlayerLanguage language = XG7Plugins.getInstance().getLangManager().getPlayerLanguageDAO().get(player.getUniqueId()).join();
 
-            boolean selected = language != null && language.getLangId().equals(s);
+            boolean selected = language != null && language.getLangId().equals(s.contains(":") ? s.split(":")[1] : s);
 
             String[] icon = c.getString("bedrock-icon").split(", ");
 

@@ -49,7 +49,7 @@ public class CommandAntiTab implements Listener {
 
     @EventHandler
     public void onTabComplete(PlayerCommandSendEvent event) {
-        if (event.getPlayer().hasPermission("xg7plugins.command.anti-tab.bypass")) return;
+        if (event.getPlayer().hasPermission("xg7plugins.command.anti-tab-bypass")) return;
 
         for (String command : new ArrayList<>(event.getCommands())) {
 

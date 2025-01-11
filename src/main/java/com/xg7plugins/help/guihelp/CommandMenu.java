@@ -23,7 +23,7 @@ public class CommandMenu extends PageMenu {
 
     private final HelpCommandGUI guiOrigin;
 
-    public CommandMenu(List<ICommand> commands, String customTitle, CommandMenu superMenu) {
+    public CommandMenu(List<ICommand> commands, String customTitle, CommandMenu superMenu, HelpCommandGUI guiOrigin) {
         super(XG7Plugins.getInstance(), "command_menu" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, 54, new Slot(2, 2), new Slot(5, 8));
         System.out.println(commands);
         this.commands = commands.stream().collect(
@@ -32,7 +32,7 @@ public class CommandMenu extends PageMenu {
                         command -> command
                 )
         );
-        this.guiOrigin = plugin.getHelpCommandGUI();
+        this.guiOrigin = guiOrigin;
         this.superMenu = superMenu;
 
     }
@@ -104,7 +104,7 @@ public class CommandMenu extends PageMenu {
 
         if (command.getSubCommands().length == 0) return;
 
-        CommandMenu commandMenu = new CommandMenu(Arrays.asList(command.getSubCommands()), "Subcommands of: " + command.getClass().getAnnotation(Command.class).name(), this);
+        CommandMenu commandMenu = new CommandMenu(Arrays.asList(command.getSubCommands()), "Subcommands of: " + command.getClass().getAnnotation(Command.class).name(), this, guiOrigin);
 
         commandMenu.open((Player) clickEvent.getWhoClicked());
 

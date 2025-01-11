@@ -79,7 +79,14 @@ public class Text {
 
         String text = getText();
 
-        return getWithPlaceholders(plugin, text, player);
+        String placeholderText = getWithPlaceholders(plugin, text, player);
+
+        for (Map.Entry<String, String> entry : replacements.entrySet()) {
+            placeholderText = placeholderText.replace(entry.getKey(),entry.getValue());
+        }
+
+
+        return placeholderText;
     }
 
     public static String getWithPlaceholders(Plugin plugin, String text, Player player) {
@@ -112,10 +119,23 @@ public class Text {
 
         langConfig = Config.of(plugin, langManager.getLangByPlayer(plugin, player).join());
 
+        StringBuilder result = new StringBuilder(text);
+        int offset = 0;
+
         while (matcher.find()) {
             String lang = matcher.group(1);
-            text = text.replace(text.substring(matcher.start(), matcher.end()), langConfig.get(lang, String.class).orElse("Cannot found path \"" + lang + "\" in " + langConfig.get("formated-name", String.class).orElse("langs")));
+            String replacement = langConfig.get(lang, String.class)
+                    .orElse("Cannot found path \"" + lang + "\" in " + langConfig.get("formated-name", String.class).orElse("langs"));
+
+            int start = matcher.start() + offset;
+            int end = matcher.end() + offset;
+
+            result.replace(start, end, replacement);
+
+            offset += replacement.length() - (end - start);
         }
+
+        text = result.toString();
 
 
         text = Condition.processCondition(text, plugin, player);
@@ -153,11 +173,25 @@ public class Text {
 
         Matcher matcher = LANG_PATTERN.matcher(textToTraslate);
 
-        YamlConfiguration mainLang = XG7Plugins.getInstance().getLangManager() != null ? XG7Plugins.getInstance().getLangManager().getLang(XG7Plugins.getInstance(), null).join() : plugin.getConfigsManager().getConfig("messages").getConfig();
+        Config mainLang = XG7Plugins.getInstance().getLangManager() != null ? Config.of(XG7Plugins.getInstance(), XG7Plugins.getInstance().getLangManager().getLang(XG7Plugins.getInstance(), null).join()) : plugin.getConfigsManager().getConfig("messages");
+
+        StringBuilder result = new StringBuilder(textToTraslate);
+        int offset = 0;
 
         while (matcher.find()) {
-            textToTraslate = textToTraslate.replace(textToTraslate.substring(matcher.start(), matcher.end()), mainLang.getString(matcher.group(1)));
+            String lang = matcher.group(1);
+            String replacement = mainLang.get(lang, String.class)
+                    .orElse("Cannot found path \"" + lang + "\" in " + mainLang.get("formated-name", String.class).orElse("langs"));
+
+            int start = matcher.start() + offset;
+            int end = matcher.end() + offset;
+
+            result.replace(start, end, replacement);
+
+            offset += replacement.length() - (end - start);
         }
+
+        textToTraslate = result.toString();
 
         for (Map.Entry<String, String> entry : replacements.entrySet()) {
             textToTraslate = textToTraslate.replace(entry.getKey(),entry.getValue());

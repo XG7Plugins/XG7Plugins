@@ -1,12 +1,9 @@
 package com.xg7plugins.help.formhelp;
 
-import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.libs.xg7geyserforms.forms.Form;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class HelpCommandForm {
 
@@ -14,7 +11,7 @@ public class HelpCommandForm {
 
     public HelpCommandForm(Form<?,?> index) {
         this.forms.put("index", index);
-        this.forms.put("commands", new CommandForm(new ArrayList<>(index.getPlugin().getCommandManager().getCommands().values()), null, null));
+        this.forms.put("commands", new CommandForm(index.getPlugin(), new ArrayList<>(index.getPlugin().getCommandManager().getCommands().values()), null, null, this));
 
     }
 

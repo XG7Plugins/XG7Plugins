@@ -13,7 +13,7 @@ import java.util.List;
 @Command(
         name = "tasks",
         description = "Task Manager",
-        syntax = "/xg7plugins tasks [<stop> <ID>, <delete> <ID>, <restart> <ID>, <see> <ID>]",
+        syntax = "/xg7plugins tasks [<stop | delete | restart | see> <ID>]",
         permission = "xg7plugins.command.tasks"
 )
 public class TaskCommand implements ICommand {

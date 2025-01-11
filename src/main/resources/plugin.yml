@@ -5,3 +5,57 @@ api-version: '1.13'
 softdepend:
   - PlaceholderAPI
   - Floodgate
+
+permissions:
+
+  xg7plugins.*:
+    description: Gives access to all XG7Plugins commands
+    default: op
+
+  xg7plugins.command:
+    description: Gives access to all XG7Plugins commands
+    default: op
+
+  xg7plugins.command.*:
+    description: Gives access to all XG7Plugins commands
+    default: op
+
+    children:
+      xg7plugins.command.reload: true
+      xg7plugins.command.help: true
+      xg7plugins.command.lang: true
+      xg7plugins.command.tasks: true
+      xg7plugins.command.anti-tab-bypass: true
+      xg7plugins.command.main-command-anti-tab-bypass: true
+
+  xg7plugins.command.reload:
+    description: Allows the player to reload the plugin
+    default: op
+    children:
+      xg7plugins.command.reload.all: true
+      xg7plugins.command.reload.config: true
+      xg7plugins.command.reload.lang: true
+      xg7plugins.command.reload.database: true
+      xg7plugins.command.reload.json: true
+      xg7plugins.command.reload.tasks: true
+      xg7plugins.command.reload.events: true
+
+  xg7plugins.command.tasks:
+    description: Allows the player to view the plugin's tasks
+    default: op
+
+    children:
+      xg7plugins.command.tasks.delete: true
+      xg7plugins.command.tasks.see: true
+      xg7plugins.command.tasks.stop: true
+      xg7plugins.command.tasks.restart: true
+
+  xg7plugins.command.lang:
+    description: Allows the player to change the plugin's language
+    default: op
+
+    children:
+        xg7plugins.command.lang.other: true
+
+
+

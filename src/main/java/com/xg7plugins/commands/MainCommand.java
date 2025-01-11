@@ -21,7 +21,8 @@ import java.util.stream.Collectors;
 @Command(
         name = "",
         description = "",
-        syntax = "/xg7plugins (command)"
+        syntax = "/xg7plugins (command)",
+        permission = "xg7plugins.command"
 )
 public class MainCommand implements ICommand {
 
@@ -31,7 +32,7 @@ public class MainCommand implements ICommand {
     public void onCommand(CommandSender sender, CommandArgs args) {
         Config config = XG7Plugins.getInstance().getConfig("config");
 
-        if (args.len() > 1) {
+        if (args.len() > 1){
             plugin.getHelpInChat().sendPage(args.get(1, String.class), sender);
             return;
         }
@@ -68,10 +69,9 @@ public class MainCommand implements ICommand {
     public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
 
         List<String> suggestions = new ArrayList<>();
-
         if (args.len() == 1) {
             suggestions.add("help");
-            suggestions.addAll(XG7Plugins.getInstance().getCommandManager().getCommands().keySet().stream().map(s -> s.replace("xg7plugins", "")).collect(Collectors.toList()));
+            suggestions.addAll(XG7Plugins.getInstance().getCommandManager().getCommands().keySet().stream().filter(cmd -> !cmd.isEmpty()).map(s -> s.replace("xg7plugins", "")).collect(Collectors.toList()));
             return suggestions;
         }
 

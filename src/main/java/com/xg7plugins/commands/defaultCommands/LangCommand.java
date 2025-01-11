@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 @Command(
         name = "lang",
         description = "Sets the language of the player",
-        syntax = "/lang (player, lang)",
+        syntax = "/xg7plugins lang (player, lang)",
         permission = "xg7plugins.command.lang"
 )
 public class LangCommand implements ICommand {
