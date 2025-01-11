@@ -4,6 +4,9 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -65,6 +68,13 @@ public class Config {
         if (type == List.class) return Optional.ofNullable(type.cast(config.getList(path)));
         if (type == ConfigurationSection.class) return Optional.ofNullable(type.cast(config.getConfigurationSection(path)));
         if (type.isEnum()) return Optional.ofNullable(config.contains(path) ? type.cast(Enum.valueOf((Class<? extends Enum>) type, config.getString(path).toUpperCase())) : null);
+
+        if (OfflinePlayer.class.isAssignableFrom(type)) {
+            return Optional.of((T) Bukkit.getOfflinePlayer(config.getString(path)));
+        }
+        if (World.class.isAssignableFrom(type)) {
+            return Optional.of((T) Bukkit.getWorld(config.getString(path)));
+        }
 
         ConfigTypeAdapter<T> adapter = (ConfigTypeAdapter<T>) configManager.getAdapters().get(type);
 

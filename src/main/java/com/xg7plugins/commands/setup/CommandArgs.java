@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 
 @AllArgsConstructor
 public class CommandArgs {
@@ -23,7 +24,10 @@ public class CommandArgs {
         }
 
         if (OfflinePlayer.class.isAssignableFrom(type)) {
-            return (T) Bukkit.getOfflinePlayer( args[index]);
+            return (T) Bukkit.getOfflinePlayer(args[index]);
+        }
+        if (World.class.isAssignableFrom(type)) {
+            return (T) Bukkit.getWorld(args[index]);
         }
 
         if (type == Integer.class || type == int.class) return Parser.INTEGER.convert(args[index]);
