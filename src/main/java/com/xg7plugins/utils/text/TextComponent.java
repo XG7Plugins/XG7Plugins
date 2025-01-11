@@ -28,11 +28,6 @@ public class TextComponent {
         this.rawText = text.replaceAll("\\[(CLICK|HOVER|CLICKHOVER) (.*?%)\\](.*?)\\[/\\1\\]", "$3");
     }
 
-    public TextComponent(String text, HashMap<String, String> placeholders) {
-        this.text = text;
-        this.rawText = text.replaceAll("\\[(CLICK|HOVER|CLICKHOVER) (.*?%)\\](.*?)\\[/\\1\\]", "$3");
-    }
-
     public BaseComponent[] getComponents() {
 
         if (XG7Plugins.getMinecraftVersion() < 8) {
@@ -127,6 +122,11 @@ public class TextComponent {
         if (sender == null) return;
 
         if (text.isEmpty()) return;
+
+        if (text.equals(rawText)) {
+            Text.format(text).send(sender);
+            return;
+        }
 
         if (XG7Plugins.getMinecraftVersion() < 8) {
             if (rawText.startsWith("[CENTER]")) {
