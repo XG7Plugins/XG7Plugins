@@ -5,6 +5,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreCondition;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -101,7 +102,7 @@ public class ScoreBoard extends Score {
             if (scoreboard == null) return;
             List<String> lastEntries = new ArrayList<>();
             for (int i = 0; i < lines.size(); i++) {
-                String translatedText = Text.format(lines.get(i), XG7Plugins.getInstance()).getWithPlaceholders(player);
+                String translatedText = Text.detectLangOrText(XG7Plugins.getInstance(),player,lines.get(i)).join().getText();
 
                 String prefix = translatedText.substring(0, Math.min(translatedText.length(), 16));
                 String entry = translatedText.length() > 16 ? translatedText.substring(16, Math.min(translatedText.length(), 56)) : "";
@@ -134,7 +135,7 @@ public class ScoreBoard extends Score {
                 }
             }
 
-            objective.setDisplayName(Text.format(title.get(indexUpdating), XG7Plugins.getInstance()).getWithPlaceholders(player));
+            objective.setDisplayName(Text.detectLangOrText(XG7Plugins.getInstance(),player,title.get(indexUpdating)).join().getText());
         }
 
 
