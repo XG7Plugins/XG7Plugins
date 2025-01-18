@@ -1,16 +1,18 @@
 package com.xg7plugins.libs.xg7scores.scores.bossbar;
 
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreCondition;
+import com.xg7plugins.utils.location.Location;
 import com.xg7plugins.utils.reflection.*;
-import com.xg7plugins.utils.reflection.nms.*;
 import com.xg7plugins.utils.text.Text;
+import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -63,6 +65,16 @@ public class LegacyBossBar extends Score {
 
 
         super.addPlayer(player);
+
+        WrapperPlayServerSpawnEntity wrapperPlayServerSpawnEntity = new WrapperPlayServerSpawnEntity(
+                SpigotReflectionUtil.generateEntityId(),
+                UUID.randomUUID(),
+                EntityTypes.WITHER,
+                Location.fromPlayer(player).add(0, 40, 0).getProtocolLocation(),
+                0,
+                0,
+                null
+        );
 
         ReflectionObject wither = entityWitherClass.getConstructor(worldClass.getAClass())
                 .newInstance(worldClass.cast(ReflectionMethod.of(player.getWorld(), "getHandle").invoke()));

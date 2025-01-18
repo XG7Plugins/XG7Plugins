@@ -7,7 +7,6 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
-import com.xg7plugins.events.packetevents.PacketEventHandler;
 import com.xg7plugins.utils.reflection.nms.Packet;
 import com.xg7plugins.utils.reflection.nms.PacketEvent;
 import org.bukkit.Bukkit;
@@ -50,7 +49,6 @@ public class CommandAntiTabOlder implements Listener, PacketListener {
     }
 
 
-    @PacketEventHandler(packet = "PacketPlayOutTabComplete")
     public void onTabComplete(PacketEvent event) {
         Player player = event.getPlayer();
         Packet packet = event.getPacket();

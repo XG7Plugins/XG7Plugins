@@ -1,5 +1,6 @@
 package com.xg7plugins;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.cache.CacheManager;
@@ -25,7 +26,6 @@ import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.events.defaultevents.CommandAntiTab;
 import com.xg7plugins.events.defaultevents.CommandAntiTabOlder;
 import com.xg7plugins.events.defaultevents.JoinAndQuit;
-import com.xg7plugins.events.packetevents.PacketEventManagerBase;
 import com.xg7plugins.libs.xg7geyserforms.forms.Form;
 import com.xg7plugins.libs.xg7menus.item.Item;
 import com.xg7plugins.libs.xg7menus.menuhandler.MenuHandler;
@@ -36,13 +36,10 @@ import com.xg7plugins.libs.xg7holograms.event.ClickEventHandler;
 import com.xg7plugins.libs.xg7menus.MenuManager;
 import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
 import com.xg7plugins.libs.xg7npcs.NPCManager;
-import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreListener;
 import com.xg7plugins.libs.xg7scores.ScoreManager;
-import com.xg7plugins.events.bukkitevents.EventManager;
-import com.xg7plugins.events.packetevents.PacketEventManager;
-import com.xg7plugins.events.packetevents.PacketEventManager1_7;
-import com.xg7plugins.libs.xg7scores.builder.BossBarBuilder;
+import com.xg7plugins.events.EventManager;
+import com.xg7plugins.events.PacketEventManager;
 import com.xg7plugins.menus.LangForm;
 import com.xg7plugins.menus.LangMenu;
 import com.xg7plugins.menus.TaskMenu;
@@ -50,6 +47,7 @@ import com.xg7plugins.tasks.CooldownManager;
 import com.xg7plugins.tasks.TPSCalculator;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -87,9 +85,9 @@ public final class XG7Plugins extends Plugin {
     @Getter
     private static boolean placeholderAPI;
     @Getter
-    private static boolean geyserFormEnabled = false;
+    private static final boolean bungeecord = Bukkit.spigot().getConfig().getBoolean("settings.bungeecord", false);
     @Getter
-    private static final boolean paper = Bukkit.getServer().getName().contains("Paper");
+    private static boolean geyserFormEnabled = false;
 
     static {
         Pattern pattern = Pattern.compile("1\\.([0-9]?[0-9])");
@@ -114,6 +112,8 @@ public final class XG7Plugins extends Plugin {
 
     private PlayerDataDAO playerDataDAO;
 
+    private ReloadCommand command;
+
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
     public XG7Plugins() {
@@ -121,8 +121,17 @@ public final class XG7Plugins extends Plugin {
     }
 
     @Override
+    public void onLoad() {
+        super.onLoad();
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().load();
+    }
+
+    @Override
     public void onEnable() {
         super.onEnable();
+        PacketEvents.getAPI().init();
+        command = new ReloadCommand();
         this.tpsCalculator = new TPSCalculator();
         tpsCalculator.start();
         floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
@@ -156,6 +165,7 @@ public final class XG7Plugins extends Plugin {
         this.scoreManager = new ScoreManager(this);
         this.formManager = floodgate ? new FormManager() : null;
 
+
         Bukkit.getOnlinePlayers().forEach(player -> packetEventManager.create(player));
 
         getLog().loading("Loading plugins...");
@@ -167,6 +177,7 @@ public final class XG7Plugins extends Plugin {
             else langManager.loadLangsFrom(plugin);
             if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
             plugin.getCommandManager().registerCommands(plugin.loadCommands());
+            command.addExpansions(plugin.loadReloadExpansions());
             loadHelp();
             eventManager.registerPlugin(plugin, plugin.loadEvents());
             packetEventManager.registerPlugin(plugin, plugin.loadPacketEvents());
@@ -193,7 +204,12 @@ public final class XG7Plugins extends Plugin {
         tpsCalculator.cancel();
         scoreManager.cancelTask();
         scoreManager.removePlayers();
-        this.plugins.forEach((name, plugin) -> unregister(plugin));
+        this.plugins.forEach((name, plugin) -> {
+            if (plugin == this) return;
+            plugin.onDisable();
+            unregister(plugin);
+        });
+        unregister(this);
         Bukkit.getOnlinePlayers().forEach(player -> {
             packetEventManager.stopEvent(player);
             if (minecraftVersion > 7) hologramsManager.removePlayer(player);
@@ -203,6 +219,7 @@ public final class XG7Plugins extends Plugin {
         npcManager.cancelTask();
         taskManager.shutdown();
         cacheManager.shutdown();
+        PacketEvents.getAPI().terminate();
     }
 
     public Class<? extends Entity>[] loadEntites() {
@@ -210,7 +227,7 @@ public final class XG7Plugins extends Plugin {
     }
     @Override
     public ICommand[] loadCommands() {
-        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand()};
+        return new ICommand[]{new LangCommand(), command, new TaskCommand()};
     }
 
     @Override

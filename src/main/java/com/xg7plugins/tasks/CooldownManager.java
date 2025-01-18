@@ -20,6 +20,7 @@ public class CooldownManager {
     private final long timeFactor;
     @Getter
     private final Task task;
+    private final List<Pair<UUID, String>> toRemove = new ArrayList<>();
 
     public CooldownManager(XG7Plugins plugin) {
         this.timeFactor = plugin.getConfigsManager().getConfig("config").getTime("player-cooldown-task-delay").orElse(1000L);
@@ -31,7 +32,6 @@ public class CooldownManager {
                 timeFactor,
                 TaskState.IDLE,
                 () -> {
-                    List<Pair<UUID, String>> toRemove = new ArrayList<>();
                     cooldowns.forEach((id, tasks) -> {
                         Player player = Bukkit.getPlayer(id);
 
@@ -57,6 +57,8 @@ public class CooldownManager {
 
                         if (cooldowns.get(pair.getFirst()).isEmpty()) cooldowns.remove(pair.getFirst());
                     }
+
+                    toRemove.clear();
                 }
         );
 
@@ -85,9 +87,7 @@ public class CooldownManager {
         CooldownTask task = cooldowns.get(playerID).get(cooldownId);
 
         if (task.getOnFinish() != null) task.getOnFinish().accept(Bukkit.getPlayer(playerID), true);
-        cooldowns.get(playerID).remove(cooldownId);
-
-        if (cooldowns.get(playerID).isEmpty()) cooldowns.remove(playerID);
+        toRemove.add(new Pair<>(playerID, cooldownId));
     }
 
     public void cancelTask() {

@@ -22,14 +22,10 @@ public class PlayerData implements Entity {
 
     private PlayerData() {}
 
-    public PlayerData(UUID playerUUID, String langId, Long firstJoin) {
-        this.playerUUID = playerUUID;
-        this.firstJoin = firstJoin;
-        this.langId = langId;
-    }
     public PlayerData(UUID playerUUID, String langId) {
         this.playerUUID = playerUUID;
         this.langId = langId;
+        this.firstJoin = System.currentTimeMillis();
     }
 
 

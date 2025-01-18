@@ -1,9 +1,7 @@
-package com.xg7plugins.events.bukkitevents;
+package com.xg7plugins.events;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.events.Listener;
-import com.xg7plugins.events.PacketListener;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.player.PlayerEvent;
@@ -63,8 +61,6 @@ public class EventManager {
                                         return;
                                 }
                             }
-
-
 
                             try {
                                 method.invoke(event, event2);

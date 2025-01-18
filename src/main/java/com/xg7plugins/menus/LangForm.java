@@ -33,21 +33,21 @@ public class LangForm extends SimpleForm {
 
         XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin).join();
 
-        XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().forEach((s, c)-> {
+        XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().entrySet().stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
 
             PlayerData language = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();
 
-            boolean selected = language != null && language.getLangId().equals(s.contains(":") ? s.split(":")[1] : s);
+            boolean selected = language != null && language.getLangId().equals(map.getKey().contains(":") ? map.getKey().split(":")[1] : map.getKey());
 
-            String[] icon = c.getString("bedrock-icon").split(", ");
+            String[] icon = map.getValue().getString("bedrock-icon").split(", ");
 
             if (icon.length == 1) {
-                components.add(ButtonComponent.of(c.getString("formated-name") != null ? selected ? "§a" + c.getString("formated-name") : "§8" + c.getString("formated-name") : selected ? "§a" + s : "§8" + s));
+                components.add(ButtonComponent.of(map.getValue().getString("formated-name") != null ? selected ? "§a" + map.getValue().getString("formated-name") : "§8" + map.getValue().getString("formated-name") : selected ? "§a" + map.getKey() : "§8" + map.getKey()));
                 return;
             }
             components.add(
                     ButtonComponent.of(
-                            c.getString("formated-name") != null ? selected ? "§a" + c.getString("formated-name") : "§8" + c.getString("formated-name") : selected ? "§a" + s : "§8" + s,
+                            map.getValue().getString("formated-name") != null ? selected ? "§a" + map.getValue().getString("formated-name") : "§8" + map.getValue().getString("formated-name") : selected ? "§a" + map.getKey() : "§8" + map.getKey(),
                             FormImage.Type.valueOf(icon[0]),
                             icon[1]
                     )

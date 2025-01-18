@@ -2,9 +2,11 @@ package com.xg7plugins.utils.location;
 
 
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Entity;
 
 @Getter
+@Setter
 public class Area implements Cloneable {
 
     private Location startPoint;

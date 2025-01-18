@@ -2,6 +2,7 @@ package com.xg7plugins.boot;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.CommandManager;
+import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadExpansion;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
@@ -29,10 +30,10 @@ import java.util.*;
 @Getter
 public abstract class Plugin extends JavaPlugin {
 
-    private String prefix;
+    private final String prefix;
 
     private final ConfigManager configsManager;
-    private CommandManager commandManager;
+    private final CommandManager commandManager;
     private final Log log;
 
     protected HelpCommandGUI helpCommandGUI;
@@ -42,7 +43,7 @@ public abstract class Plugin extends JavaPlugin {
     @Setter
     private String customPrefix;
     @Setter
-    private List<String> enabledWorlds = Collections.emptyList();
+    private List<String> enabledWorlds;
 
     public Plugin() {
 
@@ -69,8 +70,10 @@ public abstract class Plugin extends JavaPlugin {
         log.loading("Loading langs...");
         Config config = getConfig("config");
 
-        Optional<String> newPerfix = config.get("prefix", String.class);
-        if (!newPerfix.isPresent()) this.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', newPerfix.get()));
+        this.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix", String.class).orElse(prefix)));
+
+        this.enabledWorlds = config.get("enabled-worlds", List.class).orElse(Collections.emptyList());
+
 
         log.loading("Custom prefix: " + customPrefix);
     }
@@ -105,6 +108,9 @@ public abstract class Plugin extends JavaPlugin {
         return null;
     }
     public Score[] loadScores() {
+        return null;
+    }
+    public ReloadExpansion[] loadReloadExpansions() {
         return null;
     }
 

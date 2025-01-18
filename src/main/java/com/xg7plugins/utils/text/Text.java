@@ -1,19 +1,24 @@
 package com.xg7plugins.utils.text;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
+import com.github.retrooper.packetevents.protocol.chat.message.ChatMessageLegacy;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
+
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.utils.Condition;
-import com.xg7plugins.utils.reflection.nms.ChatComponent;
-import com.xg7plugins.utils.reflection.nms.Packet;
-import com.xg7plugins.utils.reflection.nms.PacketClass;
-import com.xg7plugins.utils.reflection.nms.PlayerNMS;
+
 import lombok.Getter;
 import lombok.SneakyThrows;
+
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -30,8 +35,6 @@ import java.util.regex.Pattern;
 public class Text {
 
     private String text;
-
-    private static final PacketClass packetPlayOutChat = XG7Plugins.getMinecraftVersion() == 8 ? new PacketClass("PacketPlayOutChat") : null;
 
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
 
@@ -119,34 +122,36 @@ public class Text {
 
             if (lang == null) lang = Config.of(plugin, langManager.getLangByPlayer(plugin, (sender instanceof Player) ? (Player) sender : null).join());
 
-            return Text.format(lang.get(langPath, String.class).orElse("Cannot found path \"" + lang + "\" in " + lang.get("formated-name", String.class).orElse("langs")).replace("[PREFIX]", plugin.getCustomPrefix())).textFor(sender);
+            return Text.format(lang.get(langPath, String.class).orElse("Cannot found path \"" + langPath + "\" in " + lang.get("formated-name", String.class).orElse("langs")).replace("[PREFIX]", plugin.getCustomPrefix())).textFor(sender);
 
         });
 
     }
 
     public static CompletableFuture<Text> detectLangOrText(Plugin plugin, @NotNull CommandSender sender, String text) {
-
         return CompletableFuture.supplyAsync(() -> {
-
             try {
                 String finalText = text;
 
                 Matcher matcher = LANG_PATTERN.matcher(finalText);
 
-
                 while (matcher.find()) {
-                    Config lang = null;
 
+                    Config lang = null;
                     LangManager langManager = XG7Plugins.getInstance().getLangManager();
 
-                    if (langManager == null) lang = XG7Plugins.getInstance().getConfigsManager().getConfig("messages");
+                    if (langManager == null) {
+                        lang = XG7Plugins.getInstance().getConfigsManager().getConfig("messages");
+                    }
 
-                    if (lang == null)
+                    if (lang == null) {
                         lang = Config.of(plugin, langManager.getLangByPlayer(plugin, (sender instanceof Player) ? (Player) sender : null).join());
+                    }
+
                     StringBuilder result = new StringBuilder(finalText);
 
                     String langPath = matcher.group(1);
+
                     String replacement = lang.get(langPath, String.class)
                             .orElse("Cannot found path \"" + langPath + "\" in " + lang.get("formated-name", String.class).orElse("langs"));
 
@@ -156,22 +161,23 @@ public class Text {
                 }
 
                 return Text.format(finalText.replace("[PREFIX]", plugin.getCustomPrefix())).textFor(sender);
+
             } catch (Throwable e) {
                 e.printStackTrace();
             }
 
             return null;
-
-
         });
-
     }
 
-    public void send(CommandSender sender) {
 
+    public void send(CommandSender sender) {
         if (sender == null) return;
 
+
         if (text.isEmpty()) return;
+
+
 
         if (sender instanceof Player) {
             if (text.startsWith("[ACTION] ")) {
@@ -183,11 +189,13 @@ public class Text {
 
         if (text.startsWith("[CENTER] ")) {
             text = text.substring(9);
-            TextCentralizer.getCentralizedText(TextCentralizer.PixelsSize.CHAT, text);
+            String centralizedText = TextCentralizer.getCentralizedText(TextCentralizer.PixelsSize.CHAT, text);
+            sender.sendMessage(centralizedText);
             return;
         }
 
-        sender.sendMessage(getTextFor(sender));
+        String textForSender = getTextFor(sender);
+        sender.sendMessage(textForSender);
     }
 
     @SneakyThrows
@@ -212,14 +220,11 @@ public class Text {
             return;
         }
 
-        ChatComponent chatComponent = new ChatComponent(text);
+        WrapperPlayServerChatMessage packet = new WrapperPlayServerChatMessage(
+                new ChatMessageLegacy(Component.text(text), ChatTypes.GAME_INFO)
+        );
 
-        Packet packet = new Packet(packetPlayOutChat);
-
-        packet.setField("a",chatComponent.getChatComponent());
-        packet.setField("b",(byte) 2);
-
-        PlayerNMS.cast(player).sendPacket(packet);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
 
     }
 

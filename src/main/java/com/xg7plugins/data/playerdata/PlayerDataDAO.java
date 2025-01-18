@@ -12,19 +12,20 @@ import java.util.concurrent.ExecutionException;
 public class PlayerDataDAO implements DAO<UUID, PlayerData> {
 
     @Override
-    public CompletableFuture<Void> add(PlayerData data) throws ExecutionException, InterruptedException {
+    public CompletableFuture<Boolean> add(PlayerData data) throws ExecutionException, InterruptedException {
         if(data == null || data.getPlayerUUID() == null) return CompletableFuture.completedFuture(null);
 
         return XG7Plugins.getInstance().getDatabaseManager().getProcessor().exists(
                 XG7Plugins.getInstance(), PlayerData.class, "player_id", data.getPlayerUUID()
-        ).thenAccept(exists -> {
-            if (exists) return;
+        ).thenApply(exists -> {
+            if (exists) return false;
             try {
                 Transaction.createTransaction(
                         XG7Plugins.getInstance(),
                         data,
                         Transaction.Type.INSERT
                 ).waitForResult();
+                return true;
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -37,8 +38,8 @@ public class PlayerDataDAO implements DAO<UUID, PlayerData> {
     public CompletableFuture<PlayerData> get(UUID uuid) {
         if (uuid == null) return null;
 
-        return XG7Plugins.getInstance().getDatabaseManager().containsCachedEntity(uuid.toString()).thenComposeAsync(exists -> {
-            if (exists) return XG7Plugins.getInstance().getDatabaseManager().getCachedEntity(uuid.toString());
+        return XG7Plugins.getInstance().getDatabaseManager().containsCachedEntity(XG7Plugins.getInstance(), uuid.toString()).thenComposeAsync(exists -> {
+            if (exists) return XG7Plugins.getInstance().getDatabaseManager().getCachedEntity(XG7Plugins.getInstance(), uuid.toString());
 
             try {
                 return CompletableFuture.completedFuture(Query.selectFrom(XG7Plugins.getInstance(), PlayerData.class, uuid).onError(Throwable::printStackTrace).waitForResult().get(PlayerData.class));
@@ -51,13 +52,14 @@ public class PlayerDataDAO implements DAO<UUID, PlayerData> {
     }
 
     @Override
-    public CompletableFuture<Void> update(PlayerData data) {
-        if (data == null) return CompletableFuture.completedFuture(null);
+    public CompletableFuture<Boolean> update(PlayerData data) {
+        if (data == null) return CompletableFuture.completedFuture(false);
 
-        return CompletableFuture.runAsync(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             try {
                 Transaction.update(XG7Plugins.getInstance(), data).onError(Throwable::printStackTrace).waitForResult();
-                XG7Plugins.getInstance().getDatabaseManager().cacheEntity(data.getPlayerUUID().toString(), data);
+                XG7Plugins.getInstance().getDatabaseManager().cacheEntity(XG7Plugins.getInstance(), data.getPlayerUUID().toString(), data);
+                return true;
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

@@ -36,8 +36,8 @@ public class TextComponent {
 
         String spaces = "";
 
-        if (rawText.startsWith("[CENTER]")) {
-            rawText = rawText.replace("[CENTER]", "");
+        if (rawText.startsWith("[CENTER] ")) {
+            rawText = rawText.replace("[CENTER] ", "");
             spaces = TextCentralizer.getSpacesCentralized(TextCentralizer.PixelsSize.CHAT.getPixels(), rawText);
         }
 

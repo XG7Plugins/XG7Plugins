@@ -32,10 +32,10 @@ public class LangMenu extends PageMenu {
 
         List<Item> pagedItems = new ArrayList<>();
 
-        XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().forEach((s, c)-> {
-            boolean selected = language != null && language.getLangId().equals(s.contains(":") ? s.split(":")[1] : s);
+        XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().entrySet().stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
+            boolean selected = language != null && language.getLangId().equals(map.getKey().contains(":") ? map.getKey().split(":")[1] : map.getKey());
 
-            pagedItems.add(Config.of(XG7Plugins.getInstance(), c).get("", Item.class, selected, s).orElse(null));
+            pagedItems.add(Config.of(XG7Plugins.getInstance(), map.getValue()).get("", Item.class, selected, map.getKey()).orElse(null));
         });
 
         return pagedItems;

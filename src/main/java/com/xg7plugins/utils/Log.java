@@ -1,5 +1,6 @@
 package com.xg7plugins.utils;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ public class Log {
         Config config = plugin.getConfigsManager().getConfig("config");
         if (config == null) return;
         isLogEnabled = config.get("log-enabled", Boolean.class).orElse(false);
+        PacketEvents.getAPI().getSettings().debug(isLogEnabled);
     }
 
     public void severe(String message) {

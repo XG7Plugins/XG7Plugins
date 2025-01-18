@@ -6,10 +6,12 @@ import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.entity.Pkey;
 import com.xg7plugins.data.database.entity.Table;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.data.database.processor.TableCreator;
 import com.xg7plugins.utils.Pair;
 import lombok.Getter;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
@@ -73,6 +75,8 @@ public class Transaction {
             for (Field field : entityClass.getDeclaredFields()) {
                 field.setAccessible(true);
 
+                if (Modifier.isTransient(field.getModifiers())) continue;
+
                 Object value = field.get(entityToUpdate);
 
                 if (value == null) continue;
@@ -80,11 +84,6 @@ public class Transaction {
                 if (Collection.class.isAssignableFrom(field.getType())) {
                     entitiesToUpdate.addAll((Collection<? extends Entity>) value);
                     continue;
-                }
-
-                if (Entity.class.isAssignableFrom(field.getType())) {
-                    Transaction entityTransaction = createTransaction(plugin, (Entity) value, type);
-                    commandsToAdd.addAll(entityTransaction.getQueries());
                 }
 
                 if (field.isAnnotationPresent(Pkey.class)) {
@@ -96,6 +95,16 @@ public class Transaction {
                     if (type == Type.DELETE) break;
                 }
                 if (type == Type.DELETE) continue;
+
+                if (TableCreator.getSQLType(field.getType()) == null) {
+                    for (Field fieldOfInsideOb : field.getType().getDeclaredFields()) {
+                        fieldOfInsideOb.setAccessible(true);
+                        transaction.addColumns(fieldOfInsideOb.isAnnotationPresent(Column.class) ? fieldOfInsideOb.getAnnotation(Column.class).name() : fieldOfInsideOb.getName());
+                        transaction.params(fieldOfInsideOb.get(value));
+                    }
+                    continue;
+                }
+
                 transaction.addColumns(field.isAnnotationPresent(Column.class) ? field.getAnnotation(Column.class).name() : field.getName());
                 transaction.params(value);
             }

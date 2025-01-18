@@ -4,7 +4,9 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.database.entity.*;
 import com.xg7plugins.utils.Pair;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -15,7 +17,7 @@ import java.util.function.Consumer;
 public class Query {
 
     private final String initialTable;
-    private final List<String> joinTables;
+    private final List<Pair<JoinType, String>> joinTables;
     private final List<Pair<String, List<String>>> columns = new ArrayList<>();
     private boolean selectAll = false;
     @Getter
@@ -101,7 +103,7 @@ public class Query {
                     nestedListClass.getAnnotation(Table.class).name() :
                     nestedListClass.getSimpleName();
 
-            query.innerJoin(listTableName);
+            query.leftJoin(listTableName);
 
             String idColumn = null;
             String fkeyColumn = null;
@@ -139,16 +141,30 @@ public class Query {
     }
 
     public Query innerJoin(String table) {
-        this.joinTables.add(table);
+        this.joinTables.add(new Pair<>(JoinType.INNER_JOIN, table));
         return this;
     }
+    public Query leftJoin(String table) {
+        this.joinTables.add(new Pair<>(JoinType.LEFT_JOIN, table));
+        return this;
+    }
+    public Query rightJoin(String table) {
+        this.joinTables.add(new Pair<>(JoinType.RIGHT_JOIN, table));
+        return this;
+    }
+    public Query fullJoin(String table) {
+        this.joinTables.add(new Pair<>(JoinType.FULL_JOIN, table));
+        return this;
+    }
+
+
     public Query additionalCommands(String additionalCommands) {
         this.additionalCommands = additionalCommands;
         return this;
     }
 
     public Query on(String condition) {
-        this.conditions.put(this.joinTables.get(this.joinTables.size() - 1), condition);
+        this.conditions.put(this.joinTables.get(this.joinTables.size() - 1).getSecond(), condition);
         return this;
     }
 
@@ -190,11 +206,11 @@ public class Query {
 
         query.append(" FROM ").append(initialTable);
 
-        for (String table : this.joinTables) {
-            query.append(" INNER JOIN ").append(table);
-            if (conditions.containsKey(table)) {
+        for (Pair<JoinType, String> table : this.joinTables) {
+            query.append(" ").append(table.getFirst().getSql()).append(" ").append(table.getSecond());
+            if (conditions.containsKey(table.getSecond())) {
                 query.append(" ON ");
-                query.append(conditions.get(table));
+                query.append(conditions.get(table.getSecond()));
             }
 
         }
@@ -225,6 +241,17 @@ public class Query {
     public void completeTask(QueryResult result) {
         this.finishedResult = result;
         latch.countDown();
+    }
+
+    @Getter
+    @AllArgsConstructor
+    enum JoinType {
+        INNER_JOIN("INNER JOIN"),
+        LEFT_JOIN("LEFT JOIN"),
+        RIGHT_JOIN("RIGHT JOIN"),
+        FULL_JOIN("FULL JOIN");
+
+        private final String sql;
     }
 
 

@@ -157,7 +157,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             return true;
         }
         if (commandSender instanceof Player) {
-            if (!commandConfig.isInEnabledWorldOnly() && plugin.getEnabledWorlds().contains(((Player) commandSender).getWorld().getName()) && !plugin.getEnabledWorlds().isEmpty()) {
+            if (commandConfig.isInEnabledWorldOnly() && !plugin.getEnabledWorlds().contains(((Player) commandSender).getWorld().getName())) {
                 Text.formatLang(XG7Plugins.getInstance(), commandSender, "commands.disabled-world").thenAccept(text -> text.send(commandSender));
                 return true;
             }

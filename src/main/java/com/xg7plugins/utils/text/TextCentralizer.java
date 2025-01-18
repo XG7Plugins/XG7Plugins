@@ -33,17 +33,19 @@ public class TextCentralizer {
 
     public static String getSpacesCentralized(int pixels, String text) {
 
-        int textWidht = 0;
+        int textWidth = 0;
         boolean cCode = false;
         boolean isBold = false;
-        boolean isrgb = false;
+        boolean isRgb = false;
         int rgbCount = 0;
         int cCodeCount = 0;
         int rgbToAdd = 0;
+
         for (char c : text.toCharArray()) {
-            if (isrgb) {
+
+            if (isRgb) {
                 if (rgbCount == 6) {
-                    isrgb = false;
+                    isRgb = false;
                     continue;
                 }
                 if ("0123456789aAbBcCdDeEfF".contains(String.valueOf(c))) {
@@ -52,53 +54,62 @@ public class TextCentralizer {
                     continue;
                 }
                 rgbCount = 0;
-                textWidht += rgbToAdd;
+                textWidth += rgbToAdd;
                 continue;
             }
+
             if (c == '&' || c == '§') {
                 cCode = true;
                 cCodeCount++;
                 continue;
             }
-            if (cCode && net.md_5.bungee.api.ChatColor.ALL_CODES.contains(c + "")) {
+
+            if (cCode && net.md_5.bungee.api.ChatColor.ALL_CODES.contains(String.valueOf(c))) {
                 cCode = false;
                 cCodeCount = 0;
                 isBold = c == 'l' || c == 'L';
                 continue;
             }
+
             if (cCode) {
                 if (c == '#') {
                     cCode = false;
-                    isrgb = true;
+                    isRgb = true;
                     continue;
                 }
                 while (cCodeCount != 0) {
                     cCodeCount--;
-                    textWidht += getCharSize('&', isBold);
+                    textWidth += getCharSize('&', isBold);
                 }
             }
-            textWidht += getCharSize(c, isBold);
+
+            textWidth += getCharSize(c, isBold);
         }
 
-        textWidht /= 2;
+        textWidth /= 2;
 
-        if (textWidht > pixels) return text;
+        if (textWidth > pixels) {
+            return text;
+        }
 
         StringBuilder builder = new StringBuilder();
-
         int compensated = 0;
 
-        while (compensated < pixels - textWidht) {
+        while (compensated < pixels - textWidth) {
             builder.append(ChatColor.COLOR_CHAR + "r ");
             compensated += 4;
         }
 
-        return builder.toString();
-
+        String result = builder.toString();
+        return result;
     }
 
+
     public static String getCentralizedText(PixelsSize size, String text) {
-        return getSpacesCentralized(size.getPixels(), text);
+
+        String spaces = getSpacesCentralized(size.getPixels(), text);
+
+        return spaces + text;
     }
 
 

@@ -71,12 +71,12 @@ public class MainCommand implements ICommand {
         List<String> suggestions = new ArrayList<>();
         if (args.len() == 1) {
             suggestions.add("help");
-            suggestions.addAll(XG7Plugins.getInstance().getCommandManager().getCommands().keySet().stream().filter(cmd -> !cmd.isEmpty()).map(s -> s.replace("xg7plugins", "")).collect(Collectors.toList()));
+            suggestions.addAll(plugin.getCommandManager().getCommands().keySet().stream().filter(cmd -> !cmd.isEmpty()).map(s -> s.replace("xg7plugins", "")).collect(Collectors.toList()));
             return suggestions;
         }
 
         if (args.len() == 2 && args.get(0, String.class).equalsIgnoreCase("help")) {
-            suggestions.addAll(XG7Plugins.getInstance().getHelpInChat().getPages().keySet());
+            suggestions.addAll(plugin.getHelpInChat().getPages().keySet());
             return suggestions;
         }
 
