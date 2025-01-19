@@ -35,7 +35,7 @@ public class Hologram {
         List<WrapperPlayServerSpawnEntity> armorStands = new ArrayList<>();
 
         for (String line : lines) {
-            initialLocation = location.add(0, 0.3, 0);
+            initialLocation = initialLocation.add(0, 0.3, 0).clone();
             WrapperPlayServerSpawnEntity armorStand = new WrapperPlayServerSpawnEntity(
                     SpigotReflectionUtil.generateEntityId(),
                     UUID.randomUUID(),
@@ -53,8 +53,10 @@ public class Hologram {
             entityData.add(new EntityData(3, EntityDataTypes.BOOLEAN, true));
             entityData.add(new EntityData(5, EntityDataTypes.BOOLEAN, true));
 
-            WrapperPlayServerEntityMetadata metadata = new WrapperPlayServerEntityMetadata(armorStand.getEntityId(), entityData);
-
+            WrapperPlayServerEntityMetadata metadata = new WrapperPlayServerEntityMetadata(
+                    armorStand.getEntityId(),
+                    entityData
+            );
 
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, armorStand);
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, metadata);

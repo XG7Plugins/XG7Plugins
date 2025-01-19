@@ -11,17 +11,18 @@ import org.bukkit.Bukkit;
  * This class is used to debug
  */
 @AllArgsConstructor
-public class Log {
+public class Debug {
 
     private Plugin plugin;
+    private Config config;
     @Setter
     private boolean isLogEnabled;
 
-    public Log(Plugin plugin) {
+    public Debug(Plugin plugin) {
         this.plugin = plugin;
-        Config config = plugin.getConfigsManager().getConfig("config");
+        this.config = plugin.getConfigsManager().getConfig("config");
         if (config == null) return;
-        isLogEnabled = config.get("log-enabled", Boolean.class).orElse(false);
+        isLogEnabled = config.get("debug.enabled", Boolean.class).orElse(false);
         PacketEvents.getAPI().getSettings().debug(isLogEnabled);
     }
 
@@ -29,12 +30,16 @@ public class Log {
         Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix()  + " §cERROR§8] §c" + message);
     }
 
-    public void fine(String message) {
-        if (isLogEnabled) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix()  + " §aSUCCESS§8] §a" + message);
+    public void fine(String criteria, String message) {
+        if (isLogEnabled && config.get("debug." + criteria, Boolean.class).orElse(false)) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix()  + " §aSUCCESS§8] §a" + message);
     }
 
-    public void info(String message) {
-        if (isLogEnabled) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §6DEBUG§8] §6" + message);
+    public void info(String criteria, String message) {
+        if (isLogEnabled && config.get("debug." + criteria, Boolean.class).orElse(false)) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §6DEBUG§8] §6" + message);
+    }
+
+    public void error(String criteria, String message) {
+        if (isLogEnabled && config.get("debug." + criteria, Boolean.class).orElse(false)) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §cERROR§8] §c" + message);
     }
 
     public void warn(String message) {
@@ -43,9 +48,6 @@ public class Log {
 
     public void loading(String message) {
         Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + "§8] §r" + message);
-    }
-    public void log(String message) {
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §cLOG§8] §r" + message);
     }
 
 }

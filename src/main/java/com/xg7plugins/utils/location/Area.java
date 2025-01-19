@@ -46,8 +46,33 @@ public class Area implements Cloneable {
                 '}';
     }
 
+    public double side(Orientation orientation) {
+        switch (orientation) {
+            case X:
+                return (int) endPoint.getX() - startPoint.getX();
+            case Y:
+                return (int) endPoint.getY() - startPoint.getY();
+            case Z:
+                return (int) endPoint.getZ() - startPoint.getZ();
+            default:
+                return 0;
+        }
+    }
+    public double getArea(Direction direction) {
+        switch (direction) {
+            case NORTH:
+            case SOUTH:
+                return Math.abs(endPoint.getX() - startPoint.getX()) * Math.abs(endPoint.getZ() - startPoint.getZ());
+            case EAST:
+            case WEST:
+                return Math.abs(endPoint.getY() - startPoint.getY()) * Math.abs(endPoint.getZ() - startPoint.getZ());
+            default:
+                return 0;
+        }
+    }
+
     public double getVolume() {
-        return Math.abs(endPoint.getX() - startPoint.getX()) * Math.abs(endPoint.getY() - startPoint.getY()) * Math.abs(endPoint.getZ() - startPoint.getZ());
+        return (endPoint.getX() - startPoint.getX()) * (endPoint.getY() - startPoint.getY()) * (endPoint.getZ() - startPoint.getZ());
     }
 
     @Override
@@ -57,6 +82,13 @@ public class Area implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    public enum Orientation {
+        X, Y, Z
+    }
+    public enum Direction {
+        NORTH, EAST, SOUTH, WEST
     }
 
 }

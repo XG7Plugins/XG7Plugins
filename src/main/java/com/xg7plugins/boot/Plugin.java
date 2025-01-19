@@ -2,7 +2,6 @@ package com.xg7plugins.boot;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.CommandManager;
-import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadExpansion;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
@@ -16,7 +15,7 @@ import com.xg7plugins.libs.xg7geyserforms.forms.Form;
 import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
 import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.tasks.Task;
-import com.xg7plugins.utils.Log;
+import com.xg7plugins.utils.Debug;
 import lombok.*;
 import org.apache.commons.lang.IllegalClassException;
 import org.bukkit.Bukkit;
@@ -34,7 +33,7 @@ public abstract class Plugin extends JavaPlugin {
 
     private final ConfigManager configsManager;
     private final CommandManager commandManager;
-    private final Log log;
+    private final Debug debug;
 
     protected HelpCommandGUI helpCommandGUI;
     protected HelpInChat helpInChat;
@@ -54,8 +53,8 @@ public abstract class Plugin extends JavaPlugin {
         this.configsManager = new ConfigManager(this, configurations.configs());
         this.prefix = ChatColor.translateAlternateColorCodes('&', configurations.prefix());
         this.customPrefix = this.prefix;
-        this.log = new Log(this);
-        log.loading("Loading " + prefix + "...");
+        this.debug = new Debug(this);
+        debug.loading("Loading " + prefix + "...");
         this.commandManager = new CommandManager(this);
     }
 
@@ -67,7 +66,7 @@ public abstract class Plugin extends JavaPlugin {
 
         if (configurations.onEnableDraw().length != 0) Arrays.stream(configurations.onEnableDraw()).forEach(s -> Bukkit.getConsoleSender().sendMessage(s));
 
-        log.loading("Loading langs...");
+        debug.loading("Loading langs...");
         Config config = getConfig("config");
 
         this.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix", String.class).orElse(prefix)));
@@ -75,7 +74,7 @@ public abstract class Plugin extends JavaPlugin {
         this.enabledWorlds = config.get("enabled-worlds", List.class).orElse(Collections.emptyList());
 
 
-        log.loading("Custom prefix: " + customPrefix);
+        debug.loading("Custom prefix: " + customPrefix);
     }
     @Override
     public void onDisable() {
@@ -110,14 +109,30 @@ public abstract class Plugin extends JavaPlugin {
     public Score[] loadScores() {
         return null;
     }
-    public ReloadExpansion[] loadReloadExpansions() {
-        return null;
-    }
 
     public abstract void loadHelp();
 
     public Config getConfig(String name) {
         return configsManager.getConfig(name);
+    }
+
+    public void info(String path, String message) {
+        this.getDebug().info(path, message);
+    }
+    public void fine(String path, String message) {
+        this.getDebug().fine(path, message);
+    }
+    public void error(String path, String message) {
+        this.getDebug().error(path, message);
+    }
+    public void severe(String message) {
+        this.getDebug().severe(message);
+    }
+    public void warn(String message) {
+        this.getDebug().warn(message);
+    }
+    public void loading(String message) {
+        this.getDebug().loading(message);
     }
 
     public boolean isWorldEnabled(String world) {
