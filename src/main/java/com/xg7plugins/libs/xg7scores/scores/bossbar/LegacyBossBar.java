@@ -1,19 +1,28 @@
 package com.xg7plugins.libs.xg7scores.scores.bossbar;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreCondition;
+import com.xg7plugins.utils.location.Location;
 import com.xg7plugins.utils.reflection.*;
-import com.xg7plugins.utils.reflection.nms.*;
 import com.xg7plugins.utils.text.Text;
+import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -24,31 +33,6 @@ public class LegacyBossBar extends Score {
     private final float healthPercent;
 
     private final HashMap<UUID, Integer> entities = new HashMap<>();
-
-    private static PacketClass packetPlayOutEntityTeleportClass;
-    private static PacketClass packetPlayOutEntityMetadataClass;
-    private static PacketClass packetPlayOutSpawnEntityLivingClass;
-    private static PacketClass packetPlayOutEntityDestroyClass;
-
-    private static ReflectionClass entityWitherClass;
-    private static ReflectionClass worldClass;
-    private static ReflectionClass entityLivingClass;
-
-    static {
-        try {
-            packetPlayOutEntityTeleportClass = new PacketClass("PacketPlayOutEntityTeleport");
-            packetPlayOutEntityMetadataClass = new PacketClass("PacketPlayOutEntityMetadata");
-            packetPlayOutSpawnEntityLivingClass = new PacketClass("PacketPlayOutSpawnEntityLiving");
-            packetPlayOutEntityDestroyClass = new PacketClass("PacketPlayOutEntityDestroy");
-
-            entityWitherClass = NMSUtil.getNMSClass("EntityWither");
-            worldClass = NMSUtil.getNMSClass("World");
-            entityLivingClass = NMSUtil.getNMSClass("EntityLiving");
-        } catch (Exception ignored) {
-
-        }
-    }
-
 
     @SneakyThrows
     public LegacyBossBar(long delay, List<String> text, String id, ScoreCondition condition, float healthPercent, Plugin plugin) {
@@ -64,40 +48,41 @@ public class LegacyBossBar extends Score {
 
         super.addPlayer(player);
 
-        ReflectionObject wither = entityWitherClass.getConstructor(worldClass.getAClass())
-                .newInstance(worldClass.cast(ReflectionMethod.of(player.getWorld(), "getHandle").invoke()));
+        WrapperPlayServerSpawnEntity wither = new WrapperPlayServerSpawnEntity(
+                SpigotReflectionUtil.generateEntityId(),
+                UUID.randomUUID(),
+                EntityTypes.WITHER,
+                Location.fromPlayer(player).add(0, 40, 0).getProtocolLocation(),
+                0,
+                0,
+                null
+        );
+        List<EntityData> entityData = new ArrayList<>();
 
-        Packet spawnPacket = new Packet(packetPlayOutSpawnEntityLivingClass, new Class<?>[]{entityLivingClass.getAClass()}, wither.getObject());
+        entityData.add(new EntityData(6, EntityDataTypes.FLOAT, (healthPercent / 100) * 300));
 
-        EntityDataWatcher dataWatcher = new EntityDataWatcher();
+        entityData.add(new EntityData(2, EntityDataTypes.STRING, updateText.get(0)));
+        entityData.add(new EntityData(10, EntityDataTypes.STRING, updateText.get(0)));
 
-        dataWatcher.watch(6, (healthPercent / 100) * 300);
+        entityData.add(new EntityData(11, EntityDataTypes.BOOLEAN, true));
+        entityData.add(new EntityData(3, EntityDataTypes.BOOLEAN, true));
 
-        dataWatcher.watch(10, updateText.get(0));
-        dataWatcher.watch(2, updateText.get(0));
+        entityData.add(new EntityData(17, EntityDataTypes.BYTE, 0));
+        entityData.add(new EntityData(18, EntityDataTypes.BYTE, 0));
+        entityData.add(new EntityData(19, EntityDataTypes.BYTE, 0));
 
-        dataWatcher.watch(11, (byte) 1);
-        dataWatcher.watch(3, (byte) 1);
+        entityData.add(new EntityData(20, EntityDataTypes.INT, 1000));
+        entityData.add(new EntityData(0, EntityDataTypes.BYTE, (byte) (1 << 5)));
 
-        dataWatcher.watch(17, 0);
-        dataWatcher.watch(18, 0);
-        dataWatcher.watch(19, 0);
+        WrapperPlayServerEntityMetadata packetPlayOutEntityMetadata = new WrapperPlayServerEntityMetadata(
+                wither.getEntityId(),
+                entityData
+        );
 
-        dataWatcher.watch(20, 1000);
-        dataWatcher.watch(0, (byte) (1 << 5));
+        entities.put(player.getUniqueId(), wither.getEntityId());
 
-        Packet packetPlayOutEntityMetadata = new Packet(packetPlayOutEntityMetadataClass);
-
-        packetPlayOutEntityMetadata.setField("a", wither.getMethod("getId").invoke());
-        packetPlayOutEntityMetadata.setField("b", dataWatcher.getWatcher().getMethod("c").invoke());
-
-        entities.put(player.getUniqueId(), wither.getMethod("getId").invoke());
-
-        PlayerNMS playerNMS = PlayerNMS.cast(player);
-
-        playerNMS.sendPacket(spawnPacket);
-
-        playerNMS.sendPacket(packetPlayOutEntityMetadata);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, wither);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutEntityMetadata);
 
     }
 
@@ -108,9 +93,7 @@ public class LegacyBossBar extends Score {
         if (!super.getPlayers().contains(player.getUniqueId())) return;
         if (!entities.containsKey(player.getUniqueId())) return;
 
-        Packet packet = new Packet(packetPlayOutEntityDestroyClass, new Class<?>[]{int[].class}, new int[] {entities.get(player.getUniqueId())});
-
-        PlayerNMS.cast(player).sendPacket(packet);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, new WrapperPlayServerDestroyEntities(entities.get(player.getUniqueId())));
 
         super.removePlayer(player);
     }
@@ -125,36 +108,35 @@ public class LegacyBossBar extends Score {
             if (player == null) continue;
             if (player.isDead()) continue;
 
-            Location playerLocation = player.getLocation();
+            Location playerLocation = Location.fromPlayer(player);
             Vector direction = playerLocation.getDirection();
 
             Location targetLocation = playerLocation.add(direction.multiply(40));
 
-            Packet packet = new Packet(packetPlayOutEntityTeleportClass);
 
-            packet.setField("a", entities.get(player.getUniqueId()));
-            packet.setField("b", (int) (targetLocation.getX() * 32D));
-            packet.setField("c", (int) (targetLocation.getY() * 32D));
-            packet.setField("d", (int) (targetLocation.getZ() * 32D));
-            packet.setField("e", (byte) (int) (targetLocation.getYaw() * 256F / 360F));
-            packet.setField("f", (byte) (int) (targetLocation.getPitch() * 256F / 360F));
+            WrapperPlayServerEntityTeleport packet = new WrapperPlayServerEntityTeleport(
+                    entities.get(player.getUniqueId()),
+                    targetLocation.getProtocolLocation(),
+                    true
+            );
 
-            PlayerNMS playerNMS = PlayerNMS.cast(player);
-
-            playerNMS.sendPacket(packet);
-
-            EntityDataWatcher dataWatcher = new EntityDataWatcher();
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
 
             String name = Text.detectLangOrText(plugin,player,updateText.get(indexUpdating)).join().getText();
 
-            dataWatcher.watch(10, name);
-            dataWatcher.watch(2, name);
+            List<EntityData> entityData = new ArrayList<>();
 
-            Packet packetPlayOutEntityMetadata = new Packet(packetPlayOutEntityMetadataClass);
+            entityData.add(new EntityData(6, EntityDataTypes.FLOAT, (healthPercent / 100) * 300);
 
-            packetPlayOutEntityMetadata.setField("a", entities.get(player.getUniqueId()));
-            packetPlayOutEntityMetadata.setField("b", dataWatcher.getWatcher().getMethod("c").invoke());
-            playerNMS.sendPacket(packetPlayOutEntityMetadata);
+            entityData.add(new EntityData(2, EntityDataTypes.STRING, name));
+            entityData.add(new EntityData(10, EntityDataTypes.STRING, name));
+
+            WrapperPlayServerEntityMetadata packetPlayOutEntityMetadata = new WrapperPlayServerEntityMetadata(
+                    entities.get(player.getUniqueId()),
+                    entityData
+            );
+
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutEntityMetadata);
 
 
         }

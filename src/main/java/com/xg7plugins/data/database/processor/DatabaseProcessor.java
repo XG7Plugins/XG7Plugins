@@ -60,6 +60,8 @@ public class DatabaseProcessor {
 
         if (connection == null) return;
         PreparedStatement ps = null;
+        
+        String currentQuery = "";
 
         String currentQuery = "";
 

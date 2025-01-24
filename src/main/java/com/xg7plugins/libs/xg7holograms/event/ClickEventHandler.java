@@ -1,12 +1,11 @@
 package com.xg7plugins.libs.xg7holograms.event;
 
+import com.github.retrooper.packetevents.event.PacketReceiveEvent;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.PacketListener;
-import com.xg7plugins.events.packetevents.PacketEventHandler;
-import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
-import com.xg7plugins.utils.reflection.ReflectionObject;
-import com.xg7plugins.utils.reflection.nms.Packet;
-import com.xg7plugins.utils.reflection.nms.PacketEvent;
+import com.xg7plugins.libs.xg7holograms.holograms.HologramState;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -17,28 +16,24 @@ public class ClickEventHandler implements PacketListener {
         return true;
     }
 
-
-    @PacketEventHandler(packet = "PacketPlayInUseEntity")
-    public void onClick(PacketEvent event) {
+    public void onClick(PacketReceiveEvent event) {
+        if (event.getPacketType() != PacketType.Play.Client.INTERACT_ENTITY)
+            return;
         Player player = event.getPlayer();
-        Packet packet = event.getPacket();
-        Hologram hologram = XG7Plugins.getInstance().getHologramsManager().getHologramById(player, packet.getField(XG7Plugins.getMinecraftVersion() > 20 ? "b" : "a"));
+
+        WrapperPlayClientInteractEntity packet = new WrapperPlayClientInteractEntity(event);
+
+        HologramState hologram = XG7Plugins.getInstance().getHologramsManager().getHologramState(player);
 
         if (hologram == null) return;
 
-        Enum<?> enumAction = XG7Plugins.getMinecraftVersion() <= 16 ? packet.getField("action") : ReflectionObject.of(packet.getField(XG7Plugins.getMinecraftVersion() > 20 ? "c" : "b")).getMethod("a").invoke();
-
         ClickType type;
 
-        switch (enumAction.name()) {
-            case "b":
-            case "c":
-            case "INTERACT_AT":
-            case "INTERACT":
+        switch (packet.getAction()) {
+            case INTERACT:
                 type = player.isSneaking() ? ClickType.SHIFT_RIGHT_CLICK : ClickType.RIGHT_CLICK;
                 break;
-            case "a":
-            case "ATTACK":
+            case ATTACK:
                 type = player.isSneaking() ? ClickType.SHIFT_LEFT_CLICK : ClickType.LEFT_CLICK;
                 break;
             default:
