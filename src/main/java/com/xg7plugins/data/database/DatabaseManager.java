@@ -67,7 +67,7 @@ public class DatabaseManager {
             return;
         }
 
-        com.xg7plugins.data.database.ConnectionType connectionType = pluginConfig.get("sql.type", com.xg7plugins.data.database.ConnectionType.class).orElse(ConnectionType.SQLITE);
+        ConnectionType connectionType = pluginConfig.get("sql.type", ConnectionType.class).orElse(ConnectionType.SQLITE);
 
         String host = pluginConfig.get("sql.host", String.class).orElse(null);
         String port = pluginConfig.get("sql.port", String.class).orElse(null);

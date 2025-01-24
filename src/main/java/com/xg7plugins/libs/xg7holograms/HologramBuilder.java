@@ -3,6 +3,8 @@ package com.xg7plugins.libs.xg7holograms;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
+import com.xg7plugins.libs.xg7holograms.holograms.Hologram1_17_1_XX;
+import com.xg7plugins.libs.xg7holograms.holograms.Hologram1_8_1_16;
 import com.xg7plugins.utils.Builder;
 import com.xg7plugins.utils.location.Location;
 
@@ -39,7 +41,7 @@ public class HologramBuilder implements Builder<Hologram> {
         if (location == null) {
             throw new IllegalArgumentException("Location cannot be null");
         }
-        return new Hologram(lines, location, id, plugin);
+        return XG7Plugins.getMinecraftVersion() < 17 ? new Hologram1_8_1_16(plugin, id,lines, location) : new Hologram1_17_1_XX(plugin,id, lines, location);
     }
 
     public static HologramBuilder creator(Plugin plugin, String id) {

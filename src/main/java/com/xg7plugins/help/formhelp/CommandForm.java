@@ -36,8 +36,8 @@ public class CommandForm extends SimpleForm {
         super("command-form" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, plugin);
 
         this.commands = commands.stream().collect(
-                java.util.stream.Collectors.toMap(
-                        command -> command.getClass().getAnnotation(com.xg7plugins.commands.setup.Command.class).name(),
+                Collectors.toMap(
+                        command -> command.getClass().getAnnotation(Command.class).name(),
                         command -> command
                 )
         );

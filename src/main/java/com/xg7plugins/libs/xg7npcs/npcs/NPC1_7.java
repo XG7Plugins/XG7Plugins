@@ -1,6 +1,5 @@
 package com.xg7plugins.libs.xg7npcs.npcs;
 
-import com.github.retrooper.packetevents.protocol.player.User;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xg7plugins.boot.Plugin;
@@ -96,8 +95,6 @@ public class NPC1_7 extends NPC {
         }
         String newName = Text.format((String) name).getTextFor(player);
         GameProfile npcSkinNameReplaced = new GameProfile(UUID.randomUUID(), newName.substring(0, Math.min(newName.length(), 16)));
-
-        User user = new User(player, Con);
 
         npcSkinNameReplaced.getProperties().putAll(npcSkin.getProperties());
 

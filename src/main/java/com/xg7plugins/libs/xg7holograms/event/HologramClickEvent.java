@@ -1,7 +1,6 @@
 package com.xg7plugins.libs.xg7holograms.event;
 
 import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
-import com.xg7plugins.libs.xg7holograms.holograms.HologramState;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -12,16 +11,16 @@ import org.jetbrains.annotations.NotNull;
 public class HologramClickEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
     private final ClickType clickType;
-    private final HologramState hologramState;
+    private final Hologram hologram;
 
-    public HologramClickEvent(@NotNull Player who, @NotNull ClickType clickType, @NotNull HologramState hologramState) {
+    public HologramClickEvent(@NotNull Player who, @NotNull ClickType clickType, @NotNull Hologram hologram) {
         super(who);
         this.clickType = clickType;
-        this.hologramState = hologramState;
+        this.hologram = hologram;
     }
 
     @Override
-    public @NotNull HandlerList getHandlers() {
+    public HandlerList getHandlers() {
         return handlers;
     }
 

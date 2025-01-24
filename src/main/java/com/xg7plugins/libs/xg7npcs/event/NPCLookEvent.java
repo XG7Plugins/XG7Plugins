@@ -2,7 +2,7 @@ package com.xg7plugins.libs.xg7npcs.event;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.Listener;
-import com.xg7plugins.events.EventHandler;
+import com.xg7plugins.events.bukkitevents.EventHandler;
 import com.xg7plugins.libs.xg7npcs.NPCManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;

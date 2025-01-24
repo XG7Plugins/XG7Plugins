@@ -17,7 +17,7 @@ public interface ICommand {
     }
 
     default void onCommand(CommandSender sender, CommandArgs args) {
-        syntaxError(sender,this.getClass().getAnnotation(com.xg7plugins.commands.setup.Command.class).syntax());
+        syntaxError(sender,this.getClass().getAnnotation(Command.class).syntax());
     }
 
     default List<String> onTabComplete (CommandSender sender, CommandArgs args) {

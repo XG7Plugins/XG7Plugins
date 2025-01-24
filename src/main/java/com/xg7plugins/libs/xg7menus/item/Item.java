@@ -36,6 +36,11 @@ public class Item {
     protected ItemStack itemStack;
     protected int slot;
 
+    private static final ReflectionClass nbtTagCompoundClass = NMSUtil.getNMSClassViaVersion(17 , "NBTTagCompound", "nbt.NBTTagCompound");
+    private static final ReflectionClass nmsItemStackClass = NMSUtil.getNMSClassViaVersion(17, "ItemStack", "world.item.ItemStack");
+    private static final ReflectionClass craftItemStackClass = NMSUtil.getCraftBukkitClass("inventory.CraftItemStack");
+
+
     protected HashMap<String, String> buildPlaceholders = new HashMap<>();
 
 
@@ -83,7 +88,7 @@ public class Item {
 
     public static Item commandIcon(XMaterial material, ICommand command) {
         Item item = new Item(material.parseItem());
-        Command commandConfig = command.getClass().getAnnotation(com.xg7plugins.commands.setup.Command.class);
+        Command commandConfig = command.getClass().getAnnotation(Command.class);
         item.name("&b/&f" + commandConfig.name());
         item.lore(
                 "lang:[commands-display.command-item.usage]",

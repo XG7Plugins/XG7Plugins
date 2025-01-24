@@ -7,8 +7,10 @@ import com.mojang.authlib.properties.Property;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.libs.xg7holograms.HologramBuilder;
+import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.utils.location.Location;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.reflection.nms.NMSUtil;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -22,19 +24,22 @@ import java.net.URL;
 import java.util.*;
 
 @Getter
-public class NPC {
+public abstract class NPC {
 
     protected Object name;
     protected Object skin;
     protected Location location;
+    protected Map<UUID, Integer> npcIDS;
     protected String id;
-    protected List<Pair<>> equipments;
+    protected List<Pair<?,?>> equipments;
     protected Plugin plugin;
     protected boolean lookAtPlayer = false;
     protected boolean playerSkin = false;
 
     public NPC(Plugin plugin, String id, List<String> name, Location location) {
         this.name = XG7Plugins.getMinecraftVersion() < 8 ? name.get(0) : HologramBuilder.creator(plugin,id + ":name").setLines(name).setLocation(location.add(0,-0.2,0)).build();
+
+        if (XG7Plugins.getMinecraftVersion() > 7) XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get("npcs"));
 
         initSkin();
 

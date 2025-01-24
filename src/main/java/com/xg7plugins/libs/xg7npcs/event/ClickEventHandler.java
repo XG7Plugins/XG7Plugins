@@ -2,6 +2,7 @@ package com.xg7plugins.libs.xg7npcs.event;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.PacketListener;
+import com.xg7plugins.events.packetevents.PacketEventHandler;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.reflection.nms.Packet;
@@ -17,6 +18,7 @@ public class ClickEventHandler implements PacketListener {
     }
 
 
+    @PacketEventHandler(packet = "PacketPlayInUseEntity")
     public void onClick(PacketEvent event) {
         Player player = event.getPlayer();
         Packet packet = event.getPacket();

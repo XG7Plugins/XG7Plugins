@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Command(
         name = "reload",
         description = "Reloads the plugin",
-        syntax = "/xg7plugins reload <type> (plugin)",
+        syntax = "/xg7plugins reload <jsoncache or [config, lang, database, tasks, events, all]> (plugin)",
         permission = "xg7plugins.command.reload"
 )
 public class ReloadCommand implements ICommand {
@@ -42,9 +42,7 @@ public class ReloadCommand implements ICommand {
             suggestions.add("all");
             suggestions.add("invalidatejsoncache");
         }
-        if (args.len() == 2) {
-            suggestions.addAll(XG7Plugins.getInstance().getPlugins().keySet().stream().filter(s -> !s.equals("XG7Plugins")).collect(Collectors.toList()));
-        }
+        if (args.len() == 2) suggestions.addAll(XG7Plugins.getInstance().getPlugins().keySet().stream().filter(s -> !s.equals("XG7Plugins")).collect(Collectors.toList()));
         return suggestions;
     }
 

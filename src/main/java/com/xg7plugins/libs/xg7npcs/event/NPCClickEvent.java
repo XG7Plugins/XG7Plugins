@@ -1,5 +1,6 @@
 package com.xg7plugins.libs.xg7npcs.event;
 
+import com.xg7plugins.libs.xg7holograms.holograms.Hologram;
 import com.xg7plugins.libs.xg7npcs.npcs.NPC;
 import lombok.Getter;
 import org.bukkit.entity.Player;

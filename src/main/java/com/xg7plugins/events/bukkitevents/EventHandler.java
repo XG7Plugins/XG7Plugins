@@ -1,4 +1,4 @@
-package com.xg7plugins.events;
+package com.xg7plugins.events.bukkitevents;
 
 import org.bukkit.event.EventPriority;
 
