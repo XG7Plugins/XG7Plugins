@@ -2,6 +2,10 @@ name: XG7Plugins
 version: '1.0'
 main: com.xg7plugins.XG7Plugins
 api-version: '1.13'
+loadbefore:
+  - XG7Lobby
+  - XG7Kits
+
 softdepend:
   - PlaceholderAPI
   - Floodgate

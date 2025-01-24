@@ -256,7 +256,6 @@ public final class XG7Plugins extends Plugin {
     public static void unregister(Plugin plugin) {
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
         XG7Plugins.getInstance().getLog().loading("Unregistering " + plugin.getName() + "...");
-        xg7Plugins.taskManager.cancelTasks(plugin);
         xg7Plugins.getPacketEventManager().unregisterPlugin(plugin);
         xg7Plugins.getDatabaseManager().disconnectPlugin(plugin);
         xg7Plugins.getScoreManager().unregisterPlugin(plugin);

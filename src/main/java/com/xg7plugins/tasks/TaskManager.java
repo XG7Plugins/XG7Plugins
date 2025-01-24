@@ -42,6 +42,10 @@ public class TaskManager {
         });
     }
 
+    public Task getRegisteredTask(Plugin plugin, String id) {
+        return tasks.get(plugin.getName() + ":" + id);
+    }
+
     public void runAsyncTask(Plugin plugin, String executorName, Runnable task) {
         runTask(new Task(plugin, "task-" + UUID.randomUUID(), true, executorName, 0, TaskState.IDLE, task));
     }
@@ -82,7 +86,7 @@ public class TaskManager {
                                 task.getPlugin(),
                                 taskRunnable,
                                 0,
-                                task.getDelay()
+                                convertMillisToTicks(task.getDelay())
                         ).getTaskId()
                 );
             }
@@ -148,8 +152,17 @@ public class TaskManager {
 
 
     public void shutdown() {
-        repeatingAsyncTasksExecutor.shutdownNow();
-        asyncExecutors.values().forEach(ExecutorService::shutdownNow);
+        repeatingAsyncTasksExecutor.shutdown();
+        asyncExecutors.values().forEach(ExecutorService::shutdown);
+        this.tasks.clear();
+        this.asyncExecutors.clear();
+    }
+
+    public static long convertTicksToMillis(long ticks) {
+        return ticks * 50;
+    }
+    public static long convertMillisToTicks(long millis) {
+        return millis / 50;
     }
 
 }
