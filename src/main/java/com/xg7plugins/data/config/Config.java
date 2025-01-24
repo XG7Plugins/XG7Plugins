@@ -94,6 +94,7 @@ public class Config {
         return Optional.ofNullable(adapter.fromConfig(get(path, ConfigurationSection.class).orElse(null), optionalTypeArgs));
     }
 
+    @SuppressWarnings("unchecked")
     public <T> Optional<List<T>> getList(String path, Class<T> type) {
         if (!config.contains(path)) {
             plugin.getLog().warn(path + " not found in " + name + ".yml");
