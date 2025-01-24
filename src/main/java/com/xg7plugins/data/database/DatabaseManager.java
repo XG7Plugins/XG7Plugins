@@ -25,7 +25,7 @@ public class DatabaseManager {
 
     private final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
     @Getter
-    private TableCreator tableCreator = new TableCreator();
+    private final TableCreator tableCreator = new TableCreator();
     @Getter
     private final ObjectCache<String, Entity> cachedEntities;
 
@@ -134,14 +134,14 @@ public class DatabaseManager {
         plugin.getLog().loading("Disconnected database!");
     }
 
-    public <T extends Entity> CompletableFuture<T> getCachedEntity(String id) {
-        return (CompletableFuture<T>) cachedEntities.get(id);
+    public <T extends Entity> CompletableFuture<T> getCachedEntity(Plugin plugin, String id) {
+        return (CompletableFuture<T>) cachedEntities.get(plugin.getName() + ":" + id);
     }
-    public CompletableFuture<Boolean> containsCachedEntity(String id) {
-        return cachedEntities.containsKey(id);
+    public CompletableFuture<Boolean> containsCachedEntity(Plugin plugin, String id) {
+        return cachedEntities.containsKey(plugin.getName() + ":" + id);
     }
-    public void cacheEntity(String id, Entity entity) {
-        cachedEntities.put(id, entity);
+    public void cacheEntity(Plugin plugin, String id, Entity entity) {
+        cachedEntities.put(plugin.getName() + ":" + id, entity);
     }
 
 }

@@ -41,4 +41,8 @@ public class Task {
         this.state = state;
         this.executorName = executorName;
     }
+
+    public void run() {
+        runnable.run();
+    }
 }

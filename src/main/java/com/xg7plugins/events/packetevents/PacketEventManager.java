@@ -16,30 +16,39 @@ public class PacketEventManager extends PacketEventManagerBase {
             @Override
             public void channelRead(ChannelHandlerContext context, Object o)
                     throws Exception {
-
-                Packet packet = new Packet(o);
-
                 try {
-                    processPacket(packet, player);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    Packet packet = new Packet(o);
+                    try {
+                        processPacket(packet, player);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    super.channelRead(context, packet.getPacket());
+                    return;
+                } catch (Exception ignored) {
+                    //Packet not found on plugin
                 }
 
-                super.channelRead(context, packet.getPacket());
+                super.channelRead(context, o);
             }
 
             @Override
             public void write(ChannelHandlerContext context, Object o, ChannelPromise channelPromise) throws Exception {
 
-                Packet packet = new Packet(o);
-
                 try {
-                    processPacket(packet, player);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    Packet packet = new Packet(o);
+                    try {
+                        processPacket(packet, player);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    super.write(context, packet.getPacket(),channelPromise);
+                    return;
+                } catch (Exception ignored) {
+                    //Packet not found on plugin
                 }
 
-                super.write(context, packet.getPacket(), channelPromise);
+                super.write(context, o, channelPromise);
             }
         };
 

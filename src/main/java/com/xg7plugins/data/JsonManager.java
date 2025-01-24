@@ -2,11 +2,13 @@ package com.xg7plugins.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.cache.ObjectCache;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
 
 public class JsonManager {
@@ -55,7 +57,7 @@ public class JsonManager {
                 e.printStackTrace();
             }
 
-            cache.put(path, object);
+            cache.put(plugin + ":" + path, object);
 
             plugin.getLog().info("Saved!");
         }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
@@ -70,14 +72,32 @@ public class JsonManager {
                 return cache.get(path).join();
             }
             File file = new File(plugin.getDataFolder(), path);
-            if (!file.exists()) saveJson(plugin, path, new Object()).join();
+            if (!file.exists()) plugin.saveResource(path, false);
             T t;
             try {
                 t = gson.fromJson(new FileReader(file), clazz);
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            cache.put(path, t);
+            cache.put(plugin.getName() + ":" + path, t);
+            return t;
+        }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
+    }
+    @SuppressWarnings("unchecked")
+    public <T> CompletableFuture<T> load(Plugin plugin, String path, TypeToken<T> type) {
+        return (CompletableFuture<T>) CompletableFuture.supplyAsync(() -> {
+            if (cache.containsKey(path).join()) {
+                return cache.get(path).join();
+            }
+            File file = new File(plugin.getDataFolder(), path);
+            if (!file.exists()) plugin.saveResource(path, false);
+            T t;
+            try {
+                t = gson.fromJson(new FileReader(file), type.getType());
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            cache.put(plugin.getName() + ":" + path, t);
             return t;
         }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
     }

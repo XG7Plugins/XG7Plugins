@@ -33,7 +33,7 @@ public class CommandAntiTabOlder implements Listener, PacketListener {
                     ICommand iCommand = entry.getValue();
                     Command commandConfig = iCommand.getClass().getAnnotation(Command.class);
                     if (commandConfig == null) continue;
-                    List<String> aliases = plugin.getConfigsManager().getConfig("commands").get(commandConfig.name(), List.class).orElse(new ArrayList<>());
+                    List<String> aliases = plugin.getConfigsManager().getConfig("commands").getList(commandConfig.name(), String.class).orElse(new ArrayList<>());
 
                     commandPermissions.put("/" + commandName, commandConfig.permission());
                     aliases.forEach(alias -> commandPermissions.put("/" + alias, commandConfig.permission()));

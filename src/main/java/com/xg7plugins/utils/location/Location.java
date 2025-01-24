@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 @AllArgsConstructor
 @Getter
@@ -29,38 +30,76 @@ public class Location implements Cloneable {
     }
 
     public Location add(double x, double y, double z) {
-        return new Location(world, this.x + x, this.y + y, this.z + z);
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        return this;
     }
     public Location add(double x, double y, double z,float yaw, float pitch) {
-        return new Location(world, this.x + x, this.y + y, this.z + z, this.yaw + yaw, this.pitch + pitch);
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        this.yaw += yaw;
+        this.pitch += pitch;
+        return this;
     }
     public Location add(Location locationToAdd) {
-        return new Location(world, this.x + locationToAdd.getX(), this.y + locationToAdd.getY(), this.z + locationToAdd.getZ(), this.yaw + locationToAdd.getYaw(), this.pitch + locationToAdd.getPitch());
+        this.x += locationToAdd.getX();
+        this.y += locationToAdd.getY();
+        this.z += locationToAdd.getZ();
+        this.yaw += locationToAdd.getYaw();
+        this.pitch += locationToAdd.getPitch();
+        return this;
+    }
+    public Location add(Vector vector) {
+        this.x += vector.getX();
+        this.y += vector.getY();
+        this.z += vector.getZ();
+        return this;
     }
     public Location subtract(double x, double y, double z) {
-        return new Location(world, this.x - x, this.y - y, this.z - z);
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
     }
-    public Location subtract(double x, double y, double z, float yaw, float pitch) {
-        return new Location(world, this.x - x, this.y - y, this.z - z, this.yaw - yaw, this.pitch - pitch);
+    public Location subtract(double x, double y, double z,float yaw, float pitch) {
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        this.yaw -= yaw;
+        this.pitch -= pitch;
+        return this;
     }
-    public Location subtract(Location locationToSubtract) {
-        return new Location(world, this.x - locationToSubtract.getX(), this.y - locationToSubtract.getY(), this.z - locationToSubtract.getZ(), this.yaw - locationToSubtract.getYaw(), this.pitch - locationToSubtract.getPitch());
+    public Location subtract(Location locationToAdd) {
+        this.x -= locationToAdd.getX();
+        this.y -= locationToAdd.getY();
+        this.z -= locationToAdd.getZ();
+        this.yaw -= locationToAdd.getYaw();
+        this.pitch -= locationToAdd.getPitch();
+        return this;
+    }
+    public Location subtract(Vector vector) {
+        this.x -= vector.getX();
+        this.y -= vector.getY();
+        this.z -= vector.getZ();
+        return this;
+    }
+
+    public Vector getDirection() {
+        Vector vector = new Vector();
+        double rotX = this.getYaw();
+        double rotY = this.getPitch();
+        vector.setY(-Math.sin(Math.toRadians(rotY)));
+        double xz = Math.cos(Math.toRadians(rotY));
+        vector.setX(-xz * Math.sin(Math.toRadians(rotX)));
+        vector.setZ(xz * Math.cos(Math.toRadians(rotX)));
+        return vector;
     }
 
     public boolean isNearby(Location location, double distance) {
         return Math.abs(location.getX() - x) <= distance && Math.abs(location.getY() - y) <= distance && Math.abs(location.getZ() - z) <= distance;
     }
-
-    public static boolean isInside(Location location1, Location location2, Location location) {
-
-        Location maxLocation = new Location(location1.getWorld().getName(), Math.max(location1.getX(), location2.getX()), Math.max(location1.getY(), location2.getY()), Math.max(location1.getZ(), location2.getZ()));
-        Location minLocation = new Location(location1.getWorld().getName(), Math.min(location1.getX(), location2.getX()), Math.min(location1.getY(), location2.getY()), Math.min(location1.getZ(), location2.getZ()));
-
-        return maxLocation.getX() >= location.getX() && minLocation.getX() <= location.getX() &&
-                maxLocation.getY() >= location.getY() && minLocation.getY() <= location.getY() &&
-                maxLocation.getZ() >= location.getZ() && minLocation.getZ() <= location.getZ();
-    }
-
 
     public static Location of(String world, double x, double y, double z) {
         return new Location(world, x, y, z);
@@ -98,4 +137,6 @@ public class Location implements Cloneable {
             throw new AssertionError();
         }
     }
+
+    private Location() {}
 }

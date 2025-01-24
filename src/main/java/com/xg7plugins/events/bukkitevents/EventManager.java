@@ -11,6 +11,7 @@ import org.bukkit.event.world.WorldEvent;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class EventManager {
@@ -35,17 +36,19 @@ public class EventManager {
                 if (!method.isAnnotationPresent(EventHandler.class)) continue;
                 EventHandler eventHandler = method.getAnnotation(EventHandler.class);
 
-                Config config = plugin.getConfigsManager().getConfig(eventHandler.enabledPath()[0]);
+                Config config = plugin.getConfig(eventHandler.enabledPath()[0]);
 
                 boolean invert = Boolean.parseBoolean(eventHandler.enabledPath()[2]);
-                if (config != null) if (config.get(eventHandler.enabledPath()[1], Boolean.class).orElse(false) == invert) continue;
+                if (config != null) {
+                    if (config.get(eventHandler.enabledPath()[1], Boolean.class).orElse(false) == invert) continue;
+                }
                 else if (invert) continue;
-
                 plugin.getServer().getPluginManager().registerEvent(
                         (Class<? extends org.bukkit.event.Event>) method.getParameterTypes()[0],
                         listeners.get(plugin.getName()),
                         eventHandler.priority(),
                         (listener, event2) -> {
+                            if (event2.getClass() != method.getParameterTypes()[0]) return;
                             if (eventHandler.isOnlyInWorld()) {
                                 if (event2 instanceof PlayerEvent) {
                                     PlayerEvent playerEvent = (PlayerEvent) event2;

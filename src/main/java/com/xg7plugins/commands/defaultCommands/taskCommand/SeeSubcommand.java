@@ -81,7 +81,7 @@ public class SeeSubcommand implements ICommand {
                 BaseMenu.refresh(event.getInventoryHolder());
             });;
             builder.name("&e" + task.getName());
-            builder.lore(lang.get("tasks-menu.task-item", List.class).orElse(Collections.emptyList()));
+            builder.lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()));
 
             builder.setNBTTag("task-id", task.getPlugin().getName() + ":" + task.getName());
             builder.setNBTTag("task-state", task.getState().name());

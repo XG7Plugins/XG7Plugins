@@ -60,7 +60,7 @@ public class LangManager {
                         langs.put(plugin.getName() + ":" + lang, YamlConfiguration.loadConfiguration(file));
                     }
                 }
-        , XG7Plugins.taskManager().getAsyncExecutors().get("files"));
+                , XG7Plugins.taskManager().getAsyncExecutors().get("files"));
 
     }
 
@@ -100,6 +100,7 @@ public class LangManager {
                 String playerLocale = XG7Plugins.getMinecraftVersion() >= 12 ? player.getLocale() : PlayerNMS.cast(player).getCraftPlayerHandle().getField("locale");
                 plugin.getLog().info(player.getName() + " language: " + playerLocale);
                 for (Map.Entry<String, YamlConfiguration> entry : langs.asMap().join().entrySet()) {
+                    if (entry.getValue().getString("locale") == null) continue;
                     if (entry.getValue().getString("locale").equals(playerLocale)) {
                         langId = entry.getKey();
                         break;

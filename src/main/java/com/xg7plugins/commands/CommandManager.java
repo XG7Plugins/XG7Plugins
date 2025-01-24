@@ -60,7 +60,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             Command commandSetup = command.getClass().getAnnotation(Command.class);
 
-            List<String> aliases = plugin.getConfigsManager().getConfig("commands").get(commandSetup.name(), List.class).orElse(null);
+            List<String> aliases = plugin.getConfigsManager().getConfig("commands").getList(commandSetup.name(), String.class).orElse(null);
             if (aliases == null) return;
 
             PluginCommand pluginCommand = (PluginCommand) ReflectionClass.of(PluginCommand.class)
@@ -157,7 +157,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             return true;
         }
         if (commandSender instanceof Player) {
-            if (!commandConfig.isInEnabledWorldOnly() && plugin.getEnabledWorlds().contains(((Player) commandSender).getWorld().getName()) && !plugin.getEnabledWorlds().isEmpty()) {
+            if (commandConfig.isInEnabledWorldOnly() && !plugin.getEnabledWorlds().contains(((Player) commandSender).getWorld().getName())) {
                 Text.formatLang(XG7Plugins.getInstance(), commandSender, "commands.disabled-world").thenAccept(text -> text.send(commandSender));
                 return true;
             }

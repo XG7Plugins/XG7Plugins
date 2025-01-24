@@ -50,7 +50,7 @@ public class AboutPage extends HelpPage {
                     XG7Plugins.getInstance().getConfig("messages") :
                     Config.of(XG7Plugins.getInstance(), XG7Plugins.getInstance().getLangManager().getLangByPlayer(XG7Plugins.getInstance(), player).join());
 
-            String about = (String) lang.get("help-menu.about", List.class).orElse(new ArrayList<String>()).stream().collect(Collectors.joining("\n"));
+            String about = lang.getList("help-menu.about", String.class).orElse(new ArrayList<String>()).stream().collect(Collectors.joining("\n"));
 
             return new TextComponent(
                     Text.detectLangOrText(XG7Plugins.getInstance(),player,about).join()

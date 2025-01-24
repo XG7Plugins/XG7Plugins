@@ -8,8 +8,8 @@ import java.util.Arrays;
 @Getter
 public class Packet {
 
-    private ReflectionObject packet;
-    private PacketClass packetClass;
+    private final ReflectionObject packet;
+    private final PacketClass packetClass;
 
     public Packet(PacketClass packetClass, Object... args) {
         Class<?>[] classes = new Class[args.length];
@@ -73,4 +73,5 @@ public class Packet {
     public ReflectionObject getReflectionObjectPacket() {
         return packet;
     }
+
 }

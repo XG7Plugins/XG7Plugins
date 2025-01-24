@@ -35,7 +35,7 @@ public class TaskMenu extends PageMenu {
         tasks.forEach(task -> {
             Item builder = Item.from(XMaterial.REPEATER.parseMaterial());
             builder.name("&e" + task.getName());
-            builder.lore(lang.get("tasks-menu.task-item", List.class).orElse(Collections.emptyList()));
+            builder.lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()));
 
             builder.setNBTTag("task-id", task.getPlugin().getName() + ":" + task.getName());
             builder.setNBTTag("task-state", task.getState().name());
@@ -53,7 +53,7 @@ public class TaskMenu extends PageMenu {
         pagedItems.add(
                 Item.from(XMaterial.CLOCK)
                         .name("&eTPS calculator")
-                        .lore(lang.get("tasks-menu.task-item", List.class).orElse(Collections.emptyList()))
+                        .lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()))
                         .setBuildPlaceholders(new HashMap<String, String>() {{
                             put("[PLUGIN]", "XG7Plugins");
                             put("[ID]", "TPS calculator");
@@ -83,7 +83,7 @@ public class TaskMenu extends PageMenu {
                 Item.from(XMaterial.ARROW).name("lang:[go-back-item]").slot(45),
                 Item.from(XMaterial.ARROW).name("lang:[go-next-item]").slot(53),
                 Item.from(XMaterial.ENDER_PEARL).name("lang:[refresh-item]").slot(0),
-                Item.from(Material.PAPER).name(" ").lore(lang.get("tasks-menu.notes", List.class).orElse(Collections.emptyList()))
+                Item.from(Material.PAPER).name(" ").lore(lang.getList("tasks-menu.notes", String.class).orElse(Collections.emptyList()))
                         .setBuildPlaceholders(new HashMap<String, String>() {{
                             put("[TASKS]", String.valueOf(XG7Plugins.taskManager().getTasks().size()));
                             put("[RAM]", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + " / " + Runtime.getRuntime().totalMemory() / 1024 / 1024);

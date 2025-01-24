@@ -36,8 +36,8 @@ public class TextComponent {
 
         String spaces = "";
 
-        if (rawText.startsWith("[CENTER]")) {
-            rawText = rawText.replace("[CENTER]", "");
+        if (rawText.startsWith("[CENTER] ")) {
+            rawText = rawText.replace("[CENTER] ", "");
             spaces = TextCentralizer.getSpacesCentralized(TextCentralizer.PixelsSize.CHAT.getPixels(), rawText);
         }
 
@@ -95,8 +95,8 @@ public class TextComponent {
                     builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(textMatch.group(1)).create()));
                     try {
                         builder.event(new ClickEvent(
-                                    ClickEvent.Action.valueOf(actionMatch.group(1)),
-                                    Text.format(valMatch.group(1)).getText()
+                                        ClickEvent.Action.valueOf(actionMatch.group(1)),
+                                        Text.format(valMatch.group(1)).getText()
                                 )
                         );
                     } catch (IllegalArgumentException e) {

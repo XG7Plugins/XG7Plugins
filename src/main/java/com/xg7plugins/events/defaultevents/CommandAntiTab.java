@@ -29,7 +29,7 @@ public class CommandAntiTab implements Listener {
                     Command commandConfig = iCommand.getClass().getAnnotation(Command.class);
                     if (commandConfig == null) continue;
 
-                    List<String> aliases = plugin.getConfigsManager().getConfig("commands").get(commandConfig.name(), List.class).orElse(new ArrayList<>());
+                    List<String> aliases = plugin.getConfigsManager().getConfig("commands").getList(commandConfig.name(), String.class).orElse(new ArrayList<>());
 
 
                     commandPermissions.put(commandName, commandConfig.permission());

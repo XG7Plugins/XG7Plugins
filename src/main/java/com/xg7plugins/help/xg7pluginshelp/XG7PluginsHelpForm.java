@@ -27,7 +27,7 @@ public class XG7PluginsHelpForm extends SimpleForm {
                 XG7Plugins.getInstance().getConfig("messages") :
                 Config.of(XG7Plugins.getInstance(), XG7Plugins.getInstance().getLangManager().getLangByPlayer(plugin, player).join());
 
-        String about = (String) lang.get("help-menu.about", List.class).orElse(new ArrayList<String>()).stream().collect(Collectors.joining("\n"));
+        String about = String.join("\n", lang.getList("help-menu.about", String.class).orElse(new ArrayList<>()));
 
         return Text.detectLangOrText(XG7Plugins.getInstance(),player,about).join()
                 .replace("[DISCORD]", "discord.gg/jfrn8w92kF")

@@ -61,9 +61,12 @@ public class DatabaseProcessor {
         if (connection == null) return;
         PreparedStatement ps = null;
 
+        String currentQuery = "";
+
         try {
             for (Pair<String, List<Object>> query : transaction.getQueries()) {
-                ps = connection.prepareStatement(query.getFirst());
+                currentQuery = query.getFirst();
+                ps = connection.prepareStatement(currentQuery);
                 for (int i = 0; i < query.getSecond().size(); i++) {
                     Object o = query.getSecond().get(i);
                     if (o instanceof UUID) {
@@ -87,6 +90,8 @@ public class DatabaseProcessor {
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
+            System.err.println("Error while processing query: " + currentQuery  + " " + e.getMessage());
+
             transaction.completeTask();
 
             throw new RuntimeException(e);
@@ -126,14 +131,14 @@ public class DatabaseProcessor {
                 results.add(map);
             }
 
-            QueryResult result = new QueryResult(results.iterator());
-
+            QueryResult result = new QueryResult(query.getPlugin(),results.iterator());
             if (query.getResult() != null) query.getResult().accept(result);
 
             ps.close();
             query.completeTask(result);
         } catch (SQLException e) {
-            query.completeTask(null);
+            System.err.println("Error while processing query: " + query.getQuery()  + " " + e.getMessage());
+            query.completeTask(new QueryResult(query.getPlugin(),null));
             throw new RuntimeException(e);
         }
     }
@@ -154,7 +159,7 @@ public class DatabaseProcessor {
 
     public CompletableFuture<Boolean> exists(Plugin plugin, Class<? extends Entity> table, String idCol, Object id) {
         return CompletableFuture.supplyAsync(() -> {
-            if (databaseManager.containsCachedEntity(id.toString()).join()) return true;
+            if (databaseManager.containsCachedEntity(plugin, id.toString()).join()) return true;
 
             Connection connection = databaseManager.getConnection(plugin);
 

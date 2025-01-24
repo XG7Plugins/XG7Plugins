@@ -68,7 +68,7 @@ public class XG7PluginsHelpGUI extends Menu {
                       XG7Plugins.getInstance().getConfig("messages") :
                       Config.of(XG7Plugins.getInstance(), XG7Plugins.getInstance().getLangManager().getLangByPlayer(plugin, player).join());
 
-                List<String> about = lang.get("help-menu.about", List.class).orElse(new ArrayList<String>());
+                List<String> about = lang.getList("help-menu.about", String.class).orElse(new ArrayList<>());
 
                 BookItem bookItem = BookItem.newBook();
 

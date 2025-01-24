@@ -90,6 +90,8 @@ public final class XG7Plugins extends Plugin {
     private static boolean geyserFormEnabled = false;
     @Getter
     private static final boolean paper = Bukkit.getServer().getName().contains("Paper");
+    @Getter
+    private static final boolean bungeecord = Bukkit.spigot().getConfig().getBoolean("settings.bungeecord", false);
 
     static {
         Pattern pattern = Pattern.compile("1\\.([0-9]?[0-9])");

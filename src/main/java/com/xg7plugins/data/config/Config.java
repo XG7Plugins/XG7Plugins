@@ -12,7 +12,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Getter
 public class Config {
@@ -55,19 +57,25 @@ public class Config {
     }
 
     public <T> Optional<T> get(String path, Class<T> type, Object... optionalTypeArgs) {
-        if (config.get(path) == null) {
+        if (!config.contains(path)) {
             plugin.getLog().warn(path + " not found in " + name + ".yml");
+            return Optional.empty();
+        }
+        if (config.get(path) == null) {
+            plugin.getLog().warn(path + " in " + name + " is empty");
             return Optional.empty();
         }
 
         if (type == String.class) return Optional.ofNullable(type.cast(config.getString(path)));
-        if (type == Integer.class || type == int.class) return Optional.ofNullable(type.cast(config.contains(path) ? config.getInt(path) : null));
-        if (type == Boolean.class || type == boolean.class) return Optional.ofNullable(type.cast(config.contains(path) ? config.getBoolean(path) : null));
-        if (type == Double.class || type == double.class) return Optional.ofNullable(type.cast(config.contains(path) ? config.getDouble(path) : null));
-        if (type == Long.class || type == long.class) return Optional.ofNullable(type.cast(config.contains(path) ? config.getLong(path) : null));
-        if (type == List.class) return Optional.ofNullable(type.cast(config.getList(path)));
+        if (type == Integer.class || type == int.class) return Optional.of(type.cast(config.getInt(path)));
+        if (type == Boolean.class || type == boolean.class) return Optional.of(type.cast(config.getBoolean(path)));
+        if (type == Double.class || type == double.class) return Optional.of(type.cast(config.getDouble(path)));
+        if (type == Long.class || type == long.class) return Optional.of(type.cast(config.getLong(path)));
+        if (type == Float.class || type == float.class) return Optional.of(type.cast((float) config.getDouble(path)));
+        if (type == Short.class || type == short.class) return Optional.of(type.cast((short) config.getInt(path)));
         if (type == ConfigurationSection.class) return Optional.ofNullable(type.cast(config.getConfigurationSection(path)));
-        if (type.isEnum()) return Optional.ofNullable(config.contains(path) ? type.cast(Enum.valueOf((Class<? extends Enum>) type, config.getString(path).toUpperCase())) : null);
+        if (type.isEnum()) return Optional.of(type.cast(Enum.valueOf((Class<? extends Enum>) type, config.getString(path).toUpperCase())));
+        if (type == UUID.class) return Optional.of((T) UUID.fromString(config.getString(path)));
 
         if (OfflinePlayer.class.isAssignableFrom(type)) {
             return Optional.of((T) Bukkit.getOfflinePlayer(config.getString(path)));
@@ -85,6 +93,29 @@ public class Config {
 
         return Optional.ofNullable(adapter.fromConfig(get(path, ConfigurationSection.class).orElse(null), optionalTypeArgs));
     }
+
+    public <T> Optional<List<T>> getList(String path, Class<T> type) {
+        if (!config.contains(path)) {
+            plugin.getLog().warn(path + " not found in " + name + ".yml");
+            return Optional.empty();
+        }
+        if (config.get(path) == null) {
+            plugin.getLog().warn(path + " in " + name + " is empty");
+            return Optional.empty();
+        }
+
+        if (type == String.class) return Optional.of((List<T>) config.getStringList(path));
+        if (type == Integer.class || type == int.class) return Optional.of((List<T>) config.getIntegerList(path));
+        if (type == Boolean.class || type == boolean.class) return Optional.of((List<T>) config.getBooleanList(path));
+        if (type == Double.class || type == double.class) return Optional.of((List<T>) config.getDoubleList(path));
+        if (type == Long.class || type == long.class) return Optional.of((List<T>) config.getLongList(path));
+        if (type == Float.class || type == float.class) return Optional.of((List<T>) config.getFloatList(path));
+        if (type == Map.class) return Optional.of((List<T>) config.getMapList(path));
+        if (type == Short.class || type == short.class) return Optional.of((List<T>) config.getShortList(path));
+
+        return Optional.empty();
+    }
+
     public Optional<Long> getTime(String path) {
         String time = config.getString(path);
         if (time == null) {
