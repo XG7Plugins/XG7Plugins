@@ -1,7 +1,7 @@
 package com.xg7plugins.libs.xg7menus.menuhandler;
 
 import com.xg7plugins.events.Listener;
-import com.xg7plugins.events.bukkitevents.EventHandler;
+import com.xg7plugins.events.EventHandler;
 import com.xg7plugins.libs.xg7menus.MenuManager;
 import com.xg7plugins.libs.xg7menus.MenuPrevents;
 import com.xg7plugins.libs.xg7menus.events.ClickEvent;

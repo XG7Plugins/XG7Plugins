@@ -1,6 +1,21 @@
 prefix: "&b[XG&37P&9lu&1gins]&r"
 
-log-enabled: true
+debug:
+
+  enabled: false
+
+  database: true
+  cache: true
+  npc: true
+  hologram: true
+  player-data: true
+  text-processing: true
+  command: true
+  score: true
+  config: true
+  cooldown: true
+  form: true
+  menus: true
 
 enable-langs: true
 main-lang: en-us

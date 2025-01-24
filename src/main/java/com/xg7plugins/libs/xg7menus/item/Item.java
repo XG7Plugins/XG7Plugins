@@ -36,11 +36,6 @@ public class Item {
     protected ItemStack itemStack;
     protected int slot;
 
-    private static final ReflectionClass nbtTagCompoundClass = NMSUtil.getNMSClassViaVersion(17 , "NBTTagCompound", "nbt.NBTTagCompound");
-    private static final ReflectionClass nmsItemStackClass = NMSUtil.getNMSClassViaVersion(17, "ItemStack", "world.item.ItemStack");
-    private static final ReflectionClass craftItemStackClass = NMSUtil.getCraftBukkitClass("inventory.CraftItemStack");
-
-
     protected HashMap<String, String> buildPlaceholders = new HashMap<>();
 
 

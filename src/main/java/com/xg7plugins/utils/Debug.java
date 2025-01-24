@@ -1,0 +1,53 @@
+package com.xg7plugins.utils;
+
+import com.github.retrooper.packetevents.PacketEvents;
+import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.data.config.Config;
+import lombok.AllArgsConstructor;
+import lombok.Setter;
+import org.bukkit.Bukkit;
+
+/**
+ * This class is used to debug
+ */
+@AllArgsConstructor
+public class Debug {
+
+    private Plugin plugin;
+    private Config config;
+    @Setter
+    private boolean isLogEnabled;
+
+    public Debug(Plugin plugin) {
+        this.plugin = plugin;
+        this.config = plugin.getConfigsManager().getConfig("config");
+        if (config == null) return;
+        isLogEnabled = config.get("debug.enabled", Boolean.class).orElse(false);
+        PacketEvents.getAPI().getSettings().debug(isLogEnabled);
+    }
+
+    public void severe(String message) {
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix()  + " §cERROR§8] §c" + message);
+    }
+
+    public void fine(String criteria, String message) {
+        if (isLogEnabled && config.get("debug." + criteria, Boolean.class).orElse(false)) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix()  + " §aSUCCESS§8] §a" + message);
+    }
+
+    public void info(String criteria, String message) {
+        if (isLogEnabled && config.get("debug." + criteria, Boolean.class).orElse(false)) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §6DEBUG§8] §6" + message);
+    }
+
+    public void error(String criteria, String message) {
+        if (isLogEnabled && config.get("debug." + criteria, Boolean.class).orElse(false)) Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §cERROR§8] §c" + message);
+    }
+
+    public void warn(String message) {
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §eALERT§8] §e" + message);
+    }
+
+    public void loading(String message) {
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + "§8] §r" + message);
+    }
+
+}

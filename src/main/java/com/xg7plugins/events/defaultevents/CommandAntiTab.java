@@ -6,7 +6,7 @@ import com.xg7plugins.commands.CommandManager;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.events.Listener;
-import com.xg7plugins.events.bukkitevents.EventHandler;
+import com.xg7plugins.events.EventHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.event.player.PlayerCommandSendEvent;
 

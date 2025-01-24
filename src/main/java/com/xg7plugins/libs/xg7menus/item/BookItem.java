@@ -1,5 +1,8 @@
 package com.xg7plugins.libs.xg7menus.item;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.player.InteractionHand;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerOpenBook;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.nms.NMSUtil;
@@ -16,18 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 public class BookItem extends Item {
-
-    private static PacketClass packetPlayOutCustomPayloadClass;
-
-    private static ReflectionClass packetDataSerializerClass;
-
-    static {
-            if (XG7Plugins.getMinecraftVersion() < 14) {
-
-                packetPlayOutCustomPayloadClass = new PacketClass("PacketPlayOutCustomPayload");
-                packetDataSerializerClass = NMSUtil.getNMSClass("PacketDataSerializer");
-            }
-    }
 
     public BookItem() {
         super(new ItemStack(Material.WRITTEN_BOOK));
@@ -76,7 +67,7 @@ public class BookItem extends Item {
             return this;
         } catch (Exception ignored) {
             if (XG7Plugins.getMinecraftVersion() < 8) {
-                XG7Plugins.getInstance().getLog().warn("Books with base component is not supported on this version!");
+                XG7Plugins.getInstance().warn("Books with base component is not supported on this version!");
                 return this;
             }
         }
@@ -93,7 +84,7 @@ public class BookItem extends Item {
         }
 
         if (XG7Plugins.getMinecraftVersion() < 8) {
-            XG7Plugins.getInstance().getLog().warn("Books is not supported on version under of 1.8!");
+            XG7Plugins.getInstance().warn("Books is not supported on version under of 1.8!");
             return;
         }
 
@@ -101,13 +92,9 @@ public class BookItem extends Item {
         ItemStack old = player.getInventory().getItem(slot);
         player.getInventory().setItem(slot, this.itemStack);
 
-        ByteBuf buf = Unpooled.buffer(256);
-        buf.setByte(0, 0);
-        buf.writerIndex(1);
+        WrapperPlayServerOpenBook packet = new WrapperPlayServerOpenBook(InteractionHand.MAIN_HAND);
 
-        Packet packet = new Packet(packetPlayOutCustomPayloadClass, "MC|BOpen", packetDataSerializerClass.getConstructor(ByteBuf.class).newInstance(buf).getObject());
-
-        PlayerNMS.cast(player).sendPacket(packet);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
 
         player.getInventory().setItem(slot, old);
     }
