@@ -79,9 +79,11 @@ public class Transaction {
 
                 Object value = field.get(entityToUpdate);
 
+
                 if (value == null) continue;
 
                 if (Collection.class.isAssignableFrom(field.getType())) {
+
                     entitiesToUpdate.addAll((Collection<? extends Entity>) value);
                     continue;
                 }

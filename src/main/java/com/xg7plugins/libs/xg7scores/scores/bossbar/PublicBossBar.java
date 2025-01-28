@@ -22,7 +22,7 @@ public class PublicBossBar extends Score {
         super(delay, title, id, condition, plugin);
 
         bossBar = Bukkit.createBossBar(title.get(0),color,style);
-        bossBar.setProgress(progress);
+        bossBar.setProgress(progress / 100);
         XG7Plugins.getInstance().getScoreManager().registerScore(this);
     }
 

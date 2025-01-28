@@ -27,7 +27,7 @@ public class TablistBuilder extends ScoreBuilder<Tablist, TablistBuilder> {
         return this;
     }
     public TablistBuilder footer(List<String> footer) {
-        this.footer = header;
+        this.footer = footer;
         return this;
     }
     public TablistBuilder addFooterLine(String line) {

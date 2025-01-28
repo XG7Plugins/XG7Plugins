@@ -2,11 +2,13 @@ package com.xg7plugins.commands.setup;
 
 import com.xg7plugins.utils.Parser;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
+@Getter
 @AllArgsConstructor
 public class CommandArgs {
 

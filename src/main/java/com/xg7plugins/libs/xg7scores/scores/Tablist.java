@@ -12,10 +12,14 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Tablist extends Score {
 
     private static PacketClass packetTabClass = XG7Plugins.getMinecraftVersion() < 13 ? new PacketClass("PacketPlayOutPlayerListHeaderFooter") : null;
+
+    private final AtomicInteger headerIndex = new AtomicInteger(0);
+    private final AtomicInteger footerIndex = new AtomicInteger(0);
 
     private final List<String> header;
     private final List<String> footer;
@@ -39,8 +43,11 @@ public class Tablist extends Score {
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
             player.setPlayerListName(Text.format(playerPrefix).getTextFor(player) + player.getName() + Text.format(playerSuffix).getTextFor(player));
-            String headerl = header.size() <= indexUpdating ? header.get(header.size() - 1) : header.get(indexUpdating);
-            String footerl = footer.size() <= indexUpdating ? footer.get(footer.size() - 1) : footer.get(indexUpdating);
+            String headerl = header.get(headerIndex.getAndIncrement());
+            String footerl = footer.get(footerIndex.getAndIncrement());
+
+            if (headerIndex.get() >= header.size()) headerIndex.set(0);
+            if (footerIndex.get() >= footer.size()) footerIndex.set(0);
 
             send(player, Text.detectLangOrText(plugin,player,headerl).join().getText(), Text.detectLangOrText(plugin,player,footerl).join().getText());
         }

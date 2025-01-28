@@ -6,6 +6,7 @@ import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockEvent;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.world.WorldEvent;
 
@@ -53,6 +54,11 @@ public class EventManager {
                                 if (event2 instanceof PlayerEvent) {
                                     PlayerEvent playerEvent = (PlayerEvent) event2;
                                     if (!plugin.getEnabledWorlds().contains(playerEvent.getPlayer().getWorld().getName()))
+                                        return;
+                                }
+                                if (event2 instanceof EntityEvent) {
+                                    EntityEvent entityEvent = (EntityEvent) event2;
+                                    if (!plugin.getEnabledWorlds().contains(entityEvent.getEntity().getWorld().getName()))
                                         return;
                                 }
                                 if (event2 instanceof WorldEvent) {

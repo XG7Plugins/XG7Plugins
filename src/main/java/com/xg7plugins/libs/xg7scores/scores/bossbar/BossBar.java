@@ -35,7 +35,7 @@ public class BossBar extends Score {
         super.addPlayer(player);
         if (!bossBars.containsKey(player.getUniqueId())) {
             bossBars.put(player.getUniqueId(), Bukkit.createBossBar(updateText.get(0),color,style));
-            bossBars.get(player.getUniqueId()).setProgress(progress);
+            bossBars.get(player.getUniqueId()).setProgress(progress / 100);
             bossBars.get(player.getUniqueId()).addPlayer(player);
         }
 

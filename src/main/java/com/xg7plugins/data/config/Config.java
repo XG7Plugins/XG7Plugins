@@ -74,7 +74,12 @@ public class Config {
         if (type == Float.class || type == float.class) return Optional.of(type.cast((float) config.getDouble(path)));
         if (type == Short.class || type == short.class) return Optional.of(type.cast((short) config.getInt(path)));
         if (type == ConfigurationSection.class) return Optional.ofNullable(type.cast(config.getConfigurationSection(path)));
-        if (type.isEnum()) return Optional.of(type.cast(Enum.valueOf((Class<? extends Enum>) type, config.getString(path).toUpperCase())));
+        if (type.isEnum()) {
+            @SuppressWarnings("unchecked")
+            Class<? extends Enum<?>> enumClass = (Class<? extends Enum<?>>) type;
+            Enum<?> enumValue = Enum.valueOf((Class<? extends Enum>) enumClass, config.getString(path).toUpperCase());
+            return Optional.of(type.cast(enumValue));
+        }
         if (type == UUID.class) return Optional.of((T) UUID.fromString(config.getString(path)));
 
         if (OfflinePlayer.class.isAssignableFrom(type)) {

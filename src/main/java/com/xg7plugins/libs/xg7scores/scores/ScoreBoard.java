@@ -18,9 +18,9 @@ import org.bukkit.scoreboard.Team;
 import java.util.*;
 public class ScoreBoard extends Score {
 
-    private List<String> lines;
+    private final List<String> lines;
 
-    private HashMap<UUID, PlayerBoard> playerBoards = new HashMap<>();
+    private final HashMap<UUID, PlayerBoard> playerBoards = new HashMap<>();
 
 
     public ScoreBoard(String title, List<String> lines, String id, ScoreCondition condition, long delay, Plugin plugin) {
@@ -64,7 +64,7 @@ public class ScoreBoard extends Score {
         private Scoreboard scoreboard;
         private Objective objective;
         private final List<String> title;
-        private List<String> lines;
+        private final List<String> lines;
         private final HashMap<Integer, Pair<String, String>> lastLines;
         private final Player player;
 

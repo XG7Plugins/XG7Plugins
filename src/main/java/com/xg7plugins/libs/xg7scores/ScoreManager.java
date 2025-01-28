@@ -39,8 +39,10 @@ public class ScoreManager {
                         Bukkit.getOnlinePlayers().forEach(p -> {
                             try {
                                 if (p == null) return;
-                                if (score.getCondition().verify(p)) score.addPlayer(p);
-                                else if (score.getPlayers().contains(p.getUniqueId())) score.removePlayer(p);
+                                if (score.getCondition().verify(p) && !p.isDead()) score.addPlayer(p);
+                                else if (score.getPlayers().contains(p.getUniqueId())) {
+                                    Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> score.removePlayer(p));
+                                }
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -65,7 +67,7 @@ public class ScoreManager {
     }
     public void registerScores(final Score[] scores) {
         if (scores == null) return;
-        scoreboards.putAll(Arrays.stream(scores).map(sc -> new AbstractMap.SimpleEntry<>(sc.getId(), sc)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+        scoreboards.putAll(Arrays.stream(scores).filter(Objects::nonNull).map(sc -> new AbstractMap.SimpleEntry<>(sc.getId(), sc)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
     }
 
     public void registerScore(final Score score) {

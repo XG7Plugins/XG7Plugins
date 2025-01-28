@@ -17,6 +17,7 @@ public class PacketEventManager extends PacketEventManagerBase {
             public void channelRead(ChannelHandlerContext context, Object o)
                     throws Exception {
                 try {
+                    Class.forName(o.getClass().getName());
                     Packet packet = new Packet(o);
                     try {
                         processPacket(packet, player);
@@ -36,6 +37,7 @@ public class PacketEventManager extends PacketEventManagerBase {
             public void write(ChannelHandlerContext context, Object o, ChannelPromise channelPromise) throws Exception {
 
                 try {
+                    Class.forName(o.getClass().getName());
                     Packet packet = new Packet(o);
                     try {
                         processPacket(packet, player);
