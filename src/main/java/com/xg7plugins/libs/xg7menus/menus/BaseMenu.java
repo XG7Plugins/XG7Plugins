@@ -12,6 +12,7 @@ import com.xg7plugins.libs.xg7menus.menus.holders.PageMenuHolder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
@@ -73,13 +74,18 @@ public abstract class BaseMenu {
     public void onClose(MenuEvent event) {}
 
     protected CompletableFuture<Void> putItems(Player player, MenuHolder holder) {
-        return CompletableFuture.runAsync(() -> items(player).forEach(item -> {
-            if (item instanceof ClickableItem) {
-                ClickableItem clickItem = (ClickableItem) item;
-                holder.getUpdatedClickEvents().put(clickItem.getSlot(), clickItem.getOnClick());
-            }
-            holder.getInventory().setItem(item.getSlot(), item.getItemFor(player, plugin));
-        }), XG7Plugins.taskManager().getAsyncExecutors().get("menus"));
+        return CompletableFuture.runAsync(() -> {
+            List<Item> items = items(player);
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                items.forEach(item -> {
+                    if (item instanceof ClickableItem) {
+                        ClickableItem clickItem = (ClickableItem) item;
+                        holder.getUpdatedClickEvents().put(clickItem.getSlot(), clickItem.getOnClick());
+                    }
+                    holder.getInventory().setItem(item.getSlot(), item.getItemFor(player, plugin));
+                });
+            });
+        }, XG7Plugins.taskManager().getAsyncExecutors().get("menus"));
     }
     public static CompletableFuture<Void> update(HumanEntity player, Item item, MenuHolder holder) {
         return CompletableFuture.runAsync(() -> {

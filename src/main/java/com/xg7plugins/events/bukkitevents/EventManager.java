@@ -4,6 +4,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.entity.EntityEvent;
@@ -49,6 +50,7 @@ public class EventManager {
                         listeners.get(plugin.getName()),
                         eventHandler.priority(),
                         (listener, event2) -> {
+                            if (eventHandler.ignoreCancelled() && ((event2 instanceof Cancellable) && ((Cancellable)event2).isCancelled())) return;
                             if (event2.getClass() != method.getParameterTypes()[0]) return;
                             if (eventHandler.isOnlyInWorld()) {
                                 if (event2 instanceof PlayerEvent) {

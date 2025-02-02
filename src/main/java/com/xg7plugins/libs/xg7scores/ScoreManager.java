@@ -39,7 +39,7 @@ public class ScoreManager {
                         Bukkit.getOnlinePlayers().forEach(p -> {
                             try {
                                 if (p == null) return;
-                                if (score.getCondition().verify(p) && !p.isDead()) score.addPlayer(p);
+                                if (score.getCondition().verify(p) && !p.isDead() && XG7Plugins.getInstance().isEnabled()) score.addPlayer(p);
                                 else if (score.getPlayers().contains(p.getUniqueId())) {
                                     Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> score.removePlayer(p));
                                 }

@@ -5,6 +5,7 @@ import com.xg7plugins.data.database.query.Query;
 import com.xg7plugins.data.database.query.Transaction;
 import com.xg7plugins.utils.DAO;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -26,7 +27,7 @@ public class PlayerDataDAO implements DAO<UUID, PlayerData> {
                         Transaction.Type.INSERT
                 ).waitForResult();
                 return true;
-            } catch (IllegalAccessException e) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException | InstantiationException e) {
                 throw new RuntimeException(e);
             }
         });
@@ -60,7 +61,8 @@ public class PlayerDataDAO implements DAO<UUID, PlayerData> {
                 Transaction.update(XG7Plugins.getInstance(), data).onError(Throwable::printStackTrace).waitForResult();
                 XG7Plugins.getInstance().getDatabaseManager().cacheEntity(XG7Plugins.getInstance(), data.getPlayerUUID().toString(), data);
                 return true;
-            } catch (IllegalAccessException e) {
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException |
+                     InstantiationException e) {
                 throw new RuntimeException(e);
             }
         }, XG7Plugins.taskManager().getAsyncExecutors().get("database"));

@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 public class TableCreator {
 
     public static String getSQLType(Class<?> clazz) {
-        if (clazz == String.class) return "TEXT";
+        if (clazz == String.class) return "VARCHAR(255)";
         else if (clazz == int.class || clazz == Integer.class) return "INT(11)";
         else if (clazz == long.class || clazz == Long.class) return "BIGINT";
         else if (clazz == float.class || clazz == Float.class) return "FLOAT";

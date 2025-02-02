@@ -164,22 +164,21 @@ public final class XG7Plugins extends Plugin {
         register(this);
         plugins.forEach((name, plugin) -> {
             getLog().info("Enabling " + plugin.getName() + "...");
-
-            if (langManager == null) plugin.getConfigsManager().putConfig("messages", new Config(this, "langs/" + plugin.getConfig("config").get("main-lang", String.class).get()));
-            else langManager.loadLangsFrom(plugin);
-            if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
-            plugin.getCommandManager().registerCommands(plugin.loadCommands());
-            loadHelp();
-            eventManager.registerPlugin(plugin, plugin.loadEvents());
-            packetEventManager.registerPlugin(plugin, plugin.loadPacketEvents());
             databaseManager.connectPlugin(plugin, plugin.loadEntites());
+            if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
+            eventManager.registerPlugin(plugin, plugin.loadEvents());
+            plugin.getCommandManager().registerCommands(plugin.loadCommands());
+            packetEventManager.registerPlugin(plugin, plugin.loadPacketEvents());
+            taskManager.registerTasks(plugin.loadRepeatingTasks());
             scoreManager.registerScores(plugin.loadScores());
             menuManager.registerMenus(plugin.loadMenus());
+            loadHelp();
             if (formManager != null) {
                 Form<?,?>[] forms = plugin.loadGeyserForms();
                 if (forms != null) Arrays.stream(forms).filter(Form::isEnabled).forEach(form -> formManager.registerForm(form));
             }
-            taskManager.registerTasks(plugin.loadRepeatingTasks());
+            if (langManager == null) plugin.getConfigsManager().putConfig("messages", new Config(this, "langs/" + plugin.getConfig("config").get("main-lang", String.class).get()));
+            else langManager.loadLangsFrom(plugin);
         });
 
         if (placeholderAPI) new XG7PluginsPlaceholderExpansion().register();

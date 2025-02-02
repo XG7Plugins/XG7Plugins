@@ -120,7 +120,7 @@ public class DatabaseManager {
 
         plugin.getLog().loading("Checking tables...");
 
-        Arrays.stream(entityClasses).forEach(aClass -> tableCreator.createTableOf(plugin, aClass));
+        Arrays.stream(entityClasses).forEach(aClass -> tableCreator.createTableOf(plugin, aClass).join());
 
         plugin.getLog().loading("Successfully checked tables!");
 

@@ -61,44 +61,45 @@ public class LegacyBossBar extends Score {
     public synchronized void addPlayer(Player player) {
         if (super.getPlayers().contains(player.getUniqueId())) return;
 
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
 
-        super.addPlayer(player);
+            super.addPlayer(player);
 
-        ReflectionObject wither = entityWitherClass.getConstructor(worldClass.getAClass())
-                .newInstance(worldClass.cast(ReflectionMethod.of(player.getWorld(), "getHandle").invoke()));
+            ReflectionObject wither = entityWitherClass.getConstructor(worldClass.getAClass())
+                    .newInstance(worldClass.cast(ReflectionMethod.of(player.getWorld(), "getHandle").invoke()));
 
-        Packet spawnPacket = new Packet(packetPlayOutSpawnEntityLivingClass, new Class<?>[]{entityLivingClass.getAClass()}, wither.getObject());
+            Packet spawnPacket = new Packet(packetPlayOutSpawnEntityLivingClass, new Class<?>[]{entityLivingClass.getAClass()}, wither.getObject());
 
-        EntityDataWatcher dataWatcher = new EntityDataWatcher();
+            EntityDataWatcher dataWatcher = new EntityDataWatcher();
 
-        dataWatcher.watch(6, (healthPercent / 100) * 300);
+            dataWatcher.watch(6, (healthPercent / 100) * 300);
 
-        dataWatcher.watch(10, updateText.get(0));
-        dataWatcher.watch(2, updateText.get(0));
+            dataWatcher.watch(2, updateText.get(0));
 
-        dataWatcher.watch(11, (byte) 1);
-        dataWatcher.watch(3, (byte) 1);
+            dataWatcher.watch(11, (byte) 1);
+            dataWatcher.watch(3, (byte) 1);
 
-        dataWatcher.watch(17, 0);
-        dataWatcher.watch(18, 0);
-        dataWatcher.watch(19, 0);
+            dataWatcher.watch(17, 0);
+            dataWatcher.watch(18, 0);
+            dataWatcher.watch(19, 0);
 
-        dataWatcher.watch(20, 1000);
-        dataWatcher.watch(0, (byte) (1 << 5));
+            dataWatcher.watch(20, 1000);
+            dataWatcher.watch(0, (byte) (1 << 5));
 
-        Packet packetPlayOutEntityMetadata = new Packet(packetPlayOutEntityMetadataClass);
+            Packet packetPlayOutEntityMetadata = new Packet(packetPlayOutEntityMetadataClass);
 
-        packetPlayOutEntityMetadata.setField("a", wither.getMethod("getId").invoke());
-        packetPlayOutEntityMetadata.setField("b", dataWatcher.getWatcher().getMethod("c").invoke());
+            packetPlayOutEntityMetadata.setField("a", wither.getMethod("getId").invoke());
+            packetPlayOutEntityMetadata.setField("b", dataWatcher.getWatcher().getMethod("c").invoke());
 
-        entities.put(player.getUniqueId(), wither.getMethod("getId").invoke());
+            entities.put(player.getUniqueId(), wither.getMethod("getId").invoke());
 
-        PlayerNMS playerNMS = PlayerNMS.cast(player);
+            PlayerNMS playerNMS = PlayerNMS.cast(player);
 
-        playerNMS.sendPacket(spawnPacket);
+            playerNMS.sendPacket(spawnPacket);
 
-        playerNMS.sendPacket(packetPlayOutEntityMetadata);
+            playerNMS.sendPacket(packetPlayOutEntityMetadata);
 
+        }, 2L);
     }
 
     @SneakyThrows
@@ -147,7 +148,6 @@ public class LegacyBossBar extends Score {
 
             String name = Text.detectLangOrText(plugin,player,updateText.get(indexUpdating)).join().getText();
 
-            dataWatcher.watch(10, name);
             dataWatcher.watch(2, name);
 
             Packet packetPlayOutEntityMetadata = new Packet(packetPlayOutEntityMetadataClass);

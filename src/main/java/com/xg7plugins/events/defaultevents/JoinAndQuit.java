@@ -6,6 +6,7 @@ import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -17,22 +18,28 @@ public class JoinAndQuit implements Listener {
         return true;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onJoin(AsyncPlayerPreLoginEvent event) {
 
         XG7Plugins plugin = XG7Plugins.getInstance();
 
         try {
-            XG7Plugins.getInstance().getPlayerDataDAO().add(new PlayerData(event.getPlayer().getUniqueId(), plugin.getLangManager().getMainLang()));
+            XG7Plugins.getInstance().getPlayerDataDAO().add(new PlayerData(event.getUniqueId(), plugin.getLangManager().getMainLang()));
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        XG7Plugins plugin = XG7Plugins.getInstance();
         plugin.getPacketEventManager().create(event.getPlayer());
         if (XG7Plugins.getMinecraftVersion() > 7) plugin.getHologramsManager().addPlayer(event.getPlayer());
         plugin.getNpcManager().addPlayer(event.getPlayer());
 
     }
+
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
 

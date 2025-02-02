@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 public @interface EventHandler {
 
     boolean isOnlyInWorld() default false;
+    boolean ignoreCancelled() default false;
     EventPriority priority() default EventPriority.NORMAL;
     String[] enabledPath() default {"", "", "false"};
 

@@ -53,12 +53,13 @@ public class Query {
 
     public static Query selectFrom(Plugin plugin, Class<? extends Entity> entityClass, Object id) {
 
+        Objects.requireNonNull(id, "ID cannot be null");
+
         String initialTable = entityClass.isAnnotationPresent(Table.class) ?
                 entityClass.getAnnotation(Table.class).name() :
                 entityClass.getSimpleName();
 
         Query query = new Query(plugin, initialTable);
-
         query.allColumns();
 
         String idColumn = null;
@@ -68,7 +69,9 @@ public class Query {
 
             if (!field.isAnnotationPresent(Pkey.class)) continue;
 
-            idColumn = field.isAnnotationPresent(Column.class) ? field.getAnnotation(Column.class).name() : field.getName();
+            idColumn = field.isAnnotationPresent(Column.class) ?
+                    field.getAnnotation(Column.class).name() :
+                    field.getName();
 
             break;
         }
@@ -79,11 +82,11 @@ public class Query {
 
         selectNestedLists(query, entityClass, idColumn);
 
-
         query.where(initialTable + "." + idColumn + " = ?");
         query.params(id);
 
         return query;
+
     }
 
     private static void selectNestedLists(Query query, Class<?> listClass, String localId) {
@@ -190,16 +193,19 @@ public class Query {
 
     public Query queue() {
         StringBuilder query = new StringBuilder("SELECT ");
-        if (this.selectAll) query.append("*");
-        else {
+
+        if (this.selectAll) {
+            query.append("*");
+        } else {
+            boolean firstColumn = true;
             for (Pair<String, List<String>> entry : this.columns) {
                 String table = entry.getFirst();
-
                 List<String> columns = entry.getSecond();
 
-                for (int i = 0; i < columns.size(); i++) {
-                    query.append(table).append(".").append(columns.get(i));
-                    if (i != columns.size() - 1) query.append(", ");
+                for (String column : columns) {
+                    if (!firstColumn) query.append(", ");
+                    query.append(table).append(".").append(column);
+                    firstColumn = false;
                 }
             }
         }
@@ -209,15 +215,17 @@ public class Query {
         for (Pair<JoinType, String> table : this.joinTables) {
             query.append(" ").append(table.getFirst().getSql()).append(" ").append(table.getSecond());
             if (conditions.containsKey(table.getSecond())) {
-                query.append(" ON ");
-                query.append(conditions.get(table.getSecond()));
+                query.append(" ON ").append(conditions.get(table.getSecond()));
             }
-
         }
 
-        if (this.where != null && !this.where.isEmpty()) query.append(" WHERE ").append(this.where);
+        if (this.where != null && !this.where.isEmpty()) {
+            query.append(" WHERE ").append(this.where);
+        }
 
-        if (this.additionalCommands != null && !this.additionalCommands.isEmpty()) query.append(" ").append(additionalCommands);
+        if (this.additionalCommands != null && !this.additionalCommands.isEmpty()) {
+            query.append(" ").append(additionalCommands);
+        }
 
         this.query = query.toString();
 
@@ -225,6 +233,7 @@ public class Query {
 
         return this;
     }
+
 
 
     public QueryResult waitForResult() {

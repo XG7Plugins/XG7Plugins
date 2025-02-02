@@ -1,20 +1,17 @@
 package com.xg7plugins.data.database.query;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.data.database.entity.Column;
-import com.xg7plugins.data.database.entity.Entity;
-import com.xg7plugins.data.database.entity.Pkey;
-import com.xg7plugins.data.database.entity.Table;
+import com.xg7plugins.data.database.entity.*;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.database.processor.TableCreator;
 import com.xg7plugins.utils.Pair;
 import lombok.Getter;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class Transaction {
 
@@ -48,25 +45,27 @@ public class Transaction {
         return new Transaction(plugin);
     }
 
-    public static Transaction createTransaction(Plugin plugin, Entity entity, Type type) throws IllegalAccessException {
+    public static Transaction createTransaction(Plugin plugin, Entity entity, Type type)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
+
         Transaction transaction = new Transaction(plugin);
 
-        transaction.setType(type);
-
-        List<Entity> entitiesToUpdate = new ArrayList<>();
-
+        List<Pair<Type, Entity>> entitiesToUpdate = new ArrayList<>();
         List<Pair<String, List<Object>>> commandsToAdd = new ArrayList<>();
 
-        entitiesToUpdate.add(entity);
+        entitiesToUpdate.add(new Pair<>(type, entity));
 
         int index = 0;
         while (index < entitiesToUpdate.size()) {
-            Entity entityToUpdate = entitiesToUpdate.get(index);
-
+            Entity entityToUpdate = entitiesToUpdate.get(index).getSecond();
             Class<? extends Entity> entityClass = entityToUpdate.getClass();
+            type = entitiesToUpdate.get(index).getFirst();
 
-            String tableName = entityClass.isAnnotationPresent(Table.class) ? entityClass.getAnnotation(Table.class).name() : entityClass.getSimpleName();
+            String tableName = entityClass.isAnnotationPresent(Table.class)
+                    ? entityClass.getAnnotation(Table.class).name()
+                    : entityClass.getSimpleName();
 
+            transaction.setType(type);
             transaction.onTable(tableName);
 
             String idName = null;
@@ -79,43 +78,114 @@ public class Transaction {
 
                 Object value = field.get(entityToUpdate);
 
-
                 if (value == null) continue;
 
                 if (Collection.class.isAssignableFrom(field.getType())) {
 
-                    entitiesToUpdate.addAll((Collection<? extends Entity>) value);
+                    java.lang.reflect.Type genericType = field.getGenericType();
+                    if (!(genericType instanceof ParameterizedType)) continue;
+
+                    List<? extends Entity> objectList = (List<? extends Entity>) value;
+
+                    if (type != Type.UPDATE) {
+                        for (Entity object : objectList) entitiesToUpdate.add(new Pair<>(type, object));
+                        continue;
+                    }
+
+                    String idTable = null;
+                    Class<? extends Entity> entityType = (Class<? extends Entity>)
+                            ((ParameterizedType) genericType).getActualTypeArguments()[0];
+
+                    for (Field fieldOfInsideOb : entityType.getDeclaredFields()) {
+                        fieldOfInsideOb.setAccessible(true);
+
+                        if (Modifier.isTransient(fieldOfInsideOb.getModifiers())) continue;
+
+                        if (fieldOfInsideOb.isAnnotationPresent(FKey.class) &&
+                                fieldOfInsideOb.getAnnotation(FKey.class).origin_table().equals(entityClass)) {
+                            idTable = fieldOfInsideOb.isAnnotationPresent(Column.class)
+                                    ? fieldOfInsideOb.getAnnotation(Column.class).name()
+                                    : fieldOfInsideOb.getName();
+                            break;
+                        }
+                    }
+
+                    if (idValue == null) continue;
+
+                    QueryResult result = Query.selectFrom(plugin, entityType.isAnnotationPresent(Table.class)
+                                    ? entityType.getAnnotation(Table.class).name()
+                                    : entityType.getSimpleName())
+                            .allColumns()
+                            .where(idTable + " = ?")
+                            .params(idValue)
+                            .waitForResult();
+
+                    List<Entity> databaseList = new ArrayList<>();
+                    while (result.hasNext()) {
+                        databaseList.add(result.get(entityType));
+                    }
+
+                    for (Entity object : objectList) {
+
+                        boolean exists = databaseList.stream().anyMatch(dbObject -> object.equals(dbObject));
+
+                        if (exists) entitiesToUpdate.add(new Pair<>(Type.UPDATE, object));
+                        else entitiesToUpdate.add(new Pair<>(Type.INSERT, object));
+
+                        if (!databaseList.isEmpty()) databaseList.removeIf(dbObject -> dbObject.equals(object));
+                    }
+
+                    for (Entity object : databaseList) {
+                        entitiesToUpdate.add(new Pair<>(Type.DELETE, object));
+                    }
+
                     continue;
                 }
 
                 if (field.isAnnotationPresent(Pkey.class)) {
-
-                    idName = field.isAnnotationPresent(Column.class) ? field.getAnnotation(Column.class).name() : field.getName();
+                    idName = field.isAnnotationPresent(Column.class)
+                            ? field.getAnnotation(Column.class).name()
+                            : field.getName();
                     idValue = value;
 
                     if (type == Type.UPDATE) continue;
                     if (type == Type.DELETE) break;
                 }
+
                 if (type == Type.DELETE) continue;
 
                 if (TableCreator.getSQLType(field.getType()) == null) {
                     for (Field fieldOfInsideOb : field.getType().getDeclaredFields()) {
                         fieldOfInsideOb.setAccessible(true);
-                        transaction.addColumns(fieldOfInsideOb.isAnnotationPresent(Column.class) ? fieldOfInsideOb.getAnnotation(Column.class).name() : fieldOfInsideOb.getName());
-                        transaction.params(fieldOfInsideOb.get(value));
+
+                        if (Modifier.isTransient(fieldOfInsideOb.getModifiers())) continue;
+
+                        String columnName = fieldOfInsideOb.isAnnotationPresent(Column.class)
+                                ? fieldOfInsideOb.getAnnotation(Column.class).name()
+                                : fieldOfInsideOb.getName();
+
+                        Object nestedValue = fieldOfInsideOb.get(value);
+                        transaction.addColumns(columnName);
+                        transaction.params(nestedValue);
+
                     }
                     continue;
                 }
 
-                transaction.addColumns(field.isAnnotationPresent(Column.class) ? field.getAnnotation(Column.class).name() : field.getName());
+                String columnName = field.isAnnotationPresent(Column.class)
+                        ? field.getAnnotation(Column.class).name()
+                        : field.getName();
+
+                transaction.addColumns(columnName);
                 transaction.params(value);
             }
+
             if (type != Type.INSERT) {
                 transaction.where(idName + " = ?");
                 transaction.params(idValue);
             }
-            transaction.newCommand();
 
+            transaction.newCommand();
             index++;
         }
 
@@ -124,13 +194,15 @@ public class Transaction {
         return transaction;
     }
 
-    public static Transaction update(Plugin plugin, Entity entity) throws IllegalAccessException {
+
+
+    public static Transaction update(Plugin plugin, Entity entity) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         return createTransaction(plugin, entity, Type.UPDATE);
     }
-    public static Transaction insert(Plugin plugin, Entity entity) throws IllegalAccessException {
+    public static Transaction insert(Plugin plugin, Entity entity) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         return createTransaction(plugin, entity, Type.INSERT);
     }
-    public static Transaction delete(Plugin plugin, Entity entity) throws IllegalAccessException {
+    public static Transaction delete(Plugin plugin, Entity entity) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         return createTransaction(plugin, entity, Type.DELETE);
     }
 

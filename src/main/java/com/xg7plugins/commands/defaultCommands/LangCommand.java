@@ -53,7 +53,7 @@ public class LangCommand implements ICommand {
         OfflinePlayer target = args.get(0, Player.class);
         String lang = XG7Plugins.getInstance().getName() + ":" + args.get(1, String.class);
 
-        if (target == null || !target.hasPlayedBefore()) {
+        if (target == null || (!target.hasPlayedBefore() && !target.isOnline())) {
             Text.formatLang(XG7Plugins.getInstance(), sender, "commands.player-not-found").thenAccept(text -> text.send(sender));
             return;
         }

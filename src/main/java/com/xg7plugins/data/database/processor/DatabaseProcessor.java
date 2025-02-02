@@ -98,49 +98,56 @@ public class DatabaseProcessor {
         }
     }
     private void processQuery() {
+        if (queryQueue == null || databaseManager == null) {
+            System.err.println("queryQueue or databaseManager is null!");
+            return;
+        }
+
         if (queryQueue.isEmpty()) return;
 
         Query query = queryQueue.poll();
 
         Connection connection = databaseManager.getConnection(query.getPlugin());
 
-        if (connection == null) return;
+        if (connection == null) {
+            System.err.println("Failed to get a database connection for plugin: " + query.getPlugin());
+            return;
+        }
 
-        try {
-            PreparedStatement ps = connection.prepareStatement(query.getQuery());
+        try (PreparedStatement ps = connection.prepareStatement(query.getQuery())) {
+
             for (int i = 0; i < query.getParams().size(); i++) {
                 Object o = query.getParams().get(i);
                 if (o instanceof UUID) {
                     ps.setString(i + 1, o.toString());
-                    continue;
+                } else {
+                    ps.setObject(i + 1, o);
                 }
-                ps.setObject(i + 1, o);
             }
 
-            ResultSet rs = ps.executeQuery();
-            List<Map<String, Object>> results = new ArrayList<>();
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Map<String, Object>> results = new ArrayList<>();
 
-            while (rs.next()) {
-
-                Map<String, Object> map = new HashMap<>();
-
-                for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
-                    map.put(rs.getMetaData().getTableName(i + 1) + "." + rs.getMetaData().getColumnName(i + 1), rs.getObject(i + 1));
+                while (rs.next()) {
+                    Map<String, Object> map = new HashMap<>();
+                    for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                        map.put(rs.getMetaData().getTableName(i) + "." + rs.getMetaData().getColumnName(i), rs.getObject(i));
+                    }
+                    results.add(map);
                 }
 
-                results.add(map);
+                QueryResult result = new QueryResult(query.getPlugin(), results.iterator());
+                if (query.getResult() != null) query.getResult().accept(result);
+
+                query.completeTask(result);
             }
 
-            QueryResult result = new QueryResult(query.getPlugin(),results.iterator());
-            if (query.getResult() != null) query.getResult().accept(result);
-
-            ps.close();
-            query.completeTask(result);
         } catch (SQLException e) {
-            System.err.println("Error while processing query: " + query.getQuery()  + " " + e.getMessage());
-            query.completeTask(new QueryResult(query.getPlugin(),null));
+            System.err.println("Error while processing query: " + query.getQuery() + " | " + e.getMessage());
+            query.completeTask(new QueryResult(query.getPlugin(), null));
             throw new RuntimeException(e);
         }
+
     }
 
     public void shutdown() {
