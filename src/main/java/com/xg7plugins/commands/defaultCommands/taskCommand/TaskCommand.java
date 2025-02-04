@@ -1,6 +1,7 @@
 package com.xg7plugins.commands.defaultCommands.taskCommand;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.*;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.libs.xg7menus.item.Item;
@@ -17,6 +18,11 @@ import java.util.List;
         permission = "xg7plugins.command.tasks"
 )
 public class TaskCommand implements ICommand {
+
+    @Override
+    public Plugin getPlugin() {
+        return XG7Plugins.getInstance();
+    }
 
     private ICommand[] subCommands = new ICommand[]{new DeleteTaskSubCommand(), new SeeSubcommand(), new StopTaskSubCommand(), new RestartTaskSubCommand()};
 

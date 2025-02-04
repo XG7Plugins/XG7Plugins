@@ -1,6 +1,7 @@
 package com.xg7plugins.commands.defaultCommands.taskCommand;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
@@ -18,6 +19,12 @@ import org.bukkit.command.CommandSender;
         permission = "xg7plugins.command.tasks.delete"
 )
 public class DeleteTaskSubCommand implements ICommand {
+
+    @Override
+    public Plugin getPlugin() {
+        return XG7Plugins.getInstance();
+    }
+
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {

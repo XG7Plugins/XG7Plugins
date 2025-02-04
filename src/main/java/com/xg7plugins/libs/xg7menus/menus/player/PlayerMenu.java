@@ -28,11 +28,14 @@ public abstract class PlayerMenu extends BaseMenu {
     public void close(Player player) {
 
         if (playerOldItems != null) {
+            if (!playerOldItems.containsKey(player.getUniqueId())) return;
             playerOldItems.get(player.getUniqueId()).forEach(player.getInventory()::setItem);
             playerOldItems.remove(player.getUniqueId());
         }
 
         PlayerMenuHolder holder = XG7Plugins.getInstance().getMenuManager().getPlayerMenusMap().get(player.getUniqueId());
+
+        if (holder == null) return;
 
         MenuEvent event = new MenuEvent(player, MenuEvent.ClickAction.UNKNOWN, holder, player.getLocation());
 

@@ -2,12 +2,14 @@ package com.xg7plugins.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
+@ToString
 public class Pair<F,S> {
     private F first;
     private S second;

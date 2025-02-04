@@ -18,6 +18,12 @@ import org.bukkit.command.CommandSender;
         isAsync = true
 )
 public class JsonSubCommand implements ICommand {
+
+    @Override
+    public Plugin getPlugin() {
+        return XG7Plugins.getInstance();
+    }
+
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         XG7Plugins.getInstance().getJsonManager().invalidateCache();

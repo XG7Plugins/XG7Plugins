@@ -206,6 +206,9 @@ public class Item {
 
 
         ReflectionObject nmsItem = craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invokeToRObject(this.itemStack);
+        if (nmsItem.getMethod("getTag").invoke() == null) {
+            nmsItem.getMethod("setTag", nbtTagCompoundClass.getAClass()).invoke(nbtTagCompoundClass.newInstance());
+        }
         ReflectionObject tag = nmsItem.getMethod("getTag").invokeToRObject();
 
         if (tag.getObject() == null) tag = nbtTagCompoundClass.newInstance();
@@ -235,6 +238,7 @@ public class Item {
         }
 
         ReflectionObject nmsItem = craftItemStackClass.getMethod("asNMSCopy", ItemStack.class).invokeToRObject(item);
+        if (nmsItem.getMethod("getTag").invoke() == null) return Optional.empty();
         ReflectionObject tag = nmsItem.getMethod("getTag").invokeToRObject();
 
         if (tag != null) {

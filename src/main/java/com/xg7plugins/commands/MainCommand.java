@@ -28,6 +28,11 @@ public class MainCommand implements ICommand {
 
     private final Plugin plugin;
 
+    @Override
+    public Plugin getPlugin() {
+        return plugin;
+    }
+
 
     public void onCommand(CommandSender sender, CommandArgs args) {
         Config config = XG7Plugins.getInstance().getConfig("config");

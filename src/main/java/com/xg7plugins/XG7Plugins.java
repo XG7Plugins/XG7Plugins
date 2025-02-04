@@ -50,6 +50,7 @@ import com.xg7plugins.tasks.CooldownManager;
 import com.xg7plugins.tasks.TPSCalculator;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
+import com.xg7plugins.utils.Metrics;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -125,6 +126,7 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void onEnable() {
         super.onEnable();
+        Metrics.getMetrics(this, 24626);
         this.tpsCalculator = new TPSCalculator();
         tpsCalculator.start();
         floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;

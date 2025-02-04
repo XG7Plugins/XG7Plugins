@@ -20,6 +20,12 @@ import org.bukkit.command.CommandSender;
         isAsync = true
 )
 public class EventsSubCommand implements ICommand {
+
+    @Override
+    public Plugin getPlugin() {
+        return XG7Plugins.getInstance();
+    }
+
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         Plugin plugin = XG7Plugins.getInstance();

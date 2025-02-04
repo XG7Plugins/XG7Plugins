@@ -53,6 +53,7 @@ public class CooldownManager {
                     });
 
                     for (Pair<UUID, String> pair : toRemove) {
+                        if (cooldowns.get(pair.getFirst()) == null) continue;
                         cooldowns.get(pair.getFirst()).remove(pair.getSecond());
 
                         if (cooldowns.get(pair.getFirst()).isEmpty()) cooldowns.remove(pair.getFirst());
@@ -87,7 +88,7 @@ public class CooldownManager {
         CooldownTask task = cooldowns.get(playerID).get(cooldownId);
 
         if (task.getOnFinish() != null) task.getOnFinish().accept(Bukkit.getPlayer(playerID), true);
-        toRemove.add(new Pair<>(playerID, cooldownId));
+        cooldowns.get(playerID).remove(cooldownId);
     }
 
     public void cancelTask() {

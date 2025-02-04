@@ -1,6 +1,7 @@
 package com.xg7plugins.commands.defaultCommands.reloadCommand;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.subcommands.*;
 import com.xg7plugins.commands.setup.*;
 import com.cryptomorin.xseries.XMaterial;
@@ -17,6 +18,12 @@ import java.util.stream.Collectors;
         permission = "xg7plugins.command.reload"
 )
 public class ReloadCommand implements ICommand {
+
+    @Override
+    public Plugin getPlugin() {
+        return XG7Plugins.getInstance();
+    }
+
 
     private final ICommand[] subCommands = new ICommand[]{new JsonSubCommand(), new ConfigSubCommand(), new TaskSubCommand(), new LangSubCommand(), new DatabaseSubCommand(), new EventsSubCommand(), new AllSubCommand()};
 

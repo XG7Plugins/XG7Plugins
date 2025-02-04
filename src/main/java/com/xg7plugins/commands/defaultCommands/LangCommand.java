@@ -1,6 +1,7 @@
 package com.xg7plugins.commands.defaultCommands;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
@@ -21,6 +22,11 @@ import org.bukkit.entity.Player;
         permission = "xg7plugins.command.lang"
 )
 public class LangCommand implements ICommand {
+
+    @Override
+    public Plugin getPlugin() {
+        return XG7Plugins.getInstance();
+    }
 
     @Override
     public boolean isEnabled() {

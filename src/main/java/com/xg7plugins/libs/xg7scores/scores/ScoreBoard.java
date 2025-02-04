@@ -102,7 +102,7 @@ public class ScoreBoard extends Score {
             if (scoreboard == null) return;
             List<String> lastEntries = new ArrayList<>();
             for (int i = 0; i < lines.size(); i++) {
-                String translatedText = Text.detectLangOrText(XG7Plugins.getInstance(),player,lines.get(i)).join().getText();
+                String translatedText = Text.detectLangOrText(plugin,player,lines.get(i)).join().getText();
 
                 String prefix = translatedText.substring(0, Math.min(translatedText.length(), 16));
                 String entry = translatedText.length() > 16 ? translatedText.substring(16, Math.min(translatedText.length(), 56)) : "";
@@ -135,7 +135,7 @@ public class ScoreBoard extends Score {
                 }
             }
 
-            objective.setDisplayName(Text.detectLangOrText(XG7Plugins.getInstance(),player,title.get(indexUpdating)).join().getText());
+            objective.setDisplayName(Text.detectLangOrText(plugin,player,title.get(indexUpdating)).join().getText());
         }
 
 
