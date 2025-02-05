@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 @Getter
 public class PageMenuHolder extends MenuHolder {
 
-    private int currentPage;
+    protected int currentPage;
     private final int maxPages;
     private final int area;
 

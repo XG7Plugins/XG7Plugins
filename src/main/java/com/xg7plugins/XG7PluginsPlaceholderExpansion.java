@@ -32,6 +32,8 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
 
+        if (player == null) return null;
+
         switch (identifier) {
             case "tasks_running":
                 return XG7Plugins.getInstance().getTaskManager().getTasks().values().stream().filter(task -> task.getState() == TaskState.RUNNING).count() + "";

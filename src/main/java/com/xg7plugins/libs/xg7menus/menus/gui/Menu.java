@@ -33,7 +33,7 @@ public abstract class Menu extends BaseMenu {
     public void open(Player player) {
         player.closeInventory();
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            MenuHolder holder = new MenuHolder(id, plugin, Text.detectLangOrText(XG7Plugins.getInstance(), player, title).join().getTextCentralized(TextCentralizer.PixelsSize.INV), size, type, this, player);
+            MenuHolder holder = new MenuHolder(id, plugin, Text.detectLangOrText(plugin, player, title).join().getTextCentralized(TextCentralizer.PixelsSize.INV), size, type, this, player);
             player.openInventory(holder.getInventory());
             putItems(player, holder);
         }, 1L);

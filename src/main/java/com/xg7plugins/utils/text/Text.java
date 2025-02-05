@@ -221,15 +221,6 @@ public class Text {
             return;
         }
 
-        ChatComponent chatComponent = new ChatComponent(text);
-
-        Packet packet = new Packet(packetPlayOutChat);
-
-        packet.setField("a",chatComponent.getChatComponent());
-        packet.setField("b",(byte) 2);
-
-        PlayerNMS.cast(player).sendPacket(packet);
-
 
     }
 

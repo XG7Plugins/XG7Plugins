@@ -1,5 +1,6 @@
 package com.xg7plugins;
 
+import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.cache.CacheManager;
@@ -36,13 +37,11 @@ import com.xg7plugins.libs.xg7holograms.event.ClickEventHandler;
 import com.xg7plugins.libs.xg7menus.MenuManager;
 import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
 import com.xg7plugins.libs.xg7npcs.NPCManager;
-import com.xg7plugins.libs.xg7scores.Score;
 import com.xg7plugins.libs.xg7scores.ScoreListener;
 import com.xg7plugins.libs.xg7scores.ScoreManager;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager1_7;
-import com.xg7plugins.libs.xg7scores.builder.BossBarBuilder;
 import com.xg7plugins.menus.LangForm;
 import com.xg7plugins.menus.LangMenu;
 import com.xg7plugins.menus.TaskMenu;
@@ -51,6 +50,7 @@ import com.xg7plugins.tasks.TPSCalculator;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.utils.Metrics;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -124,8 +124,19 @@ public final class XG7Plugins extends Plugin {
     }
 
     @Override
+    public void onLoad() {
+        super.onLoad();
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().getSettings()
+                .bStats(false)
+                .checkForUpdates(true);
+        PacketEvents.getAPI().load();
+    }
+
+    @Override
     public void onEnable() {
         super.onEnable();
+        PacketEvents.getAPI().init();
         Metrics.getMetrics(this, 24626);
         this.tpsCalculator = new TPSCalculator();
         tpsCalculator.start();
@@ -206,6 +217,7 @@ public final class XG7Plugins extends Plugin {
         npcManager.cancelTask();
         taskManager.shutdown();
         cacheManager.shutdown();
+        PacketEvents.getAPI().terminate();
     }
 
     public Class<? extends Entity>[] loadEntites() {

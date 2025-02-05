@@ -21,12 +21,17 @@ repositories {
         url = "https://repo.opencollab.dev/main/"
     }
     maven { url = uri("https://maven.elmakers.com/repository/") }
+    maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
+
+    maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
 }
 
 dependencies {
 
     compileOnly files("D:/buildTools/spigot-1.16.1.jar")
     compileOnly files("D:/buildTools/spigot-1.7.8.jar")
+
+    implementation "com.github.retrooper:packetevents-spigot:2.7.0"
 
     compileOnly 'io.netty:netty-all:4.1.111.Final'
     implementation 'com.mojang:authlib:1.5.25'
