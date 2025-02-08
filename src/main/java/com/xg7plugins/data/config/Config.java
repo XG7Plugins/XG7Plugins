@@ -1,6 +1,8 @@
 package com.xg7plugins.data.config;
 
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.cache.ObjectCache;
+import com.xg7plugins.utils.Time;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -8,9 +10,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -21,6 +27,7 @@ public class Config {
 
     private final Plugin plugin;
     private final String name;
+    private final File configFile;
     private final ConfigManager configManager;
     private YamlConfiguration config;
 
@@ -36,33 +43,47 @@ public class Config {
 
         if (!configFile.exists()) plugin.saveResource(name + ".yml", false);
 
-        this.config = YamlConfiguration.loadConfiguration(configFile);
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
-        plugin.getLogger().info("Loaded!");
-    }
+        YamlConfiguration resourceConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource(name + ".yml"), StandardCharsets.UTF_8));
+        if (!resourceConfig.getString("config-version").equals(config.getString("config-version"))) {
 
-    public Config(Plugin plugin, YamlConfiguration config) {
-        this.plugin = plugin;
-        this.name = config.getName();
-        this.configManager = plugin.getConfigsManager();
+            File backupFile = new File(plugin.getName(), name + "-old.yml");
+            configFile.renameTo(backupFile);
+
+            plugin.saveResource(name + ".yml", true);
+
+            this.configFile = new File(plugin.getDataFolder(), name + ".yml");
+
+            this.config = YamlConfiguration.loadConfiguration(configFile);
+
+            plugin.getLogger().info("Loaded!");
+
+            return;
+        }
+
+        this.configFile = configFile;
         this.config = config;
     }
 
-    public static Config of(Plugin plugin, YamlConfiguration config) {
-        return new Config(plugin, config);
+    public static Config of(String name, Plugin plugin) {
+        return new Config(plugin, name);
+    }
+    public static Config mainConfigOf(Plugin plugin) {
+        return new Config(plugin, "config");
     }
 
     public boolean contains(String path) {
         return config.contains(path);
     }
 
-    public <T> Optional<T> get(String path, Class<T> type, Object... optionalTypeArgs) {
+    public <T> Optional<T> get(String path, Class<T> type, boolean ignoreNonexistent, Object... optionalTypeArgs) {
         if (!config.contains(path)) {
-            plugin.getLog().warn(path + " not found in " + name + ".yml");
+            if (!ignoreNonexistent) plugin.getDebug().warn("config-warn", path + " not found in " + name + ".yml");
             return Optional.empty();
         }
         if (config.get(path) == null) {
-            plugin.getLog().warn(path + " in " + name + " is empty");
+            if (!ignoreNonexistent) plugin.getDebug().warn("config-warn", path + " in " + name + " is empty");
             return Optional.empty();
         }
 
@@ -92,21 +113,26 @@ public class Config {
         ConfigTypeAdapter<T> adapter = (ConfigTypeAdapter<T>) configManager.getAdapters().get(type);
 
         if (adapter == null) {
-            plugin.getLog().warn("Adapter not found for " + type.getName());
+            plugin.getDebug().warn("config-warn", "Adapter not found for " + type.getName());
             return Optional.empty();
         }
 
         return Optional.ofNullable(adapter.fromConfig(get(path, ConfigurationSection.class).orElse(null), optionalTypeArgs));
     }
 
+    public <T> Optional<T> get(String path, Class<T> type, Object... optionalTypeArgs) {
+        return get(path,type,false,optionalTypeArgs);
+    }
+
+
     @SuppressWarnings("unchecked")
-    public <T> Optional<List<T>> getList(String path, Class<T> type) {
+    public <T> Optional<List<T>> getList(String path, Class<T> type, boolean ignoreNonexistent) {
         if (!config.contains(path)) {
-            plugin.getLog().warn(path + " not found in " + name + ".yml");
+            if (!ignoreNonexistent) plugin.getDebug().warn("config-warn", " not found in " + name + ".yml");
             return Optional.empty();
         }
         if (config.get(path) == null) {
-            plugin.getLog().warn(path + " in " + name + " is empty");
+            if (!ignoreNonexistent) plugin.getDebug().warn("config-warn", " in " + name + " is empty");
             return Optional.empty();
         }
 
@@ -121,15 +147,26 @@ public class Config {
 
         return Optional.empty();
     }
+    public <T> Optional<List<T>> getList(String path, Class<T> type) {
+        return getList(path,type,false);
+    }
 
-    public Optional<Long> getTime(String path) {
+    public Optional<Long> getTime(String path, boolean ignoreNonexistent) {
         String time = config.getString(path);
         if (time == null) {
-            plugin.getLog().warn(path + " not found in " + name + ".yml");
+            if (!ignoreNonexistent) plugin.getDebug().warn("config-warn", path + " not found in " + name + ".yml");
             return Optional.empty();
         }
-        long milliseconds = Text.convertToMilliseconds(plugin, time);
+        long milliseconds;
+        try {
+            milliseconds = Time.convertToMilliseconds(time);
+        } catch (Time.TimeParseException e) {
+            throw new RuntimeException(e);
+        }
         return Optional.ofNullable(milliseconds == 0 ? null : milliseconds);
+    }
+    public Optional<Long> getTime(String path) {
+        return getTime(path,false);
     }
 
     public void set(String path, Object value) {
@@ -138,27 +175,24 @@ public class Config {
 
     @SneakyThrows
     public <T> boolean is(String path, Class<T> type) {
-
         return (boolean) config.getClass().getMethod("is" + type.getSimpleName(), String.class).invoke(config, path);
     }
 
     @SneakyThrows
     public void save() {
-        plugin.getLog().info("Saving " + name + ".yml...");
-        config.save(new File(plugin.getDataFolder(), name + ".yml"));
-        plugin.getLog().info("Saved!");
+        plugin.getDebug().info("config-warn", "Saving " + name + ".yml...");
+        config.save(configFile);
+        plugin.getDebug().info("config-warn", "Saved!");
     }
 
     public void reload() {
-        File configFile = new File(plugin.getDataFolder(), name + ".yml");
+        plugin.getDebug().info("config-warn", "Reloading " + name + ".yml...");
 
-        plugin.getLog().loading("Reloading " + name + ".yml...");
-
-        if (!configFile.exists()) plugin.saveResource(name + ".yml", false);
         this.config = YamlConfiguration.loadConfiguration(configFile);
+
         plugin.getConfigsManager().getConfigs().put(name,this);
 
-        plugin.getLog().loading("Reloaded!");
+        plugin.getDebug().info("config-warn", "Reloaded");
     }
 
 }

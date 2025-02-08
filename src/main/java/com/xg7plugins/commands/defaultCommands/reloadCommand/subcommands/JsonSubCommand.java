@@ -6,7 +6,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.libs.xg7menus.item.Item;
+import com.xg7plugins.temp.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 

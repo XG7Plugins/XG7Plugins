@@ -1,6 +1,21 @@
 prefix: "&b[XG&37P&9lu&1gins]&r"
 
-log-enabled: true
+debug:
+  enabled: false
+
+  config-warn: true
+  lang: true
+  packet-events: true
+  sql: true
+  menu: true
+  npc: true
+  hologram: true
+  scoreboards: true
+  commands: true
+  events: true
+  extensions: true
+  libs: true
+
 
 enable-langs: true
 main-lang: en-us
@@ -45,6 +60,8 @@ sql:
 
   cache-expires: 30m
 
+  timeout: 10s
+
   query-processor-threads: 4
   sql-command-processing-interval: 20ms
 
@@ -67,3 +84,7 @@ redis-cache:
   max-connections: 100
 
   max-wait-time: 10s
+
+
+#DON'T CHANGE THIS
+config-version: 1.0

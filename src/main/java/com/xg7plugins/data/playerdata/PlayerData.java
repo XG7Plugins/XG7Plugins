@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Table(name = "player_data")
 @Data
-public class PlayerData implements Entity<PlayerData> {
+public class PlayerData implements Entity<UUID, PlayerData> {
 
     @Pkey
     @Column(name = "player_id")
@@ -32,5 +32,10 @@ public class PlayerData implements Entity<PlayerData> {
     @Override
     public boolean equals(PlayerData other) {
         return playerUUID.equals(other.playerUUID);
+    }
+
+    @Override
+    public UUID getID() {
+        return playerUUID;
     }
 }

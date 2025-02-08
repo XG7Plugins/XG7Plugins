@@ -3,7 +3,7 @@ package com.xg7plugins.help.xg7pluginshelp;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.libs.xg7geyserforms.forms.SimpleForm;
+import com.xg7plugins.temp.xg7geyserforms.forms.SimpleForm;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.ButtonComponent;
@@ -13,7 +13,6 @@ import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class XG7PluginsHelpForm extends SimpleForm {
     public XG7PluginsHelpForm(Plugin plugin) {

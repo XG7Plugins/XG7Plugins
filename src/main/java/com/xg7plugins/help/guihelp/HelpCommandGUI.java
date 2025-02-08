@@ -1,9 +1,8 @@
 package com.xg7plugins.help.guihelp;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
-import com.xg7plugins.libs.xg7menus.menus.MenuNavigation;
-import com.xg7plugins.libs.xg7menus.menus.gui.Menu;
+import com.xg7plugins.temp.xg7menus.menus.MenuNavigation;
+import com.xg7plugins.temp.xg7menus.menus.gui.Menu;
 import lombok.Getter;
 
 import java.util.ArrayList;

@@ -8,14 +8,13 @@ import com.xg7plugins.data.config.ConfigManager;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
+import com.xg7plugins.extensions.ExtensionManager;
 import com.xg7plugins.help.formhelp.HelpCommandForm;
 import com.xg7plugins.help.chathelp.HelpInChat;
 import com.xg7plugins.help.guihelp.HelpCommandGUI;
-import com.xg7plugins.libs.xg7geyserforms.forms.Form;
-import com.xg7plugins.libs.xg7menus.menus.BaseMenu;
-import com.xg7plugins.libs.xg7scores.Score;
+import com.xg7plugins.temp.xg7geyserforms.forms.Form;
 import com.xg7plugins.tasks.Task;
-import com.xg7plugins.utils.Log;
+import com.xg7plugins.utils.Debug;
 import lombok.*;
 import org.apache.commons.lang.IllegalClassException;
 import org.bukkit.Bukkit;
@@ -29,11 +28,13 @@ import java.util.*;
 @Getter
 public abstract class Plugin extends JavaPlugin {
 
-    private final String prefix;
+    private String prefix;
 
-    private final ConfigManager configsManager;
-    private final CommandManager commandManager;
-    private final Log log;
+    private ConfigManager configsManager;
+    private CommandManager commandManager;
+    protected Debug debug;
+
+    private ExtensionManager extensionManager;
 
     protected HelpCommandGUI helpCommandGUI;
     protected HelpInChat helpInChat;
@@ -49,13 +50,6 @@ public abstract class Plugin extends JavaPlugin {
         PluginConfigurations configurations = getClass().getAnnotation(PluginConfigurations.class);
 
         if (configurations == null) throw new IllegalClassException("PluginConfigurations annotation not found in " + getClass().getName());
-
-        this.configsManager = new ConfigManager(this, configurations.configs());
-        this.prefix = ChatColor.translateAlternateColorCodes('&', configurations.prefix());
-        this.customPrefix = this.prefix;
-        this.log = new Log(this);
-        log.loading("Loading " + prefix + "...");
-        this.commandManager = new CommandManager(this);
     }
 
     @Override
@@ -66,7 +60,7 @@ public abstract class Plugin extends JavaPlugin {
 
         if (configurations.onEnableDraw().length != 0) Arrays.stream(configurations.onEnableDraw()).forEach(s -> Bukkit.getConsoleSender().sendMessage(s));
 
-        log.loading("Loading langs...");
+        debug.loading("Loading langs...");
         Config config = getConfig("config");
 
         this.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix", String.class).orElse(prefix)));
@@ -74,21 +68,37 @@ public abstract class Plugin extends JavaPlugin {
         this.enabledWorlds = config.getList("enabled-worlds", String.class).orElse(Collections.emptyList());
 
 
-        log.loading("Custom prefix: " + customPrefix);
+        debug.loading("Custom prefix: " + customPrefix);
+
+        Bukkit.getScheduler().runTask(this, () -> {
+            this.extensionManager = new ExtensionManager(this);
+
+            extensionManager.initExtensions();
+            extensionManager.loadTasks();
+            extensionManager.loadExecutors();
+            extensionManager.loadCommands();
+            extensionManager.loadListeners();
+
+            debug.loading("Loaded " + extensionManager.getExtensions().size() + " extensions");
+
+        });
     }
     @Override
     public void onDisable() {
-        super.onDisable();
+        extensionManager.disableExtensions();
     };
     @Override
     public void onLoad() {
+        PluginConfigurations configurations = getClass().getAnnotation(PluginConfigurations.class);
+        this.configsManager = new ConfigManager(this, configurations.configs());
+        this.prefix = ChatColor.translateAlternateColorCodes('&', configurations.prefix());
+        this.customPrefix = this.prefix;
+        this.debug = new Debug(this);
+        debug.loading("Loading " + prefix + "...");
+        this.commandManager = new CommandManager(this);
         XG7Plugins.register(this);
     };
-
     public Class<? extends Entity>[] loadEntites() {
-        return null;
-    }
-    public BaseMenu[] loadMenus() {
         return null;
     }
     public Form<?,?>[] loadGeyserForms() {
@@ -104,9 +114,6 @@ public abstract class Plugin extends JavaPlugin {
         return null;
     }
     public Task[] loadRepeatingTasks() {
-        return null;
-    }
-    public Score[] loadScores() {
         return null;
     }
     public abstract void loadHelp();

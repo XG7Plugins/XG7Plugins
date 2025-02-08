@@ -15,12 +15,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class EventManager {
 
     private final HashMap<String, org.bukkit.event.Listener> listeners = new HashMap<>();
 
-    public void registerPlugin(Plugin plugin, Listener... events) {
+    public void registerListeners(Plugin plugin, Listener... events) {
 
         plugin.getLog().loading("Loading Events...");
 
@@ -75,8 +76,6 @@ public class EventManager {
                                 }
                             }
 
-
-
                             try {
                                 method.invoke(event, event2);
                             } catch (IllegalAccessException | InvocationTargetException e) {
@@ -91,6 +90,9 @@ public class EventManager {
         }
 
         plugin.getLog().loading("Events loaded.");
+    }
+    public void registerListeners(Plugin plugin, List<Listener> listeners) {
+        registerListeners(plugin, listeners.toArray(new Listener[0]));
     }
 
     public void unregisterEvents(Plugin plugin) {

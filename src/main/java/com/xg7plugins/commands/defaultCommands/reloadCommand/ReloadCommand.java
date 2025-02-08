@@ -5,7 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.subcommands.*;
 import com.xg7plugins.commands.setup.*;
 import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.libs.xg7menus.item.Item;
+import com.xg7plugins.temp.xg7menus.item.Item;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;

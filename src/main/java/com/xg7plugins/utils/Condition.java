@@ -75,6 +75,10 @@ public enum Condition {
         return conditionPattern.matcher(line).replaceAll("");
     }
 
+    public static String removeTags(String text) {
+        return conditionPattern.matcher(text).replaceAll("");
+    }
+
     @Getter
     @Setter
     @AllArgsConstructor

@@ -41,6 +41,16 @@ public class TaskManager {
 
         });
     }
+    public void registerTasks(List<Task> tasks) {
+        if (tasks == null) return;
+        tasks.forEach(task -> {
+            if (task == null) return;
+            if (task.getState() == TaskState.RUNNING) {
+                task.setState(TaskState.IDLE);
+                runTask(task);
+            } else this.tasks.put(task.getPlugin().getName() + ":" + task.getName(), task);
+        });
+    }
 
     public Task getRegisteredTask(Plugin plugin, String id) {
         return tasks.get(plugin.getName() + ":" + id);
@@ -156,13 +166,6 @@ public class TaskManager {
         asyncExecutors.values().forEach(ExecutorService::shutdown);
         this.tasks.clear();
         this.asyncExecutors.clear();
-    }
-
-    public static long convertTicksToMillis(long ticks) {
-        return ticks * 50;
-    }
-    public static long convertMillisToTicks(long millis) {
-        return millis / 50;
     }
 
 }

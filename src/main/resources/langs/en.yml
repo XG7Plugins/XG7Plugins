@@ -1,0 +1,160 @@
+
+config-version: 1.0
+
+locale: en_US
+formated-name: "English"
+icon: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2QxNWQ1NjYyMDJhYzBlNzZjZDg5Nzc1OWRmNWQwMWMxMWY5OTFiZDQ2YzVjOWEwNDM1N2VhODllZTc1In19fQ=="
+bedrock-icon: "URL, https://cdn.britannica.com/33/4833-050-F6E415FE/Flag-United-States-of-America.jpg"
+
+commands:
+  syntax-error: "You are using the command incorrectly! The right way is [SYNTAX]"
+  player-not-found: "This player hasn't found or never played before!"
+  no-permission: "You don't have permission to use this command!"
+  disabled-world: "You cannot execute this command in a disabled world!"
+  not-a-player: "You cannot execute this command in console!"
+  is-a-player: "You cannot execute this command being a player!"
+  command-not-found: "Command not found!"
+
+
+reload-message:
+  config: "Configs of [PLUGIN] reloaded!"
+  database: "Database of [PLUGIN] reloaded!"
+  all: "[PLUGIN] reloaded!"
+  lang: "Languages of [PLUGIN] reloaded!"
+  tasks: "Tasks of [PLUGIN] reloaded!"
+  events: "Events of [PLUGIN] reloaded!"
+  json: "Successful invalidate json cache!"
+
+
+#Plugin defaults
+
+go-back-item: "Back"
+go-next-item: "Next"
+close-item: "Close"
+refresh-item: "Refresh page"
+
+go-back-to-help: "Back to help"
+go-back-to-previous-commands: "Back to the previous commands"
+
+lang-not-found: "&cLanguage not found!"
+
+lang-menu:
+  title: "Languages"
+
+  content: "Choose a language for the server!"
+
+  item-click:
+    - "Click here to change the language for English"
+
+  already-selected: "You're already using this language!"
+
+  toggle-success: "You toggle the language to english!"
+
+  cooldown-to-toggle: "You need to wait [SECONDS] seconds to toggle the language again"
+
+tasks-menu:
+  title: "Tasks"
+
+  task-item:
+    - "&fTask id: &b[ID]"
+    - "&fTask plugin: &e[PLUGIN]"
+    - "&fTask state: &9[STATE]"
+    - " "
+    - "&fLeft click -> &aCopy id"
+    - "[IF: %task_is_running%] &fRight click -> &cStop Task"
+    - "[IF: %task_is_not_running%] &fRight click -> &aStart task"
+
+  copy-to-clipboard: "Click [CLICK action=%COPY_TO_CLICKBOARD% value=%[ID]%]&bhere&r[/CLICK] to copy the task id!"
+
+  notes:
+    - "&fServer RAM usage: &9[RAM]MB"
+    - "&fServer TPS: &9[TPS]"
+    - "&fTasks running: &9[TASKS]"
+
+task-command:
+  not-found: "Task not found!"
+  deleted: "Task deleted!"
+  stopped: "Task stopped!"
+  restarted: "Task restarted!"
+
+  already-running: "Task already running!"
+  already-stopped: "Task already stopped!"
+
+commands-display:
+
+  if-subcommand: "&aClick to see the subcommands!"
+
+  command-item:
+    usage: "&fUsage: &a[SYNTAX]"
+    desc: "&fDescription: &e[DESCRIPTION]"
+    perm: "&fPermission: &c[PERMISSION]"
+    player-only: "&fOnly players can use: &b[PLAYER_ONLY]"
+
+commands-form:
+  content: "Click on an option to see its description and usage!"
+  subcommands-label: "Click to see the subcommands!"
+  no-subcommands: "There are no subcommands for this command!"
+
+  back: "Back to the help"
+  subcommands-back: "Back to previous commands"
+
+help-menu:
+
+  index:
+
+    title: "Help of XG7Plugins"
+
+    see-in-chat: "Click here to see the help in chat"
+
+    profile-item:
+      name: "Profile: %player_name%"
+      lang-chose: "%xg7plugins_player_lang%"
+    lang-item:
+      name: "Languages"
+      lore: "Click here to change profile lang"
+    tasks-item:
+      name: "Tasks"
+      lore: "Click here to see the tasks"
+    about-item:
+      name: "About"
+      lore: "Click here to see the plugin information"
+    commands-item:
+      name: "Commands"
+      lore: "Click here to see the commands"
+
+  about:
+    - "About &9XG7Plugins"
+    - ""
+    - "Version: &a[VERSION]&r"
+    - "Website: &a&n[WEBSITE]&r"
+    - "GitHub: &a&n[GITHUB]&r"
+    - "Discord: &a&n[DISCORD]&r"
+    - ""
+    - "This plugin was made"
+    - "for creating other"
+    - "plugins for XG7."
+    - "Its goal is to manage"
+    - "tasks, include libraries"
+    - "(such as menus, scores,"
+    - "etc.) and facilitate"
+    - "the creation of plugins."
+    - "It also has a language"
+    - "system for the inclusion"
+    - "of new languages."
+    - ""
+    - "&oDeveloped by DaviXG7"
+
+help-in-chat:
+
+  title: "&7Welcome to the &6XG7Plugins &7help page!"
+
+  content: "&eXG7Plugins is a plugin that aims to facilitate the creation\n of other plugins for other XG7Plugins.\n Click to see more information."
+
+  back: "&aClick to back to the help"
+
+  lang: "&aLanguages&f: &1click here to change profile lang"
+  tasks: "&aTasks&f: &1click here to see the tasks"
+  commands: "&aCommands&f: &1click here to see the commands"
+
+  commands-title: "&7Commands of &6XG7Plugins &8(&7[PAGE]&8/&7[MAX_PAGE]&8)"
+

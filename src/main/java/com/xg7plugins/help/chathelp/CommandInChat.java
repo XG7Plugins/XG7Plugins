@@ -3,7 +3,7 @@ package com.xg7plugins.help.chathelp;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.libs.xg7menus.item.Item;
+import com.xg7plugins.temp.xg7menus.item.Item;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;

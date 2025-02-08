@@ -1,31 +1,20 @@
 package com.xg7plugins.utils.text;
 
-
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.Config;
-import com.xg7plugins.lang.LangManager;
+import com.xg7plugins.lang.Lang;
 import com.xg7plugins.utils.Condition;
-
-import com.xg7plugins.utils.reflection.nms.ChatComponent;
-import com.xg7plugins.utils.reflection.nms.Packet;
-import com.xg7plugins.utils.reflection.nms.PacketClass;
-import com.xg7plugins.utils.reflection.nms.PlayerNMS;
 import lombok.Getter;
-import lombok.SneakyThrows;
-
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import me.clip.placeholderapi.libs.kyori.adventure.platform.bukkit.BukkitAudiences;
+import me.clip.placeholderapi.libs.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,229 +22,106 @@ import java.util.regex.Pattern;
 @Getter
 public class Text {
 
-    private String text;
-
-    private static final PacketClass packetPlayOutChat = XG7Plugins.getMinecraftVersion() == 8 ? new PacketClass("PacketPlayOutChat") : null;
-
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
+    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
+    private static final BukkitAudiences audience = BukkitAudiences.create(XG7Plugins.getInstance());
 
+    String text;
+    String rawText;
 
     public Text(String text) {
-        this.text = ChatColor.translateAlternateColorCodes('&', text);
 
-        if (XG7Plugins.getMinecraftVersion() >= 16) {
-            this.text = Color.hex(this.text);
-            this.text = Color.gradient(this.text);
-        }
+        this.text = text;
+
+        String legacyText = LegacyComponentSerializer.legacyAmpersand().serialize(MINI_MESSAGE.deserialize(text));
+
+        this.rawText = PlainTextComponentSerializer.plainText().serialize(Component.text(legacyText));
+
     }
 
     public Text replace(String placeholder, String replacement) {
         this.text = this.text.replace(placeholder, replacement);
+        this.rawText = this.rawText.replace(placeholder, replacement);
+
         return this;
     }
-    public Text replaceAll(HashMap<String, String> replacements) {
-        for (String placeholder : replacements.keySet()) {
-            this.text = this.text.replace(placeholder, replacements.get(placeholder));
+
+    public Text textFor(Player player) {
+
+        this.text = Condition.processCondition(this.text, player);
+
+        if (XG7Plugins.isPlaceholderAPI()) this.text = PlaceholderAPI.setPlaceholders(player, this.text);
+
+        return this;
+    }
+
+    public Component toAdventureComponent() {
+        return MINI_MESSAGE.deserialize(text.replace("[CENTER] ", "").replace("[ACTION] ", ""));
+    }
+
+    public String getCentralizedText(TextCentralizer.PixelsSize pixelsSize) {
+        return TextCentralizer.getCentralizedText(pixelsSize, rawText);
+    }
+
+    public void send(CommandSender sender) {
+
+        if (text.isEmpty()) return;
+
+        boolean isCenter = false;
+
+        if (text.startsWith("[CENTER] ")) {
+            this.text = text.substring(9);
+            this.rawText = rawText.substring(9);
+            isCenter = true;
         }
-        return this;
-    }
 
-    public Text setPlaceholders(Player player) {
-        this.text = XG7Plugins.isPlaceholderAPI() ? PlaceholderAPI.setPlaceholders(player, text) : text;
-        return this;
-    }
-
-    public boolean processCondition(Player player) {
-        return !Objects.equals(Condition.processCondition(text, player), "");
-    }
-
-    public Text condition(Player player) {
-        this.text = Condition.processCondition(text, player);
-        return this;
-    }
-
-    public String getTextFor(CommandSender sender) {
-        if (sender instanceof Player) {
-            return setPlaceholders((Player) sender).condition((Player) sender).getText();
+        if (!(sender instanceof Player)) {
+            this.rawText = Condition.removeTags(rawText);
+            if (isCenter) this.rawText = getCentralizedText(TextCentralizer.PixelsSize.CHAT);
+            sender.sendMessage(rawText);
+            return;
         }
-        return text;
-    }
 
-    public Text textFor(CommandSender sender) {
-        if (sender instanceof Player) {
-            setPlaceholders((Player) sender).condition((Player) sender).getText();
+        boolean isActionBar = false;
+
+        if (text.startsWith("[ACTION] ")) {
+            this.text = text.substring(9);
+            this.rawText = rawText.substring(9);
+            isActionBar = true;
         }
-        return this;
-    }
 
-    public String getTextCentralized(TextCentralizer.PixelsSize pixelsSize) {
-        if (!text.startsWith("[CENTER] ")) return text;
-        text = text.substring(9);
-        return TextCentralizer.getCentralizedText(pixelsSize, text);
-    }
+        if (isCenter && !isActionBar) {this.text = getCentralizedText(TextCentralizer.PixelsSize.CHAT);}
 
-    public String getTextForCentralized(TextCentralizer.PixelsSize pixelsSize, CommandSender sender) {
-        if (!text.startsWith("[CENTER] ")) return text;
-        text = text.substring(9);
-        if (sender instanceof Player) {
-            return TextCentralizer.getCentralizedText(pixelsSize, setPlaceholders((Player) sender).condition((Player) sender).getText());
-        }
-        return TextCentralizer.getCentralizedText(pixelsSize, text);
-    }
+        if (isActionBar) audience.player((Player) sender).sendActionBar((ComponentLike) MINI_MESSAGE.deserialize(text));
+        else audience.player((Player) sender).sendMessage((ComponentLike) MINI_MESSAGE.deserialize(text));
 
-    public com.xg7plugins.utils.text.TextComponent toComponent() {
-        return new com.xg7plugins.utils.text.TextComponent(text);
     }
 
     public static Text format(String text) {
         return new Text(text);
     }
 
-    public static CompletableFuture<Text> formatLang(Plugin plugin, @NotNull CommandSender sender, String langPath) {
+    public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText) {
 
-        return CompletableFuture.supplyAsync(() -> {
+        return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
 
-            Config lang = null;
+            String text = rawText;
 
-            LangManager langManager = XG7Plugins.getInstance().getLangManager();
+            text = text.replace("[PLUGIN]", plugin.getCustomPrefix());
+            text = text.replace("[PLAYER]", sender.getName());
 
-            if (langManager == null) lang = XG7Plugins.getInstance().getConfigsManager().getConfig("messages");
+            Matcher langMatch = LANG_PATTERN.matcher(text);
 
-            if (lang == null) lang = Config.of(plugin, langManager.getLangByPlayer(plugin, (sender instanceof Player) ? (Player) sender : null).join());
+            StringBuilder result = new StringBuilder(text);
 
-            return Text.format(lang.get(langPath, String.class).orElse("Cannot found path \"" + langPath + "\" in " + lang.get("formated-name", String.class).orElse("langs")).replace("[PREFIX]", plugin.getCustomPrefix())).textFor(sender);
+            while (langMatch.find()) {
+                String path = langMatch.group(1);
 
+                result.replace(langMatch.start(), langMatch.end(), lang.get(path));
+            }
+
+            return new Text(result.toString());
         });
-
-    }
-
-    public static CompletableFuture<Text> detectLangOrText(Plugin plugin, @NotNull CommandSender sender, String text) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                String finalText = text;
-
-                Matcher matcher = LANG_PATTERN.matcher(finalText);
-
-                while (matcher.find()) {
-
-                    Config lang = null;
-                    LangManager langManager = XG7Plugins.getInstance().getLangManager();
-
-                    if (langManager == null) {
-                        lang = XG7Plugins.getInstance().getConfigsManager().getConfig("messages");
-                    }
-
-                    if (lang == null) {
-                        lang = Config.of(plugin, langManager.getLangByPlayer(plugin, (sender instanceof Player) ? (Player) sender : null).join());
-                    }
-
-                    StringBuilder result = new StringBuilder(finalText);
-
-                    String langPath = matcher.group(1);
-
-                    String replacement = lang.get(langPath, String.class)
-                            .orElse("Cannot found path \"" + langPath + "\" in " + lang.get("formated-name", String.class).orElse("langs"));
-
-                    result.replace(matcher.start(), matcher.end(), replacement);
-
-                    finalText = result.toString();
-                }
-
-                return Text.format(finalText.replace("[PREFIX]", plugin.getCustomPrefix())).textFor(sender);
-
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        });
-    }
-
-
-    public void send(CommandSender sender) {
-        if (sender == null) return;
-
-
-        if (text.isEmpty()) return;
-
-
-
-        if (sender instanceof Player) {
-            if (text.startsWith("[ACTION] ")) {
-                text = text.substring(9);
-                sendActionBar((Player) sender);
-                return;
-            }
-        }
-
-        if (text.startsWith("[CENTER] ")) {
-            text = text.substring(9);
-            String centralizedText = TextCentralizer.getCentralizedText(TextCentralizer.PixelsSize.CHAT, text);
-            sender.sendMessage(centralizedText);
-            return;
-        }
-
-        String textForSender = getTextFor(sender);
-        sender.sendMessage(textForSender);
-    }
-
-    @SneakyThrows
-    public void sendActionBar(Player player) {
-
-        if (XG7Plugins.getMinecraftVersion() < 8) return;
-
-        XG7Plugins.getInstance().getScoreManager().getSendActionBlackList().add(player.getUniqueId());
-        sendScoreActionBar(player);
-
-        Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> XG7Plugins.getInstance().getScoreManager().getSendActionBlackList().remove(player.getUniqueId()),60L);
-
-    }
-
-    @SneakyThrows
-    public void sendScoreActionBar(Player player) {
-
-        if (XG7Plugins.getMinecraftVersion() < 8) return;
-
-        if (XG7Plugins.getMinecraftVersion() > 8) {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(text));
-            return;
-        }
-
-
-    }
-
-
-    public static long convertToMilliseconds(Plugin plugin, String timeStr) {
-        long milliseconds = 0;
-        Pattern pattern = Pattern.compile("(\\d+)(ms|[SMHD])", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(timeStr.toUpperCase());
-
-        while (matcher.find()) {
-            long value = Long.parseLong(matcher.group(1));
-            String unit = matcher.group(2);
-
-            switch (unit) {
-                case "S":
-                    milliseconds += value * 1000;
-                    break;
-                case "M":
-                    milliseconds += value * 60000;
-                    break;
-                case "H":
-                    milliseconds += value * 3600000;
-                    break;
-                case "D":
-                    milliseconds += value * 86400000;
-                    break;
-                case "MS":
-                    milliseconds += value;
-                    break;
-                default:
-                    plugin.getLog().severe("Invalid time unit: " + unit);
-            }
-        }
-
-        return milliseconds;
     }
 
 }

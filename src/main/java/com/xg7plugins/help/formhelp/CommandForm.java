@@ -5,9 +5,9 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.MainCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.libs.xg7geyserforms.forms.ModalForm;
-import com.xg7plugins.libs.xg7geyserforms.forms.SimpleForm;
-import com.xg7plugins.libs.xg7menus.item.Item;
+import com.xg7plugins.temp.xg7geyserforms.forms.ModalForm;
+import com.xg7plugins.temp.xg7geyserforms.forms.SimpleForm;
+import com.xg7plugins.temp.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class CommandForm extends SimpleForm {

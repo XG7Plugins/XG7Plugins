@@ -2,7 +2,7 @@ package com.xg7plugins.lang;
 
 import com.sun.jna.platform.unix.solaris.LibKstat;
 import com.xg7plugins.data.config.ConfigTypeAdapter;
-import com.xg7plugins.libs.xg7menus.item.Item;
+import com.xg7plugins.temp.xg7menus.item.Item;
 import org.bukkit.configuration.ConfigurationSection;
 
 public class LangItemTypeAdapter implements ConfigTypeAdapter<Item> {

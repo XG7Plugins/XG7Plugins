@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 @Getter
 public class ConfigManager {
@@ -13,6 +14,9 @@ public class ConfigManager {
     private final HashMap<Class<?>, ConfigTypeAdapter<?>> adapters = new HashMap<>();
 
     public ConfigManager(Plugin plugin, String[] configs) {
+
+        plugin.getLogger().log(Level.CONFIG, "Loading configs of " + plugin.getName());
+
         this.configs.put("config", new Config(plugin,"config"));
         this.configs.put("commands", new Config(plugin,"commands"));
 

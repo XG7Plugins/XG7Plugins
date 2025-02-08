@@ -5,12 +5,12 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.MainCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.libs.xg7menus.Slot;
-import com.xg7plugins.libs.xg7menus.events.ClickEvent;
-import com.xg7plugins.libs.xg7menus.events.MenuEvent;
-import com.xg7plugins.libs.xg7menus.item.Item;
-import com.xg7plugins.libs.xg7menus.menus.gui.PageMenu;
-import com.xg7plugins.libs.xg7menus.menus.holders.PageMenuHolder;
+import com.xg7plugins.temp.xg7menus.Slot;
+import com.xg7plugins.temp.xg7menus.events.ClickEvent;
+import com.xg7plugins.temp.xg7menus.events.MenuEvent;
+import com.xg7plugins.temp.xg7menus.item.Item;
+import com.xg7plugins.temp.xg7menus.menus.gui.PageMenu;
+import com.xg7plugins.temp.xg7menus.menus.holders.PageMenuHolder;
 import org.bukkit.entity.Player;
 
 import java.util.*;

@@ -28,6 +28,12 @@ public class DatabaseManager {
     private final TableCreator tableCreator = new TableCreator();
     @Getter
     private final ObjectCache<String, Entity> cachedEntities;
+    @Getter
+    private final DatabaseProcessor processor = new DatabaseProcessor(this);
+
+    public Connection getConnection(Plugin plugin) {
+        return connections.get(plugin.getName());
+    }
 
     public DatabaseManager(XG7Plugins plugin) {
         plugin.getLog().loading("Loading database manager...");
@@ -44,13 +50,6 @@ public class DatabaseManager {
                 Entity.class
         );
 
-    }
-
-    @Getter
-    private final DatabaseProcessor processor = new DatabaseProcessor(this);
-
-    public Connection getConnection(Plugin plugin) {
-        return connections.get(plugin.getName());
     }
 
     @SafeVarargs

@@ -2,6 +2,7 @@ package com.xg7plugins.data.database.processor;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.entity.Table;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 public class DatabaseProcessor {
 
     private final DatabaseManager databaseManager;
+    private final long timeout = Config.mainConfigOf(XG7Plugins.getInstance()).getTime("sql.timeout").orElse(5000L);
 
     @Getter
     private final ScheduledExecutorService executorService;
@@ -67,6 +69,7 @@ public class DatabaseProcessor {
             for (Pair<String, List<Object>> query : transaction.getQueries()) {
                 currentQuery = query.getFirst();
                 ps = connection.prepareStatement(currentQuery);
+                ps.setQueryTimeout((int) (timeout / 1000));
                 for (int i = 0; i < query.getSecond().size(); i++) {
                     Object o = query.getSecond().get(i);
                     if (o instanceof UUID) {
@@ -115,7 +118,7 @@ public class DatabaseProcessor {
         }
 
         try (PreparedStatement ps = connection.prepareStatement(query.getQuery())) {
-
+            ps.setQueryTimeout((int) (timeout / 1000));
             for (int i = 0; i < query.getParams().size(); i++) {
                 Object o = query.getParams().get(i);
                 if (o instanceof UUID) {

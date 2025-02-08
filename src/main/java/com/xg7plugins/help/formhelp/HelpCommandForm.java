@@ -1,6 +1,6 @@
 package com.xg7plugins.help.formhelp;
 
-import com.xg7plugins.libs.xg7geyserforms.forms.Form;
+import com.xg7plugins.temp.xg7geyserforms.forms.Form;
 
 import java.util.ArrayList;
 import java.util.HashMap;
