@@ -15,6 +15,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,15 +46,35 @@ public class Text {
 
         return this;
     }
+    public Text replaceAll(Map<String, String> placeholders) {
+        placeholders.forEach(this::replace);
+
+        return this;
+    }
 
     public Text textFor(Player player) {
 
         this.text = Condition.processCondition(this.text, player);
+        this.rawText = Condition.processCondition(this.rawText, player);
 
-        if (XG7Plugins.isPlaceholderAPI()) this.text = PlaceholderAPI.setPlaceholders(player, this.text);
+        if (XG7Plugins.isPlaceholderAPI()) {
+            this.text = PlaceholderAPI.setPlaceholders(player, this.text);
+            this.rawText = PlaceholderAPI.setPlaceholders(player, this.rawText);
+        }
 
         return this;
     }
+
+    public Text verifyCentralized(TextCentralizer.PixelsSize size) {
+        if (text.startsWith("[CENTER] ")) {
+            this.text = text.substring(9);
+            this.rawText = rawText.substring(9);
+            this.text = getCentralizedText(size);
+        }
+        return this;
+    }
+
+
 
     public Component toAdventureComponent() {
         return MINI_MESSAGE.deserialize(text.replace("[CENTER] ", "").replace("[ACTION] ", ""));
@@ -107,7 +128,7 @@ public class Text {
 
             String text = rawText;
 
-            text = text.replace("[PLUGIN]", plugin.getCustomPrefix());
+            text = text.replace("[PREFIX]", plugin.getCustomPrefix());
             text = text.replace("[PLAYER]", sender.getName());
 
             Matcher langMatch = LANG_PATTERN.matcher(text);
@@ -120,7 +141,31 @@ public class Text {
                 result.replace(langMatch.start(), langMatch.end(), lang.get(path));
             }
 
-            return new Text(result.toString());
+            Text objectText = new Text(result.toString());
+
+            if (sender instanceof Player) {
+                objectText.textFor((Player) sender);
+            }
+
+            return objectText;
+        });
+    }
+    public static CompletableFuture<Text> fromLang(CommandSender sender, Plugin plugin, String path) {
+
+        return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
+
+            String text = lang.get(path);
+
+            text = text.replace("[PREFIX]", plugin.getCustomPrefix());
+            text = text.replace("[PLAYER]", sender.getName());
+
+            Text objectText = new Text(text);
+
+            if (sender instanceof Player) {
+                objectText.textFor((Player) sender);
+            }
+
+            return objectText;
         });
     }
 

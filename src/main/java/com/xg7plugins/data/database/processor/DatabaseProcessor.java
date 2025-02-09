@@ -11,6 +11,7 @@ import com.xg7plugins.data.database.query.QueryResult;
 import com.xg7plugins.data.database.query.Transaction;
 import com.xg7plugins.utils.Pair;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -49,11 +50,23 @@ public class DatabaseProcessor {
     }
 
     public void process(long delay) {
-        executorService.scheduleWithFixedDelay(this::processTransaction, 0, delay, TimeUnit.MILLISECONDS);
-        executorService.scheduleWithFixedDelay(this::processQuery, 0, delay, TimeUnit.MILLISECONDS);
+        executorService.scheduleWithFixedDelay(() -> {
+            try {
+                processTransaction();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }, 0, delay, TimeUnit.MILLISECONDS);
+        executorService.scheduleWithFixedDelay(() -> {
+            try {
+                processQuery();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }, 0, delay, TimeUnit.MILLISECONDS);
     }
 
-    private void processTransaction() {
+    private void processTransaction() throws SQLException {
         if (transactionQueue.isEmpty()) return;
 
         Transaction transaction = transactionQueue.poll();
@@ -100,7 +113,7 @@ public class DatabaseProcessor {
             throw new RuntimeException(e);
         }
     }
-    private void processQuery() {
+    private void processQuery() throws SQLException {
         if (queryQueue == null || databaseManager == null) {
             System.err.println("queryQueue or databaseManager is null!");
             return;
@@ -153,7 +166,7 @@ public class DatabaseProcessor {
 
     }
 
-    public void shutdown() {
+    public void shutdown() throws SQLException {
         executorService.shutdown();
 
         while (!queryQueue.isEmpty()) {
@@ -171,7 +184,12 @@ public class DatabaseProcessor {
         return CompletableFuture.supplyAsync(() -> {
             if (databaseManager.containsCachedEntity(plugin, id.toString()).join()) return true;
 
-            Connection connection = databaseManager.getConnection(plugin);
+            Connection connection;
+            try {
+                connection = databaseManager.getConnection(plugin);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
 
             if (connection == null) return false;
 

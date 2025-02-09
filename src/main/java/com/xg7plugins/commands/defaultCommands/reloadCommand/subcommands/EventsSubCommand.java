@@ -6,8 +6,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.events.bukkitevents.EventManager;
-import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.temp.xg7menus.item.Item;
+import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -32,23 +31,23 @@ public class EventsSubCommand implements ICommand {
         if (args.len() != 0) plugin = XG7Plugins.getInstance().getPlugins().get(args.get(0, String.class));
 
         EventManager eventManager = XG7Plugins.getInstance().getEventManager();
-        eventManager.unregisterEvents(plugin);
-        eventManager.registerPlugin(plugin, plugin.loadEvents());
+        eventManager.unregisterListeners(plugin);
+        eventManager.registerListeners(plugin, plugin.loadEvents());
 
-        PacketEventManagerBase base = XG7Plugins.getInstance().getPacketEventManager();
+        PacketEventManager packetEventManager = XG7Plugins.getInstance().getPacketEventManager();
 
-        base.unregisterPlugin(plugin);
-        base.registerPlugin(plugin, plugin.loadPacketEvents());
+        packetEventManager.unregisterListeners(plugin);
+        packetEventManager.registerListeners(plugin, plugin.loadPacketEvents());
 
         Plugin finalPlugin = plugin;
-        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.events").thenAccept(text ->
+        Text.fromLang(sender,XG7Plugins.getInstance(),"reload-message.events").thenAccept(text ->
                 text.replace("[PLUGIN]", finalPlugin.getName())
                         .send(sender)
         );
     }
-
-    @Override
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.EMERALD, this);
-    }
+//
+//    @Override
+//    public Item getIcon() {
+//        return Item.commandIcon(XMaterial.EMERALD, this);
+//    }
 }

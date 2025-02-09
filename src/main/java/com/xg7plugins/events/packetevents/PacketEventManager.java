@@ -12,9 +12,11 @@ import java.util.List;
 
 public class PacketEventManager {
 
-    private HashMap<String, List<PacketListenerCommon>> packetListeners = new HashMap<>();
+    private final HashMap<String, List<PacketListenerCommon>> packetListeners = new HashMap<>();
 
     public void registerListeners(Plugin plugin, PacketListener... listeners) {
+
+        if (listeners == null) return;
 
         packetListeners.putIfAbsent(plugin.getName(), new ArrayList<>());
 

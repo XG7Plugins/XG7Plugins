@@ -51,8 +51,6 @@ dependencies {
 
     implementation 'redis.clients:jedis:5.2.0'
 
-    implementation "com.github.cryptomorin:XSeries:13.0.0"
-
     compileOnly 'org.geysermc.floodgate:api:2.2.3-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.6'
 
@@ -65,6 +63,7 @@ dependencies {
     compileOnly 'org.jetbrains:annotations:24.1.0'
 
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
+    implementation 'com.zaxxer:HikariCP:4.0.3'
 
 }
 

@@ -15,12 +15,14 @@ import java.util.stream.Collectors;
 @Getter
 public class ExtensionManager {
 
-    private final File extensionsFolder = new File("extensions");
+    private final File extensionsFolder;
     private final HashMap<String, Extension> extensions = new HashMap<>();
     private final Plugin plugin;
 
     public ExtensionManager(Plugin plugin) {
         this.plugin = plugin;
+
+        this.extensionsFolder = new File(plugin.getDataFolder(), "extensions");
 
         if (!extensionsFolder.exists()) extensionsFolder.mkdirs();
 
@@ -31,6 +33,10 @@ public class ExtensionManager {
         for (File file : files) {
             try (ExtensionClassLoader loader = new ExtensionClassLoader(file, getClass().getClassLoader())) {
                 Extension extension = loader.loadExtension(file);
+                if (!extension.getPlugin().equals(plugin)) {
+                    plugin.getDebug().error("Extension " + extension.getName() + " is not for this plugin");
+                    continue;
+                }
                 extension.onInit();
                 extensions.put(extension.getName(), extension);
                 plugin.getDebug().info("extensions", "Loaded extension " + extension.getName());
@@ -70,17 +76,21 @@ public class ExtensionManager {
     }
 
     public void disableExtensions() {
-        extensions.values().forEach(Extension::disable);
+        extensions.values().forEach(Extension::onDisable);
     }
 
     public boolean isExtensionLoaded(String name) {
         return extensions.containsKey(name);
     }
 
+    public static boolean isExtensionEnabled(Plugin plugin, String name) {
+        return plugin.getExtensionManager().isExtensionLoaded(name);
+    }
+
     public void unloadExtension(String name) {
         Extension extension = extensions.get(name);
         if (extension != null) {
-            extension.disable();
+            extension.onDisable();
             extensions.remove(name);
         }
     }

@@ -6,8 +6,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.database.DatabaseManager;
-import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.temp.xg7menus.item.Item;
+//import com.xg7plugins.temp.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -37,14 +36,14 @@ public class DatabaseSubCommand implements ICommand {
         dbManager.connectPlugin(plugin, plugin.loadEntites());
 
         Plugin finalPlugin = plugin;
-        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.database").thenAccept(text ->
+        Text.fromLang(sender,XG7Plugins.getInstance(),"reload-message.database").thenAccept(text ->
                 text.replace("[PLUGIN]", finalPlugin.getName())
                         .send(sender)
         );
     }
 
-    @Override
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.CHEST, this);
-    }
+//    @Override
+//    public Item getIcon() {
+//        return Item.commandIcon(XMaterial.CHEST, this);
+//    }
 }

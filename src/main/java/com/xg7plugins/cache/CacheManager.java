@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
@@ -60,8 +59,8 @@ public class CacheManager {
                 if (authEnabled) jedis.auth(password);
                 jedis.close();
             } catch (Exception e) {
-                plugin.getLog().severe("Failed to connect to Redis: " + e.getMessage());
-                plugin.getLog().severe("Using local cache instead.");
+                plugin.getDebug().error("Failed to connect to Redis: " + e.getMessage());
+                plugin.getDebug().error("Using local cache instead.");
             }
         }
 

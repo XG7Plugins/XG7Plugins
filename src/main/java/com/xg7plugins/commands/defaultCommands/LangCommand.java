@@ -5,11 +5,8 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
-import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
-import com.xg7plugins.temp.xg7menus.item.Item;
-import com.xg7plugins.temp.xg7menus.menus.holders.MenuHolder;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -37,18 +34,18 @@ public class LangCommand implements ICommand {
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() == 0) {
             if (!(sender instanceof Player)) {
-                Text.formatLang(XG7Plugins.getInstance(), sender, "commands.not-a-player").thenAccept(text -> text.send(sender));
+                Text.fromLang(sender, XG7Plugins.getInstance(), "commands.not-a-player").thenAccept(text -> text.send(sender));
                 return;
             }
             if (XG7Plugins.isFloodgate()) {
-                if (XG7Plugins.getInstance().getFormManager().sendForm((Player) sender, "lang-form")) return;
+                //if (XG7Plugins.getInstance().getFormManager().sendForm((Player) sender, "lang-form")) return;
             }
-            XG7Plugins.getInstance().getMenuManager().getMenu(XG7Plugins.getInstance(), "lang-menu").open((Player) sender);
+            //XG7Plugins.getInstance().getMenuManager().getMenu(XG7Plugins.getInstance(), "lang-menu").open((Player) sender);
             return;
         }
 
         if (!sender.hasPermission("xg7plugins.command.lang.other")) {
-            Text.formatLang(XG7Plugins.getInstance(), sender, "commands.no-permission").thenAccept(text -> text.send(sender));
+            Text.fromLang(sender, XG7Plugins.getInstance(), "commands.no-permission").thenAccept(text -> text.send(sender));
             return;
         }
 
@@ -60,14 +57,14 @@ public class LangCommand implements ICommand {
         String lang = XG7Plugins.getInstance().getName() + ":" + args.get(1, String.class);
 
         if (target == null || (!target.hasPlayedBefore() && !target.isOnline())) {
-            Text.formatLang(XG7Plugins.getInstance(), sender, "commands.player-not-found").thenAccept(text -> text.send(sender));
+            Text.fromLang(sender, XG7Plugins.getInstance(), "commands.player-not-found").thenAccept(text -> text.send(sender));
             return;
         }
 
         XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
 
         if (!XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().containsKey(lang)) {
-            Text.formatLang(XG7Plugins.getInstance(),sender,"lang-not-found").thenAccept(text -> text.send(sender));
+            Text.fromLang(sender, XG7Plugins.getInstance(),"lang-not-found").thenAccept(text -> text.send(sender));
             return;
         }
 
@@ -77,23 +74,23 @@ public class LangCommand implements ICommand {
 
         dao.update(new PlayerData(target.getUniqueId(), dbLang)).thenAccept(r -> {
             XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
-            Text.formatLang(XG7Plugins.getInstance(), sender, "lang-menu.toggle-success").thenAccept(text -> text.send(sender));
+            Text.fromLang(sender, XG7Plugins.getInstance(), "lang-menu.toggle-success").thenAccept(text -> text.send(sender));
             if (target.isOnline()) {
                 Player targetOnline = target.getPlayer();
-                Text.formatLang(XG7Plugins.getInstance(), targetOnline, "lang-menu.toggle-success").thenAccept(text -> text.send(targetOnline));
-                if (targetOnline.getOpenInventory().getTopInventory().getHolder() instanceof MenuHolder) {
-                    MenuHolder holder = (MenuHolder) targetOnline.getOpenInventory().getTopInventory().getHolder();
-                    targetOnline.closeInventory();
-                    holder.getMenu().open(targetOnline);
-                }
+                Text.fromLang(targetOnline, XG7Plugins.getInstance(), "lang-menu.toggle-success").thenAccept(text -> text.send(targetOnline));
+//                if (targetOnline.getOpenInventory().getTopInventory().getHolder() instanceof MenuHolder) {
+//                    MenuHolder holder = (MenuHolder) targetOnline.getOpenInventory().getTopInventory().getHolder();
+//                    targetOnline.closeInventory();
+//                    holder.getMenu().open(targetOnline);
+//                }
             }
         });
 
     }
-
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.WRITABLE_BOOK, this);
-    }
+//
+//    public Item getIcon() {
+//        return Item.commandIcon(XMaterial.WRITABLE_BOOK, this);
+//    }
 
 
 }

@@ -6,7 +6,6 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.lang.LangManager;
-import com.cryptomorin.xseries.XMaterial;import com.xg7plugins.temp.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -36,14 +35,14 @@ public class LangSubCommand implements ICommand {
         langManager.loadLangsFrom(plugin);
 
         Plugin finalPlugin = plugin;
-        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.lang").thenAccept(text ->
+        Text.fromLang(sender,XG7Plugins.getInstance(),"reload-message.lang").thenAccept(text ->
                 text.replace("[PLUGIN]", finalPlugin.getName())
                         .send(sender)
         );
     }
 
-    @Override
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.WRITABLE_BOOK, this);
-    }
+//    @Override
+//    public Item getIcon() {
+//        return Item.commandIcon(XMaterial.WRITABLE_BOOK, this);
+//    }
 }

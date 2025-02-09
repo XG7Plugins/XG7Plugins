@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class Time {
 
-    private static final Pattern TIME_PATTERN = Pattern.compile("(\\d+)(ms|[SMHD])", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TIME_PATTERN = Pattern.compile("(\\d+)(MS|[SMHD])", Pattern.CASE_INSENSITIVE);
 
 
     public static long convertToMilliseconds(String timeStr) throws TimeParseException {

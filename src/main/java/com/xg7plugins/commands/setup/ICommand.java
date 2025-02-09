@@ -2,7 +2,6 @@ package com.xg7plugins.commands.setup;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.temp.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -27,10 +26,10 @@ public interface ICommand {
         return Collections.emptyList();
     }
 
-    Item getIcon();
+//    Item getIcon();
 
     default void syntaxError(CommandSender sender, String syntax) {
-        Text.formatLang(XG7Plugins.getInstance(),sender,"commands.syntax-error")
+        Text.fromLang(sender, XG7Plugins.getInstance(),"commands.syntax-error")
                 .thenAccept(text -> text.replace("[SYNTAX]", syntax).send(sender));
     }
 }

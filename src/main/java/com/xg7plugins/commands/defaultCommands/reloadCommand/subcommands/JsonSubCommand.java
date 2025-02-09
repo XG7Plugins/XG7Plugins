@@ -5,8 +5,6 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
-import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.temp.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -27,13 +25,13 @@ public class JsonSubCommand implements ICommand {
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         XG7Plugins.getInstance().getJsonManager().invalidateCache();
-        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.json").thenAccept(text ->
+        Text.fromLang(sender,XG7Plugins.getInstance(),"reload-message.json").thenAccept(text ->
                 text.send(sender)
         );
     }
 
-    @Override
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.PAPER, this);
-    }
+//    @Override
+//    public Item getIcon() {
+//        return Item.commandIcon(XMaterial.PAPER, this);
+//    }
 }

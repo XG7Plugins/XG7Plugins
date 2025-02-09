@@ -15,30 +15,12 @@ import com.xg7plugins.data.database.processor.DatabaseProcessor;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.events.packetevents.PacketEventManager;
-import com.xg7plugins.help.formhelp.HelpCommandForm;
-import com.xg7plugins.help.guihelp.HelpCommandGUI;
-import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpForm;
-import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpGUI;
-import com.xg7plugins.help.xg7pluginshelp.chathelp.XG7PluginsChatHelp;
-import com.xg7plugins.lang.LangItemTypeAdapter;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.events.defaultevents.JoinListener;
-import com.xg7plugins.temp.xg7geyserforms.forms.Form;
-import com.xg7plugins.temp.xg7menus.item.Item;
-import com.xg7plugins.temp.xg7menus.menuhandler.MenuHandler;
-import com.xg7plugins.temp.xg7menus.menuhandler.PlayerMenuHandler;
-import com.xg7plugins.temp.xg7geyserforms.FormManager;
-import com.xg7plugins.temp.xg7holograms.HologramsManager;
-import com.xg7plugins.temp.xg7holograms.event.ClickEventHandler;
-import com.xg7plugins.temp.xg7menus.MenuManager;
-import com.xg7plugins.temp.xg7npcs.NPCManager;
-import com.xg7plugins.temp.xg7scores.ScoreListener;
-import com.xg7plugins.temp.xg7scores.ScoreManager;
 import com.xg7plugins.events.bukkitevents.EventManager;
-import com.xg7plugins.menus.LangForm;
 import com.xg7plugins.tasks.CooldownManager;
 import com.xg7plugins.tasks.TPSCalculator;
 import com.xg7plugins.tasks.Task;
@@ -101,20 +83,15 @@ public final class XG7Plugins extends Plugin {
     private EventManager eventManager;
     private TaskManager taskManager;
     private CooldownManager cooldownManager;
-    private ScoreManager scoreManager;
     private PacketEventManager packetEventManager;
-    private MenuManager menuManager;
-    private FormManager formManager;
     private JsonManager jsonManager;
-    private HologramsManager hologramsManager;
-    private NPCManager npcManager;
 
     private PlayerDataDAO playerDataDAO;
 
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
     public XG7Plugins() {
-        getConfigsManager().registerAdapter(Item.class, new LangItemTypeAdapter());
+//        getConfigsManager().registerAdapter(Item.class, new LangItemTypeAdapter());
     }
 
     @Override
@@ -130,76 +107,105 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void onEnable() {
         super.onEnable();
+        debug.loading("Enabling XG7Plugins...");
         PacketEvents.getAPI().init();
+        debug.loading("Loading metrics...");
         Metrics.getMetrics(this, 24626);
+        debug.loading("Starting tps calculator...");
         this.tpsCalculator = new TPSCalculator();
         tpsCalculator.start();
         floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
         placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
-        getLog().loading("Enabling XG7Plugins...");
-
         Config config = getConfig("config");
 
         geyserFormEnabled = floodgate && config.get("enable-geyser-forms", Boolean.class).orElse(false);
 
+        debug.loading("Loading managers...");
+
+        debug.loading("Loading task manager...");
         this.taskManager = new TaskManager(this);
         taskManager().registerExecutor("commands", Executors.newCachedThreadPool());
         taskManager().registerExecutor("database", Executors.newCachedThreadPool());
         taskManager().registerExecutor("files", Executors.newCachedThreadPool());
         taskManager().registerExecutor("menus", Executors.newCachedThreadPool());
         taskManager().registerExecutor("cache", Executors.newSingleThreadExecutor());
+
+        debug.loading("Loading cache manager...");
         this.cacheManager = new CacheManager(this);
+
+        debug.loading("Loading database...");
         this.databaseManager = new DatabaseManager(this);
         this.playerDataDAO = new PlayerDataDAO();
+
+        debug.loading("Loading lang manager...");
         this.langManager = new LangManager(this, new String[]{"en", "pt", "es"});
-        langManager.loadLangsFrom(this);
+
+        debug.loading("Loading JSON manager...");
         this.jsonManager = new JsonManager(this);
-        this.hologramsManager = minecraftVersion < 8 ? null : new HologramsManager(this);
-        this.npcManager = new NPCManager(this);
-        this.menuManager = new MenuManager();
+
+        debug.loading("Loading events manager...");
         this.eventManager = new EventManager();
+
+        debug.loading("Loading packet events manager...");
         this.packetEventManager = new PacketEventManager();
+
+        debug.loading("Loading cooldown manager...");
         this.cooldownManager = new CooldownManager(this);
-        this.scoreManager = new ScoreManager(this);
-        this.formManager = floodgate ? new FormManager() : null;
 
-
-        getLog().loading("Loading plugins...");
+        debug.loading("Loading plugins...");
         register(this);
         plugins.forEach((name, plugin) -> {
-            getLog().info("Enabling " + plugin.getName() + "...");
+            debug.loading("Enabling " + plugin.getName() + "...");
+
+            debug.loading("Connecting plugin to database...");
             databaseManager.connectPlugin(plugin, plugin.loadEntites());
+
             if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
-            eventManager.registerPlugin(plugin, plugin.loadEvents());
+
+            debug.loading("Registering listeners...");
+            eventManager.registerListeners(plugin, plugin.loadEvents());
+
+            debug.loading("Registering commands...");
             plugin.getCommandManager().registerCommands(plugin.loadCommands());
+
+            debug.loading("Registering packet events...");
             packetEventManager.registerListeners(plugin, plugin.loadPacketEvents());
+
+            debug.loading("Registering tasks...");
             taskManager.registerTasks(plugin.loadRepeatingTasks());
+
+            debug.loading("Loading langs...");
             langManager.loadLangsFrom(plugin);
+
+            debug.loading("Loading help...");
             loadHelp();
-            if (formManager != null) {
-                Form<?,?>[] forms = plugin.loadGeyserForms();
-                if (forms != null) Arrays.stream(forms).filter(Form::isEnabled).forEach(form -> formManager.registerForm(form));
-            }
 
         });
 
-        if (placeholderAPI) new XG7PluginsPlaceholderExpansion().register();
+        if (placeholderAPI) {
+            debug.loading("Registering PlaceholderAPI expansion...");
+            new XG7PluginsPlaceholderExpansion().register();
+        }
 
-        getLog().loading("XG7Plugins enabled.");
+        debug.loading("XG7Plugins enabled.");
 
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
+        debug.loading("Stopping tpsCalculator...");
         tpsCalculator.cancel();
-        scoreManager.cancelTask();
-        scoreManager.removePlayers();
         this.plugins.forEach((name, plugin) -> unregister(plugin));
-        npcManager.cancelTask();
+
+        debug.loading("Stopping tasks...");
         taskManager.shutdown();
+
+        debug.loading("Stopping cache...");
         cacheManager.shutdown();
+
+        debug.loading("Stopping PacketEvents...");
         PacketEvents.getAPI().terminate();
     }
 
@@ -213,45 +219,46 @@ public final class XG7Plugins extends Plugin {
 
     @Override
     public Listener[] loadEvents() {
-        return new Listener[]{new JoinListener(), new ClickEventHandler(), new com.xg7plugins.temp.xg7npcs.event.ClickEventHandler(), minecraftVersion > 12 ? new CommandAntiTab() : null, new ScoreListener(), new MenuHandler(), new PlayerMenuHandler(menuManager)};
+        return new Listener[]{new JoinListener()};
     }
 
     @Override
     public PacketListener[] loadPacketEvents() {
-        return minecraftVersion < 13 ? new PacketListener[]{new CommandAntiTabOlder()} : super.loadPacketEvents();
+        return null;
     }
 
     public Task[] loadRepeatingTasks() {
-        return new Task[]{hologramsManager == null ? null : hologramsManager.getTask(), npcManager.getTask(), scoreManager.getTask(), cooldownManager.getTask()};
+        return new Task[]{cooldownManager.getTask()};
     }
 
     @Override
     public void loadHelp() {
-        this.helpCommandGUI = new HelpCommandGUI(this, new XG7PluginsHelpGUI(this));
-        if (floodgate) this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
-        this.helpInChat = new XG7PluginsChatHelp();
-    }
-
-    @Override
-    public Form<?, ?>[] loadGeyserForms() {
-        return new Form[]{new LangForm()};
+//        this.helpCommandGUI = new HelpCommandGUI(this, new XG7PluginsHelpGUI(this));
+//        if (floodgate) this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
+//        this.helpInChat = new XG7PluginsChatHelp();
     }
 
     public static void register(Plugin plugin) {
-        XG7Plugins.getInstance().getLog().loading("Registering " + plugin.getName() + "...");
+        XG7Plugins.getInstance().getDebug().loading("Registering " + plugin.getName() + "...");
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
 
         xg7Plugins.getPlugins().put(plugin.getName().split(" ")[0], plugin);
+        XG7Plugins.getInstance().getDebug().loading(plugin.getName() + " registered.");
     }
 
     public static void unregister(Plugin plugin) {
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
-        XG7Plugins.getInstance().getLog().loading("Unregistering " + plugin.getName() + "...");
+        xg7Plugins.getDebug().loading("Unregistering " + plugin.getName() + "...");
+
+        xg7Plugins.getDebug().loading("Disabling plugin events...");
+        xg7Plugins.getEventManager().unregisterListeners(plugin);
         xg7Plugins.getPacketEventManager().unregisterListeners(plugin);
+
+        xg7Plugins.getDebug().loading("Disconnecting plugin from database...");
         xg7Plugins.getDatabaseManager().disconnectPlugin(plugin);
-        xg7Plugins.getScoreManager().unregisterPlugin(plugin);
 
         xg7Plugins.getPlugins().remove(plugin.getName());
+        xg7Plugins.getDebug().loading(plugin.getName() + " unregistered.");
 
     }
 
@@ -274,12 +281,16 @@ public final class XG7Plugins extends Plugin {
     public static void reload(Plugin plugin) {
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
 
+        XG7Plugins.getInstance().getDebug().loading("Reloading " + plugin.getName() + "...");
+
         if (plugin == xg7Plugins) return;
 
         unregister(plugin);
         Bukkit.getPluginManager().disablePlugin(plugin);
         Bukkit.getPluginManager().enablePlugin(plugin);
         register(plugin);
+
+        xg7Plugins.getDebug().loading(plugin.getName() + " reloaded.");
     }
 
     public static @NotNull XG7Plugins getInstance() {

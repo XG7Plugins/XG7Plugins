@@ -48,7 +48,7 @@ public class Config {
         YamlConfiguration resourceConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource(name + ".yml"), StandardCharsets.UTF_8));
         if (!resourceConfig.getString("config-version").equals(config.getString("config-version"))) {
 
-            File backupFile = new File(plugin.getName(), name + "-old.yml");
+            File backupFile = new File(plugin.getDataFolder(), name + "-old.yml");
             configFile.renameTo(backupFile);
 
             plugin.saveResource(name + ".yml", true);
@@ -67,10 +67,13 @@ public class Config {
     }
 
     public static Config of(String name, Plugin plugin) {
+        if (plugin.getConfigsManager().getConfigs().containsKey(name)) {
+            return plugin.getConfigsManager().getConfigs().get(name);
+        }
         return new Config(plugin, name);
     }
     public static Config mainConfigOf(Plugin plugin) {
-        return new Config(plugin, "config");
+        return Config.of("config", plugin);
     }
 
     public boolean contains(String path) {

@@ -9,10 +9,6 @@ import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.extensions.ExtensionManager;
-import com.xg7plugins.help.formhelp.HelpCommandForm;
-import com.xg7plugins.help.chathelp.HelpInChat;
-import com.xg7plugins.help.guihelp.HelpCommandGUI;
-import com.xg7plugins.temp.xg7geyserforms.forms.Form;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.utils.Debug;
 import lombok.*;
@@ -36,9 +32,9 @@ public abstract class Plugin extends JavaPlugin {
 
     private ExtensionManager extensionManager;
 
-    protected HelpCommandGUI helpCommandGUI;
-    protected HelpInChat helpInChat;
-    protected HelpCommandForm helpCommandForm;
+//    protected HelpCommandGUI helpCommandGUI;
+//    protected HelpInChat helpInChat;
+//    protected HelpCommandForm helpCommandForm;
 
     @Setter
     private String customPrefix;
@@ -67,10 +63,12 @@ public abstract class Plugin extends JavaPlugin {
 
         this.enabledWorlds = config.getList("enabled-worlds", String.class).orElse(Collections.emptyList());
 
-
         debug.loading("Custom prefix: " + customPrefix);
 
         Bukkit.getScheduler().runTask(this, () -> {
+
+            debug.loading("Loading extensions...");
+
             this.extensionManager = new ExtensionManager(this);
 
             extensionManager.initExtensions();
@@ -85,6 +83,8 @@ public abstract class Plugin extends JavaPlugin {
     }
     @Override
     public void onDisable() {
+        debug.loading("Disabling " + prefix + "...");
+        debug.loading("Disabling extensions...");
         extensionManager.disableExtensions();
     };
     @Override
@@ -99,9 +99,6 @@ public abstract class Plugin extends JavaPlugin {
         XG7Plugins.register(this);
     };
     public Class<? extends Entity>[] loadEntites() {
-        return null;
-    }
-    public Form<?,?>[] loadGeyserForms() {
         return null;
     }
     public ICommand[] loadCommands() {

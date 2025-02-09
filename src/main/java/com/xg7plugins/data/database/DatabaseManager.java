@@ -7,6 +7,8 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.TableCreator;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.ConfigurationSection;
@@ -23,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DatabaseManager {
 
-    private final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, HikariDataSource> connections = new ConcurrentHashMap<>();
     @Getter
     private final TableCreator tableCreator = new TableCreator();
     @Getter
@@ -31,13 +33,11 @@ public class DatabaseManager {
     @Getter
     private final DatabaseProcessor processor = new DatabaseProcessor(this);
 
-    public Connection getConnection(Plugin plugin) {
-        return connections.get(plugin.getName());
+    public Connection getConnection(Plugin plugin) throws SQLException {
+        return connections.get(plugin.getName()).getConnection();
     }
 
     public DatabaseManager(XG7Plugins plugin) {
-        plugin.getLog().loading("Loading database manager...");
-
         Config config = plugin.getConfigsManager().getConfig("config");
 
         cachedEntities = new ObjectCache<>(
@@ -57,12 +57,13 @@ public class DatabaseManager {
 
         if (entityClasses == null) return;
 
-        plugin.getLog().loading("Connecting database...");
+        plugin.getDebug().loading("Connecting database...");
 
-        Config pluginConfig = plugin.getConfigsManager().getConfig("config");
+        Config pluginConfig = Config.mainConfigOf(plugin);
+        Config xg7PluginsConfig = Config.mainConfigOf(XG7Plugins.getInstance());
 
-        if (pluginConfig == null || !pluginConfig.get("sql", ConfigurationSection.class).isPresent()) {
-            plugin.getLog().severe("Connection aborted!");
+        if (!pluginConfig.get("sql", ConfigurationSection.class).isPresent()) {
+            plugin.getDebug().error("Connection aborted!");
             return;
         }
 
@@ -76,7 +77,18 @@ public class DatabaseManager {
 
         String additionalArgs = pluginConfig.get("sql.additional-url-args", String.class).orElse("");
 
-        plugin.getLog().loading("Connection type: " + connectionType);
+        plugin.getDebug().loading("Connection type: " + connectionType);
+
+        HikariConfig hikariConfig = new HikariConfig();
+
+        hikariConfig.setAutoCommit(false);
+        hikariConfig.setConnectionTimeout(xg7PluginsConfig.getTime("sql.connection-timeout").orElse(5000L));
+        hikariConfig.setIdleTimeout(xg7PluginsConfig.getTime("sql.idle-timeout").orElse(600000L));
+        hikariConfig.setUsername(username);
+        hikariConfig.setPassword(password);
+        hikariConfig.setMaximumPoolSize(xg7PluginsConfig.get("sql.max-pool-size", Integer.class).orElse(10));
+        hikariConfig.setPoolName(plugin.getName() + "-pool");
+        hikariConfig.setMinimumIdle(xg7PluginsConfig.get("min-idle-connections", Integer.class).orElse(5));
 
         try {
             switch (connectionType) {
@@ -87,50 +99,47 @@ public class DatabaseManager {
                     File file = new File(plugin.getDataFolder(), "data.db");
                     if (!file.exists()) file.createNewFile();
 
-                    connections.put(plugin.getName(), DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getPath() + "/data.db"));
+                    hikariConfig.setJdbcUrl("jdbc:sqlite:" + file.getAbsolutePath());
 
                     break;
                 case MARIADB:
 
-                    connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mariadb://" + host + ":" + port + "/" + database + "?" + additionalArgs, username, password));
+                    Class.forName("org.mariadb.jdbc.Driver");
+
+                    hikariConfig.setJdbcUrl("jdbc:mariadb://" + host + ":" + port + "/" + database + "?" + additionalArgs);
 
                     break;
                 case MYSQL:
 
-                    connections.put(plugin.getName(), DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + additionalArgs, username, password));
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + additionalArgs);
 
                     break;
             }
-        } catch (SQLException | ClassNotFoundException | IOException e) {
-            plugin.getLog().severe("Error while connecting to database: " + e.getMessage());
+        } catch (ClassNotFoundException | IOException e) {
+            plugin.getDebug().error("Error while connecting to database: " + e.getMessage());
             e.printStackTrace();
             return;
         }
 
+        connections.put(plugin.getName(), new HikariDataSource(hikariConfig));
 
+        plugin.getDebug().loading("Successfully connected to database!");
 
-        plugin.getLog().loading("Successfully connected to database!");
-
-        try {
-            connections.get(plugin.getName()).setAutoCommit(false);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        plugin.getLog().loading("Checking tables...");
+        plugin.getDebug().loading("Checking tables...");
 
         Arrays.stream(entityClasses).forEach(aClass -> tableCreator.createTableOf(plugin, aClass).join());
 
-        plugin.getLog().loading("Successfully checked tables!");
+        plugin.getDebug().loading("Successfully checked tables!");
 
     }
 
     @SneakyThrows
     public void disconnectPlugin(Plugin plugin) {
-        plugin.getLog().loading("Disconnecting database...");
+        plugin.getDebug().loading("Disconnecting database...");
         if (connections.get(plugin.getName()) != null) connections.get(plugin.getName()).close();
         connections.remove(plugin.getName());
-        plugin.getLog().loading("Disconnected database!");
+        plugin.getDebug().loading("Disconnected database!");
     }
 
     public <T extends Entity> CompletableFuture<T> getCachedEntity(Plugin plugin, String id) {

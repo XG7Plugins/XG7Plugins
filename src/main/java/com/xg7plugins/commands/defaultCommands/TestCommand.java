@@ -5,7 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.temp.xg7menus.item.Item;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -24,11 +24,11 @@ public class TestCommand implements ICommand {
 
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
-        Text.format("Test").sendActionBar((Player) sender);
+        Text.format("[ACTION] Test").send(sender);
     }
-
-    @Override
-    public Item getIcon() {
-        return null;
-    }
+//
+//    @Override
+//    public Item getIcon() {
+//        return null;
+//    }
 }

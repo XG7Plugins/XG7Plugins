@@ -6,6 +6,7 @@ debug:
   config-warn: true
   lang: true
   packet-events: true
+  tasks: true
   sql: true
   menu: true
   npc: true
@@ -60,10 +61,14 @@ sql:
 
   cache-expires: 30m
 
-  timeout: 10s
+  connection-timeout: 10s
+  idle-timeout: 600s
+
+  max-pool-size: 10
+  min-idle-connections: 5
 
   query-processor-threads: 4
-  sql-command-processing-interval: 20ms
+  sql-command-processing-interval: 10ms
 
 redis-cache:
 

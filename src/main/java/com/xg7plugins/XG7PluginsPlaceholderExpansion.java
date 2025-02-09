@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 
 public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
 
-    private static Pattern pattern = Pattern.compile("format\\((.*?)\\)");
+    private static final Pattern pattern = Pattern.compile("format\\((.*?)\\)");
 
     @Override
     public @NotNull String getIdentifier() {
@@ -30,7 +30,7 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public String onPlaceholderRequest(Player player, String identifier) {
+    public String onPlaceholderRequest(Player player, @NotNull String identifier) {
 
         if (player == null) return null;
 

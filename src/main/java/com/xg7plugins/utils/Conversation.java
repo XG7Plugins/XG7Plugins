@@ -54,7 +54,7 @@ public class Conversation {
             @NotNull
             @Override
             public String getPromptText(@NotNull ConversationContext conversationContext) {
-                return Text.detectLangOrText(plugin, (CommandSender) conversationContext.getForWhom(), prompt).join().getTextFor((Player) conversationContext.getForWhom());
+                return Text.detectLangs((CommandSender) conversationContext.getForWhom(),plugin, prompt).join().textFor((Player) conversationContext.getForWhom()).getRawText();
             }
 
             @Override
@@ -69,7 +69,7 @@ public class Conversation {
                     results.put(id, result.convert(s));
                 } catch (Exception e) {
                     Player player = (Player) conversationContext.getForWhom();
-                    Text.detectLangOrText(plugin, player, errorMessage).join().toComponent().send(player);
+                    Text.detectLangs(player,plugin, errorMessage).join().send(player);
                     return this;
                 }
 

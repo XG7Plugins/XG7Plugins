@@ -5,8 +5,6 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
-import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.temp.xg7menus.item.Item;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;
@@ -39,26 +37,26 @@ public class RestartTaskSubCommand implements ICommand {
         String id = args.get(0, String.class);
 
         if (!manager.getTasks().containsKey(id)) {
-            Text.formatLang(XG7Plugins.getInstance(),sender,"task-command.not-found").thenAccept(text -> text.send(sender));
+            Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.not-found").thenAccept(text -> text.send(sender));
             return;
         }
 
         Task task = manager.getTasks().get(id);
 
         if (task.getState() == TaskState.RUNNING) {
-            Text.formatLang(XG7Plugins.getInstance(),sender,"task-command.already-running").thenAccept(text -> text.send(sender));
+            Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.already-running").thenAccept(text -> text.send(sender));
             return;
         }
 
         manager.runTask(task);
 
-        XG7Plugins.getInstance().getLog().warn("Task " + id + " was restarted by " + sender.getName());
+        XG7Plugins.getInstance().getDebug().warn("tasks","Task " + id + " was restarted by " + sender.getName());
 
-        Text.formatLang(XG7Plugins.getInstance(),sender,"task-command.restarted").thenAccept(text -> text.send(sender));
+        Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.restarted").thenAccept(text -> text.send(sender));
     }
-
-    @Override
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.COMPASS, this);
-    }
+//
+//    @Override
+//    public Item getIcon() {
+//        return Item.commandIcon(XMaterial.COMPASS, this);
+//    }
 }

@@ -5,8 +5,6 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
-import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.temp.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -33,14 +31,14 @@ public class ConfigSubCommand implements ICommand {
         plugin.getConfigsManager().reloadConfigs();
 
         Plugin finalPlugin = plugin;
-        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.config").thenAccept(text ->
+        Text.fromLang(sender,XG7Plugins.getInstance(),"reload-message.config").thenAccept(text ->
                 text.replace("[PLUGIN]", finalPlugin.getName())
                         .send(sender)
         );
     }
 
-    @Override
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.REDSTONE, this);
-    }
+//    @Override
+//    public Item getIcon() {
+//        return Item.commandIcon(XMaterial.REDSTONE, this);
+//    }
 }

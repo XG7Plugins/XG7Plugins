@@ -5,8 +5,6 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
-import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.temp.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -34,14 +32,14 @@ public class TaskSubCommand implements ICommand {
         XG7Plugins.taskManager().registerTasks(plugin.loadRepeatingTasks());
 
         Plugin finalPlugin = plugin;
-        Text.formatLang(XG7Plugins.getInstance(),sender,"reload-message.tasks").thenAccept(text ->
+        Text.fromLang(sender,XG7Plugins.getInstance(),"reload-message.tasks").thenAccept(text ->
                 text.replace("[PLUGIN]", finalPlugin.getName())
                     .send(sender)
         );
     }
-
-    @Override
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.BOOK, this);
-    }
+//
+//    @Override
+//    public Item getIcon() {
+//        return Item.commandIcon(XMaterial.BOOK, this);
+//    }
 }

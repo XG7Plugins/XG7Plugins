@@ -23,8 +23,6 @@ public class EventManager {
 
     public void registerListeners(Plugin plugin, Listener... events) {
 
-        plugin.getLog().loading("Loading Events...");
-
         if (events == null) return;
 
         listeners.put(plugin.getName(), new org.bukkit.event.Listener() {});
@@ -89,13 +87,12 @@ public class EventManager {
 
         }
 
-        plugin.getLog().loading("Events loaded.");
     }
     public void registerListeners(Plugin plugin, List<Listener> listeners) {
         registerListeners(plugin, listeners.toArray(new Listener[0]));
     }
 
-    public void unregisterEvents(Plugin plugin) {
+    public void unregisterListeners(Plugin plugin) {
         HandlerList.unregisterAll(listeners.get(plugin.getName()));
         listeners.remove(plugin.getName());
     }

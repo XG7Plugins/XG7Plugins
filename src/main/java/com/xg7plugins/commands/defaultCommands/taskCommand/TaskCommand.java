@@ -3,8 +3,6 @@ package com.xg7plugins.commands.defaultCommands.taskCommand;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.*;
-import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.temp.xg7menus.item.Item;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -25,11 +23,11 @@ public class TaskCommand implements ICommand {
     }
 
     private ICommand[] subCommands = new ICommand[]{new DeleteTaskSubCommand(), new SeeSubcommand(), new StopTaskSubCommand(), new RestartTaskSubCommand()};
-
-    @Override
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.REPEATER, this);
-    }
+//
+//    @Override
+//    public Item getIcon() {
+//        return Item.commandIcon(XMaterial.REPEATER, this);
+//    }
 
     @Override
     public ICommand[] getSubCommands() {
@@ -42,7 +40,7 @@ public class TaskCommand implements ICommand {
             return;
         }
 
-        XG7Plugins.getInstance().getMenuManager().getMenu(XG7Plugins.getInstance(), "task-menu").open((Player) sender);
+        //XG7Plugins.getInstance().getMenuManager().getMenu(XG7Plugins.getInstance(), "task-menu").open((Player) sender);
     }
 
     @Override

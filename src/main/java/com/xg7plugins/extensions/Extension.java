@@ -14,7 +14,7 @@ public interface Extension {
 
     void onInit();
 
-    void disable();
+    void onDisable();
 
     default Map<String, ExecutorService> getExecutors() {
         return Collections.emptyMap();

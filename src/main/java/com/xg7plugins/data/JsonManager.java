@@ -37,7 +37,7 @@ public class JsonManager {
 
     public <T> CompletableFuture<Void> saveJson(Plugin plugin, String path, T object) {
         return CompletableFuture.runAsync(() -> {
-            plugin.getLog().info("Saving " + path + "...");
+            plugin.getDebug().info("json", "Saving " + path + "...");
 
             File file = new File(plugin.getDataFolder(), path);
             if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
@@ -53,13 +53,13 @@ public class JsonManager {
             try (Writer writer = new BufferedWriter(new FileWriter(file, false))) {
                 gson.toJson(object, writer);
             } catch (Exception e) {
-                plugin.getLog().severe("Erro ao serializar o objeto: " + e.getMessage());
+                plugin.getDebug().severe("json", "Error on object serialize: " + e.getMessage());
                 e.printStackTrace();
             }
 
             cache.put(plugin + ":" + path, object);
 
-            plugin.getLog().info("Saved!");
+            plugin.getDebug().info("json", "Saved!");
         }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
 
     }
