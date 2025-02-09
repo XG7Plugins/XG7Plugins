@@ -22,8 +22,6 @@ repositories {
     }
     maven { url = uri("https://maven.elmakers.com/repository/") }
     maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
-
-    maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
     maven {
         name = "sonatype-oss-snapshots1"
         url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
@@ -51,7 +49,6 @@ dependencies {
 
     implementation 'redis.clients:jedis:5.2.0'
 
-    compileOnly 'org.geysermc.floodgate:api:2.2.3-SNAPSHOT'
     compileOnly 'me.clip:placeholderapi:2.11.6'
 
     compileOnly 'org.projectlombok:lombok:1.18.34'

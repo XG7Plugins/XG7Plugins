@@ -32,8 +32,6 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
