@@ -6,6 +6,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.modules.xg7menus.item.Item;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -34,40 +35,40 @@ public class MainCommand implements ICommand {
 
 
     public void onCommand(CommandSender sender, CommandArgs args) {
-//        Config config = XG7Plugins.getInstance().getConfig("config");
-//
-//        if (args.len() > 1){
-//            plugin.getHelpInChat().sendPage(args.get(1, String.class), sender);
-//            return;
-//        }
-//
-//        if (!(sender instanceof Player)) {
-//            plugin.getHelpInChat().sendPage("index", sender);
-//            return;
-//        }
-//
-//        Player player = (Player) sender;
-//
-//        if (XG7Plugins.isGeyserFormEnabled()) {
-//            boolean commandFormEnabled = config.get("help-command-form", Boolean.class).orElse(false);
-//            if (commandFormEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
-//                plugin.getHelpCommandForm().getForm("index").send(player);
-//                return;
-//            }
-//        }
-//
-//        if (config.get("help-command-in-gui", Boolean.class).orElse(false)) {
-//            plugin.getHelpCommandGUI().getMenu("index").open(player);
-//            return;
-//        }
-//
-////        plugin.getHelpInChat().sendPage("index", player);
+        Config config = XG7Plugins.getInstance().getConfig("config");
+
+        if (args.len() > 1){
+            plugin.getHelpInChat().sendPage(args.get(1, String.class), sender);
+            return;
+        }
+
+        if (!(sender instanceof Player)) {
+            plugin.getHelpInChat().sendPage("index", sender);
+            return;
+        }
+
+        Player player = (Player) sender;
+
+        if (XG7Plugins.isGeyserFormEnabled()) {
+            boolean commandFormEnabled = config.get("help-command-form", Boolean.class).orElse(false);
+            if (commandFormEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
+                plugin.getHelpCommandForm().getForm("index").send(player);
+                return;
+            }
+        }
+
+        if (config.get("help-command-in-gui", Boolean.class).orElse(false)) {
+            plugin.getHelpCommandGUI().getMenu("index").open(player);
+            return;
+        }
+
+        plugin.getHelpInChat().sendPage("index", player);
      }
-//
-//    @Override
-//    public Item getIcon() {
-//        return null;
-//    }
+
+    @Override
+    public Item getIcon() {
+        return null;
+    }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
@@ -79,10 +80,10 @@ public class MainCommand implements ICommand {
             return suggestions;
         }
 
-//        if (args.len() == 2 && args.get(0, String.class).equalsIgnoreCase("help")) {
-//            suggestions.addAll(plugin.getHelpInChat().getPages().keySet());
-//            return suggestions;
-//        }
+        if (args.len() == 2 && args.get(0, String.class).equalsIgnoreCase("help")) {
+            suggestions.addAll(plugin.getHelpInChat().getPages().keySet());
+            return suggestions;
+        }
 
         return Collections.emptyList();
     }

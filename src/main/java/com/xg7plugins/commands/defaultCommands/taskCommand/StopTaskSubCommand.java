@@ -1,11 +1,13 @@
 package com.xg7plugins.commands.defaultCommands.taskCommand;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 
+import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.utils.text.Text;
@@ -56,8 +58,8 @@ public class StopTaskSubCommand implements ICommand {
         Text.fromLang(sender,XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
     }
 
-//    @Override
-//    public Item getIcon() {
-//        return Item.commandIcon(XMaterial.REDSTONE_TORCH, this);
-//    }
+    @Override
+    public Item getIcon() {
+        return Item.commandIcon(XMaterial.REDSTONE_TORCH, this);
+    }
 }

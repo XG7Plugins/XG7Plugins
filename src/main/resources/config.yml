@@ -9,7 +9,6 @@ debug:
   tasks: true
   sql: true
   menu: true
-  npc: true
   hologram: true
   scoreboards: true
   commands: true
@@ -18,7 +17,7 @@ debug:
   libs: true
 
 
-enable-langs: true
+lang-enabled: true
 main-lang: en-us
 
 anti-tab: true
@@ -66,6 +65,8 @@ sql:
 
   max-pool-size: 10
   min-idle-connections: 5
+
+  keep-alive-time: 600s
 
   query-processor-threads: 4
   sql-command-processing-interval: 10ms

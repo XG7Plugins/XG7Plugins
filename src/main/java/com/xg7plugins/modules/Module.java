@@ -1,7 +1,6 @@
-package com.xg7plugins.extensions;
+package com.xg7plugins.modules;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.tasks.Task;
 
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-public interface Extension {
+public interface Module {
 
     void onInit();
 
@@ -28,11 +27,6 @@ public interface Extension {
         return Collections.emptyList();
     }
 
-    default List<ICommand> loadCommands() {
-        return Collections.emptyList();
-    }
-
-    Plugin getPlugin();
     String getName();
 
 }

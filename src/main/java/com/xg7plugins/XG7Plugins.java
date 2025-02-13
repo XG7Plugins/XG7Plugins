@@ -15,16 +15,24 @@ import com.xg7plugins.data.database.processor.DatabaseProcessor;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.events.packetevents.PacketEventManager;
+import com.xg7plugins.help.formhelp.HelpCommandForm;
+import com.xg7plugins.help.guihelp.HelpCommandGUI;
+import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpForm;
+import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpGUI;
+import com.xg7plugins.help.xg7pluginshelp.chathelp.XG7PluginsChatHelp;
+import com.xg7plugins.modules.ModuleManager;
+import com.xg7plugins.lang.LangItemTypeAdapter;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.events.defaultevents.JoinListener;
 import com.xg7plugins.events.bukkitevents.EventManager;
-import com.xg7plugins.tasks.CooldownManager;
-import com.xg7plugins.tasks.TPSCalculator;
-import com.xg7plugins.tasks.Task;
-import com.xg7plugins.tasks.TaskManager;
+import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
+import com.xg7plugins.modules.xg7menus.XG7Menus;
+import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7scores.XG7Scores;
+import com.xg7plugins.tasks.*;
 import com.xg7plugins.utils.Metrics;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
@@ -83,14 +91,11 @@ public final class XG7Plugins extends Plugin {
     private CooldownManager cooldownManager;
     private PacketEventManager packetEventManager;
     private JsonManager jsonManager;
+    private ModuleManager moduleManager;
 
     private PlayerDataDAO playerDataDAO;
 
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
-
-    public XG7Plugins() {
-//        getConfigsManager().registerAdapter(Item.class, new LangItemTypeAdapter());
-    }
 
     @Override
     public void onLoad() {
@@ -151,6 +156,16 @@ public final class XG7Plugins extends Plugin {
         debug.loading("Loading cooldown manager...");
         this.cooldownManager = new CooldownManager(this);
 
+        debug.loading("Loading modules...");
+
+        this.moduleManager = new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores());
+
+        moduleManager.initModules();
+        moduleManager.loadTasks();
+        moduleManager.loadExecutors();
+        moduleManager.loadListeners();
+
+
         debug.loading("Loading plugins...");
         register(this);
         plugins.forEach((name, plugin) -> {
@@ -180,6 +195,9 @@ public final class XG7Plugins extends Plugin {
             loadHelp();
 
         });
+
+        getConfigsManager().registerAdapter(Item.class, new LangItemTypeAdapter());
+
 
         if (placeholderAPI) {
             debug.loading("Registering PlaceholderAPI expansion...");
@@ -226,14 +244,14 @@ public final class XG7Plugins extends Plugin {
     }
 
     public Task[] loadRepeatingTasks() {
-        return new Task[]{cooldownManager.getTask()};
+        return new Task[]{cooldownManager.getTask(), new DatabaseKeepAlive()};
     }
 
     @Override
     public void loadHelp() {
-//        this.helpCommandGUI = new HelpCommandGUI(this, new XG7PluginsHelpGUI(this));
-//        if (floodgate) this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
-//        this.helpInChat = new XG7PluginsChatHelp();
+        this.helpCommandGUI = new HelpCommandGUI(this, new XG7PluginsHelpGUI(this));
+        if (floodgate) this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
+        this.helpInChat = new XG7PluginsChatHelp();
     }
 
     public static void register(Plugin plugin) {
@@ -274,21 +292,6 @@ public final class XG7Plugins extends Plugin {
     }
     public static JsonManager json() {
         return XG7Plugins.getInstance().getJsonManager();
-    }
-
-    public static void reload(Plugin plugin) {
-        XG7Plugins xg7Plugins = XG7Plugins.getInstance();
-
-        XG7Plugins.getInstance().getDebug().loading("Reloading " + plugin.getName() + "...");
-
-        if (plugin == xg7Plugins) return;
-
-        unregister(plugin);
-        Bukkit.getPluginManager().disablePlugin(plugin);
-        Bukkit.getPluginManager().enablePlugin(plugin);
-        register(plugin);
-
-        xg7Plugins.getDebug().loading(plugin.getName() + " reloaded.");
     }
 
     public static @NotNull XG7Plugins getInstance() {

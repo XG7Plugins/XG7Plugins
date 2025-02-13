@@ -17,6 +17,14 @@ public class Lang {
     private final Plugin plugin;
     private final Config langConfiguration;
     private final String langid;
+    private final boolean selected;
+
+    public Lang(Plugin plugin, Config langConfiguration, String langid) {
+        this.plugin = plugin;
+        this.langConfiguration = langConfiguration;
+        this.langid = langid;
+        this.selected = false;
+    }
 
     public static CompletableFuture<Lang> of(Plugin plugin, Player player) {
         return CompletableFuture.supplyAsync(() -> {

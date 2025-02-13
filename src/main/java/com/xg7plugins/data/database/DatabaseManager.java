@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DatabaseManager {
 
+    @Getter
     private final ConcurrentHashMap<String, HikariDataSource> connections = new ConcurrentHashMap<>();
     @Getter
     private final TableCreator tableCreator = new TableCreator();
@@ -88,7 +89,8 @@ public class DatabaseManager {
         hikariConfig.setPassword(password);
         hikariConfig.setMaximumPoolSize(xg7PluginsConfig.get("sql.max-pool-size", Integer.class).orElse(10));
         hikariConfig.setPoolName(plugin.getName() + "-pool");
-        hikariConfig.setMinimumIdle(xg7PluginsConfig.get("min-idle-connections", Integer.class).orElse(5));
+        hikariConfig.setMinimumIdle(xg7PluginsConfig.get("sql.min-idle-connections", Integer.class).orElse(5));
+        hikariConfig.setConnectionTestQuery("SELECT 1");
 
         try {
             switch (connectionType) {
@@ -131,6 +133,8 @@ public class DatabaseManager {
         Arrays.stream(entityClasses).forEach(aClass -> tableCreator.createTableOf(plugin, aClass).join());
 
         plugin.getDebug().loading("Successfully checked tables!");
+
+
 
     }
 

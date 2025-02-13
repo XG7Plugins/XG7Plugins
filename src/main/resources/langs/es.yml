@@ -67,7 +67,7 @@ tasks-menu:
     - "[IF: %task_is_running%] &fClic derecho -> &cDetener tarea"
     - "[IF: %task_is_not_running%] &fClic derecho -> &eIniciar tarea"
 
-  copy-to-clipboard: "Haz clic [CLICK action=%COPY_TO_CLICKBOARD% value=%[ID]%]&baquí&r[/CLICK] para copiar el id!"
+  copy-to-clipboard: "Haz clic <click:copy_to_clipboard:[ID]>&baquí&r</click> para copiar el id!"
 
   notes:
     - "&fUso de RAM: &9[RAM]MB"

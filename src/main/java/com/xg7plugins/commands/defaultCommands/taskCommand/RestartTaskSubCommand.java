@@ -1,10 +1,12 @@
 package com.xg7plugins.commands.defaultCommands.taskCommand;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;
@@ -54,9 +56,9 @@ public class RestartTaskSubCommand implements ICommand {
 
         Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.restarted").thenAccept(text -> text.send(sender));
     }
-//
-//    @Override
-//    public Item getIcon() {
-//        return Item.commandIcon(XMaterial.COMPASS, this);
-//    }
+
+    @Override
+    public Item getIcon() {
+        return Item.commandIcon(XMaterial.COMPASS, this);
+    }
 }

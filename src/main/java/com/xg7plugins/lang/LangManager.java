@@ -1,8 +1,5 @@
 package com.xg7plugins.lang;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.player.User;
-import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientSettings;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
@@ -10,7 +7,6 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.Getter;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -81,7 +77,7 @@ public class LangManager {
         }, XG7Plugins.taskManager().getAsyncExecutors().get("lang"));
     }
 
-    public CompletableFuture<Lang> getLang(Plugin plugin, String lang) {
+    public CompletableFuture<Lang> getLang(Plugin plugin, String lang, boolean selected) {
         return CompletableFuture.supplyAsync(() -> {
 
             String finalLang = lang;
@@ -97,9 +93,13 @@ public class LangManager {
 
             langs.put(plugin.getName() + ":" + finalLang, langConfig);
 
-            return new Lang(plugin, langConfig, finalLang);
+            return new Lang(plugin, langConfig, finalLang,selected);
 
         }, XG7Plugins.taskManager().getAsyncExecutors().get("lang"));
+    }
+
+    public CompletableFuture<Lang> getLang(Plugin plugin, String lang) {
+        return getLang(plugin, lang, false);
     }
 
     public CompletableFuture<Lang> getLangByPlayer(Plugin plugin, Player player) {
@@ -111,9 +111,9 @@ public class LangManager {
 
             PlayerData playerData = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();
 
-            if (playerData == null) return getLang(plugin, mainLang).join();
+            if (playerData == null) return getLang(plugin, mainLang,true).join();
 
-            return getLang(plugin, playerData.getLangId()).join();
+            return getLang(plugin, playerData.getLangId(), true).join();
 
         }, XG7Plugins.taskManager().getAsyncExecutors().get("lang"));
     }

@@ -1,9 +1,11 @@
 package com.xg7plugins.commands.defaultCommands.reloadCommand;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.subcommands.*;
 import com.xg7plugins.commands.setup.*;
+import com.xg7plugins.modules.xg7menus.item.Item;
 import org.bukkit.command.CommandSender;
 
 import java.util.*;
@@ -25,10 +27,10 @@ public class ReloadCommand implements ICommand {
 
     private final ICommand[] subCommands = new ICommand[]{new JsonSubCommand(), new ConfigSubCommand(), new TaskSubCommand(), new LangSubCommand(), new DatabaseSubCommand(), new EventsSubCommand(), new AllSubCommand()};
 
-//    @Override
-//    public Item getIcon() {
-//        return Item.commandIcon(XMaterial.STONE_BUTTON, this);
-//    }
+    @Override
+    public Item getIcon() {
+        return Item.commandIcon(XMaterial.STONE_BUTTON, this);
+    }
     @Override
     public ICommand[] getSubCommands() {
         return subCommands;

@@ -1,5 +1,6 @@
 package com.xg7plugins.commands.defaultCommands;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
@@ -7,6 +8,10 @@ import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
+import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
+import com.xg7plugins.modules.xg7menus.XG7Menus;
+import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -38,9 +43,9 @@ public class LangCommand implements ICommand {
                 return;
             }
             if (XG7Plugins.isFloodgate()) {
-                //if (XG7Plugins.getInstance().getFormManager().sendForm((Player) sender, "lang-form")) return;
+                if (XG7GeyserForms.getInstance().sendForm((Player) sender, "lang-form")) return;
             }
-            //XG7Plugins.getInstance().getMenuManager().getMenu(XG7Plugins.getInstance(), "lang-menu").open((Player) sender);
+            XG7Menus.getInstance().getMenu(XG7Plugins.getInstance(), "lang-menu").open((Player) sender);
             return;
         }
 
@@ -78,19 +83,19 @@ public class LangCommand implements ICommand {
             if (target.isOnline()) {
                 Player targetOnline = target.getPlayer();
                 Text.fromLang(targetOnline, XG7Plugins.getInstance(), "lang-menu.toggle-success").thenAccept(text -> text.send(targetOnline));
-//                if (targetOnline.getOpenInventory().getTopInventory().getHolder() instanceof MenuHolder) {
-//                    MenuHolder holder = (MenuHolder) targetOnline.getOpenInventory().getTopInventory().getHolder();
-//                    targetOnline.closeInventory();
-//                    holder.getMenu().open(targetOnline);
-//                }
+                    if (targetOnline.getOpenInventory().getTopInventory().getHolder() instanceof MenuHolder) {
+                        MenuHolder holder = (MenuHolder) targetOnline.getOpenInventory().getTopInventory().getHolder();
+                        targetOnline.closeInventory();
+                        holder.getMenu().open(targetOnline);
+                    }
             }
         });
 
     }
-//
-//    public Item getIcon() {
-//        return Item.commandIcon(XMaterial.WRITABLE_BOOK, this);
-//    }
+
+    public Item getIcon() {
+        return Item.commandIcon(XMaterial.WRITABLE_BOOK, this);
+    }
 
 
 }
