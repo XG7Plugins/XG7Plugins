@@ -2,6 +2,7 @@ package com.xg7plugins.modules.xg7scores.scores.bossbar;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -53,7 +54,7 @@ public class BossBar extends Score {
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
 
-            String name = Text.detectLangs(player, plugin,updateText.get(indexUpdating)).join().getText();
+            String name = Text.detectLangs(player, plugin,updateText.get(indexUpdating)).join().getRawText();
 
             if (!bossBars.get(id).getTitle().equals(name)) {
                 bossBars.get(player.getUniqueId()).setTitle(name);

@@ -4,6 +4,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
+import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.text.TextCentralizer;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -48,7 +49,7 @@ public abstract class PageMenu extends Menu {
     @Override
     public void open(Player player) {
 
-        PageMenuHolder holder = new PageMenuHolder(id, plugin, Text.detectLangs(player, plugin,title).join().verifyCentralized(TextCentralizer.PixelsSize.INV).getText(), size, type, this, player);
+        PageMenuHolder holder = new PageMenuHolder(id, plugin, Text.detectLangs(player, plugin,title).join().getRawText(), size, type, this, player);
         player.openInventory(holder.getInventory());
         putItems(player, holder);
         holder.goPage(0);

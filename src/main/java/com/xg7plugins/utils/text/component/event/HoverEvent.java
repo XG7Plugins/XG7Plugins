@@ -24,4 +24,8 @@ public class HoverEvent implements Event {
     public <T> T toBukkitEvent() {
         return (T) new net.md_5.bungee.api.chat.HoverEvent(action.toBukkitAction(), TextComponent.fromLegacyText(content));
     }
+
+    public static HoverEvent of(HoverAction action, String content) {
+        return new HoverEvent(content,action);
+    }
 }

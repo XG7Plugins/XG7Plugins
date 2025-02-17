@@ -50,6 +50,22 @@ public class Component implements Cloneable {
         components.add(0, component);
     }
 
+    public void setClickEvent(ClickEvent event) {
+        if (this.events == null) this.events = new Pair<>(null, null);
+
+        events.setSecond(event);
+    }
+
+    public void setHoverEvent(HoverEvent event) {
+        if (this.events == null) this.events = new Pair<>(null, null);
+
+        events.setFirst(event);
+    }
+
+    public boolean isEmpty() {
+        return text.isEmpty();
+    }
+
     public TextComponent toBukkitComponent() {
         TextComponent component = new TextComponent(text);
         if (events != null) {

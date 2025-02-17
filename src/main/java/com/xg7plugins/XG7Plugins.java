@@ -6,6 +6,7 @@ import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.defaultCommands.LangCommand;
 import com.xg7plugins.commands.defaultCommands.TestCommand;
+import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCause;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
 import com.xg7plugins.commands.setup.ICommand;
@@ -122,6 +123,7 @@ public final class XG7Plugins extends Plugin {
         this.tpsCalculator = new TPSCalculator();
         tpsCalculator.start();
         floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
+        ReloadCause.registerCause(this, new ReloadCause("json"));
 
         Config config = getConfig("config");
 
@@ -240,8 +242,12 @@ public final class XG7Plugins extends Plugin {
 
         debug.loading("Stopping PacketEvents...");
         PacketEvents.getAPI().terminate();
+    }
 
-        Text.getAudience().close();
+    @Override
+    public void onReload(ReloadCause cause) {
+        super.onReload(cause);
+        if (cause.equals("json")) jsonManager.invalidateCache();
     }
 
     public Class<? extends Entity>[] loadEntites() {

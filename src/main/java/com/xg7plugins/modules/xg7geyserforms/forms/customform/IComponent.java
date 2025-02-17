@@ -1,6 +1,7 @@
 package com.xg7plugins.modules.xg7geyserforms.forms.customform;
 
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;

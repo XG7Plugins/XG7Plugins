@@ -25,5 +25,9 @@ public class ClickEvent implements Event {
         return (T) new net.md_5.bungee.api.chat.ClickEvent(action.toBukkitAction(), content);
     }
 
+    public static ClickEvent of(ClickAction action, String content) {
+        return new ClickEvent(content,action);
+    }
+
 
 }

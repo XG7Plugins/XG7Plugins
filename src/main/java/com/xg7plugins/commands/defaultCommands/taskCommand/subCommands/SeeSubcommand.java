@@ -1,4 +1,4 @@
-package com.xg7plugins.commands.defaultCommands.taskCommand;
+package com.xg7plugins.commands.defaultCommands.taskCommand.subCommands;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
@@ -14,11 +14,12 @@ import com.xg7plugins.modules.xg7menus.menus.BaseMenu;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;
+import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;
-import java.util.HashMap;
 
 @Command(
         name = "see",
@@ -77,7 +78,7 @@ public class SeeSubcommand implements ICommand {
                 if (event.getClickAction().isLeftClick()) {
                     Text.fromLang(sender, XG7Plugins.getInstance(), "tasks-menu.copy-to-clipboard")
                             .thenAccept(text -> {
-                                text.replace("[ID]", task.getPlugin().getName() + ":" + task.getName()).send(sender);
+                                text.replace("id", task.getPlugin().getName() + ":" + task.getName()).send(sender);
                             });
                 }
 
@@ -89,13 +90,13 @@ public class SeeSubcommand implements ICommand {
             builder.setNBTTag("task-id", task.getPlugin().getName() + ":" + task.getName());
             builder.setNBTTag("task-state", task.getState().name());
 
-            builder.setBuildPlaceholders(new HashMap<String, String>() {{
-                put("[PLUGIN]", task.getPlugin().getName());
-                put("[ID]", task.getPlugin().getName() + ":" + task.getName());
-                put("[STATE]", task.getState().name());
-                put("%task_is_running%", String.valueOf(task.getState() == TaskState.RUNNING));
-                put("%task_is_not_running%", String.valueOf(task.getState() == TaskState.IDLE));
-            }});
+            builder.setBuildPlaceholders(
+                Pair.of("plugin", task.getPlugin().getName()),
+                Pair.of("id", task.getPlugin().getName() + ":" + task.getName()),
+                Pair.of("state", task.getState().name()),
+                Pair.of("task_is_running", String.valueOf(task.getState() == TaskState.RUNNING)),
+                Pair.of("task_is_not_running", String.valueOf(task.getState() == TaskState.IDLE))
+            );
             builder.slot(13);
 
             MenuBuilder.create("task-menu-for-task-" + id, XG7Plugins.getInstance()).addItem(builder).title("Task: " + id).size(27).build().open((Player) sender);

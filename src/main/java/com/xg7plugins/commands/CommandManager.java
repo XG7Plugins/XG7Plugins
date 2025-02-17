@@ -7,6 +7,7 @@ import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
+import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -113,7 +114,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             if (strings.length == 0) {
                 ICommand finalCommand1 = command;
                 Text.fromLang(commandSender, XG7Plugins.getInstance(), "commands.syntax-error").thenAccept(text -> {
-                        text.replace("[SYNTAX]", finalCommand1.getClass().getAnnotation(Command.class).syntax())
+                        text.replace("syntax", finalCommand1.getClass().getAnnotation(Command.class).syntax())
                             .send(commandSender);
                 });
                 return true;

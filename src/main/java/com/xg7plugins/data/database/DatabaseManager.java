@@ -27,11 +27,13 @@ import java.util.concurrent.TimeUnit;
 public class DatabaseManager {
 
     private final ConcurrentHashMap<String, HikariDataSource> connections = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Connection> sqliteConnections = new ConcurrentHashMap<>();
     private final TableCreator tableCreator = new TableCreator();
     private final ObjectCache<String, Entity> cachedEntities;
     private final DatabaseProcessor processor = new DatabaseProcessor(this);
 
     public Connection getConnection(Plugin plugin) throws SQLException {
+        if (sqliteConnections.containsKey(plugin.getName())) return sqliteConnections.get(plugin.getName());
         return connections.get(plugin.getName()).getConnection();
     }
 
@@ -98,7 +100,7 @@ public class DatabaseManager {
                     File file = new File(plugin.getDataFolder(), "data.db");
                     if (!file.exists()) file.createNewFile();
 
-                    hikariConfig.setJdbcUrl("jdbc:sqlite:" + plugin.getDataFolder().getPath() + "/data.db");
+                    sqliteConnections.put(plugin.getName(), DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getPath() + "/data.db", username, password));
 
                     break;
                 case MARIADB:
@@ -107,10 +109,14 @@ public class DatabaseManager {
 
                     hikariConfig.setJdbcUrl("jdbc:mariadb://" + host + ":" + port + "/" + database + "?" + additionalArgs);
 
+                    connections.put(plugin.getName(), new HikariDataSource(hikariConfig));
+
                     break;
                 case MYSQL:
 
                     hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + additionalArgs);
+
+                    connections.put(plugin.getName(), new HikariDataSource(hikariConfig));
 
                     break;
             }
@@ -118,9 +124,9 @@ public class DatabaseManager {
             plugin.getDebug().error("Error while connecting to database: " + e.getMessage());
             e.printStackTrace();
             return;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-        connections.put(plugin.getName(), new HikariDataSource(hikariConfig));
 
         plugin.getDebug().loading("Successfully connected to database!");
 

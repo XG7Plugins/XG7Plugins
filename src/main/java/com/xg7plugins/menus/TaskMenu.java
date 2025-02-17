@@ -11,6 +11,8 @@ import com.xg7plugins.modules.xg7menus.menus.gui.PageMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
+import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -38,13 +40,13 @@ public class TaskMenu extends PageMenu {
             builder.setNBTTag("task-id", task.getPlugin().getName() + ":" + task.getName());
             builder.setNBTTag("task-state", task.getState().name());
 
-            builder.setBuildPlaceholders(new HashMap<String, String>() {{
-                put("[PLUGIN]", task.getPlugin().getName());
-                put("[ID]", task.getPlugin().getName() + ":" + task.getName());
-                put("[STATE]", task.getState().name());
-                put("%task_is_running%", String.valueOf(task.getState() == TaskState.RUNNING));
-                put("%task_is_not_running%", String.valueOf(task.getState() == TaskState.IDLE));
-            }});
+            builder.setBuildPlaceholders(
+                    Pair.of("plugin", task.getPlugin().getName()),
+                    Pair.of("id", task.getPlugin().getName() + ":" + task.getName()),
+                    Pair.of("state", task.getState().name()),
+                    Pair.of("task_is_running", String.valueOf(task.getState() == TaskState.RUNNING)),
+                    Pair.of("task_is_not_running", String.valueOf(task.getState() == TaskState.IDLE))
+            );
 
             pagedItems.add(builder);
         });
@@ -52,13 +54,13 @@ public class TaskMenu extends PageMenu {
                 Item.from(XMaterial.CLOCK)
                         .name("&eTPS calculator")
                         .lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()))
-                        .setBuildPlaceholders(new HashMap<String, String>() {{
-                            put("[PLUGIN]", "XG7Plugins");
-                            put("[ID]", "TPS calculator");
-                            put("[STATE]", XG7Plugins.getInstance().getTpsCalculator().getState().name());
-                            put("%task_is_running%", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getState() == TaskState.RUNNING));
-                            put("%task_is_not_running%", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getState() == TaskState.IDLE));
-                        }}).setNBTTag("task-id", "TPS calculator")
+                        .setBuildPlaceholders(
+                            Pair.of("[PLUGIN]", "XG7Plugins"),
+                                Pair.of("[ID]", "TPS calculator"),
+                                Pair.of("[STATE]", XG7Plugins.getInstance().getTpsCalculator().getState().name()),
+                                Pair.of("%task_is_running%", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getState() == TaskState.RUNNING)),
+                                Pair.of("%task_is_not_running%", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getState() == TaskState.IDLE))
+                        ).setNBTTag("task-id", "TPS calculator")
                         .setNBTTag("task-state", XG7Plugins.getInstance().getTpsCalculator().getState())
 
         );
@@ -82,11 +84,11 @@ public class TaskMenu extends PageMenu {
                 Item.from(XMaterial.ARROW).name("lang:[go-next-item]").slot(53),
                 Item.from(XMaterial.ENDER_PEARL).name("lang:[refresh-item]").slot(0),
                 Item.from(Material.PAPER).name(" ").lore(lang.getList("tasks-menu.notes", String.class).orElse(Collections.emptyList()))
-                        .setBuildPlaceholders(new HashMap<String, String>() {{
-                            put("[TASKS]", String.valueOf(XG7Plugins.taskManager().getTasks().size()));
-                            put("[RAM]", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + " / " + Runtime.getRuntime().totalMemory() / 1024 / 1024);
-                            put("[TPS]", String.format("%.2f", XG7Plugins.getInstance().getTpsCalculator().getTPS()));
-                        }}).slot(49));
+                        .setBuildPlaceholders(
+                                Pair.of("tasks", String.valueOf(XG7Plugins.taskManager().getTasks().size())),
+                                Pair.of("ram", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + " / " + Runtime.getRuntime().totalMemory() / 1024 / 1024),
+                                Pair.of("tps", String.format("%.2f", XG7Plugins.getInstance().getTpsCalculator().getTPS()))
+                        ).slot(49));
     }
 
     @Override
@@ -147,7 +149,7 @@ public class TaskMenu extends PageMenu {
                 }
                 if (event.getClickAction().isLeftClick()) {
                     Text.fromLang(player, XG7Plugins.getInstance(),"tasks-menu.copy-to-clipboard")
-                            .thenAccept(text -> text.replace("[ID]", taskId).send(player));
+                            .thenAccept(text -> text.replace("id", taskId).send(player));
                 }
 
                 refresh(holder);

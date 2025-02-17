@@ -9,6 +9,7 @@ import com.xg7plugins.modules.xg7menus.events.ClickEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.gui.PageMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -86,10 +87,10 @@ public class LangMenu extends PageMenu {
                     double cooldownToToggle = XG7Plugins.getInstance().getCooldownManager().getReamingTime("lang-change", player);
 
                     Text.fromLang(player, plugin, "lang-menu.cooldown-to-toggle").thenAccept(
-                            text -> text.replace("[MILLISECONDS]", String.valueOf((cooldownToToggle)))
-                                    .replace("[SECONDS]", String.valueOf((int) ((cooldownToToggle) / 1000)))
-                                    .replace("[MINUTES]", String.valueOf((int) ((cooldownToToggle) / 60000)))
-                                    .replace("[HOURS]", String.valueOf((int) ((cooldownToToggle) / 3600000)))
+                            text -> text.replace("milliseconds", String.valueOf((cooldownToToggle)))
+                                    .replace("seconds", String.valueOf((int) ((cooldownToToggle) / 1000)))
+                                    .replace("minutes", String.valueOf((int) ((cooldownToToggle) / 60000)))
+                                    .replace("hours", String.valueOf((int) ((cooldownToToggle) / 3600000)))
                                     .send(player)
                     );
 

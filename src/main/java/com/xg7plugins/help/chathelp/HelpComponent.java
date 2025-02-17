@@ -1,51 +1,120 @@
 package com.xg7plugins.help.chathelp;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.text.Text;
+import com.xg7plugins.utils.text.component.Component;
+import com.xg7plugins.utils.text.component.event.ClickEvent;
+import com.xg7plugins.utils.text.component.event.HoverEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import lombok.Setter;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 @Getter
 @AllArgsConstructor
 public class HelpComponent {
 
-    private static final HelpComponent EMPTY_COMPONENT = new HelpComponent("", null, null);
+    private static final HelpComponent EMPTY_COMPONENT = new HelpComponent(XG7Plugins.getInstance(), "");
 
-    @Getter
-    protected HashMap<String, String> placeholders;
+    protected List<Pair<String, String>> placeholders;
     private String content;
-    private ClickEvent clickEvent;
-    private HoverEvent hoverEvent;
+    private final Plugin plugin;
 
-    public HelpComponent(String content, ClickEvent clickEvent, HoverEvent hoverEvent) {
+    @Setter
+    private HoverEvent hoverEvent;
+    @Setter
+    private ClickEvent clickEvent;
+
+    public HelpComponent(Plugin plugin, String content) {
+        this.plugin = plugin;
         this.content = content;
-        this.clickEvent = clickEvent;
+        this.placeholders = new ArrayList<>();
+    }
+    @SafeVarargs
+    public HelpComponent(Plugin plugin, String content, ClickEvent clickEvent, HoverEvent hoverEvent, Pair<String, String>... placeholders) {
+        this.plugin = plugin;
+        this.content = content;
         this.hoverEvent = hoverEvent;
-        this.placeholders = new HashMap<>();
+        this.clickEvent = clickEvent;
+        this.placeholders = Arrays.asList(placeholders);
     }
 
+    public Component buildFor(Player player) {
 
+        String translatedContent = Text.detectLangs(player,plugin,content).join().replaceAll(placeholders.toArray(new Pair[0])).getRawText();
 
-    public TextComponent build(Player player) {
-        TextComponent textComponent = new TextComponent(Text.detectLangs(player, XG7Plugins.getInstance(),content).join().replaceAll(placeholders).getText());
-        if (clickEvent != null) {
-            ClickEvent transletedClickEvent = new ClickEvent(clickEvent.getAction(), Text.detectLangs(player, XG7Plugins.getInstance(), clickEvent.getValue()).join().getText());
-            textComponent.setClickEvent(transletedClickEvent);
-        }
-        if (hoverEvent != null) {
-            textComponent.setHoverEvent(hoverEvent);
-        }
-        return textComponent;
+        Component component = Component.text(translatedContent).build();
+
+        if (hoverEvent != null) component.setHoverEvent(new HoverEvent(Text.detectLangs(player,plugin,hoverEvent.content()).join().replaceAll(placeholders.toArray(new Pair[0])).getRawText(), hoverEvent.action()));
+        if (clickEvent != null) component.setClickEvent(new ClickEvent(Text.detectLangs(player,plugin,clickEvent.content()).join().replaceAll(placeholders.toArray(new Pair[0])).getRawText(), clickEvent.action()));
+
+        return component;
+    }
+
+    public Component build() {
+        String translatedContent = Text.format(content).replaceAll(placeholders.toArray(new Pair[0])).getRawText();
+
+        return Component.text(translatedContent).build();
     }
 
     public static HelpComponent empty() {
         return EMPTY_COMPONENT;
+    }
+
+    public static Builder of(Plugin plugin, String content) {
+        return new Builder(plugin,content);
+    }
+
+    public static class Builder {
+
+        private List<Pair<String,String>> placeholders = new ArrayList<>();
+
+        private String content;
+        private final Plugin plugin;
+
+        private HoverEvent hoverEvent;
+        private ClickEvent clickEvent;
+
+        public Builder(Plugin plugin, String text) {
+            this.plugin = plugin;
+            this.content = text;
+        }
+
+        public Builder content(String text) {
+            this.content = text;
+            return this;
+        }
+        public Builder hoverEvent(HoverEvent event) {
+            this.hoverEvent = event;
+            return this;
+        }
+
+        public Builder clickEvent(ClickEvent event) {
+            this.clickEvent = event;
+            return this;
+        }
+        public Builder replace(String placeholder, String text) {
+            this.placeholders.add(Pair.of(placeholder,text));
+            return this;
+        }
+
+        public Builder replaceAll(Pair<String,String>... placeholder) {
+            this.placeholders.addAll(Arrays.asList(placeholder));
+            return this;
+        }
+
+        public HelpComponent build() {
+            return new HelpComponent(plugin,content,clickEvent,hoverEvent,placeholders.toArray(new Pair[0]));
+        }
+
+
     }
 
 }

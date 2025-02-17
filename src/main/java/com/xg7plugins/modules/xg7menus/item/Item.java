@@ -11,6 +11,8 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.text.Text;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -35,7 +37,7 @@ public class Item {
     protected int slot;
 
 
-    protected HashMap<String, String> buildPlaceholders = new HashMap<>();
+    protected List<Pair<String,String>> buildPlaceholders = new ArrayList<>();
 
 
     public Item(ItemStack itemStack) {
@@ -92,14 +94,10 @@ public class Item {
                 command.getSubCommands().length == 0 ? "" : "lang:[commands-display.if-subcommand]"
         );
         item.setBuildPlaceholders(
-                new HashMap<String, String>() {
-                    {
-                        put("[SYNTAX]", commandConfig.syntax());
-                        put("[DESCRIPTION]", commandConfig.description());
-                        put("[PERMISSION]", commandConfig.permission());
-                        put("[PLAYER_ONLY]", String.valueOf(commandConfig.isPlayerOnly()));
-                    }
-                }
+                Pair.of("syntax", commandConfig.syntax()),
+                Pair.of("description", commandConfig.description()),
+                Pair.of("permission", commandConfig.permission()),
+                Pair.of("player_only", String.valueOf(commandConfig.isPlayerOnly()))
         );
         return item;
     }
@@ -113,8 +111,8 @@ public class Item {
         return new ClickableItem(this.itemStack, this.slot);
     }
 
-    public Item setBuildPlaceholders(HashMap<String, String> buildPlaceholders) {
-        this.buildPlaceholders = buildPlaceholders;
+    public Item setBuildPlaceholders(Pair<String,String>... placeholders) {
+        this.buildPlaceholders = Arrays.asList(placeholders);
         return this;
     }
 

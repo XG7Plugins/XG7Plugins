@@ -1,9 +1,12 @@
 package com.xg7plugins.help.xg7pluginshelp.chathelp;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.help.chathelp.HelpComponent;
 import com.xg7plugins.help.chathelp.HelpPage;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
+import com.xg7plugins.utils.text.component.event.ClickEvent;
+import com.xg7plugins.utils.text.component.event.HoverEvent;
+import com.xg7plugins.utils.text.component.event.action.ClickAction;
+import com.xg7plugins.utils.text.component.event.action.HoverAction;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class Index extends HelpPage {
@@ -11,40 +14,39 @@ public class Index extends HelpPage {
         super("index");
 
         addMessages(
-                new HelpComponent(
-                        "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-",
-                        null,null
-                ),
-                new HelpComponent(
-                        "lang:[help-in-chat.title]",
-                        null,null
-                ),
+                HelpComponent.of(
+                        XG7Plugins.getInstance(),
+                        "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"
+                ).build(),
+                HelpComponent.of(
+                        XG7Plugins.getInstance(),
+                        "lang:[help-in-chat.title]"
+                ).build(),
                 HelpComponent.empty(),
-                new HelpComponent(
-                        "lang:[help-in-chat.content]",
-                        new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help about"),
-                        new HoverEvent(HoverEvent.Action.SHOW_TEXT, TextComponent.fromLegacyText("Click to see about the plugins"))
-                ),
-                HelpComponent.empty(),
-                new HelpComponent(
-                        "lang:[help-in-chat.lang]",
-                        new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins lang"),
-                        null
-                ),
-                new HelpComponent(
-                        "lang:[help-in-chat.tasks]",
-                        new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins tasks"),
-                        null
-                ),
-                new HelpComponent(
-                        "lang:[help-in-chat.commands]",
-                        new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help command-page1"),
-                        null
-                ),
-                new HelpComponent(
-                        "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-",
-                null,null
+                HelpComponent.of(
+                        XG7Plugins.getInstance(),
+                        "lang:[help-in-chat.content]"
                 )
+                        .clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins help about"))
+                        .hoverEvent(HoverEvent.of(HoverAction.SHOW_TEXT, "Click to see about the plugins"))
+                        .build(),
+                HelpComponent.empty(),
+                HelpComponent.of(
+                        XG7Plugins.getInstance(),
+                        "lang:[help-in-chat.lang]"
+                ).clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins lang")).build(),
+                HelpComponent.of(
+                        XG7Plugins.getInstance(),
+                        "lang:[help-in-chat.tasks]"
+                ).clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins tasks")).build(),
+                HelpComponent.of(
+                        XG7Plugins.getInstance(),
+                        "lang:[help-in-chat.commands]"
+                ).clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins help command-page1")).build(),
+                HelpComponent.of(
+                        XG7Plugins.getInstance(),
+                        "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"
+                ).build()
         );
     }
 }

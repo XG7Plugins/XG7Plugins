@@ -4,8 +4,10 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.help.chathelp.HelpComponent;
 import com.xg7plugins.help.chathelp.HelpPage;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import com.xg7plugins.utils.text.Text;
+import com.xg7plugins.utils.text.component.Component;
+import com.xg7plugins.utils.text.component.event.ClickEvent;
+import com.xg7plugins.utils.text.component.event.action.ClickAction;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -15,48 +17,56 @@ public class AboutPage extends HelpPage {
     public AboutPage() {
         super("about");
         addMessages(
-                new HelpComponent(
-                        "&m-&9&m-&6&m------------------&e*&6&m-----------------&9&m--&f&m-",
-                        null,null
-                ),
+                HelpComponent.of(
+                        XG7Plugins.getInstance(),
+                        "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"
+                ).build(),
                 new AboutComponent(),
                 HelpComponent.empty(),
-                new HelpComponent(
-                        "lang:[help-in-chat.back]",
-                        new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "xg7plugins help"),
-                        null
-                ),
+                HelpComponent.of(
+                        XG7Plugins.getInstance(),
+                        "lang:[help-in-chat.back]"
+                ).clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "xg7plugins help")).build(),
                 HelpComponent.empty(),
-                new HelpComponent(
-                        "&m-&9&m-&6&m------------------&e*&6&m-----------------&9&m--&f&m-",
-                        null,null
-                )
+                HelpComponent.of(
+                        XG7Plugins.getInstance(),
+                        "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"
+                ).build()
 
         );
     }
 
     private class AboutComponent extends HelpComponent {
         public AboutComponent() {
-            super(null, null, null);
+            super(XG7Plugins.getInstance(),null,null, null);
         }
 
 
         @Override
-        public TextComponent build(Player player) {
+        public Component buildFor(Player player) {
 
             Config lang = XG7Plugins.getInstance().getLangManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getLangConfiguration();
 
             String about = lang.getList("help-menu.about", String.class).orElse(new ArrayList<>()).stream().collect(Collectors.joining("\n"));
 
-            return new TextComponent(
+            return Component.text(
                     Text.detectLangs(player, XG7Plugins.getInstance(),about).join()
-                    .replace("[DISCORD]", "discord.gg/jfrn8w92kF")
-                    .replace("[GITHUB]", "github.com/DaviXG7")
-                    .replace("[WEBSITE]", "xg7plugins.com")
-                    .replace("[VERSION]", XG7Plugins.getInstance().getDescription().getVersion())
+                    .replace("discord", "discord.gg/jfrn8w92kF")
+                    .replace("github", "github.com/DaviXG7")
+                    .replace("website", "xg7plugins.com")
+                    .replace("version", XG7Plugins.getInstance().getDescription().getVersion())
                     .getText()
-            );
+            ).build();
 
         }
+
+        @Override
+        public Component build() {
+
+            return Component.text("Try to do it in game").build();
+
+        }
+
+
     }
 }

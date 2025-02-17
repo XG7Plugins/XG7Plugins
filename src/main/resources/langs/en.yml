@@ -1,5 +1,5 @@
 
-config-version: 1.0
+config-version: test-1.0
 
 locale: en_US
 formated-name: "English"
@@ -17,13 +17,9 @@ commands:
 
 
 reload-message:
-  config: "Configs of [PLUGIN] reloaded!"
-  database: "Database of [PLUGIN] reloaded!"
-  all: "[PLUGIN] reloaded!"
-  lang: "Languages of [PLUGIN] reloaded!"
-  tasks: "Tasks of [PLUGIN] reloaded!"
-  events: "Events of [PLUGIN] reloaded!"
-  json: "Successful invalidate json cache!"
+  all-plugins: "All plugins reloaded!"
+  without-cause: "%plugin% reloaded!"
+  with-cause: "%cause% reloaded in plugin %plugin%"
 
 
 #Plugin defaults
@@ -50,13 +46,13 @@ lang-menu:
 
   toggle-success: "You toggle the language to english!"
 
-  cooldown-to-toggle: "You need to wait [SECONDS] seconds to toggle the language again"
+  cooldown-to-toggle: "You need to wait %seconds% seconds to toggle the language again"
 
 tasks-menu:
   title: "Tasks"
 
   task-item:
-    - "&fTask id: &b[ID]"
+    - "&fTask id: &b%id%"
     - "&fTask plugin: &e[PLUGIN]"
     - "&fTask state: &9[STATE]"
     - " "

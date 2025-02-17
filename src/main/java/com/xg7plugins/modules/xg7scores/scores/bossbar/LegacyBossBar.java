@@ -11,6 +11,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSp
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.utils.location.Location;
+import com.xg7plugins.utils.text.Text;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;

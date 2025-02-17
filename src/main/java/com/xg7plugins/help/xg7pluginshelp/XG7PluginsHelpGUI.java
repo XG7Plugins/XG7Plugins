@@ -9,6 +9,7 @@ import com.xg7plugins.modules.xg7menus.item.BookItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.item.SkullItem;
 import com.xg7plugins.modules.xg7menus.menus.gui.Menu;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 public class XG7PluginsHelpGUI extends Menu {
 
-    private Plugin plugin;
+    private final Plugin plugin;
 
     public XG7PluginsHelpGUI(Plugin plugin) {
         super(plugin, "help-command-index", "lang:[help-menu.index.title]", 45);
@@ -71,10 +72,10 @@ public class XG7PluginsHelpGUI extends Menu {
                 for (String line : about) {
 
                     currentPage.add(Text.detectLangs(player, XG7Plugins.getInstance(),line).join()
-                            .replace("[DISCORD]", "discord.gg/jfrn8w92kF")
-                            .replace("[GITHUB]", "github.com/DaviXG7")
-                            .replace("[WEBSITE]", "xg7plugins.com")
-                            .replace("[VERSION]", XG7Plugins.getInstance().getDescription().getVersion())
+                            .replace("discord", "discord.gg/jfrn8w92kF")
+                            .replace("github", "github.com/DaviXG7")
+                            .replace("website", "xg7plugins.com")
+                            .replace("version", XG7Plugins.getInstance().getDescription().getVersion())
                             .getText());
                     if (currentPage.size() == 10) {
                         pages.add(new ArrayList<>(currentPage));

@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPl
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
+import com.xg7plugins.utils.text.Text;
 import lombok.SneakyThrows;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
@@ -47,7 +48,7 @@ public class Tablist extends Score {
             if (headerIndex.get() >= header.size()) headerIndex.set(0);
             if (footerIndex.get() >= footer.size()) footerIndex.set(0);
 
-            send(player, Text.detectLangs(player, plugin,headerl).join().getText(), Text.detectLangs(player, plugin,footerl).join().getText());
+            send(player, Text.detectLangs(player, plugin,headerl).join().getRawText(), Text.detectLangs(player, plugin,footerl).join().getRawText());
         }
     }
 

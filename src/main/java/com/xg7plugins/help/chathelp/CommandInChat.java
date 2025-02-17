@@ -4,12 +4,12 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import com.xg7plugins.utils.text.component.Component;
+import com.xg7plugins.utils.text.component.event.ClickEvent;
+import com.xg7plugins.utils.text.component.event.action.ClickAction;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,25 +19,16 @@ public class CommandInChat extends HelpPage {
     public CommandInChat(List<ICommand> commands, int page, int maxPage) {
         super("command-in-chat" + UUID.randomUUID());
 
-        addMessage(new HelpComponent(
-                "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-",
-                null,null
-        ));
         addMessages(
-                new HelpComponent(
-                        new HashMap<String, String>() {
-                            {
-                                put("[PAGE]", (page + 1) + "");
-                                put("[MAX_PAGE]", maxPage + "");
-                            }
-                        },
-                        "lang:[help-in-chat.commands-title]",
-                        null,null
-                )
+                HelpComponent.of(XG7Plugins.getInstance(), "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").build(),
+                HelpComponent.of(XG7Plugins.getInstance(), "lang:[help-in-chat.commands-title]")
+                        .replace("page", (page + 1) + "")
+                        .replace("%max_page%", maxPage + "")
+                        .build()
         );
         for (ICommand command : commands) {
 
-            Item commandIcon = (Item) command.getIcon();
+            Item commandIcon = command.getIcon();
 
             addMessages(
                     HelpComponent.empty(),
@@ -46,10 +37,7 @@ public class CommandInChat extends HelpPage {
 
         }
 
-        addMessage(new HelpComponent(
-                "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-",
-                null,null
-        ));
+        addMessage(HelpComponent.of(XG7Plugins.getInstance(), "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").build());
 
 
     }
@@ -60,21 +48,20 @@ public class CommandInChat extends HelpPage {
         private final ICommand command;
 
         public CommandComponent(ICommand command, Item commandIcon) {
-            super(commandIcon.getItemStack().getItemMeta().getDisplayName() + "\n" +
-                    commandIcon.getItemStack().getItemMeta().getLore().get(0) + "\n" +
-                    commandIcon.getItemStack().getItemMeta().getLore().get(1) + "\n" +
-                    commandIcon.getItemStack().getItemMeta().getLore().get(2) + "\n" +
-                    commandIcon.getItemStack().getItemMeta().getLore().get(3), null, null);
+            super(
+                    XG7Plugins.getInstance(),
+                    null
+            );
             this.commandIcon = commandIcon;
             this.command = command;
             this.placeholders = commandIcon.getBuildPlaceholders();
         }
 
         @Override
-        public TextComponent build(Player player) {
+        public Component buildFor(Player player) {
             ItemStack itemStack = commandIcon.getItemFor(player, XG7Plugins.getInstance());
 
-            TextComponent textComponent = new TextComponent(
+            Component.Builder builder = Component.text(
                     itemStack.getItemMeta().getDisplayName() + "\n" +
                             itemStack.getItemMeta().getLore().get(0) + "\n" +
                             itemStack.getItemMeta().getLore().get(1) + "\n" +
@@ -82,9 +69,26 @@ public class CommandInChat extends HelpPage {
                             itemStack.getItemMeta().getLore().get(3)
             );
 
-            textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command.getClass().getAnnotation(Command.class).syntax()));
+            builder.onClick(new ClickEvent(command.getClass().getAnnotation(Command.class).syntax(), ClickAction.SUGGEST_COMMAND));
 
-            return textComponent;
+            return builder.build();
+        }
+
+        @Override
+        public Component build() {
+            ItemStack itemStack = commandIcon.getItemStack();
+
+            Component.Builder builder = Component.text(
+                    itemStack.getItemMeta().getDisplayName() + "\n" +
+                            itemStack.getItemMeta().getLore().get(0) + "\n" +
+                            itemStack.getItemMeta().getLore().get(1) + "\n" +
+                            itemStack.getItemMeta().getLore().get(2) + "\n" +
+                            itemStack.getItemMeta().getLore().get(3)
+            );
+
+            builder.onClick(new ClickEvent(command.getClass().getAnnotation(Command.class).syntax(), ClickAction.SUGGEST_COMMAND));
+
+            return builder.build();
         }
     }
 

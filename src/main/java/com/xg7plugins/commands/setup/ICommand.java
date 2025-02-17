@@ -3,6 +3,7 @@ package com.xg7plugins.commands.setup;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
@@ -30,6 +31,6 @@ public interface ICommand {
 
     default void syntaxError(CommandSender sender, String syntax) {
         Text.fromLang(sender, XG7Plugins.getInstance(),"commands.syntax-error")
-                .thenAccept(text -> text.replace("[SYNTAX]", syntax).send(sender));
+                .thenAccept(text -> text.replace("syntax", syntax).send(sender));
     }
 }

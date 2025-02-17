@@ -4,6 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.response.SimpleFormResponse;
@@ -26,10 +27,10 @@ public class XG7PluginsHelpForm extends SimpleForm {
         String about = String.join("\n", lang.getList("help-menu.about", String.class).orElse(new ArrayList<>()));
 
         return Text.detectLangs(player, XG7Plugins.getInstance(),about).join()
-                .replace("[DISCORD]", "discord.gg/jfrn8w92kF")
-                .replace("[GITHUB]", "github.com/DaviXG7")
-                .replace("[WEBSITE]", "xg7plugins.com")
-                .replace("[VERSION]", XG7Plugins.getInstance().getDescription().getVersion())
+                .replace("discord", "discord.gg/jfrn8w92kF")
+                .replace("github", "github.com/DaviXG7")
+                .replace("website", "xg7plugins.com")
+                .replace("version", XG7Plugins.getInstance().getDescription().getVersion())
                 .getText();
     }
 

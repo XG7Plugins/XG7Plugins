@@ -4,6 +4,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -100,7 +101,7 @@ public class ScoreBoard extends Score {
             if (scoreboard == null) return;
             List<String> lastEntries = new ArrayList<>();
             for (int i = 0; i < lines.size(); i++) {
-                String translatedText = Text.detectLangs(player, plugin,lines.get(i)).join().getText();
+                String translatedText = Text.detectLangs(player, plugin,lines.get(i)).join().getRawText();
 
                 String prefix = translatedText.substring(0, Math.min(translatedText.length(), 16));
                 String entry = translatedText.length() > 16 ? translatedText.substring(16, Math.min(translatedText.length(), 56)) : "";

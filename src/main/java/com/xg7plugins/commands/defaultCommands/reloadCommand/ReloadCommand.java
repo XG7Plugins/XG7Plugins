@@ -1,4 +1,85 @@
 package com.xg7plugins.commands.defaultCommands.reloadCommand;
 
-public class ReloadCommand {
+import com.cryptomorin.xseries.XMaterial;
+import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.setup.CommandArgs;
+import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.modules.xg7menus.item.Item;
+import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Command(name = "reload", description = "Reloads a plugin", syntax = "/xg7plugins reload (plugin) (cause)")
+public class ReloadCommand implements ICommand {
+
+    @Override
+    public Plugin getPlugin() {
+        return XG7Plugins.getInstance();
+    }
+
+    @Override
+    public void onCommand(CommandSender sender, CommandArgs args) {
+
+        if (args.len() == 0) {
+            XG7Plugins.getInstance().getPlugins().values().forEach(plugin -> plugin.onReload(ReloadCause.ALL));
+            return;
+        }
+        Plugin plugin = args.get(0, Plugin.class);
+
+        if (args.len() == 1) {
+            if (plugin == null) return;
+            plugin.onReload(ReloadCause.ALL);
+            return;
+        }
+
+        ReloadCause cause = ReloadCause.of(plugin, args.get(1,String.class));
+
+        if (cause == null) {
+            return;
+        }
+
+        plugin.onReload(cause);
+
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
+
+        if (args.len() == 1) {
+            return new ArrayList<>(XG7Plugins.getInstance().getPlugins().keySet());
+        }
+        if (args.len() == 2) {
+
+            Plugin plugin = args.get(0,Plugin.class);
+
+            if (plugin == null) return Collections.emptyList();
+
+            List<String> completions = new ArrayList<>();
+
+            completions.add("all");
+            completions.add("database");
+            completions.add("langs");
+            completions.add("events");
+            completions.add("config");
+            completions.add("tasks");
+
+            List<ReloadCause> causes = ReloadCause.getCausesOf(plugin);
+
+            completions.addAll(causes.stream().map(ReloadCause::getName).collect(Collectors.toList()));
+
+            return completions;
+        }
+
+        return ICommand.super.onTabComplete(sender, args);
+    }
+
+    @Override
+    public Item getIcon() {
+        return Item.commandIcon(XMaterial.FEATHER,this);
+    }
 }

@@ -2,6 +2,7 @@ package com.xg7plugins.boot;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.CommandManager;
+import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCause;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
@@ -67,8 +68,51 @@ public abstract class Plugin extends JavaPlugin {
 
     }
 
-    @Override
-    public abstract void onReload();
+    public void onReload(ReloadCause cause) {
+
+        XG7Plugins xg7Plugin = XG7Plugins.getInstance();
+
+        if (cause.equals(ReloadCause.ALL)) {
+            xg7Plugin.getEventManager().unregisterListeners(this);
+            xg7Plugin.getEventManager().registerListeners(this, this.loadEvents());
+            xg7Plugin.getPacketEventManager().unregisterListeners(this);
+            xg7Plugin.getPacketEventManager().registerListeners(this, this.loadPacketEvents());
+            xg7Plugin.getLangManager().getLangs().clear().join();
+            xg7Plugin.getLangManager().loadLangsFrom(this);
+            xg7Plugin.getDatabaseManager().disconnectPlugin(this);
+            xg7Plugin.getDatabaseManager().connectPlugin(this, this.loadEntites());
+            configsManager.reloadConfigs();
+            xg7Plugin.getTaskManager().cancelTasks(this);
+            xg7Plugin.getTaskManager().getTasks().values().stream().filter(task -> task.getPlugin().getName().equals(this.getName())).forEach(task -> xg7Plugin.getTaskManager().runTask(task));
+            return;
+        }
+        if (cause.equals(ReloadCause.CONFIG)) {
+            configsManager.reloadConfigs();
+            return;
+        }
+        if (cause.equals(ReloadCause.EVENTS)) {
+            xg7Plugin.getEventManager().unregisterListeners(this);
+            xg7Plugin.getEventManager().registerListeners(this, this.loadEvents());
+            xg7Plugin.getPacketEventManager().unregisterListeners(this);
+            xg7Plugin.getPacketEventManager().registerListeners(this, this.loadPacketEvents());
+            return;
+        }
+        if (cause.equals(ReloadCause.DATABASE)) {
+            xg7Plugin.getDatabaseManager().disconnectPlugin(this);
+            xg7Plugin.getDatabaseManager().connectPlugin(this, this.loadEntites());
+            return;
+        }
+        if (cause.equals(ReloadCause.LANGS)) {
+            xg7Plugin.getLangManager().getLangs().clear().join();
+            xg7Plugin.getLangManager().loadLangsFrom(this);
+            return;
+        }
+        if (cause.equals(ReloadCause.TASKS)) {
+            xg7Plugin.getTaskManager().cancelTasks(this);
+            xg7Plugin.getTaskManager().getTasks().values().stream().filter(task -> task.getPlugin().getName().equals(this.getName())).forEach(task -> xg7Plugin.getTaskManager().runTask(task));
+        }
+
+    };
 
 
     @Override

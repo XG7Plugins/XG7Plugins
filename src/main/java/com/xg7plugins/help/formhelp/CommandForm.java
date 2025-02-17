@@ -8,6 +8,7 @@ import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.modules.xg7geyserforms.forms.ModalForm;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;
 import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.ButtonComponent;

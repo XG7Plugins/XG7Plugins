@@ -37,8 +37,8 @@ repositories {
 
 dependencies {
 
-    compileOnly files("D:/buildTools/spigot-1.16.1.jar")
-    compileOnly files("D:/buildTools/spigot-1.7.8.jar")
+    compileOnly files("C:/Users/davis/Documents/Build tools/spigot-1.16.5.jar")
+    compileOnly files("C:/Users/davis/Documents/Build tools/spigot-1.7.8.jar")
 
     implementation("com.github.cryptomorin:XSeries:13.0.0")
 

@@ -7,6 +7,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCh
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
+import com.xg7plugins.modules.xg7scores.scores.ActionBar;
 import com.xg7plugins.utils.Condition;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.component.Component;
@@ -15,21 +16,24 @@ import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Getter
 public class Text {
 
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
-    @Getter
     private String text;
 
     public Text(String text) {
-        this.text = text;
+        this.text = ChatColor.translateAlternateColorCodes('&', text);
     }
 
     public Text textFor(Player player) {
@@ -46,7 +50,13 @@ public class Text {
         return this;
     }
     @SafeVarargs
-    public final Text replace(Pair<String, String>... replacements) {
+    public final Text replaceAll(Pair<String, String>... replacements) {
+        for (Pair<String,String> replacement : replacements) {
+            this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond());
+        }
+        return this;
+    }
+    public final Text replaceAll(List<Pair<String,String>> replacements) {
         for (Pair<String,String> replacement : replacements) {
             this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond());
         }
@@ -59,6 +69,13 @@ public class Text {
         if (this.text.isEmpty()) return;
 
         Component component = ComponentDeserializer.deserialize(this.text);
+
+        send(component,sender);
+
+    }
+
+    public static void send(Component component, CommandSender sender) {
+        if (component.isEmpty()) return;
 
         String rawText = component.content();
         String componentText = component.getText();
@@ -88,6 +105,8 @@ public class Text {
         if (isAction) {
             if (XG7Plugins.getMinecraftVersion() < 8) return;
 
+            ActionBar.addToBlacklist(player);
+
             if (XG7Plugins.getMinecraftVersion() > 8) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(rawText));
                 return;
@@ -99,6 +118,8 @@ public class Text {
 
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutChat);
 
+            Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId()), 60L);
+
             return;
         }
 
@@ -108,7 +129,6 @@ public class Text {
         }
 
         player.spigot().sendMessage(component.toBukkitComponent());
-
     }
 
     public String getRawText() {
