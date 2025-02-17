@@ -4,13 +4,11 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.help.chathelp.HelpComponent;
 import com.xg7plugins.help.chathelp.HelpPage;
-import com.xg7plugins.utils.text.Text;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class AboutPage extends HelpPage {

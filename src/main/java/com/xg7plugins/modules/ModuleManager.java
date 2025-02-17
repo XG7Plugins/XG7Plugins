@@ -47,30 +47,8 @@ public class ModuleManager {
         });
     }
 
-    public Module getExtension(String name) {
-        return extensions.get(name);
-    }
-
-    public void disableExtensions() {
+    public void disableModules() {
         extensions.values().forEach(Module::onDisable);
-    }
-
-    public boolean isExtensionLoaded(String name) {
-
-        if (!extensions.containsKey(name)) {
-            plugin.getDebug().warn("extensions", "Extension " + name + " is not loaded. Download it from the plugin page to get more resources.");
-            return false;
-        }
-
-        return true;
-    }
-
-    public void unloadExtension(String name) {
-        Module extension = extensions.get(name);
-        if (extension != null) {
-            extension.onDisable();
-            extensions.remove(name);
-        }
     }
 
 }

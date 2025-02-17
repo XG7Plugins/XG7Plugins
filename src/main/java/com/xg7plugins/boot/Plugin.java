@@ -67,6 +67,9 @@ public abstract class Plugin extends JavaPlugin {
 
     }
 
+    @Override
+    public abstract void onReload();
+
 
     @Override
     public void onDisable() {

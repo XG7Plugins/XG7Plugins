@@ -60,7 +60,7 @@ public class LangManager {
             for (String lang : defLangs) {
                 loadLang(plugin, lang).join();
             }
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("lang"));
+        }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
     }
 
     public CompletableFuture<Void> loadLang(Plugin plugin, String lang) {
@@ -72,9 +72,9 @@ public class LangManager {
             if (!langFolder.exists()) langFolder.mkdirs();
 
             File langFile = new File(langFolder, lang + ".yml");
-            if (!langFile.exists()) plugin.saveResource("langs/" + lang + ".yml", false);
-            langs.put(plugin.getName() + ":" + lang, Config.of("langs/" + lang, plugin));
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("lang"));
+            if (!langFile.exists()) plugin.saveResource( lang + ".yml", false);
+            langs.put(plugin.getName() + ":" + lang, Config.of(lang, plugin));
+        }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
     }
 
     public CompletableFuture<Lang> getLang(Plugin plugin, String lang, boolean selected) {
@@ -88,14 +88,14 @@ public class LangManager {
                 return new Lang(plugin, langs.get(plugin.getName() + ":" + finalLang).join(), finalLang);
             }
 
-            Config langConfig = new Config(plugin, "langs/" + finalLang);
+            Config langConfig = new Config(plugin, finalLang);
 
 
             langs.put(plugin.getName() + ":" + finalLang, langConfig);
 
             return new Lang(plugin, langConfig, finalLang,selected);
 
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("lang"));
+        });
     }
 
     public CompletableFuture<Lang> getLang(Plugin plugin, String lang) {
@@ -115,7 +115,7 @@ public class LangManager {
 
             return getLang(plugin, playerData.getLangId(), true).join();
 
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("lang"));
+        });
     }
 
     public CompletableFuture<String> getNewLangFor(@NotNull Player player) {
@@ -134,7 +134,7 @@ public class LangManager {
             String locale = XG7Plugins.getMinecraftVersion() >= 12 ? player.getLocale() : ReflectionObject.of(player).getMethod("getHandle").invokeToRObject().getField("locale");
 
             return langs.stream().filter(lang -> lang.get("locale", String.class).orElse("en_US").equals(locale)).findFirst().map(Config::getName).orElse(mainLang);
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("lang"));
+        });
 
     }
 

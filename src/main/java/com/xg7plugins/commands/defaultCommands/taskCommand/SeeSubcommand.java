@@ -7,7 +7,6 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.modules.ModuleManager;
 import com.xg7plugins.modules.xg7menus.builders.MenuBuilder;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
@@ -15,7 +14,6 @@ import com.xg7plugins.modules.xg7menus.menus.BaseMenu;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

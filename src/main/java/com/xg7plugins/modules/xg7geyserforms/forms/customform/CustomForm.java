@@ -3,7 +3,6 @@ package com.xg7plugins.modules.xg7geyserforms.forms.customform;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7geyserforms.forms.Form;
-import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.response.CustomFormResponse;

@@ -2,8 +2,6 @@ package com.xg7plugins.modules.xg7scores.scores;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
-import com.xg7plugins.modules.xg7scores.XG7Scores;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

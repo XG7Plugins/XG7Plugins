@@ -69,46 +69,96 @@ public class DatabaseProcessor {
     private void processTransaction() throws SQLException {
         if (transactionQueue.isEmpty()) return;
 
+
         Transaction transaction = transactionQueue.poll();
+        System.out.println("[DEBUG] Processando transação: " + transaction);
 
         Connection connection = databaseManager.getConnection(transaction.getPlugin());
+        if (connection == null) {
+            System.out.println("[DEBUG] Conexão com o banco de dados não pôde ser obtida para o plugin: " + transaction.getPlugin().getName());
+            return;
+        }
 
-        if (connection == null) return;
         PreparedStatement ps = null;
-
         String currentQuery = "";
 
         try {
+            System.out.println("[DEBUG] Iniciando execução das queries da transação.");
+
             for (Pair<String, List<Object>> query : transaction.getQueries()) {
                 currentQuery = query.getFirst();
+                System.out.println("[DEBUG] Preparando query: " + currentQuery);
+                System.out.println("[DEBUG] Parâmetros da query: " + query.getSecond());
+
                 ps = connection.prepareStatement(currentQuery);
                 ps.setQueryTimeout((int) (timeout / 1000));
+
+                // Configura os parâmetros da query
                 for (int i = 0; i < query.getSecond().size(); i++) {
                     Object o = query.getSecond().get(i);
                     if (o instanceof UUID) {
                         ps.setString(i + 1, o.toString());
-                        continue;
+                        System.out.println("[DEBUG] Parâmetro " + (i + 1) + ": UUID = " + o);
+                    } else {
+                        ps.setObject(i + 1, o);
+                        System.out.println("[DEBUG] Parâmetro " + (i + 1) + ": " + o);
                     }
-                    ps.setObject(i + 1, o);
                 }
+
+                // Executa a query
+                System.out.println("[DEBUG] Executando query: " + currentQuery);
                 ps.executeUpdate();
+                System.out.println("[DEBUG] Query executada com sucesso: " + currentQuery);
+
+                // Fecha o PreparedStatement
                 ps.close();
+                System.out.println("[DEBUG] PreparedStatement fechado para a query: " + currentQuery);
             }
+
+            // Commit da transação
+            System.out.println("[DEBUG] Commit da transação.");
             connection.commit();
-            if (transaction.getSuccess() != null) transaction.getSuccess().run();
+            System.out.println("[DEBUG] Commit realizado com sucesso.");
+
+            // Executa o callback de sucesso, se existir
+            if (transaction.getSuccess() != null) {
+                System.out.println("[DEBUG] Executando callback de sucesso.");
+                transaction.getSuccess().run();
+            }
+
+            // Marca a transação como concluída
             transaction.completeTask();
+            System.out.println("[DEBUG] Transação concluída com sucesso.");
 
         } catch (SQLException e) {
+            System.err.println("[DEBUG] Erro ao processar a query: " + currentQuery);
+            System.err.println("[DEBUG] Mensagem de erro: " + e.getMessage());
+
             try {
+                // Rollback em caso de erro
+                System.out.println("[DEBUG] Realizando rollback da transação.");
                 connection.rollback();
-                if (ps != null) ps.close();
-                if (transaction.getError() != null) transaction.getError().accept(e);
+                System.out.println("[DEBUG] Rollback realizado com sucesso.");
+
+                // Fecha o PreparedStatement, se ainda estiver aberto
+                if (ps != null) {
+                    System.out.println("[DEBUG] Fechando PreparedStatement após erro.");
+                    ps.close();
+                }
+
+                // Executa o callback de erro, se existir
+                if (transaction.getError() != null) {
+                    System.out.println("[DEBUG] Executando callback de erro.");
+                    transaction.getError().accept(e);
+                }
             } catch (SQLException ex) {
+                System.err.println("[DEBUG] Erro ao realizar rollback ou fechar PreparedStatement: " + ex.getMessage());
                 throw new RuntimeException(ex);
             }
-            System.err.println("Error while processing query: " + currentQuery  + " " + e.getMessage());
 
+            // Marca a transação como concluída (mesmo em caso de erro)
             transaction.completeTask();
+            System.out.println("[DEBUG] Transação marcada como concluída (com erro).");
 
             throw new RuntimeException(e);
         }

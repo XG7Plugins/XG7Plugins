@@ -1,13 +1,13 @@
 package com.xg7plugins.modules.xg7menus.menuhandler;
 
 import com.xg7plugins.events.Listener;
+import com.xg7plugins.events.bukkitevents.EventHandler;
 import com.xg7plugins.modules.xg7menus.MenuPermissions;
 import com.xg7plugins.modules.xg7menus.events.ClickEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -17,6 +17,11 @@ import org.bukkit.inventory.Inventory;
 import java.util.stream.Collectors;
 
 public class MenuHandler implements Listener {
+
+    {
+        System.out.println("MenuHandler loaded");
+    }
+
     @Override
     public boolean isEnabled() {
         return true;

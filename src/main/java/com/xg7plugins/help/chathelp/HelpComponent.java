@@ -1,7 +1,6 @@
 package com.xg7plugins.help.chathelp;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.ClickEvent;

@@ -5,6 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.defaultCommands.LangCommand;
+import com.xg7plugins.commands.defaultCommands.TestCommand;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
 import com.xg7plugins.commands.setup.ICommand;
@@ -20,6 +21,9 @@ import com.xg7plugins.help.guihelp.HelpCommandGUI;
 import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpForm;
 import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpGUI;
 import com.xg7plugins.help.xg7pluginshelp.chathelp.XG7PluginsChatHelp;
+import com.xg7plugins.menus.LangForm;
+import com.xg7plugins.menus.LangMenu;
+import com.xg7plugins.menus.TaskMenu;
 import com.xg7plugins.modules.ModuleManager;
 import com.xg7plugins.lang.LangItemTypeAdapter;
 import com.xg7plugins.lang.LangManager;
@@ -68,7 +72,7 @@ public final class XG7Plugins extends Plugin {
     @Getter
     private static boolean floodgate;
     @Getter
-    private static boolean placeholderAPI;
+    public static boolean placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
     @Getter
     private static boolean geyserFormEnabled = false;
     @Getter
@@ -118,7 +122,6 @@ public final class XG7Plugins extends Plugin {
         this.tpsCalculator = new TPSCalculator();
         tpsCalculator.start();
         floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
-        placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
 
         Config config = getConfig("config");
 
@@ -165,6 +168,18 @@ public final class XG7Plugins extends Plugin {
         moduleManager.loadExecutors();
         moduleManager.loadListeners();
 
+        debug.loading("Loading Menus...");
+
+        XG7Menus menus = XG7Menus.getInstance();
+
+        menus.registerMenus(new LangMenu(this), new TaskMenu(this));
+
+        if (floodgate) {
+            debug.loading("Loading GeyserForms...");
+            XG7GeyserForms geyserForms = XG7GeyserForms.getInstance();
+            geyserForms.registerForm(new LangForm());
+        }
+
 
         debug.loading("Loading plugins...");
         register(this);
@@ -199,10 +214,10 @@ public final class XG7Plugins extends Plugin {
         getConfigsManager().registerAdapter(Item.class, new LangItemTypeAdapter());
 
 
-        if (placeholderAPI) {
-            debug.loading("Registering PlaceholderAPI expansion...");
-            new XG7PluginsPlaceholderExpansion().register();
-        }
+
+        debug.loading("Registering PlaceholderAPI expansion...");
+        new XG7PluginsPlaceholderExpansion().register();
+
 
         debug.loading("XG7Plugins enabled.");
 
@@ -221,8 +236,12 @@ public final class XG7Plugins extends Plugin {
         debug.loading("Stopping cache...");
         cacheManager.shutdown();
 
+        moduleManager.disableModules();
+
         debug.loading("Stopping PacketEvents...");
         PacketEvents.getAPI().terminate();
+
+        Text.getAudience().close();
     }
 
     public Class<? extends Entity>[] loadEntites() {
@@ -230,7 +249,7 @@ public final class XG7Plugins extends Plugin {
     }
     @Override
     public ICommand[] loadCommands() {
-        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand()};
+        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand(), new TestCommand()};
     }
 
     @Override

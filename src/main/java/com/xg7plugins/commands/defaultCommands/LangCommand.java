@@ -6,13 +6,13 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ public class LangCommand implements ICommand {
 
     @Override
     public boolean isEnabled() {
-        return XG7Plugins.getInstance().getConfig("config").get("enable-langs", Boolean.class).orElse(false);
+        return Config.mainConfigOf(XG7Plugins.getInstance()).get("lang-enabled", Boolean.class).orElse(false);
     }
 
     @Override

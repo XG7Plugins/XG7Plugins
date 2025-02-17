@@ -1,125 +1,142 @@
 package com.xg7plugins.utils.text;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
+import com.github.retrooper.packetevents.protocol.chat.message.ChatMessageLegacy;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
 import com.xg7plugins.utils.Condition;
+import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.text.component.Component;
+import com.xg7plugins.utils.text.component.serializer.ComponentDeserializer;
 import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.clip.placeholderapi.libs.kyori.adventure.platform.bukkit.BukkitAudiences;
-import me.clip.placeholderapi.libs.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Getter
 public class Text {
 
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
-    private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
-    private static final BukkitAudiences audience = BukkitAudiences.create(XG7Plugins.getInstance());
-
-    String text;
-    String rawText;
+    @Getter
+    private String text;
 
     public Text(String text) {
-
         this.text = text;
-
-        String legacyText = LegacyComponentSerializer.legacyAmpersand().serialize(MINI_MESSAGE.deserialize(text));
-
-        this.rawText = PlainTextComponentSerializer.plainText().serialize(Component.text(legacyText));
-
-    }
-
-    public Text replace(String placeholder, String replacement) {
-        this.text = this.text.replace(placeholder, replacement);
-        this.rawText = this.rawText.replace(placeholder, replacement);
-
-        return this;
-    }
-    public Text replaceAll(Map<String, String> placeholders) {
-        placeholders.forEach(this::replace);
-
-        return this;
     }
 
     public Text textFor(Player player) {
 
         this.text = Condition.processCondition(this.text, player);
-        this.rawText = Condition.processCondition(this.rawText, player);
 
-        if (XG7Plugins.isPlaceholderAPI()) {
-            this.text = PlaceholderAPI.setPlaceholders(player, this.text);
-            this.rawText = PlaceholderAPI.setPlaceholders(player, this.rawText);
-        }
+        if (XG7Plugins.isPlaceholderAPI()) this.text = PlaceholderAPI.setPlaceholders(player, this.text);
 
         return this;
     }
 
-    public Text verifyCentralized(TextCentralizer.PixelsSize size) {
-        if (text.startsWith("[CENTER] ")) {
-            this.text = text.substring(9);
-            this.rawText = rawText.substring(9);
-            this.text = getCentralizedText(size);
+    public Text replace(String placeholder, String replacement) {
+        this.text = this.text.replace("%" + placeholder + "%", replacement);
+        return this;
+    }
+    @SafeVarargs
+    public final Text replace(Pair<String, String>... replacements) {
+        for (Pair<String,String> replacement : replacements) {
+            this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond());
         }
         return this;
     }
 
-
-
-    public Component toAdventureComponent() {
-        return MINI_MESSAGE.deserialize(text.replace("[CENTER] ", "").replace("[ACTION] ", ""));
-    }
-
-    public String getCentralizedText(TextCentralizer.PixelsSize pixelsSize) {
-        return TextCentralizer.getCentralizedText(pixelsSize, rawText);
-    }
 
     public void send(CommandSender sender) {
 
-        if (text.isEmpty()) return;
+        if (this.text.isEmpty()) return;
 
-        boolean isCenter = false;
+        Component component = ComponentDeserializer.deserialize(this.text);
 
-        if (text.startsWith("[CENTER] ")) {
-            this.text = text.substring(9);
-            this.rawText = rawText.substring(9);
-            isCenter = true;
-        }
+        String rawText = component.content();
+        String componentText = component.getText();
 
-        if (!(sender instanceof Player)) {
-            this.rawText = Condition.removeTags(rawText);
-            if (isCenter) this.rawText = getCentralizedText(TextCentralizer.PixelsSize.CHAT);
-            sender.sendMessage(rawText);
+        boolean isCentered = rawText.startsWith("<center> ");
+        boolean isAction = rawText.startsWith("<action> ");
+        boolean isPlayer = sender instanceof Player;
+
+        componentText = componentText.replace("<center> ", "");
+        componentText = componentText.replace("<action> ", "");
+
+        component.setText(componentText);
+
+        if (isCentered) component.center(TextCentralizer.PixelsSize.CHAT);
+
+        if (!isPlayer) {
+            if (XG7Plugins.getMinecraftVersion() < 8) {
+                sender.sendMessage(rawText);
+                return;
+            }
+            sender.spigot().sendMessage(component.toBukkitComponent());
             return;
         }
 
-        boolean isActionBar = false;
+        Player player = (Player) sender;
 
-        if (text.startsWith("[ACTION] ")) {
-            this.text = text.substring(9);
-            this.rawText = rawText.substring(9);
-            isActionBar = true;
+        if (isAction) {
+            if (XG7Plugins.getMinecraftVersion() < 8) return;
+
+            if (XG7Plugins.getMinecraftVersion() > 8) {
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(rawText));
+                return;
+            }
+
+            WrapperPlayServerChatMessage packetPlayOutChat = new WrapperPlayServerChatMessage(
+                    new ChatMessageLegacy(net.kyori.adventure.text.Component.text(rawText), ChatTypes.GAME_INFO)
+            );
+
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutChat);
+
+            return;
         }
 
-        if (isCenter && !isActionBar) {this.text = getCentralizedText(TextCentralizer.PixelsSize.CHAT);}
+        if (XG7Plugins.getMinecraftVersion() < 8) {
+            player.sendMessage(rawText);
+            return;
+        }
 
-        if (isActionBar) audience.player((Player) sender).sendActionBar((ComponentLike) MINI_MESSAGE.deserialize(text));
-        else audience.player((Player) sender).sendMessage((ComponentLike) MINI_MESSAGE.deserialize(text));
+        player.spigot().sendMessage(component.toBukkitComponent());
 
     }
 
-    public static Text format(String text) {
-        return new Text(text);
+    public String getRawText() {
+
+        Component component = ComponentDeserializer.deserialize(this.text);
+
+        String rawText = component.content();
+
+        if (rawText.startsWith("<center> ")) rawText = rawText.replace("<center> ", "");
+        if (rawText.startsWith("<action> ")) rawText = rawText.replace("<action> ", "");
+
+        return rawText;
+    }
+
+    public Component getComponent() {
+        return ComponentDeserializer.deserialize(this.text);
+    }
+
+    public String getCentralizedText(TextCentralizer.PixelsSize size) {
+
+        Component component = ComponentDeserializer.deserialize(this.text);
+
+        String rawText = component.content();
+
+        if (rawText.startsWith("<center> ")) rawText = rawText.replace("<center> ", "");
+        if (rawText.startsWith("<action> ")) rawText = rawText.replace("<action> ", "");
+
+        return TextCentralizer.getCentralizedText(size, rawText);
     }
 
     public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText) {
@@ -128,8 +145,8 @@ public class Text {
 
             String text = rawText;
 
-            text = text.replace("[PREFIX]", plugin.getCustomPrefix());
-            text = text.replace("[PLAYER]", sender.getName());
+            text = text.replace("%plugin%", plugin.getCustomPrefix());
+            text = text.replace("%prefix%", sender.getName());
 
             Matcher langMatch = LANG_PATTERN.matcher(text);
 
@@ -156,8 +173,8 @@ public class Text {
 
             String text = lang.get(path);
 
-            text = text.replace("[PREFIX]", plugin.getCustomPrefix());
-            text = text.replace("[PLAYER]", sender.getName());
+            text = text.replace("%plugin%", plugin.getCustomPrefix());
+            text = text.replace("%prefix%", sender.getName());
 
             Text objectText = new Text(text);
 
@@ -167,6 +184,10 @@ public class Text {
 
             return objectText;
         });
+    }
+
+    public static Text format(String text) {
+        return new Text(text);
     }
 
 }

@@ -5,7 +5,6 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.response.SimpleFormResponse;

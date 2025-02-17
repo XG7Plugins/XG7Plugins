@@ -23,15 +23,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+@Getter
 public class DatabaseManager {
 
-    @Getter
     private final ConcurrentHashMap<String, HikariDataSource> connections = new ConcurrentHashMap<>();
-    @Getter
     private final TableCreator tableCreator = new TableCreator();
-    @Getter
     private final ObjectCache<String, Entity> cachedEntities;
-    @Getter
     private final DatabaseProcessor processor = new DatabaseProcessor(this);
 
     public Connection getConnection(Plugin plugin) throws SQLException {
@@ -83,13 +80,13 @@ public class DatabaseManager {
         HikariConfig hikariConfig = new HikariConfig();
 
         hikariConfig.setAutoCommit(false);
-        hikariConfig.setConnectionTimeout(xg7PluginsConfig.getTime("sql.connection-timeout").orElse(5000L));
-        hikariConfig.setIdleTimeout(xg7PluginsConfig.getTime("sql.idle-timeout").orElse(600000L));
         hikariConfig.setUsername(username);
         hikariConfig.setPassword(password);
         hikariConfig.setMaximumPoolSize(xg7PluginsConfig.get("sql.max-pool-size", Integer.class).orElse(10));
         hikariConfig.setPoolName(plugin.getName() + "-pool");
         hikariConfig.setMinimumIdle(xg7PluginsConfig.get("sql.min-idle-connections", Integer.class).orElse(5));
+        hikariConfig.setConnectionTimeout(xg7PluginsConfig.getTime("sql.connection-timeout").orElse(5000L));
+        hikariConfig.setIdleTimeout(xg7PluginsConfig.getTime("sql.idle-timeout").orElse(600000L));
         hikariConfig.setConnectionTestQuery("SELECT 1");
 
         try {
@@ -101,7 +98,7 @@ public class DatabaseManager {
                     File file = new File(plugin.getDataFolder(), "data.db");
                     if (!file.exists()) file.createNewFile();
 
-                    hikariConfig.setJdbcUrl("jdbc:sqlite:" + file.getAbsolutePath());
+                    hikariConfig.setJdbcUrl("jdbc:sqlite:" + plugin.getDataFolder().getPath() + "/data.db");
 
                     break;
                 case MARIADB:
@@ -113,7 +110,6 @@ public class DatabaseManager {
                     break;
                 case MYSQL:
 
-                    Class.forName("com.mysql.cj.jdbc.Driver");
                     hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + additionalArgs);
 
                     break;

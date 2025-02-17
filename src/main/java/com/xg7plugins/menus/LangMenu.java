@@ -1,7 +1,6 @@
 package com.xg7plugins.menus;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.cryptomorin.xseries.XMaterial;
@@ -10,7 +9,6 @@ import com.xg7plugins.modules.xg7menus.events.ClickEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.gui.PageMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

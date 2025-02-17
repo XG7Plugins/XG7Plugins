@@ -6,8 +6,10 @@ loadbefore:
   - XG7Lobby
   - XG7Kits
 
-softdepend:
+depend:
   - PlaceholderAPI
+
+softdepend:
   - Floodgate
 
 permissions:

@@ -9,7 +9,6 @@ import com.xg7plugins.modules.xg7menus.item.BookItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.item.SkullItem;
 import com.xg7plugins.modules.xg7menus.menus.gui.Menu;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

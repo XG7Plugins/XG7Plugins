@@ -3,7 +3,6 @@ package com.xg7plugins.modules.xg7menus.menus.gui;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.menus.BaseMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
-import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.text.TextCentralizer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

@@ -11,7 +11,6 @@ import com.xg7plugins.modules.xg7menus.menus.gui.PageMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -148,9 +147,7 @@ public class TaskMenu extends PageMenu {
                 }
                 if (event.getClickAction().isLeftClick()) {
                     Text.fromLang(player, XG7Plugins.getInstance(),"tasks-menu.copy-to-clipboard")
-                            .thenAccept(text -> {
-                                text.replace("[ID]", taskId).send(player);
-                            });
+                            .thenAccept(text -> text.replace("[ID]", taskId).send(player));
                 }
 
                 refresh(holder);

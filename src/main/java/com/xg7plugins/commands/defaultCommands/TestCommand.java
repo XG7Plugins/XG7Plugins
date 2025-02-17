@@ -6,7 +6,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.utils.text.Text;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
 @Command(
@@ -29,6 +29,6 @@ public class TestCommand implements ICommand {
 
     @Override
     public Item getIcon() {
-        return null;
+        return Item.from(Material.ARROW).lore("asd","asd","asd","asd","asdfliojbhasdpofb");
     }
 }

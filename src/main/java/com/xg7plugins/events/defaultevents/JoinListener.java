@@ -41,7 +41,10 @@ public class JoinListener implements Listener {
 
         if (playerData == null) return;
 
-        if (playerData.getLangId() == null) playerData.setLangId(plugin.getLangManager().getNewLangFor(event.getPlayer()).join());
+        if (playerData.getLangId() == null) {
+            playerData.setLangId(plugin.getLangManager().getNewLangFor(event.getPlayer()).join());
+            plugin.getPlayerDataDAO().update(playerData);
+        }
     }
 
 }
