@@ -90,6 +90,7 @@ public class XG7Scores implements Module {
     }
 
     public void registerScore(Score score) {
+        if (score == null) return;
         scores.put(score.getId(), score);
     }
     public void registerScores(Score... scores) {

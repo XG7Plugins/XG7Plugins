@@ -47,7 +47,7 @@ public abstract class StorageMenu extends Menu {
 
     @Override
     public void open(Player player) {
-        StorageMenuHolder holder = new StorageMenuHolder(id, plugin, Text.detectLangs(player, plugin,title).join().getRawText(),size,type, this, player);
+        StorageMenuHolder holder = new StorageMenuHolder(id, plugin, Text.detectLangs(player, plugin,title).join().getPlainText(),size,type, this, player);
         player.openInventory(holder.getInventory());
         putItems(player, holder);
     }

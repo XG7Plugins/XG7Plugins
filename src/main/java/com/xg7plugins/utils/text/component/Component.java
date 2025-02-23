@@ -5,11 +5,12 @@ import com.xg7plugins.utils.text.TextCentralizer;
 import com.xg7plugins.utils.text.component.event.ClickEvent;
 import com.xg7plugins.utils.text.component.event.HoverEvent;
 import lombok.Data;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 @Data
 public class Component implements Cloneable {
@@ -29,6 +30,7 @@ public class Component implements Cloneable {
     public String content() {
         StringBuilder builder = new StringBuilder(text);
 
+        if (components == null || components.isEmpty()) return builder.toString();
         for (Component component : components) {
             builder.append(component.content());
         }
@@ -39,6 +41,8 @@ public class Component implements Cloneable {
     public void center(TextCentralizer.PixelsSize size) {
         String content = content();
 
+        content = content.replace("<center> ", "");
+        text = text.replace("<center> ", "");
         this.text = TextCentralizer.getSpacesCentralized(size.getPixels(), content) + text;
     }
 
@@ -63,28 +67,50 @@ public class Component implements Cloneable {
     }
 
     public boolean isEmpty() {
-        return text.isEmpty();
+        return text.isEmpty() && (components == null || components.isEmpty());
     }
 
-    public TextComponent toBukkitComponent() {
-        TextComponent component = new TextComponent(text);
+    public BaseComponent[] toBukkitComponent() {
+        ComponentBuilder builder = new ComponentBuilder(text);
         if (events != null) {
             if (events.getFirst() != null) {
-                component.setHoverEvent(events.getFirst().toBukkitEvent());
+                builder.event((net.md_5.bungee.api.chat.HoverEvent) events.getFirst().toBukkitEvent());
             }
             if (events.getSecond() != null) {
-                component.setClickEvent(events.getSecond().toBukkitEvent());
+                builder.event((net.md_5.bungee.api.chat.ClickEvent) events.getSecond().toBukkitEvent());
             }
         }
 
-        ComponentBuilder builder = new ComponentBuilder(component);
         if (components != null) {
-            for (Component component1 : components) {
-                builder.append(component1.toBukkitComponent());
+
+            List<Component> toProcess = new ArrayList<>();
+            Stack<Component> stack = new Stack<>();
+
+            for (int i = components.size() - 1; i >= 0; i--) stack.push(components.get(i));
+
+
+            while (!stack.isEmpty()) {
+                Component currentComponent = stack.pop();
+                toProcess.add(currentComponent);
+
+                List<Component> subComponents = currentComponent.getComponents();
+                for (int i = subComponents.size() - 1; i >= 0; i--) stack.push(subComponents.get(i));
+            }
+
+            for (Component component : toProcess) {
+                builder.append(component.getText());
+                if (component.getEvents() != null) {
+                    if (component.getEvents().getFirst() != null) {
+                        builder.event((net.md_5.bungee.api.chat.HoverEvent) component.getEvents().getFirst().toBukkitEvent());
+                    }
+                    if (component.getEvents().getSecond() != null) {
+                        builder.event((net.md_5.bungee.api.chat.ClickEvent) component.getEvents().getSecond().toBukkitEvent());
+                    }
+                }
             }
         }
 
-        return new TextComponent(builder.create());
+        return builder.create();
     }
 
     @Override
@@ -107,8 +133,6 @@ public class Component implements Cloneable {
         return new Builder(component);
     }
 
-
-
     public static class Builder {
 
         private final Component component;
@@ -119,10 +143,15 @@ public class Component implements Cloneable {
         public Builder(String text) {
             this.currentText = text;
             this.component = Component.EMPTY.clone();
+            component.setEvents(new Pair<>(null,null));
+            component.setComponents(new ArrayList<>());
         }
         public Builder(Component component) {
             this.currentText = component.content();
             this.component = component;
+            if (component.getComponents() == null) {
+                component.setComponents(new ArrayList<>());
+            }
         }
 
         public Builder text(String text) {

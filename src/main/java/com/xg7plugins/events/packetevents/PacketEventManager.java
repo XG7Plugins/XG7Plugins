@@ -22,6 +22,8 @@ public class PacketEventManager {
 
         for (PacketListener listener : listeners) {
 
+            if (listener == null) continue;
+
             if (!listener.isEnabled()) continue;
 
             PacketEventHandler packetEventHandler = listener.getClass().getAnnotation(PacketEventHandler.class);

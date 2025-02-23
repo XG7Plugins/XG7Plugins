@@ -48,18 +48,18 @@ public class HelpComponent {
 
     public Component buildFor(Player player) {
 
-        String translatedContent = Text.detectLangs(player,plugin,content).join().replaceAll(placeholders.toArray(new Pair[0])).getRawText();
+        String translatedContent = Text.detectLangs(player,plugin,content).join().replaceAll(placeholders.toArray(new Pair[0])).getPlainText();
 
         Component component = Component.text(translatedContent).build();
 
-        if (hoverEvent != null) component.setHoverEvent(new HoverEvent(Text.detectLangs(player,plugin,hoverEvent.content()).join().replaceAll(placeholders.toArray(new Pair[0])).getRawText(), hoverEvent.action()));
-        if (clickEvent != null) component.setClickEvent(new ClickEvent(Text.detectLangs(player,plugin,clickEvent.content()).join().replaceAll(placeholders.toArray(new Pair[0])).getRawText(), clickEvent.action()));
+        if (hoverEvent != null) component.setHoverEvent(new HoverEvent(Text.detectLangs(player,plugin,hoverEvent.content()).join().replaceAll(placeholders.toArray(new Pair[0])).getPlainText(), hoverEvent.action()));
+        if (clickEvent != null) component.setClickEvent(new ClickEvent(Text.detectLangs(player,plugin,clickEvent.content()).join().replaceAll(placeholders.toArray(new Pair[0])).getPlainText(), clickEvent.action()));
 
         return component;
     }
 
     public Component build() {
-        String translatedContent = Text.format(content).replaceAll(placeholders.toArray(new Pair[0])).getRawText();
+        String translatedContent = Text.format(content).replaceAll(placeholders.toArray(new Pair[0])).getPlainText();
 
         return Component.text(translatedContent).build();
     }

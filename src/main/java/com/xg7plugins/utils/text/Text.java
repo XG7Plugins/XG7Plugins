@@ -70,6 +70,7 @@ public class Text {
 
         Component component = ComponentDeserializer.deserialize(this.text);
 
+
         send(component,sender);
 
     }
@@ -78,7 +79,9 @@ public class Text {
         if (component.isEmpty()) return;
 
         String rawText = component.content();
+
         String componentText = component.getText();
+
 
         boolean isCentered = rawText.startsWith("<center> ");
         boolean isAction = rawText.startsWith("<action> ");
@@ -86,6 +89,9 @@ public class Text {
 
         componentText = componentText.replace("<center> ", "");
         componentText = componentText.replace("<action> ", "");
+
+        rawText = rawText.replace("<center> ", "");
+        rawText = rawText.replace("<action> ", "");
 
         component.setText(componentText);
 
@@ -131,16 +137,20 @@ public class Text {
         player.spigot().sendMessage(component.toBukkitComponent());
     }
 
-    public String getRawText() {
+    public String getPlainText() {
+        try {
+            Component component = ComponentDeserializer.deserialize(this.text);
 
-        Component component = ComponentDeserializer.deserialize(this.text);
+            String rawText = component.content();
 
-        String rawText = component.content();
+            if (rawText.startsWith("<center> ")) rawText = rawText.replace("<center> ", "");
+            if (rawText.startsWith("<action> ")) rawText = rawText.replace("<action> ", "");
 
-        if (rawText.startsWith("<center> ")) rawText = rawText.replace("<center> ", "");
-        if (rawText.startsWith("<action> ")) rawText = rawText.replace("<action> ", "");
-
-        return rawText;
+            return rawText;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return this.text;
+        }
     }
 
     public Component getComponent() {
@@ -159,7 +169,7 @@ public class Text {
         return TextCentralizer.getCentralizedText(size, rawText);
     }
 
-    public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText) {
+    public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText, boolean textForSender) {
 
         return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
 
@@ -180,14 +190,20 @@ public class Text {
 
             Text objectText = new Text(result.toString());
 
-            if (sender instanceof Player) {
+            if (sender instanceof Player && textForSender) {
                 objectText.textFor((Player) sender);
             }
 
             return objectText;
+        }).exceptionally(throwable -> {
+            throwable.printStackTrace();
+            return new Text("Error: " + throwable.getMessage());
         });
     }
-    public static CompletableFuture<Text> fromLang(CommandSender sender, Plugin plugin, String path) {
+    public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText) {
+        return detectLangs(sender, plugin, rawText, true);
+    }
+    public static CompletableFuture<Text> fromLang(CommandSender sender, Plugin plugin, String path, boolean textForSender) {
 
         return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
 
@@ -198,12 +214,18 @@ public class Text {
 
             Text objectText = new Text(text);
 
-            if (sender instanceof Player) {
+            if (sender instanceof Player && textForSender) {
                 objectText.textFor((Player) sender);
             }
 
             return objectText;
+        }).exceptionally(throwable -> {
+            throwable.printStackTrace();
+            return new Text("Error: " + throwable.getMessage());
         });
+    }
+    public static CompletableFuture<Text> fromLang(CommandSender sender, Plugin plugin, String path) {
+        return fromLang(sender, plugin, path, true);
     }
 
     public static Text format(String text) {

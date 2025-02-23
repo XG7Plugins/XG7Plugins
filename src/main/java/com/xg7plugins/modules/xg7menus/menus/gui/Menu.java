@@ -32,7 +32,7 @@ public abstract class Menu extends BaseMenu {
     public void open(Player player) {
         player.closeInventory();
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            MenuHolder holder = new MenuHolder(id, plugin, Text.detectLangs(player, plugin,title).join().getRawText(), size, type, this, player);
+            MenuHolder holder = new MenuHolder(id, plugin, Text.detectLangs(player, plugin,title).join().getPlainText(), size, type, this, player);
             player.openInventory(holder.getInventory());
             putItems(player, holder);
         }, 1L);

@@ -55,11 +55,11 @@ public class TaskMenu extends PageMenu {
                         .name("&eTPS calculator")
                         .lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()))
                         .setBuildPlaceholders(
-                            Pair.of("[PLUGIN]", "XG7Plugins"),
-                                Pair.of("[ID]", "TPS calculator"),
-                                Pair.of("[STATE]", XG7Plugins.getInstance().getTpsCalculator().getState().name()),
-                                Pair.of("%task_is_running%", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getState() == TaskState.RUNNING)),
-                                Pair.of("%task_is_not_running%", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getState() == TaskState.IDLE))
+                            Pair.of("plugin", "XG7Plugins"),
+                                Pair.of("id", "TPS calculator"),
+                                Pair.of("state", XG7Plugins.getInstance().getTpsCalculator().getState().name()),
+                                Pair.of("task_is_running", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getState() == TaskState.RUNNING)),
+                                Pair.of("task_is_not_running", String.valueOf(XG7Plugins.getInstance().getTpsCalculator().getState() == TaskState.IDLE))
                         ).setNBTTag("task-id", "TPS calculator")
                         .setNBTTag("task-state", XG7Plugins.getInstance().getTpsCalculator().getState())
 

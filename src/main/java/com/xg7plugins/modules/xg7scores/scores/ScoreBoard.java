@@ -101,11 +101,16 @@ public class ScoreBoard extends Score {
             if (scoreboard == null) return;
             List<String> lastEntries = new ArrayList<>();
             for (int i = 0; i < lines.size(); i++) {
-                String translatedText = Text.detectLangs(player, plugin,lines.get(i)).join().getRawText();
+                String translatedText = Text.detectLangs(player, plugin,lines.get(i)).join().getPlainText();
 
                 String prefix = translatedText.substring(0, Math.min(translatedText.length(), 16));
                 String entry = translatedText.length() > 16 ? translatedText.substring(16, Math.min(translatedText.length(), 56)) : "";
                 String suffix = translatedText.length() > 56 ? translatedText.substring(56, Math.min(translatedText.length(), XG7Plugins.getMinecraftVersion() > 12 ? translatedText.length() : 72)) : "";
+
+                if (XG7Plugins.getMinecraftVersion() > 12) {
+                    suffix = ChatColor.getLastColors(prefix) + entry + suffix;
+                    entry = "";
+                }
 
                 if (!lastLines.containsKey(i) || !lastLines.get(i).equals(translatedText)) {
                     Team team = scoreboard.getTeam("team_" + i);

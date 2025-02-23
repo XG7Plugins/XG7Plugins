@@ -25,7 +25,7 @@ public abstract class ConfirmationMenu extends Menu {
 
     @Override
     public void open(Player player) {
-        ConfirmationMenuHolder holder = new ConfirmationMenuHolder(id, plugin, Text.detectLangs(player, plugin,title).join().getRawText(), size,type, this, player);
+        ConfirmationMenuHolder holder = new ConfirmationMenuHolder(id, plugin, Text.detectLangs(player, plugin,title).join().getPlainText(), size,type, this, player);
         player.openInventory(holder.getInventory());
         putItems(player, holder);
 

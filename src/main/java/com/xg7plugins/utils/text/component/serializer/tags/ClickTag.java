@@ -18,19 +18,19 @@ public class ClickTag implements Tag {
     @Override
     public void resolve(Component content, List<String> openArgs, List<String> closeArgs) {
 
-        if (openArgs.size() != 2) {
-            throw new IllegalArgumentException("Click tag must have 2 arguments");
+        if (openArgs.size() < 2) {
+            throw new IllegalArgumentException("Click tag must have 2 arguments at least");
         }
 
         ClickAction action = ClickAction.valueOf(openArgs.get(0).toUpperCase());
 
-        String hoverContent = openArgs.get(1);
+        String clickContent = String.join(":", openArgs.subList(1, openArgs.size()));
 
         Pair<HoverEvent, ClickEvent> pair = content.getEvents();
         if (pair == null) {
             pair = new Pair<>(null, null);
         }
-        pair.setSecond(new ClickEvent(hoverContent, action));
+        pair.setSecond(new ClickEvent(clickContent, action));
 
         content.setEvents(pair);
 

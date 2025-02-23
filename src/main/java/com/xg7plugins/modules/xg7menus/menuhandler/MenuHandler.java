@@ -18,10 +18,6 @@ import java.util.stream.Collectors;
 
 public class MenuHandler implements Listener {
 
-    {
-        System.out.println("MenuHandler loaded");
-    }
-
     @Override
     public boolean isEnabled() {
         return true;

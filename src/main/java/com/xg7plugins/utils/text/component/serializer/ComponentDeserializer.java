@@ -6,6 +6,7 @@ import com.xg7plugins.utils.text.component.serializer.tags.GradientTag;
 import com.xg7plugins.utils.text.component.serializer.tags.HexTag;
 import com.xg7plugins.utils.text.component.serializer.tags.HoverTag;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class ComponentDeserializer {
 
-    private static final Pattern TAG_PATTERN = Pattern.compile("<(\\w+)(?::([^>]*))?>(.*?)</\\1(?::([^>]*))?>", Pattern.CASE_INSENSITIVE);
+    private static final Pattern TAG_PATTERN = Pattern.compile("<(\\w+)(?::([^>]*))?>(.*?)</\\1(?::([^>]*))?>");
 
     private static final HashMap<String, Tag> tags = new HashMap<>();
 
@@ -25,47 +26,56 @@ public class ComponentDeserializer {
     }
 
     public static Component deserialize(String text) {
-        Matcher matcher = TAG_PATTERN.matcher(text);
+        try {
+            Matcher test = TAG_PATTERN.matcher(text);
 
-        if (!matcher.find()) {
-            return Component.text(text).build();
-        }
-
-        Component component = Component.EMPTY.clone();
-
-        int lastIndex = 0;
-        matcher.reset();
-
-        while (matcher.find()) {
-            if (matcher.start() > lastIndex) {
-                component.addComponent(Component.text(text.substring(lastIndex, matcher.start())).build());
+            if (!test.find()) {
+                return Component.text(text).build();
             }
 
-            String tagName = matcher.group(1);
-            String[] openArgs = matcher.group(2) != null ? matcher.group(2).split(":") : new String[0];
-            String content = matcher.group(3);
-            String[] closeArgs = matcher.group(4) != null ? matcher.group(4).split(":") : new String[0];
+            Component component = null;
 
-            Component innerComponent = deserialize(content);
+            int lastIndex = 0;
 
-            Tag tag = tags.get(tagName);
-            if (tag == null) throw new IllegalArgumentException("Unknown tag: " + tagName);
+            Matcher matcher = TAG_PATTERN.matcher(text);
 
-            Component resolveComponent = Component.EMPTY.clone();
+            while (matcher.find()) {
+                if (matcher.start() > lastIndex) {
+                    if (component == null) component = Component.text(text.substring(lastIndex, matcher.start())).build();
+                    else component.addComponent(Component.text(text.substring(lastIndex, matcher.start())).build());
+                }
 
-            resolveComponent.setEvents(innerComponent.getEvents());
-            resolveComponent.setText(innerComponent.getText());
+                String tagName = matcher.group(1);
+                String[] openArgs = matcher.group(2) != null ? matcher.group(2).split(":") : new String[0];
+                String content = matcher.group(3);
+                String[] closeArgs = matcher.group(4) != null ? matcher.group(4).split(":") : new String[0];
 
-            tag.resolve(resolveComponent, Arrays.asList(openArgs), Arrays.asList(closeArgs));
+                Component innerComponent = deserialize(content);
 
-            lastIndex = matcher.end();
+                Tag tag = tags.get(tagName);
+                if (tag == null) throw new IllegalArgumentException("Unknown tag: " + tagName);
 
-            component.addComponent(resolveComponent);
+                tag.resolve(innerComponent, Arrays.asList(openArgs), Arrays.asList(closeArgs));
+
+
+                lastIndex = matcher.end();
+
+                if (component == null) {
+                    component = innerComponent;
+                    continue;
+                }
+                component.addComponent(innerComponent);
+
+
+            }
+
+            if (lastIndex < text.length()) component.addComponent(Component.text(text.substring(lastIndex)).build());
+
+            return component;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Component.text(text).build();
         }
-
-        if (lastIndex < text.length()) component.addComponent(Component.text(text.substring(lastIndex)).build());
-
-        return component;
     }
 
 }

@@ -62,6 +62,14 @@ public class Config {
         this.config = config;
     }
 
+    public Config(Plugin plugin, YamlConfiguration config, String name) {
+        this.plugin = plugin;
+        this.name = name;
+        this.configManager = plugin.getConfigsManager();
+        this.config = config;
+        this.configFile = new File(plugin.getDataFolder(), "config.yml");
+    }
+
     public static Config of(String name, Plugin plugin) {
         if (plugin.getConfigsManager().getConfigs().containsKey(name)) {
             return plugin.getConfigsManager().getConfigs().get(name);

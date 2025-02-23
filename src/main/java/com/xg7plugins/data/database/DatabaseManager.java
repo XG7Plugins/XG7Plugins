@@ -100,7 +100,11 @@ public class DatabaseManager {
                     File file = new File(plugin.getDataFolder(), "data.db");
                     if (!file.exists()) file.createNewFile();
 
-                    sqliteConnections.put(plugin.getName(), DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getPath() + "/data.db", username, password));
+                    Connection sqliteConnection = DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getPath() + "/data.db", username, password);
+
+                    sqliteConnection.setAutoCommit(false);
+
+                    sqliteConnections.put(plugin.getName(), sqliteConnection);
 
                     break;
                 case MARIADB:

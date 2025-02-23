@@ -113,7 +113,7 @@ public class PlayerMenuHandler implements Listener {
 
             event.setCancelled(!holder.getMenu().getMenuPermissions().contains(MenuPermissions.PLAYER_PICKUP));
 
-            MenuEvent menuEvent = new MenuEvent(event.getPlayer(), MenuEvent.ClickAction.KEYBOARD, holder, null);
+            MenuEvent menuEvent = new MenuEvent(event.getPlayer(), MenuEvent.ClickAction.UNKNOWN, holder, null);
 
             ((PlayerMenu) holder.getMenu()).onPickup(menuEvent);
 
@@ -130,7 +130,7 @@ public class PlayerMenuHandler implements Listener {
 
             event.setCancelled(!holder.getMenu().getMenuPermissions().contains(MenuPermissions.PLAYER_BREAK_BLOCKS));
 
-            MenuEvent menuEvent = new MenuEvent(event.getPlayer(), MenuEvent.ClickAction.KEYBOARD, holder, null);
+            MenuEvent menuEvent = new MenuEvent(event.getPlayer(), MenuEvent.ClickAction.UNKNOWN, holder, null);
 
             ((PlayerMenu) holder.getMenu()).onBreak(menuEvent);
 
@@ -146,7 +146,7 @@ public class PlayerMenuHandler implements Listener {
 
             event.setCancelled(!holder.getMenu().getMenuPermissions().contains(MenuPermissions.PLAYER_PLACE_BLOCKS));
 
-            MenuEvent menuEvent = new MenuEvent(event.getPlayer(), MenuEvent.ClickAction.KEYBOARD, holder, null);
+            MenuEvent menuEvent = new MenuEvent(event.getPlayer(), MenuEvent.ClickAction.UNKNOWN, holder, null);
 
             ((PlayerMenu) holder.getMenu()).onPlace(menuEvent);
 

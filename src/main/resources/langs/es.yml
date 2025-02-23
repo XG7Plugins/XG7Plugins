@@ -6,38 +6,28 @@ icon: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQub
 bedrock-icon: "URL, data:image/png;base64,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"
 
 commands:
-  syntax-error: "¡Digitaste el comando de manera incorrecta! La manera correcta es [SYNTAX]"
-  player-not-found: "¡Este jugador no existe o nunca ha jugado antes!"
-  no-permission: "¡No tienes permiso para ejecutar este comando!"
-  disabled-world: "¡No puedes ejecutar el comando en este mundo!"
+  syntax-error: "¡Estás usando el comando incorrectamente! La forma correcta es %syntax%"
+  player-not-found: "¡Este jugador no ha sido encontrado o nunca ha jugado antes!"
+  no-permission: "¡No tienes permiso para usar este comando!"
+  disabled-world: "¡No puedes ejecutar este comando en un mundo deshabilitado!"
   not-a-player: "¡No puedes ejecutar este comando en la consola!"
   is-a-player: "¡No puedes ejecutar este comando siendo un jugador!"
   command-not-found: "¡Comando no encontrado!"
 
 reload-message:
-  config: "¡Configs de [PLUGIN] recargados!"
-  database: "¡Base de datos de [PLUGIN] recargada!"
-  all: "¡[PLUGIN] recargado!"
-  lang: "¡Idiomas de [PLUGIN] recargados!"
-  tasks: "¡Tarefas de [PLUGIN] recargados!"
-  events: "¡Eventos de [PLUGIN] recargados!"
-  json: "¡Cachés invalidados con éxito!"
+  all-plugins: "¡Todos los plugins recargados!"
+  without-cause: "¡%plugin% recargado!"
+  with-cause: "¡%cause% recargado en el plugin %plugin%!"
 
-#Plugin defaults
+# Configuraciones predeterminadas del plugin
 
 go-back-item: "Volver"
-go-next-item: "Avanzar"
+go-next-item: "Siguiente"
 close-item: "Cerrar"
-refresh-item: "Recargar página"
+refresh-item: "Actualizar página"
 
 go-back-to-help: "Volver a la ayuda"
 go-back-to-previous-commands: "Volver a los comandos anteriores"
-
-confirmation-menu:
-  title: "&a¿Estás seguro de que deseas hacer esto?"
-
-  yes-item: "&cSí"
-  no-item: "&aNo"
 
 lang-not-found: "&c¡Idioma no encontrado!"
 
@@ -47,32 +37,32 @@ lang-menu:
   content: "¡Elige un idioma para el servidor!"
 
   item-click:
-    - "Haz clic para cambiar el idioma a español"
+    - "Haz clic aquí para cambiar el idioma a Español"
 
-  already-selected: "¡Ya tienes seleccionado este idioma!"
+  already-selected: "¡Ya estás usando este idioma!"
 
-  toggle-success: "¡Cambiaste el idioma a español!"
+  toggle-success: "¡Has cambiado el idioma a español!"
 
-  cooldown-to-toggle: "¡Debes esperar [SECONDS] segundos para cambiar el idioma nuevamente!"
+  cooldown-to-toggle: "Debes esperar %seconds% segundos para cambiar el idioma nuevamente"
 
 tasks-menu:
   title: "Tareas"
 
   task-item:
-    - "&fId de la tarea: &b[ID]"
-    - "&fPlugin de la tarea: &e[PLUGIN]"
-    - "&fEstado de la tarea: &9[STATE]"
+    - "&fID de la tarea: &b%id%"
+    - "&fPlugin de la tarea: &e%plugin%"
+    - "&fEstado de la tarea: &9%state%"
     - " "
-    - "&fClic izquierdo -> &aCopiar id"
+    - "&fClic izquierdo -> &aCopiar ID"
     - "[IF: %task_is_running%] &fClic derecho -> &cDetener tarea"
-    - "[IF: %task_is_not_running%] &fClic derecho -> &eIniciar tarea"
+    - "[IF: %task_is_not_running%] &fClic derecho -> &aIniciar tarea"
 
-  copy-to-clipboard: "Haz clic <click:copy_to_clipboard:[ID]>&baquí&r</click> para copiar el id!"
+  copy-to-clipboard: "Haz clic <click:suggest_command:%id%><hover:show_text:%id%>&baquí&r</hover></click> para copiar el ID de la tarea."
 
   notes:
-    - "&fUso de RAM: &9[RAM]MB"
-    - "&fTPS: &9[TPS]"
-    - "&fTareas en ejecución: &9[TASKS]"
+    - "&fUso de RAM del servidor: &9%ram%MB"
+    - "&fTPS del servidor: &9%tps%"
+    - "&fTareas en ejecución: &9%tasks%"
 
 task-command:
   not-found: "¡Tarea no encontrada!"
@@ -80,18 +70,18 @@ task-command:
   stopped: "¡Tarea detenida!"
   restarted: "¡Tarea reiniciada!"
 
-  already-running: "¡A tarea já está em execução!"
-  already-stopped: "¡A tarea já está parada!"
+  already-running: "¡La tarea ya está en ejecución!"
+  already-stopped: "¡La tarea ya está detenida!"
 
 commands-display:
 
   if-subcommand: "&a¡Haz clic para ver los subcomandos!"
 
   command-item:
-    usage: "&fUso: &a[SYNTAX]"
-    desc: "&fDescripción: &e[DESCRIPTION]"
-    perm: "&fPermiso: &c[PERMISSION]"
-    player-only: "&fSolo los jugadores pueden usar: &b[PLAYER_ONLY]"
+    usage: "&fUso: &a%syntax%"
+    desc: "&fDescripción: &e%description%"
+    perm: "&fPermiso: &c%permission%"
+    player-only: "&fSolo los jugadores pueden usarlo: &b%player_only%"
 
 commands-form:
   content: "¡Haz clic en una opción para ver su descripción y uso!"
@@ -112,7 +102,6 @@ help-menu:
     profile-item:
       name: "Perfil: %player_name%"
       lang-chose: "%xg7plugins_player_lang%"
-
     lang-item:
       name: "Idiomas"
       lore: "Haz clic aquí para cambiar el idioma del perfil"
@@ -126,26 +115,25 @@ help-menu:
       name: "Comandos"
       lore: "Haz clic aquí para ver los comandos"
 
-
-
   about:
     - "Acerca de &9XG7Plugins"
-    - " "
-    - "Versión: &a[VERSION]&r"
-    - "Site: &a&n[WEBSITE]&r"
-    - "GitHub: &a&n[GITHUB]&r"
-    - "Discord: &a&n[DISCORD]&r"
     - ""
-    - "Este plugin fue hecho"
-    - "para crear otros plugins para XG7."
-    - "Su objetivo es"
-    - "gestionar tareas,"
-    - "incluir bibliotecas"
-    - "(como menús, scores, etc.)"
-    - "y facilitar la creación de plugins."
-    - "También tiene un"
-    - "sistema de idiomas"
-    - "para la inclusión de nuevos idiomas."
+    - "Versión: &a%version%&r"
+    - "Sitio web: &a&n%website%&r"
+    - "GitHub: &a&n%github%&r"
+    - "Discord: &a&n%discord%&r"
+    - ""
+    - "Este plugin fue creado"
+    - "para desarrollar otros"
+    - "plugins para XG7."
+    - "Su objetivo es gestionar"
+    - "tareas, incluir bibliotecas"
+    - "(como menús, marcadores,"
+    - "etc.) y facilitar"
+    - "la creación de plugins."
+    - "También tiene un sistema"
+    - "de idiomas para la inclusión"
+    - "de nuevos idiomas."
     - ""
     - "&oDesarrollado por DaviXG7"
 
@@ -153,7 +141,7 @@ help-in-chat:
 
   title: "&7¡Bienvenido a la página de ayuda de &6XG7Plugins&7!"
 
-  content: "&eXG7Plugins es un plugin que tiene como objetivo facilitar la creación\n de otros plugins para otros XG7Plugins.\n Haz clic para ver más información."
+  content: "&eXG7Plugins es un plugin cuyo objetivo es facilitar la creación\n de otros plugins para otros XG7Plugins.\n Haz clic para ver más información."
 
   back: "&aHaz clic para volver a la ayuda"
 
@@ -161,4 +149,4 @@ help-in-chat:
   tasks: "&aTareas&f: &1haz clic aquí para ver las tareas"
   commands: "&aComandos&f: &1haz clic aquí para ver los comandos"
 
-  commands-title: "&7Comandos de &6XG7Plugins &8(&7[PAGE]&8/&7[MAX_PAGE]&8)"
+  commands-title: "&7Comandos de &6XG7Plugins &8(&7%page%&8/&7%max_page%&8)"

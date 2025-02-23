@@ -51,4 +51,8 @@ public class Debug {
         Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " LOG§8]§r " + message);
     }
 
+    public static Debug of(Plugin plugin) {
+        return new Debug(plugin);
+    }
+
 }

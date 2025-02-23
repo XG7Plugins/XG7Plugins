@@ -48,7 +48,7 @@ public class Tablist extends Score {
             if (headerIndex.get() >= header.size()) headerIndex.set(0);
             if (footerIndex.get() >= footer.size()) footerIndex.set(0);
 
-            send(player, Text.detectLangs(player, plugin,headerl).join().getRawText(), Text.detectLangs(player, plugin,footerl).join().getRawText());
+            send(player, Text.detectLangs(player, plugin,headerl).join().getPlainText(), Text.detectLangs(player, plugin,footerl).join().getPlainText());
         }
     }
 

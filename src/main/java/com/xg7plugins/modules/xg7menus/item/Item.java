@@ -21,6 +21,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -279,7 +280,7 @@ public class Item {
             ItemStack prepared = this.itemStack.clone();
             ItemMeta meta = prepared.getItemMeta();
             if (meta.getDisplayName() != null) {
-                String newName = Text.detectLangs(player, plugin,meta.getDisplayName()).join().replaceAll(buildPlaceholders).getText();
+                String newName = Text.detectLangs(player, plugin,meta.getDisplayName(), false).join().replaceAll(buildPlaceholders).textFor((Player) player).getText();
                 meta.setDisplayName(newName.isEmpty() ? " " : newName);
             }
 
@@ -287,7 +288,7 @@ public class Item {
                 List<String> lore = new ArrayList<>();
 
                 for (String line : meta.getLore()) {
-                    String formatted = Text.detectLangs(player, plugin,line).join().replaceAll(buildPlaceholders).getText();
+                    String formatted = Text.detectLangs(player, plugin,line, false).join().replaceAll(buildPlaceholders).textFor((Player) player).getText();
                     if (formatted.isEmpty()) continue;
                     lore.add(formatted);
                 }

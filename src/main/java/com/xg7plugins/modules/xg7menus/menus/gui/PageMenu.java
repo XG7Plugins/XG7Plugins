@@ -49,7 +49,7 @@ public abstract class PageMenu extends Menu {
     @Override
     public void open(Player player) {
 
-        PageMenuHolder holder = new PageMenuHolder(id, plugin, Text.detectLangs(player, plugin,title).join().getRawText(), size, type, this, player);
+        PageMenuHolder holder = new PageMenuHolder(id, plugin, Text.detectLangs(player, plugin,title).join().getPlainText(), size, type, this, player);
         player.openInventory(holder.getInventory());
         putItems(player, holder);
         holder.goPage(0);

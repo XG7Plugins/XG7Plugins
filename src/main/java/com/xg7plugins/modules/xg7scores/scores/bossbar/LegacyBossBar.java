@@ -61,14 +61,14 @@ public class LegacyBossBar extends Score {
 
             entityData.add(new EntityData(2, EntityDataTypes.ADV_COMPONENT, Component.text(updateText.get(0))));
 
-            entityData.add(new EntityData(3, EntityDataTypes.BOOLEAN, true));
-            entityData.add(new EntityData(11, EntityDataTypes.BOOLEAN, true));
+            entityData.add(new EntityData(3, EntityDataTypes.BYTE, (byte) 1));
+            entityData.add(new EntityData(11, EntityDataTypes.BYTE, (byte) 1));
 
             entityData.add(new EntityData(6, EntityDataTypes.FLOAT, (healthPercent / 100) * 300));
 
-            entityData.add(new EntityData(17, EntityDataTypes.BYTE, 0));
-            entityData.add(new EntityData(18, EntityDataTypes.BYTE, 0));
-            entityData.add(new EntityData(19, EntityDataTypes.BYTE, 0));
+            entityData.add(new EntityData(17, EntityDataTypes.BYTE, (byte) 0));
+            entityData.add(new EntityData(18, EntityDataTypes.BYTE, (byte) 0));
+            entityData.add(new EntityData(19, EntityDataTypes.BYTE, (byte) 0));
 
             entityData.add(new EntityData(20, EntityDataTypes.INT, 1000));
 

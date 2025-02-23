@@ -23,15 +23,19 @@ public abstract class PlayerMenu extends BaseMenu {
     }
 
     public void onDrop(MenuEvent event) {
+        if (messages == null) return;
         event.getWhoClicked().sendMessage(messages.getOnDropMessage((Player) event.getWhoClicked()));
     }
     public void onPickup(MenuEvent event) {
+        if (messages == null) return;
         event.getWhoClicked().sendMessage(messages.getOnPickupMessage((Player) event.getWhoClicked()));
     }
     public void onBreak(MenuEvent event) {
+        if (messages == null) return;
         event.getWhoClicked().sendMessage(messages.getOnBreakMessage((Player) event.getWhoClicked()));
     }
     public void onPlace(MenuEvent event) {
+        if (messages == null) return;
         event.getWhoClicked().sendMessage(messages.getOnPlaceMessage((Player) event.getWhoClicked()));
     }
 

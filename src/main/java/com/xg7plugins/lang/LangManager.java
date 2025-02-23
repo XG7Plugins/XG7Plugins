@@ -49,9 +49,6 @@ public class LangManager {
     public CompletableFuture<Void> loadLangsFrom(Plugin plugin) {
         return CompletableFuture.runAsync(() -> {
 
-            File langFolder = new File(plugin.getDataFolder(), "langs");
-            if (!langFolder.exists()) langFolder.mkdirs();
-
             if (!langEnabled) {
                 loadLang(plugin, mainLang).join();
                 return;
@@ -72,8 +69,8 @@ public class LangManager {
             if (!langFolder.exists()) langFolder.mkdirs();
 
             File langFile = new File(langFolder, lang + ".yml");
-            if (!langFile.exists()) plugin.saveResource( lang + ".yml", false);
-            langs.put(plugin.getName() + ":" + lang, Config.of(lang, plugin));
+            if (!langFile.exists()) plugin.saveResource( "langs/" + lang + ".yml", false);
+            langs.put(plugin.getName() + ":" + lang, Config.of("langs/" + lang, plugin));
         }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
     }
 

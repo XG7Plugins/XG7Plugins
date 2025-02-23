@@ -1,10 +1,16 @@
 package com.xg7plugins.modules.xg7scores.scores;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
+import com.github.retrooper.packetevents.protocol.chat.message.ChatMessageLegacy;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -29,7 +35,24 @@ public class ActionBar extends Score {
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
             if (containsPlayer(id)) continue;
-            Text.detectLangs(player, plugin,super.updateText.get(indexUpdating)).join().send(player);
+
+            String message = Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).join().getPlainText();
+
+            ActionBar.addToBlacklist(player);
+
+            if (XG7Plugins.getMinecraftVersion() > 8) {
+                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
+                return;
+            }
+
+            WrapperPlayServerChatMessage packetPlayOutChat = new WrapperPlayServerChatMessage(
+                    new ChatMessageLegacy(net.kyori.adventure.text.Component.text(message), ChatTypes.GAME_INFO)
+            );
+
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutChat);
+
+            Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId()), 60L);
+
         }
     }
 

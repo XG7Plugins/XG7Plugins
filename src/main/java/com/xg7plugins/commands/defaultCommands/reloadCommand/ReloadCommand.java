@@ -7,6 +7,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class ReloadCommand implements ICommand {
 
         if (args.len() == 0) {
             XG7Plugins.getInstance().getPlugins().values().forEach(plugin -> plugin.onReload(ReloadCause.ALL));
+            Text.fromLang(sender,XG7Plugins.getInstance(), "reload-message.all-plugins").join().send(sender);
             return;
         }
         Plugin plugin = args.get(0, Plugin.class);
@@ -34,6 +36,8 @@ public class ReloadCommand implements ICommand {
         if (args.len() == 1) {
             if (plugin == null) return;
             plugin.onReload(ReloadCause.ALL);
+            Text.fromLang(sender,XG7Plugins.getInstance(), "reload-message.without-cause").join().replace("plugin", plugin.getPrefix()).send(sender);
+
             return;
         }
 
@@ -44,6 +48,8 @@ public class ReloadCommand implements ICommand {
         }
 
         plugin.onReload(cause);
+
+        Text.fromLang(sender,XG7Plugins.getInstance(), "reload-message.with-cause").join().replace("plugin", plugin.getPrefix()).replace("cause", cause.getName()).send(sender);
 
     }
 
