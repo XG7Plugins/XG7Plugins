@@ -101,14 +101,14 @@ public class LangManager {
 
     public CompletableFuture<Lang> getLangByPlayer(Plugin plugin, Player player) {
         if (!langEnabled || player == null) {
-            return getLang(plugin, mainLang);
+            return getLang(plugin, "langs/" +  mainLang);
         }
 
         return CompletableFuture.supplyAsync(() -> {
 
             PlayerData playerData = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();
 
-            if (playerData == null) return getLang(plugin, mainLang,true).join();
+            if (playerData == null) return getLang(plugin, "langs/" + mainLang,true).join();
 
             return getLang(plugin, playerData.getLangId(), true).join();
 

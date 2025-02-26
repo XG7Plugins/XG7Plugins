@@ -4,10 +4,8 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
+import com.github.retrooper.packetevents.util.Vector3d;
+import com.github.retrooper.packetevents.wrapper.play.server.*;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.utils.location.Location;
@@ -45,42 +43,36 @@ public class LegacyBossBar extends Score {
 
             super.addPlayer(player);
 
-            WrapperPlayServerSpawnEntity spawnEntity = new WrapperPlayServerSpawnEntity(
-                    SpigotReflectionUtil.generateEntityId(),
-                    UUID.randomUUID(),
-                    EntityTypes.WITHER,
-                    Location.of("world",0,1,0).getProtocolLocation(),
-                    0,
-                    0,
-                    null
-            );
-
             List<EntityData> entityData = new ArrayList<>();
 
             entityData.add(new EntityData(0, EntityDataTypes.BYTE, (byte) (1 << 5)));
 
-            entityData.add(new EntityData(2, EntityDataTypes.ADV_COMPONENT, Component.text(updateText.get(0))));
+            entityData.add(new EntityData(2, EntityDataTypes.STRING, updateText.get(0)));
 
             entityData.add(new EntityData(3, EntityDataTypes.BYTE, (byte) 1));
             entityData.add(new EntityData(11, EntityDataTypes.BYTE, (byte) 1));
 
             entityData.add(new EntityData(6, EntityDataTypes.FLOAT, (healthPercent / 100) * 300));
 
-            entityData.add(new EntityData(17, EntityDataTypes.BYTE, (byte) 0));
-            entityData.add(new EntityData(18, EntityDataTypes.BYTE, (byte) 0));
-            entityData.add(new EntityData(19, EntityDataTypes.BYTE, (byte) 0));
+            entityData.add(new EntityData(17, EntityDataTypes.INT, 0));
+            entityData.add(new EntityData(18, EntityDataTypes.INT, (0)));
+            entityData.add(new EntityData(19, EntityDataTypes.INT, 0));
 
             entityData.add(new EntityData(20, EntityDataTypes.INT, 1000));
 
-            WrapperPlayServerEntityMetadata entityMetadata = new WrapperPlayServerEntityMetadata(
-                    spawnEntity.getEntityId(),
+            WrapperPlayServerSpawnLivingEntity spawnEntity = new WrapperPlayServerSpawnLivingEntity(
+                    SpigotReflectionUtil.generateEntityId(),
+                    UUID.randomUUID(),
+                    EntityTypes.WITHER,
+                    Location.of("world",0,1,0).getProtocolLocation(),
+                    0,
+                    Vector3d.zero(),
                     entityData
             );
 
             entities.put(player.getUniqueId(), spawnEntity.getEntityId());
 
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, spawnEntity);
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, entityMetadata);
 
         }, 2L);
     }
@@ -128,7 +120,7 @@ public class LegacyBossBar extends Score {
 
             WrapperPlayServerEntityMetadata packetPlayOutEntityMetadata = new WrapperPlayServerEntityMetadata(
                     entities.get(player.getUniqueId()),
-                    Collections.singletonList(new EntityData(2, EntityDataTypes.ADV_COMPONENT, Component.text(name)))
+                    Collections.singletonList(new EntityData(2, EntityDataTypes.STRING, name))
             );
 
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutEntityMetadata);

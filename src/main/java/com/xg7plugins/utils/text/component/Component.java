@@ -11,9 +11,12 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 @Data
 public class Component implements Cloneable {
+
+    private static final Pattern centerPattern = Pattern.compile("<center> ");
 
     public static final Component EMPTY = new Component("", null, null);
 

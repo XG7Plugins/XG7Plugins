@@ -38,20 +38,14 @@ public class ActionBar extends Score {
 
             String message = Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).join().getPlainText();
 
-            ActionBar.addToBlacklist(player);
-
             if (XG7Plugins.getMinecraftVersion() > 8) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
                 return;
             }
 
-            WrapperPlayServerChatMessage packetPlayOutChat = new WrapperPlayServerChatMessage(
-                    new ChatMessageLegacy(net.kyori.adventure.text.Component.text(message), ChatTypes.GAME_INFO)
-            );
+            WrapperPlayServerChatMessage packetPlayOutChat = new WrapperPlayServerChatMessage(new ChatMessageLegacy(net.kyori.adventure.text.Component.text(message), ChatTypes.GAME_INFO));
 
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutChat);
-
-            Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId()), 60L);
 
         }
     }
