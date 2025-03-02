@@ -5,6 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
+import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -61,6 +62,7 @@ public class LangManager {
     }
 
     public CompletableFuture<Void> loadLang(Plugin plugin, String lang) {
+
         return CompletableFuture.runAsync(() -> {
 
             if (langs.containsKey(plugin.getName() + ":" + lang).join()) return;
@@ -69,7 +71,7 @@ public class LangManager {
             if (!langFolder.exists()) langFolder.mkdirs();
 
             File langFile = new File(langFolder, lang + ".yml");
-            if (!langFile.exists()) plugin.saveResource( "langs/" + lang + ".yml", false);
+            if (!langFile.exists()) plugin.saveResource("langs/" + lang + ".yml", false);
             langs.put(plugin.getName() + ":" + lang, Config.of("langs/" + lang, plugin));
         }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
     }
@@ -82,15 +84,12 @@ public class LangManager {
             if (!langEnabled) finalLang = mainLang;
 
             if (langs.containsKey(plugin.getName() + ":" + finalLang).join()) {
-                return new Lang(plugin, langs.get(plugin.getName() + ":" + finalLang).join(), finalLang);
+                return new Lang(plugin, langs.get(plugin.getName() + ":" + finalLang).join(), finalLang,selected);
             }
 
-            Config langConfig = new Config(plugin, finalLang);
+            loadLang(plugin, finalLang).join();
 
-
-            langs.put(plugin.getName() + ":" + finalLang, langConfig);
-
-            return new Lang(plugin, langConfig, finalLang,selected);
+            return new Lang(plugin, langs.get(plugin.getName() + ":" + finalLang).join(), finalLang, selected);
 
         });
     }
@@ -100,18 +99,15 @@ public class LangManager {
     }
 
     public CompletableFuture<Lang> getLangByPlayer(Plugin plugin, Player player) {
-        if (!langEnabled || player == null) {
-            return getLang(plugin, "langs/" +  mainLang);
-        }
+        if (!langEnabled || player == null) return getLang(plugin, mainLang);
+
 
         return CompletableFuture.supplyAsync(() -> {
-
             PlayerData playerData = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();
 
-            if (playerData == null) return getLang(plugin, "langs/" + mainLang,true).join();
+            if (playerData == null || playerData.getLangId() == null) return getLang(plugin, mainLang,true).join();
 
             return getLang(plugin, playerData.getLangId(), true).join();
-
         });
     }
 
@@ -128,9 +124,9 @@ public class LangManager {
 
             List<Config> langs = this.langs.asMap().join().entrySet().stream().filter(e -> e.getKey().startsWith(XG7Plugins.getInstance().getName() + ":")).map(Map.Entry::getValue).collect(Collectors.toList());
 
-            String locale = XG7Plugins.getMinecraftVersion() >= 12 ? player.getLocale() : ReflectionObject.of(player).getMethod("getHandle").invokeToRObject().getField("locale");
+            String locale = MinecraftVersion.isNewerOrEqual(12) ? player.getLocale() : ReflectionObject.of(player).getMethod("getHandle").invokeToRObject().getField("locale");
 
-            return langs.stream().filter(lang -> lang.get("locale", String.class).orElse("en_US").equals(locale)).findFirst().map(Config::getName).orElse(mainLang);
+            return langs.stream().filter(lang -> lang.get("locale", String.class).orElse("en_US").equals(locale)).findFirst().map(config -> config.getName().replace("langs/", "")).orElse(mainLang);
         });
 
     }

@@ -99,10 +99,14 @@ public class LangMenu extends PageMenu {
 
                 PlayerDataDAO dao = XG7Plugins.getInstance().getPlayerDataDAO();
 
+                PlayerData data = dao.get(player.getUniqueId()).join();
+
                 String dbLang = langName.split(":")[1];
 
-                dao.update(new PlayerData(player.getUniqueId(), dbLang)).thenAccept(r -> {
-                    XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
+                data.setLangId(dbLang);
+
+                dao.update(data).thenAccept(r -> {
+                    XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin).join();
                     Text.fromLang(player, plugin, "lang-menu.toggle-success").thenAccept(text -> text.send(player));
                     player.closeInventory();
                     open(player);

@@ -34,7 +34,6 @@ public class TestCommand implements ICommand {
             case "2":
                 Component component = ComponentDeserializer.deserialize("saddasdadas <click:suggest_command:foiD>click aqui</click> mds");
 
-                Text.send(component, sender);
 
                 break;
             case "3":

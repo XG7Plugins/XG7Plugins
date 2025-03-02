@@ -1,6 +1,7 @@
 package com.xg7plugins.utils.text.component.serializer.tags;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.text.component.Component;
 import com.xg7plugins.utils.text.component.serializer.Tag;
 
@@ -15,7 +16,7 @@ public class HexTag implements Tag {
     @Override
     public void resolve(Component content, List<String> openArgs, List<String> closeArgs) {
 
-        if (XG7Plugins.getMinecraftVersion() < 16) return;
+        if (MinecraftVersion.isOlderThan(16)) return;
 
         if (openArgs.size() != 1) {
             throw new IllegalArgumentException("Hex tag must have 1 open arguments");

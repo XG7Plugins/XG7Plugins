@@ -6,6 +6,7 @@ import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.modules.xg7scores.scores.bossbar.BossBar;
 import com.xg7plugins.modules.xg7scores.scores.bossbar.LegacyBossBar;
 import com.xg7plugins.modules.xg7scores.scores.bossbar.PublicBossBar;
+import com.xg7plugins.server.MinecraftVersion;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 
@@ -60,7 +61,7 @@ public class BossBarBuilder extends ScoreBuilder<Score, BossBarBuilder> {
 
         if (progress == 0) throw new IllegalArgumentException("You must specify the progress of the boss bar");
 
-        if (XG7Plugins.getMinecraftVersion() <= 8) {
+        if (MinecraftVersion.isOlderOrEqual(8)) {
             return new LegacyBossBar(delayToUpdate, title,id,condition,progress,plugin);
         }
 

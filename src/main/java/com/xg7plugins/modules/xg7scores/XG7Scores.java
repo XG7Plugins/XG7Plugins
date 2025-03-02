@@ -21,6 +21,8 @@ public class XG7Scores implements Module {
 
     private final ConcurrentHashMap<String, Score> scores = new ConcurrentHashMap<>();
 
+    private final List<UUID> players = new ArrayList<>();
+
     @Override
     public void onInit() {
 
@@ -49,9 +51,14 @@ public class XG7Scores implements Module {
                 TaskState.IDLE,
                 () -> {
                     scores.values().forEach(score -> {
-                        Bukkit.getOnlinePlayers().forEach(p -> {
+                        players.forEach(uuid -> {
                             try {
+
+                                Player p = Bukkit.getPlayer(uuid);
+
                                 if (p == null) return;
+
+
                                 if (score.getCondition().apply(p) && !p.isDead() && XG7Plugins.getInstance().isEnabled()) score.addPlayer(p);
                                 else if (score.getPlayers().contains(p.getUniqueId())) {
                                     Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> score.removePlayer(p));
@@ -110,6 +117,11 @@ public class XG7Scores implements Module {
     }
 
     public void removePlayer(Player player) {
+        players.remove(player.getUniqueId());
         scores.values().forEach(score -> score.removePlayer(player));
+    }
+
+    public void addPlayer(Player player) {
+        players.add(player.getUniqueId());
     }
 }

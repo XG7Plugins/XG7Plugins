@@ -15,9 +15,6 @@ import java.util.regex.Pattern;
 
 @Data
 public class Component implements Cloneable {
-
-    private static final Pattern centerPattern = Pattern.compile("<center> ");
-
     public static final Component EMPTY = new Component("", null, null);
 
     private String text;
@@ -39,14 +36,6 @@ public class Component implements Cloneable {
         }
 
         return builder.toString();
-    }
-
-    public void center(TextCentralizer.PixelsSize size) {
-        String content = content();
-
-        content = content.replace("<center> ", "");
-        text = text.replace("<center> ", "");
-        this.text = TextCentralizer.getSpacesCentralized(size.getPixels(), content) + text;
     }
 
     public void addComponent(Component component) {

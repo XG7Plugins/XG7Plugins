@@ -112,8 +112,8 @@ public class DatabaseProcessor {
             transaction.completeTask();
 
         } catch (SQLException e) {
-            Debug.of(XG7Plugins.getInstance()).severe("database", "Error in processing query: " + currentQuery);
-            Debug.of(XG7Plugins.getInstance()).severe("database", "Error message: " + e.getMessage());
+            Debug.of(XG7Plugins.getInstance()).severe("sql", "Error in processing query: " + currentQuery);
+            Debug.of(XG7Plugins.getInstance()).severe("sql", "Error message: " + e.getMessage());
 
             try {
                 connection.rollback();
@@ -143,7 +143,11 @@ public class DatabaseProcessor {
 
         Query query = queryQueue.poll();
 
+        Debug.of(XG7Plugins.getInstance()).info("sql", "Processing query: " + query.getQuery());
+
         Connection connection = databaseManager.getConnection(query.getPlugin());
+
+        Debug.of(XG7Plugins.getInstance()).info("sql", "Connection: " + connection);
 
         if (connection == null) {
             System.err.println("Failed to get a database connection for plugin: " + query.getPlugin());
@@ -161,6 +165,7 @@ public class DatabaseProcessor {
                 }
             }
 
+            Debug.of(XG7Plugins.getInstance()).info("sql", "Executing query: " + query.getQuery());
             try (ResultSet rs = ps.executeQuery()) {
                 List<Map<String, Object>> results = new ArrayList<>();
 
@@ -172,9 +177,15 @@ public class DatabaseProcessor {
                     results.add(map);
                 }
 
+                Debug.of(XG7Plugins.getInstance()).info("sql", "Query executed successfully: " + query.getQuery());
+
+                Debug.of(XG7Plugins.getInstance()).info("sql", "Results: " + results);
+
+                Debug.of(XG7Plugins.getInstance()).info("sql", "Making QueryResult");
                 QueryResult result = new QueryResult(query.getPlugin(), results.iterator());
                 if (query.getResult() != null) query.getResult().accept(result);
 
+                Debug.of(XG7Plugins.getInstance()).info("sql", "Completing task");
                 query.completeTask(result);
             }
 

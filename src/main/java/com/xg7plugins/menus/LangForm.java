@@ -92,9 +92,13 @@ public class LangForm extends SimpleForm {
 
             PlayerDataDAO dao = XG7Plugins.getInstance().getPlayerDataDAO();
 
+            PlayerData data = dao.get(player.getUniqueId()).join();
+
             String dbLang = lang.split(":")[1];
 
-            dao.update(new PlayerData(player.getUniqueId(), dbLang)).thenAccept(r -> {
+            data.setLangId(dbLang);
+
+            dao.update(data).thenAccept(r -> {
                 XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
                 Text.fromLang(player, plugin, "lang-menu.toggle-success").thenAccept(text -> text.send(player));
                 send(player);

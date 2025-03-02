@@ -7,6 +7,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerCh
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
+import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
@@ -26,7 +27,7 @@ public class ActionBar extends Score {
 
     public ActionBar(long delay, List<String> text, String id, Function<Player, Boolean> condition, Plugin plugin) {
         super(delay, text, id, condition, plugin);
-        if (XG7Plugins.getMinecraftVersion() < 8) throw new RuntimeException("This version doesn't support ActionBar");
+        if (MinecraftVersion.isOlderThan(8)) throw new RuntimeException("This version doesn't support ActionBar");
     }
 
     @Override
@@ -38,7 +39,7 @@ public class ActionBar extends Score {
 
             String message = Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).join().getPlainText();
 
-            if (XG7Plugins.getMinecraftVersion() > 8) {
+            if (MinecraftVersion.isNewerThan(8)) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
                 return;
             }

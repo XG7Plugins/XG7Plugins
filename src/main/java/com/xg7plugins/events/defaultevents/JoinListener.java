@@ -32,18 +32,17 @@ public class JoinListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent event) {
         XG7Plugins plugin = XG7Plugins.getInstance();
-        PlayerData playerData;
         try {
-            playerData = plugin.getPlayerDataDAO().get(event.getPlayer().getUniqueId()).get();
-        } catch (InterruptedException | ExecutionException e) {
+            plugin.getPlayerDataDAO().get(event.getPlayer().getUniqueId()).thenAccept(playerData -> {
+                if (playerData == null) return;
+
+                if (playerData.getLangId() == null) {
+                    playerData.setLangId(plugin.getLangManager().getNewLangFor(event.getPlayer()).join());
+                    plugin.getPlayerDataDAO().update(playerData);
+                }
+            });
+        } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-
-        if (playerData == null) return;
-
-        if (playerData.getLangId() == null) {
-            playerData.setLangId(plugin.getLangManager().getNewLangFor(event.getPlayer()).join());
-            plugin.getPlayerDataDAO().update(playerData);
         }
     }
 

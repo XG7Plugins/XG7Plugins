@@ -3,6 +3,7 @@ package com.xg7plugins.modules.xg7scores.scores;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7scores.Score;
+import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.Bukkit;
@@ -105,9 +106,9 @@ public class ScoreBoard extends Score {
 
                 String prefix = translatedText.substring(0, Math.min(translatedText.length(), 16));
                 String entry = translatedText.length() > 16 ? translatedText.substring(16, Math.min(translatedText.length(), 56)) : "";
-                String suffix = translatedText.length() > 56 ? translatedText.substring(56, Math.min(translatedText.length(), XG7Plugins.getMinecraftVersion() > 12 ? translatedText.length() : 72)) : "";
+                String suffix = translatedText.length() > 56 ? translatedText.substring(56, Math.min(translatedText.length(), MinecraftVersion.isNewerThan(12) ? translatedText.length() : 72)) : "";
 
-                if (XG7Plugins.getMinecraftVersion() > 12) {
+                if (MinecraftVersion.isNewerThan(12)) {
                     suffix = ChatColor.getLastColors(prefix) + entry + suffix;
                     entry = "";
                 }

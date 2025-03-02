@@ -2,11 +2,13 @@ package com.xg7plugins.commands;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.server.SoftDependencies;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -49,7 +51,7 @@ public class MainCommand implements ICommand {
 
         Player player = (Player) sender;
 
-        if (XG7Plugins.isGeyserFormEnabled()) {
+        if (SoftDependencies.isGeyserFormsEnabled()) {
             boolean commandFormEnabled = config.get("help-command-form", Boolean.class).orElse(false);
             if (commandFormEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
                 plugin.getHelpCommandForm().getForm("index").send(player);
@@ -76,7 +78,10 @@ public class MainCommand implements ICommand {
         List<String> suggestions = new ArrayList<>();
         if (args.len() == 1) {
             suggestions.add("help");
-            suggestions.addAll(plugin.getCommandManager().getCommands().keySet().stream().filter(cmd -> !cmd.isEmpty()).map(s -> s.replace("xg7plugins", "")).collect(Collectors.toList()));
+            suggestions.addAll(plugin.getCommandManager().getCommands().entrySet().stream().filter(cmd -> !cmd.getKey().isEmpty()).map(cmd -> {
+                PluginConfigurations configurations = cmd.getValue().getPlugin().getClass().getAnnotation(PluginConfigurations.class);
+                return cmd.getKey().replace(configurations.mainCommandName(), "");
+            }).collect(Collectors.toList()));
             return suggestions;
         }
 

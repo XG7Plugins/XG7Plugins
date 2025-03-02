@@ -30,7 +30,7 @@ public class CooldownManager {
                 true,
                 true,
                 timeFactor,
-                TaskState.IDLE,
+                TaskState.RUNNING,
                 () -> {
                     cooldowns.forEach((id, tasks) -> {
                         Player player = Bukkit.getPlayer(id);

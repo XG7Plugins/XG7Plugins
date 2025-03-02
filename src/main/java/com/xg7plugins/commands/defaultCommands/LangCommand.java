@@ -13,6 +13,7 @@ import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
+import com.xg7plugins.server.SoftDependencies;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -43,8 +44,10 @@ public class LangCommand implements ICommand {
                 Text.fromLang(sender, XG7Plugins.getInstance(), "commands.not-a-player").thenAccept(text -> text.send(sender));
                 return;
             }
-            if (XG7Plugins.isFloodgate()) {
-                if (XG7GeyserForms.getInstance().sendForm((Player) sender, "lang-form")) return;
+            if (SoftDependencies.isGeyserFormsEnabled()) {
+                if (XG7GeyserForms.getInstance().sendForm((Player) sender, "lang-form")) {
+                    return;
+                }
             }
             XG7Menus.getInstance().getMenu(XG7Plugins.getInstance(), "lang-menu").open((Player) sender);
             return;

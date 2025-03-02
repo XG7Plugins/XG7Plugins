@@ -42,12 +42,12 @@ public class HelpInChat {
         }
         if (!(sender instanceof Player)) {
             for (HelpComponent message : pages.get(page).getMessages()) {
-                Text.send(message.build(), sender);
+                Text.send(message.build(), sender, false, 0);
             }
             return;
         }
         for (HelpComponent message : helpPage.getMessages()) {
-            Text.send(message.buildFor((Player) sender), sender);
+            Text.send(message.buildFor((Player) sender), sender, false, 0);
         }
     };
 

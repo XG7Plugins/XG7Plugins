@@ -10,6 +10,7 @@ import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -99,6 +100,14 @@ public abstract class BaseMenu {
     }
 
     public static void refresh(MenuHolder holder) {
+
+        if (holder instanceof PlayerMenuHolder) {
+            Player player = holder.getPlayer();
+
+            player.getInventory().clear();
+            holder.getMenu().putItems(holder.getPlayer(), holder).thenRun(() -> holder.getPlayer().updateInventory());
+            return;
+        }
 
         holder.getInventory().clear();
         holder.getUpdatedClickEvents().clear();

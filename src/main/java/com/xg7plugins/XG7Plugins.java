@@ -10,7 +10,6 @@ import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCause;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
 import com.xg7plugins.commands.setup.ICommand;
-import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
@@ -37,8 +36,11 @@ import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
+import com.xg7plugins.server.ServerInfo;
+import com.xg7plugins.server.SoftDependencies;
 import com.xg7plugins.tasks.*;
 import com.xg7plugins.utils.Metrics;
+import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -46,9 +48,8 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Getter(AccessLevel.PUBLIC)
 @PluginConfigurations(
@@ -68,24 +69,7 @@ import java.util.regex.Pattern;
 )
 public final class XG7Plugins extends Plugin {
 
-    @Getter
-    private static final int minecraftVersion;
-    @Getter
-    private static boolean floodgate;
-    @Getter
-    public static boolean placeholderAPI = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
-    @Getter
-    private static boolean geyserFormEnabled = false;
-    @Getter
-    private static final boolean paper = Bukkit.getServer().getName().contains("Paper");
-    @Getter
-    private static final boolean bungeecord = Bukkit.spigot().getConfig().getBoolean("settings.bungeecord", false);
-
-    static {
-        Pattern pattern = Pattern.compile("1\\.([0-9]?[0-9])");
-        Matcher matcher = pattern.matcher(Bukkit.getServer().getVersion());
-        minecraftVersion = matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
-    }
+    private ServerInfo serverInfo;
 
     private DatabaseManager databaseManager;
     private CacheManager cacheManager;
@@ -117,17 +101,13 @@ public final class XG7Plugins extends Plugin {
         super.onEnable();
         debug.loading("Enabling XG7Plugins...");
         PacketEvents.getAPI().init();
+        SoftDependencies.initialize();
         debug.loading("Loading metrics...");
         Metrics.getMetrics(this, 24626);
         debug.loading("Starting tps calculator...");
         this.tpsCalculator = new TPSCalculator();
         tpsCalculator.start();
-        floodgate = Bukkit.getPluginManager().getPlugin("floodgate") != null;
         ReloadCause.registerCause(this, new ReloadCause("json"));
-
-        Config config = getConfig("config");
-
-        geyserFormEnabled = floodgate && config.get("enable-geyser-forms", Boolean.class).orElse(false);
 
         debug.loading("Loading managers...");
 
@@ -176,12 +156,18 @@ public final class XG7Plugins extends Plugin {
 
         menus.registerMenus(new LangMenu(this), new TaskMenu(this));
 
-        if (floodgate) {
+        if (SoftDependencies.isGeyserFormsEnabled()) {
             debug.loading("Loading GeyserForms...");
             XG7GeyserForms geyserForms = XG7GeyserForms.getInstance();
             geyserForms.registerForm(new LangForm());
         }
 
+        debug.loading("Loading server info...");
+        try {
+            this.serverInfo = new ServerInfo(this);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         debug.loading("Loading plugins...");
         register(this);
@@ -273,7 +259,7 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void loadHelp() {
         this.helpCommandGUI = new HelpCommandGUI(this, new XG7PluginsHelpGUI(this));
-        if (floodgate) this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
+        if (SoftDependencies.isGeyserFormsEnabled()) this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
         this.helpInChat = new XG7PluginsChatHelp();
     }
 
@@ -309,6 +295,9 @@ public final class XG7Plugins extends Plugin {
     }
     public static DatabaseProcessor dbProcessor() {
         return XG7Plugins.getInstance().getDatabaseManager().getProcessor();
+    }
+    public static ServerInfo serverInfo() {
+        return XG7Plugins.getInstance().getServerInfo();
     }
     public static Plugin getXG7Plugin(String name) {
         return XG7Plugins.getInstance().getPlugins().get(name);

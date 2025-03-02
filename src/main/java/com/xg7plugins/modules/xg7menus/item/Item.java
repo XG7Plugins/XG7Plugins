@@ -11,6 +11,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
@@ -185,7 +186,7 @@ public class Item {
 
 
         if (this.itemStack.getType().equals(Material.AIR)) return this;
-        if (XG7Plugins.getMinecraftVersion() > 13) {
+        if (MinecraftVersion.isNewerThan(13)) {
 
             NamespacedKey namespacedKey = new NamespacedKey(XG7Plugins.getInstance(), key);
 
@@ -216,7 +217,7 @@ public class Item {
 
         if (item.getType().equals(Material.AIR)) return Optional.empty();
 
-        if (XG7Plugins.getMinecraftVersion() > 13) {
+        if (MinecraftVersion.isNewerThan(13)) {
 
             NamespacedKey namespacedKey = new NamespacedKey(XG7Plugins.getInstance(), key);
 

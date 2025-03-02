@@ -1,5 +1,6 @@
-package com.xg7plugins;
+package com.xg7plugins.utils;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.tasks.TaskState;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;

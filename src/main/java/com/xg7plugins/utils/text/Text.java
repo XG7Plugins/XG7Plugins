@@ -8,6 +8,8 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
 import com.xg7plugins.modules.xg7scores.scores.ActionBar;
+import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.server.SoftDependencies;
 import com.xg7plugins.utils.Condition;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.component.Component;
@@ -30,17 +32,40 @@ import java.util.regex.Pattern;
 public class Text {
 
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
+    private static final Pattern CENTER_PATTERN = Pattern.compile("(?i)<center:(INV|CHAT|MOTD|\\d+)> ");
+
+    private boolean centered;
+    private int pixels;
+
     private String text;
 
     public Text(String text) {
         this.text = ChatColor.translateAlternateColorCodes('&', text);
+
+        Matcher centerMatch = CENTER_PATTERN.matcher(this.text);
+
+        if (centerMatch.find()) {
+            this.centered = true;
+            String center = centerMatch.group(1).toUpperCase();
+            this.pixels = 0;
+            try {
+                pixels = TextCentralizer.PixelsSize.valueOf(center).getPixels();
+            } catch (Exception ignored) {
+                try {
+                    pixels = Integer.parseInt(center);
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("Invalid center size: " + center + " expected: INV, CHAT, MOTD or a number");
+                }
+            }
+            this.text = centerMatch.replaceFirst("");
+        }
     }
 
     public Text textFor(Player player) {
 
         this.text = Condition.processCondition(this.text, player);
 
-        if (XG7Plugins.isPlaceholderAPI()) this.text = PlaceholderAPI.setPlaceholders(player, this.text);
+        if (SoftDependencies.hasPlaceholderAPI()) this.text = PlaceholderAPI.setPlaceholders(player, this.text);
 
         return this;
     }
@@ -71,34 +96,31 @@ public class Text {
         Component component = ComponentDeserializer.deserialize(this.text);
 
 
-        send(component,sender);
+        send(component,sender, centered, pixels);
 
     }
 
-    public static void send(Component component, CommandSender sender) {
+    public static void send(Component component, CommandSender sender, boolean centered, int pixels) {
         if (component.isEmpty()) return;
 
         String rawText = component.content();
 
         String componentText = component.getText();
 
-
-        boolean isCentered = rawText.startsWith("<center> ");
         boolean isAction = rawText.startsWith("<action> ");
         boolean isPlayer = sender instanceof Player;
 
-        componentText = componentText.replace("<center> ", "");
         componentText = componentText.replace("<action> ", "");
 
-        rawText = rawText.replace("<center> ", "");
         rawText = rawText.replace("<action> ", "");
 
         component.setText(componentText);
 
-        if (isCentered) component.center(TextCentralizer.PixelsSize.CHAT);
+        if (centered) component.setText(TextCentralizer.getSpacesCentralized(pixels, rawText) + componentText);
+
 
         if (!isPlayer) {
-            if (XG7Plugins.getMinecraftVersion() < 8) {
+            if (MinecraftVersion.isOlderThan(8)) {
                 sender.sendMessage(rawText);
                 return;
             }
@@ -109,11 +131,11 @@ public class Text {
         Player player = (Player) sender;
 
         if (isAction) {
-            if (XG7Plugins.getMinecraftVersion() < 8) return;
+            if (MinecraftVersion.isOlderThan(8)) return;
 
             ActionBar.addToBlacklist(player);
 
-            if (XG7Plugins.getMinecraftVersion() > 8) {
+            if (MinecraftVersion.isNewerThan(8)) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(rawText));
                 return;
             }
@@ -129,7 +151,7 @@ public class Text {
             return;
         }
 
-        if (XG7Plugins.getMinecraftVersion() < 8) {
+        if (MinecraftVersion.isOlderThan(8)) {
             player.sendMessage(rawText);
             return;
         }
@@ -175,8 +197,8 @@ public class Text {
 
             String text = rawText;
 
-            text = text.replace("%plugin%", plugin.getCustomPrefix());
-            text = text.replace("%prefix%", sender.getName());
+            text = text.replace("%prefix%", plugin.getCustomPrefix());
+            text = text.replace("%player%", sender.getName());
 
             Matcher langMatch = LANG_PATTERN.matcher(text);
 
@@ -204,13 +226,11 @@ public class Text {
         return detectLangs(sender, plugin, rawText, true);
     }
     public static CompletableFuture<Text> fromLang(CommandSender sender, Plugin plugin, String path, boolean textForSender) {
-
         return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
-
             String text = lang.get(path);
 
-            text = text.replace("%plugin%", plugin.getCustomPrefix());
-            text = text.replace("%prefix%", sender.getName());
+            text = text.replace("%prefix%", plugin.getCustomPrefix());
+            text = text.replace("%player%", sender.getName());
 
             Text objectText = new Text(text);
 
@@ -218,6 +238,7 @@ public class Text {
                 objectText.textFor((Player) sender);
             }
 
+            System.out.println("Lang da db retornada");
             return objectText;
         }).exceptionally(throwable -> {
             throwable.printStackTrace();

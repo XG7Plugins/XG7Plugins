@@ -1,9 +1,11 @@
 package com.xg7plugins.modules.xg7menus.item;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.player.InteractionHand;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerOpenBook;
-import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.utils.reflection.ReflectionClass;
+import com.xg7plugins.utils.reflection.ReflectionObject;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -55,7 +57,7 @@ public class BookItem extends Item {
     @SneakyThrows
     public void openBook(Player player) {
 
-        if (XG7Plugins.getMinecraftVersion() > 13) {
+        if (MinecraftVersion.isNewerThan(13)) {
             player.openBook(this.itemStack);
             return;
         }
@@ -64,9 +66,26 @@ public class BookItem extends Item {
         ItemStack old = player.getInventory().getItem(slot);
         player.getInventory().setItem(slot, this.itemStack);
 
-        WrapperPlayServerOpenBook wrapper = new WrapperPlayServerOpenBook(InteractionHand.MAIN_HAND);
+        ReflectionClass packetDataSerializerClass = ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".PacketDataSerializer");
 
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, wrapper);
+        ReflectionObject byteBuf = MinecraftVersion.isOlderOrEqual(7) ? ReflectionClass.of("net.minecraft.util.io.netty.buffer")
+                .getMethod("buffer", int.class).invoke(256) : ReflectionObject.of(Unpooled.buffer(256));
+
+        byteBuf.getMethod("setByte", int.class, int.class).invoke(0, 0);
+        byteBuf.getMethod("writerIndex", int.class).invoke(1);
+
+        ReflectionObject packetPlayOutCustomPayloadClass = ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".PacketPlayOutCustomPayload")
+                .getConstructor(String.class, packetDataSerializerClass.getAClass())
+                .newInstance(
+                        "MC|BOpen",
+                        packetDataSerializerClass
+                        .getConstructor(MinecraftVersion.isOlderOrEqual(7) ? ReflectionClass.of("net.minecraft.util.io.netty.buffer.ByteBuf").getAClass() : ByteBuf.class)
+                        .newInstance(byteBuf.getObject()).getObject()
+                );
+
+        ReflectionObject nmsPlayer = ReflectionObject.of(player);
+
+        ReflectionObject.of(nmsPlayer.getMethod("getHandle").invokeToRObject().getField("playerConnection")).getMethod("sendPacket", ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".Packet").getAClass()).invoke(packetPlayOutCustomPayloadClass.getObject());
 
         player.getInventory().setItem(slot, old);
     }

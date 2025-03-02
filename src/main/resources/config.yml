@@ -1,5 +1,8 @@
 prefix: "&b[XG&37P&9lu&1gins]&r"
 
+#Must be the same as in BungeeCord config
+plugin-server-name: "XG7PluginsServer"
+
 debug:
   enabled: false
 
@@ -13,8 +16,7 @@ debug:
   scoreboards: true
   commands: true
   events: true
-  extensions: true
-  libs: true
+  plugins: true
 
 
 lang-enabled: true
@@ -93,4 +95,4 @@ redis-cache:
 
 
 #DON'T CHANGE THIS
-config-version: 1.0
+config-version: test-1.0

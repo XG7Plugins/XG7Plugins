@@ -8,6 +8,7 @@ import com.mojang.authlib.properties.Property;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.cache.ObjectCache;
+import com.xg7plugins.server.MinecraftVersion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -55,7 +56,7 @@ public class SkullItem extends Item {
      * @return This InventoryItem
      */
     public SkullItem setValue(String value) {
-        if (XG7Plugins.getMinecraftVersion() < 8) {
+        if (MinecraftVersion.isOlderThan(8)) {
             return this;
         }
         if (cachedSkulls.containsKey(value).join()) {
@@ -85,7 +86,7 @@ public class SkullItem extends Item {
      * @return This InventoryItem
      */
     public SkullItem setOwner(String owner) {
-        if (XG7Plugins.getMinecraftVersion() < 8) {
+        if (MinecraftVersion.isOlderThan(8)) {
             return this;
         }
         if (Bukkit.getOnlineMode() && Bukkit.getPlayer(owner) != null) {
@@ -109,7 +110,7 @@ public class SkullItem extends Item {
      * @return This InventoryItem
      */
     public SkullItem setPlayerSkinValue(UUID player) {
-        if (XG7Plugins.getMinecraftVersion() < 8) {
+        if (MinecraftVersion.isOlderThan(8)) {
             return this;
         }
         if (cachedSkulls.containsKey(player.toString()).join()) {

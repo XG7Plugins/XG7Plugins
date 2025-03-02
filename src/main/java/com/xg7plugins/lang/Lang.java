@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
 public class Lang {
 
     private final Plugin plugin;
@@ -20,16 +20,12 @@ public class Lang {
     private final boolean selected;
 
     public Lang(Plugin plugin, Config langConfiguration, String langid) {
-        this.plugin = plugin;
-        this.langConfiguration = langConfiguration;
-        this.langid = langid;
-        this.selected = false;
+        this(plugin, langConfiguration, langid, false);
     }
 
     public static CompletableFuture<Lang> of(Plugin plugin, Player player) {
         return CompletableFuture.supplyAsync(() -> {
             LangManager langManager = XG7Plugins.getInstance().getLangManager();
-
             return langManager.getLangByPlayer(plugin, player).join();
         });
     }
