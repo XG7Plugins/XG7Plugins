@@ -49,12 +49,10 @@ public class LangManager {
 
     public CompletableFuture<Void> loadLangsFrom(Plugin plugin) {
         return CompletableFuture.runAsync(() -> {
-
             if (!langEnabled) {
                 loadLang(plugin, mainLang).join();
                 return;
             }
-
             for (String lang : defLangs) {
                 loadLang(plugin, lang).join();
             }
@@ -62,9 +60,7 @@ public class LangManager {
     }
 
     public CompletableFuture<Void> loadLang(Plugin plugin, String lang) {
-
         return CompletableFuture.runAsync(() -> {
-
             if (langs.containsKey(plugin.getName() + ":" + lang).join()) return;
 
             File langFolder = new File(plugin.getDataFolder(), "langs");
@@ -100,7 +96,6 @@ public class LangManager {
 
     public CompletableFuture<Lang> getLangByPlayer(Plugin plugin, Player player) {
         if (!langEnabled || player == null) return getLang(plugin, mainLang);
-
 
         return CompletableFuture.supplyAsync(() -> {
             PlayerData playerData = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();

@@ -107,6 +107,9 @@ public class XG7Scores implements Module {
     public void unregisterScore(Score score) {
         scores.remove(score.getId());
     }
+    public void unregisterScore(String score) {
+        scores.remove(score);
+    }
 
     public <T extends Score> T getScore(String id) {
         return (T) scores.get(id);

@@ -1,35 +1,35 @@
 config-version: test-1.0
 
 locale: pt_BR
-formated-name: "Português"
+formated-name: "PortuguÃªs"
 icon: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY2OGExZmI2YWY4MWIyMzFiYmNjNGRlNWY3Zjk1ODAzYmJkMTk0ZjU4MjdkYTAyN2ZhNzAzMjFjZjQ3YyJ9fX0="
 bedrock-icon: "URL, https://rondonia.ro.gov.br/wp-content/uploads/2020/09/Bandeira-Nacionals%C3%ADmbolo-maior-da-P%C3%A1tria-Brasileira-Foto-Divulga%C3%A7%C3%A3o.jpg"
 
 commands:
-  syntax-error: "Você está usando o comando incorretamente! A maneira correta é %syntax%"
-  player-not-found: "Este jogador não foi encontrado ou nunca jogou antes!"
-  no-permission: "Você não tem permissão para usar este comando!"
-  disabled-world: "Você não pode executar este comando em um mundo desativado!"
-  not-a-player: "Você não pode executar este comando no console!"
-  is-a-player: "Você não pode executar este comando sendo um jogador!"
-  command-not-found: "Comando não encontrado!"
+  syntax-error: "VocÃª estÃ¡ usando o comando incorretamente! A maneira correta Ã© %syntax%"
+  player-not-found: "Este jogador nÃ£o foi encontrado ou nunca jogou antes!"
+  no-permission: "VocÃª nÃ£o tem permissÃ£o para usar este comando!"
+  disabled-world: "VocÃª nÃ£o pode executar este comando em um mundo desativado!"
+  not-a-player: "VocÃª nÃ£o pode executar este comando no console!"
+  is-a-player: "VocÃª nÃ£o pode executar este comando sendo um jogador!"
+  command-not-found: "Comando nÃ£o encontrado!"
 
 reload-message:
   all-plugins: "Todos os plugins recarregados!"
   without-cause: "%plugin% recarregado!"
   with-cause: "%cause% recarregado no plugin %plugin%"
 
-# Configurações padrão do plugin
+# ConfiguraÃ§Ãµes padrÃ£o do plugin
 
 go-back-item: "Voltar"
-go-next-item: "Próximo"
+go-next-item: "PrÃ³ximo"
 close-item: "Fechar"
-refresh-item: "Atualizar página"
+refresh-item: "Atualizar pÃ¡gina"
 
 go-back-to-help: "Voltar para a ajuda"
 go-back-to-previous-commands: "Voltar para os comandos anteriores"
 
-lang-not-found: "&cIdioma não encontrado!"
+lang-not-found: "&cIdioma nÃ£o encontrado!"
 
 lang-menu:
   title: "Idiomas"
@@ -37,13 +37,13 @@ lang-menu:
   content: "Escolha um idioma para o servidor!"
 
   item-click:
-    - "Clique aqui para mudar o idioma para Inglês"
+    - "Clique aqui para mudar o idioma para InglÃªs"
 
-  already-selected: "Você já está usando este idioma!"
+  already-selected: "VocÃª jÃ¡ estÃ¡ usando este idioma!"
 
-  toggle-success: "Você mudou o idioma para português!"
+  toggle-success: "VocÃª mudou o idioma para portuguÃªs!"
 
-  cooldown-to-toggle: "Você precisa esperar %seconds% segundos para mudar o idioma novamente"
+  cooldown-to-toggle: "VocÃª precisa esperar %seconds% segundos para mudar o idioma novamente"
 
 tasks-menu:
   title: "Tarefas"
@@ -62,16 +62,16 @@ tasks-menu:
   notes:
     - "&fUso de RAM do servidor: &9%ram%MB"
     - "&fTPS do servidor: &9%tps%"
-    - "&fTarefas em execução: &9%tasks%"
+    - "&fTarefas em execuÃ§Ã£o: &9%tasks%"
 
 task-command:
-  not-found: "Tarefa não encontrada!"
+  not-found: "Tarefa nÃ£o encontrada!"
   deleted: "Tarefa deletada!"
   stopped: "Tarefa parada!"
   restarted: "Tarefa reiniciada!"
 
-  already-running: "A tarefa já está em execução!"
-  already-stopped: "A tarefa já está parada!"
+  already-running: "A tarefa jÃ¡ estÃ¡ em execuÃ§Ã£o!"
+  already-stopped: "A tarefa jÃ¡ estÃ¡ parada!"
 
 commands-display:
 
@@ -79,14 +79,14 @@ commands-display:
 
   command-item:
     usage: "&fUso: &a%syntax%"
-    desc: "&fDescrição: &e%description%"
-    perm: "&fPermissão: &c%permission%"
+    desc: "&fDescriÃ§Ã£o: &e%description%"
+    perm: "&fPermissÃ£o: &c%permission%"
     player-only: "&fSomente jogadores podem usar: &b%player_only%"
 
 commands-form:
-  content: "Clique em uma opção para ver sua descrição e uso!"
+  content: "Clique em uma opÃ§Ã£o para ver sua descriÃ§Ã£o e uso!"
   subcommands-label: "Clique para ver os subcomandos!"
-  no-subcommands: "Não há subcomandos para este comando!"
+  no-subcommands: "NÃ£o hÃ¡ subcomandos para este comando!"
 
   back: "Voltar para a ajuda"
   subcommands-back: "Voltar para os comandos anteriores"
@@ -110,7 +110,7 @@ help-menu:
       lore: "Clique aqui para ver as tarefas"
     about-item:
       name: "Sobre"
-      lore: "Clique aqui para ver as informações do plugin"
+      lore: "Clique aqui para ver as informaÃ§Ãµes do plugin"
     commands-item:
       name: "Comandos"
       lore: "Clique aqui para ver os comandos"
@@ -118,7 +118,7 @@ help-menu:
   about:
     - "Sobre &9XG7Plugins"
     - ""
-    - "Versão: &a%version%&r"
+    - "VersÃ£o: &a%version%&r"
     - "Site: &a&n%website%&r"
     - "GitHub: &a&n%github%&r"
     - "Discord: &a&n%discord%&r"
@@ -126,22 +126,22 @@ help-menu:
     - "Este plugin foi feito"
     - "para criar outros"
     - "plugins para XG7."
-    - "Seu objetivo é gerenciar"
+    - "Seu objetivo Ã© gerenciar"
     - "tarefas, incluir bibliotecas"
     - "(como menus, placares,"
     - "etc.) e facilitar"
-    - "a criação de plugins."
-    - "Ele também possui um sistema"
-    - "de idiomas para a inclusão"
+    - "a criaÃ§Ã£o de plugins."
+    - "Ele tambÃ©m possui um sistema"
+    - "de idiomas para a inclusÃ£o"
     - "de novos idiomas."
     - ""
     - "&oDesenvolvido por DaviXG7"
 
 help-in-chat:
 
-  title: "&7Bem-vindo à página de ajuda do &6XG7Plugins&7!"
+  title: "&7Bem-vindo Ã  pÃ¡gina de ajuda do &6XG7Plugins&7!"
 
-  content: "&eXG7Plugins é um plugin que tem como objetivo facilitar a criação\n de outros plugins para outros XG7Plugins.\n Clique para ver mais informações."
+  content: "&eXG7Plugins Ã© um plugin que tem como objetivo facilitar a criaÃ§Ã£o\n de outros plugins para outros XG7Plugins.\n Clique para ver mais informaÃ§Ãµes."
 
   back: "&aClique para voltar para a ajuda"
 

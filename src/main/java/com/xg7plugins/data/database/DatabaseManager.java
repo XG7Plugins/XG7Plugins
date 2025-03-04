@@ -12,6 +12,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -152,14 +153,17 @@ public class DatabaseManager {
         plugin.getDebug().loading("Disconnected database!");
     }
 
-    public <T extends Entity> CompletableFuture<T> getCachedEntity(Plugin plugin, String id) {
+    public <T extends Entity> CompletableFuture<T> getCachedEntity(@NotNull Plugin plugin, String id) {
         return (CompletableFuture<T>) cachedEntities.get(plugin.getName() + ":" + id);
     }
-    public CompletableFuture<Boolean> containsCachedEntity(Plugin plugin, String id) {
+    public CompletableFuture<Boolean> containsCachedEntity(@NotNull Plugin plugin, String id) {
         return cachedEntities.containsKey(plugin.getName() + ":" + id);
     }
-    public void cacheEntity(Plugin plugin, String id, Entity entity) {
+    public void cacheEntity(@NotNull Plugin plugin, String id, Entity entity) {
         cachedEntities.put(plugin.getName() + ":" + id, entity);
+    }
+    public void uncacheEntity(@NotNull Plugin plugin, String id) {
+        cachedEntities.remove(plugin.getName() + ":" + id);
     }
 
 }

@@ -238,7 +238,6 @@ public class Text {
                 objectText.textFor((Player) sender);
             }
 
-            System.out.println("Lang da db retornada");
             return objectText;
         }).exceptionally(throwable -> {
             throwable.printStackTrace();
