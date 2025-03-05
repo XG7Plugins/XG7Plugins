@@ -204,7 +204,7 @@ public final class XG7Plugins extends Plugin {
         getConfigsManager().registerAdapter(Item.class, new LangItemTypeAdapter());
 
         debug.loading("Registering PlaceholderAPI expansion...");
-        new XG7PluginsPlaceholderExpansion().register();
+        if (SoftDependencies.hasPlaceholderAPI()) new XG7PluginsPlaceholderExpansion().register();
 
 
         debug.loading("XG7Plugins enabled.");
