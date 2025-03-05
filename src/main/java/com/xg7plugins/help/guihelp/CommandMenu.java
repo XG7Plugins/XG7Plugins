@@ -23,7 +23,7 @@ public class CommandMenu extends PageMenu {
     private final HelpCommandGUI guiOrigin;
 
     public CommandMenu(List<ICommand> commands, String customTitle, CommandMenu superMenu, HelpCommandGUI guiOrigin) {
-        super(XG7Plugins.getInstance(), "command_menu" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, 54, Slot.of(2,2), Slot.of(2,5));
+        super(XG7Plugins.getInstance(), "command_menu" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, 54, Slot.of(2,2), Slot.of(5,8));
         this.commands = commands.stream().collect(
                 Collectors.toMap(
                         command -> command.getClass().getAnnotation(Command.class).name(),

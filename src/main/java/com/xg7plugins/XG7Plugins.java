@@ -5,7 +5,6 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.defaultCommands.LangCommand;
-import com.xg7plugins.commands.defaultCommands.TestCommand;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCause;
 import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
@@ -43,10 +42,13 @@ import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -174,28 +176,28 @@ public final class XG7Plugins extends Plugin {
         plugins.forEach((name, plugin) -> {
             debug.loading("Enabling " + plugin.getName() + "...");
 
-            debug.loading("Connecting plugin to database...");
+            plugin.getDebug().loading("Connecting plugin to database...");
             databaseManager.connectPlugin(plugin, plugin.loadEntites());
 
             if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
 
-            debug.loading("Registering listeners...");
+            plugin.getDebug().loading("Registering listeners...");
             eventManager.registerListeners(plugin, plugin.loadEvents());
 
-            debug.loading("Registering commands...");
+            plugin.getDebug().loading("Registering commands...");
             plugin.getCommandManager().registerCommands(plugin.loadCommands());
 
-            debug.loading("Registering packet events...");
+            plugin.getDebug().loading("Registering packet events...");
             packetEventManager.registerListeners(plugin, plugin.loadPacketEvents());
 
-            debug.loading("Registering tasks...");
+            plugin.getDebug().loading("Registering tasks...");
             taskManager.registerTasks(plugin.loadRepeatingTasks());
 
-            debug.loading("Loading langs...");
+            plugin.getDebug().loading("Loading langs...");
             langManager.loadLangsFrom(plugin);
 
-            debug.loading("Loading help...");
-            loadHelp();
+            plugin.getDebug().loading("Loading help...");
+            plugin.loadHelp();
 
         });
 
@@ -212,6 +214,7 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void onDisable() {
         super.onDisable();
+        Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer("§cServer is restarting..."));
         debug.loading("Stopping tpsCalculator...");
         tpsCalculator.cancel();
         this.plugins.forEach((name, plugin) -> unregister(plugin));
@@ -239,7 +242,7 @@ public final class XG7Plugins extends Plugin {
     }
     @Override
     public ICommand[] loadCommands() {
-        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand(), new TestCommand()};
+        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand()};
     }
 
     @Override

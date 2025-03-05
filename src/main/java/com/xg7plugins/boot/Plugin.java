@@ -72,20 +72,6 @@ public abstract class Plugin extends JavaPlugin {
 
         XG7Plugins xg7Plugin = XG7Plugins.getInstance();
 
-        if (cause.equals(ReloadCause.ALL)) {
-            xg7Plugin.getEventManager().unregisterListeners(this);
-            xg7Plugin.getEventManager().registerListeners(this, this.loadEvents());
-            xg7Plugin.getPacketEventManager().unregisterListeners(this);
-            xg7Plugin.getPacketEventManager().registerListeners(this, this.loadPacketEvents());
-            xg7Plugin.getLangManager().getLangs().clear().join();
-            xg7Plugin.getLangManager().loadLangsFrom(this);
-            xg7Plugin.getDatabaseManager().disconnectPlugin(this);
-            xg7Plugin.getDatabaseManager().connectPlugin(this, this.loadEntites());
-            configsManager.reloadConfigs();
-            xg7Plugin.getTaskManager().cancelTasks(this);
-            xg7Plugin.getTaskManager().getTasks().values().stream().filter(task -> task.getPlugin().getName().equals(this.getName())).forEach(task -> xg7Plugin.getTaskManager().runTask(task));
-            return;
-        }
         if (cause.equals(ReloadCause.CONFIG)) {
             configsManager.reloadConfigs();
             return;

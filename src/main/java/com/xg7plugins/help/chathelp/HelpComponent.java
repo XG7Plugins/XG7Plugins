@@ -59,9 +59,7 @@ public class HelpComponent {
     }
 
     public Component build() {
-        String translatedContent = Text.format(content).replaceAll(placeholders.toArray(new Pair[0])).getPlainText();
-
-        return Component.text(translatedContent).build();
+        return buildFor(null);
     }
 
     public static HelpComponent empty() {

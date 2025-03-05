@@ -54,6 +54,7 @@ public class ScoreBoard extends Score {
 
     @Override
     public synchronized void removePlayer(Player player) {
+        if (player == null) return;
         super.removePlayer(player);
         playerBoards.remove(player.getUniqueId());
 

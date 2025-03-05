@@ -47,11 +47,11 @@ public class Query {
         this.joinTables = new ArrayList<>();
     }
 
-    public static Query selectFrom(Plugin plugin, String table) {
+    public synchronized static Query selectFrom(Plugin plugin, String table) {
         return new Query(plugin, table);
     }
 
-    public static Query selectFrom(Plugin plugin, Class<? extends Entity> entityClass, Object id) {
+    public synchronized static Query selectFrom(Plugin plugin, Class<? extends Entity> entityClass, Object id) {
 
         Objects.requireNonNull(id, "ID cannot be null");
 

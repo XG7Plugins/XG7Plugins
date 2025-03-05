@@ -1,5 +1,6 @@
 package com.xg7plugins.help.chathelp;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.MainCommand;
 import com.xg7plugins.commands.setup.ICommand;
@@ -26,7 +27,7 @@ public class HelpInChat {
 
         int maxPage = (int) Math.ceil(commands.size() / 7.0);
         for (int i = 0; i < maxPage; i++) {
-            pages.put("command-page" + (i + 1), new CommandInChat(commands.subList(i * 7, Math.min((i + 1) * 7, commands.size())), i, maxPage));
+            pages.put("command-page" + (i + 1), new CommandInChat(plugin, commands.subList(i * 7, Math.min((i + 1) * 7, commands.size())), i, maxPage));
         }
     }
 

@@ -29,7 +29,7 @@ public class HexTag implements Tag {
         hex = hex.replace("#", "");
 
         if (hex.length() != 6) {
-            throw new IllegalArgumentException("Gradient tag must have 6 characters in the open and close arguments");
+            throw new IllegalArgumentException("Hex tag must have 6 characters in the open arguments");
         }
 
         contentText = contentText.replace(hex, net.md_5.bungee.api.ChatColor.of(hex) + "");

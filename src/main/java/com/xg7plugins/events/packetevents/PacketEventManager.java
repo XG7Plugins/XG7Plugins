@@ -106,7 +106,7 @@ public class PacketEventManager {
     public void unregisterListeners(Plugin plugin) {
         for (PacketListenerCommon listener : packetListeners.get(plugin.getName())) PacketEvents.getAPI().getEventManager().unregisterListener(listener);
 
-        packetListeners.remove(plugin.getName());
+        packetListeners.get(plugin.getName()).clear();
     }
 
 

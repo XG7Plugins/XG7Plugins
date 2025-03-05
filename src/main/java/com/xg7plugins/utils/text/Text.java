@@ -165,7 +165,10 @@ public class Text {
 
             String rawText = component.content();
 
-            if (rawText.startsWith("<center> ")) rawText = rawText.replace("<center> ", "");
+            if (centered) component.setText(TextCentralizer.getSpacesCentralized(pixels, rawText) + component.getText());
+
+            rawText = component.content();
+
             if (rawText.startsWith("<action> ")) rawText = rawText.replace("<action> ", "");
 
             return rawText;
@@ -185,7 +188,6 @@ public class Text {
 
         String rawText = component.content();
 
-        if (rawText.startsWith("<center> ")) rawText = rawText.replace("<center> ", "");
         if (rawText.startsWith("<action> ")) rawText = rawText.replace("<action> ", "");
 
         return TextCentralizer.getCentralizedText(size, rawText);
@@ -198,7 +200,7 @@ public class Text {
             String text = rawText;
 
             text = text.replace("%prefix%", plugin.getCustomPrefix());
-            text = text.replace("%player%", sender.getName());
+            text = text.replace("%player%", sender == null ? "No name" : sender.getName());
 
             Matcher langMatch = LANG_PATTERN.matcher(text);
 
@@ -230,7 +232,7 @@ public class Text {
             String text = lang.get(path);
 
             text = text.replace("%prefix%", plugin.getCustomPrefix());
-            text = text.replace("%player%", sender.getName());
+            text = text.replace("%player%", sender == null ? "No name" : sender.getName());
 
             Text objectText = new Text(text);
 

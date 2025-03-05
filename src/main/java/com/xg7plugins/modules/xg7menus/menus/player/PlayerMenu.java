@@ -8,6 +8,7 @@ import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -45,11 +46,14 @@ public abstract class PlayerMenu extends BaseMenu {
             if (!playerOldItems.containsKey(player.getUniqueId())) return;
             playerOldItems.get(player.getUniqueId()).forEach(player.getInventory()::setItem);
             playerOldItems.remove(player.getUniqueId());
+        } else {
+            player.getInventory().clear();
         }
 
         PlayerMenuHolder holder = XG7Menus.getInstance().getPlayerMenuHolder(player.getUniqueId());
 
         if (holder == null) return;
+
 
         MenuEvent event = new MenuEvent(player, MenuEvent.ClickAction.UNKNOWN, holder, player.getLocation());
 

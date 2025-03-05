@@ -1,8 +1,22 @@
+
+#__   _______ ______ _____  _             _
+#\ \ / / ____|____  |  __ \| |           (_)
+# \ V / |  __    / /| |__) | |_   _  __ _ _ _ __  ___
+#  > <| | |_ |  / / |  ___/| | | | |/ _` | | '_ \/ __|
+# / . \ |__| | / /  | |    | | |_| | (_| | | | | \__ \
+#/_/ \_\_____|/_/   |_|    |_|\__,_|\__, |_|_| |_|___/
+#                                    __/ |
+#                                   |___/
+
+#Visit our website: https://xg7plugins.com
+
+
 prefix: "&b[XG&37P&9lu&1gins]&r"
 
 #Must be the same as in BungeeCord config
 plugin-server-name: "XG7PluginsServer"
 
+#Debug mode
 debug:
   enabled: false
 
@@ -18,36 +32,51 @@ debug:
   events: true
   plugins: true
 
-
+#When disabled, the plugin will choose
+#the main language from the server
 lang-enabled: true
+
+#Main language
+#Must be the name of the file in lang folder
 main-lang: en
 
+#Igore it for while
 anti-tab: true
 
+#Cache expires of langs
 lang-cache-expires: 30m
+
+#Auto chose lang for player
 auto-chose-lang: true
+
 cooldown-to-toggle-lang: 5s
 
+#Cache expires of json
 json-cache-expires: 10m
 
+#This plugins can use Floodgate
+#forms, make it enabled if you have
 enable-geyser-forms: true
 enable-lang-form: true
 
+#Threads for executing repeating tasks
 repeating-tasks-threads: 8
 
+#Delay to send a message or
+#make an action wilhe is in cooldown
 player-cooldown-task-delay: 1s
 
+#Cache expires of menus
 menu-cache-expires: 10m
-
-holograms-update-delay: 1s
-npcs-update-delay: 5s
-npcs-look-at-player: true
 
 help-command-in-gui: true
 help-command-form: true
 
+
+#Define database values
 sql:
 
+  #Types: SQLITE, MYSQL, MARIADB
   type: "sqlite"
 
   host: ""
@@ -58,10 +87,14 @@ sql:
   username: ""
   password: ""
 
+  #Additional connection URL args
   additional-url-args: "characterEncoding=utf8"
 
+  #Cache expires of sql entities
   cache-expires: 30m
 
+  #Don't work on SQLITE
+  #Connection pool
   connection-timeout: 10s
   idle-timeout: 600s
 
@@ -73,6 +106,7 @@ sql:
   query-processor-threads: 4
   sql-command-processing-interval: 10ms
 
+#Define redis cache configuration
 redis-cache:
 
   enabled: false
@@ -95,4 +129,4 @@ redis-cache:
 
 
 #DON'T CHANGE THIS
-config-version: test-1.0
+config-version: 1.0

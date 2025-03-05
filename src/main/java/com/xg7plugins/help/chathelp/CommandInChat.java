@@ -1,12 +1,14 @@
 package com.xg7plugins.help.chathelp;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.utils.text.component.Component;
 import com.xg7plugins.utils.text.component.event.ClickEvent;
 import com.xg7plugins.utils.text.component.event.action.ClickAction;
+import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,15 +17,17 @@ import java.util.UUID;
 
 public class CommandInChat extends HelpPage {
 
+    private final Plugin plugin;
 
-    public CommandInChat(List<ICommand> commands, int page, int maxPage) {
+    public CommandInChat(Plugin plugin, List<ICommand> commands, int page, int maxPage) {
         super("command-in-chat" + UUID.randomUUID());
+        this.plugin = plugin;
 
         addMessages(
-                HelpComponent.of(XG7Plugins.getInstance(), "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").build(),
-                HelpComponent.of(XG7Plugins.getInstance(), "lang:[help-in-chat.commands-title]")
+                HelpComponent.of(plugin, "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").build(),
+                HelpComponent.of(plugin, "lang:[help-in-chat.commands-title]")
                         .replace("page", (page + 1) + "")
-                        .replace("%max_page%", maxPage + "")
+                        .replace("max_page", maxPage + "")
                         .build()
         );
         for (ICommand command : commands) {
@@ -32,12 +36,12 @@ public class CommandInChat extends HelpPage {
 
             addMessages(
                     HelpComponent.empty(),
-                    new CommandComponent(command, commandIcon)
+                    new CommandComponent(plugin,command, commandIcon)
             );
 
         }
 
-        addMessage(HelpComponent.of(XG7Plugins.getInstance(), "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").build());
+        addMessage(HelpComponent.of(plugin, "&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").build());
 
 
     }
@@ -47,9 +51,9 @@ public class CommandInChat extends HelpPage {
         private final Item commandIcon;
         private final ICommand command;
 
-        public CommandComponent(ICommand command, Item commandIcon) {
+        public CommandComponent(Plugin plugin, ICommand command, Item commandIcon) {
             super(
-                    XG7Plugins.getInstance(),
+                    plugin,
                     null
             );
             this.commandIcon = commandIcon;

@@ -141,7 +141,7 @@ public class SkullItem extends Item {
             JsonObject properties = profileData.getAsJsonArray("properties").get(0).getAsJsonObject();
 
 
-            GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+            GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "null");
             gameProfile.getProperties().put("textures", new Property("textures", properties.get("value").getAsString()));
 
             SkullMeta skullMeta = (SkullMeta) this.itemStack.getItemMeta();

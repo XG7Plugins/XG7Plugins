@@ -26,7 +26,7 @@ public class AboutPage extends HelpPage {
                 HelpComponent.of(
                         XG7Plugins.getInstance(),
                         "lang:[help-in-chat.back]"
-                ).clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "xg7plugins help")).build(),
+                ).clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins help")).build(),
                 HelpComponent.empty(),
                 HelpComponent.of(
                         XG7Plugins.getInstance(),
@@ -59,14 +59,6 @@ public class AboutPage extends HelpPage {
             ).build();
 
         }
-
-        @Override
-        public Component build() {
-
-            return Component.text("Try to do it in game").build();
-
-        }
-
 
     }
 }
