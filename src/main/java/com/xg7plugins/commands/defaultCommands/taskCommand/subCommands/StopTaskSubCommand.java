@@ -51,9 +51,9 @@ public class StopTaskSubCommand implements ICommand {
 
         manager.cancelTask(id);
 
-        XG7Plugins.getInstance().getDebug().warn("tasks","Task " + id + " was stopped by " + sender.getName());
-        XG7Plugins.getInstance().getDebug().warn("tasks","It can cause errors in the plugin of the task!");
-        XG7Plugins.getInstance().getDebug().warn("tasks","To resume the task to execution use /xg7plugins tasks restart " + id + "!");
+        XG7Plugins.getInstance().getDebug().warn("Task " + id + " was stopped by " + sender.getName());
+        XG7Plugins.getInstance().getDebug().warn("It can cause errors in the plugin of the task!");
+        XG7Plugins.getInstance().getDebug().warn("To resume the task to execution use /xg7plugins tasks restart " + id + "!");
 
         Text.fromLang(sender,XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
     }

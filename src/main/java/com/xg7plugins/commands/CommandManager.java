@@ -53,7 +53,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             if (!command.isEnabled()) return;
 
             if (!command.getClass().isAnnotationPresent(Command.class)) {
-                plugin.getDebug().error("Commands must be annotated with @Command interface!!");
+                plugin.getDebug().severe("Commands must be annotated with @Command interface!!");
                 return;
             }
 

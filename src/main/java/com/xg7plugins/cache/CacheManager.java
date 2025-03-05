@@ -59,8 +59,8 @@ public class CacheManager {
                 if (authEnabled) jedis.auth(password);
                 jedis.close();
             } catch (Exception e) {
-                plugin.getDebug().error("Failed to connect to Redis: " + e.getMessage());
-                plugin.getDebug().error("Using local cache instead.");
+                plugin.getDebug().severe("Failed to connect to Redis: " + e.getMessage());
+                plugin.getDebug().severe("Using local cache instead.");
             }
         }
 

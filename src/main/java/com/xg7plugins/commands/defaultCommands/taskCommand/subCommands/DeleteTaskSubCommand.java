@@ -42,8 +42,8 @@ public class DeleteTaskSubCommand implements ICommand {
         }
         manager.deleteTask(id);
 
-        XG7Plugins.getInstance().getDebug().warn("tasks", "Task " + id + " was deleted by " + sender.getName());
-        XG7Plugins.getInstance().getDebug().warn("tasks", "To back up the task, you need to restart the plugin of the task!");
+        XG7Plugins.getInstance().getDebug().warn("Task " + id + " was deleted by " + sender.getName());
+        XG7Plugins.getInstance().getDebug().warn("To back up the task, you need to restart the plugin of the task!");
 
         Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.deleted").thenAccept(text -> text.send(sender));
     }

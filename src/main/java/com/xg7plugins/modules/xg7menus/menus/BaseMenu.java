@@ -68,10 +68,10 @@ public abstract class BaseMenu {
     }
 
     public void onOpen(MenuEvent event) {
-        XG7Plugins.getInstance().getDebug().info("menus", "Menu " + id + " opened by " + event.getWhoClicked().getName());
+        XG7Plugins.getInstance().getDebug().info("Menu " + id + " opened by " + event.getWhoClicked().getName());
     }
     public void onClose(MenuEvent event) {
-        XG7Plugins.getInstance().getDebug().info("menus", "Menu " + id + " closed by " + event.getWhoClicked().getName());
+        XG7Plugins.getInstance().getDebug().info("Menu " + id + " closed by " + event.getWhoClicked().getName());
 
     }
 

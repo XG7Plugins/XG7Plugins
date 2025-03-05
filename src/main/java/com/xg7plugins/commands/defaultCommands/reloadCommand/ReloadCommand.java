@@ -29,7 +29,7 @@ public class ReloadCommand implements ICommand {
 
         if (args.len() == 0) {
             XG7Plugins.getInstance().getPlugins().values().forEach(plugin -> {
-                Debug.of(XG7Plugins.getInstance()).info("plugins","Reloading " + plugin.getPrefix());
+                Debug.of(XG7Plugins.getInstance()).info("Reloading " + plugin.getPrefix());
                 plugin.onReload(ReloadCause.ALL);
             });
             Text.fromLang(sender,XG7Plugins.getInstance(), "reload-message.all-plugins").join().send(sender);
@@ -39,7 +39,7 @@ public class ReloadCommand implements ICommand {
 
         if (args.len() == 1) {
             if (plugin == null) return;
-            Debug.of(XG7Plugins.getInstance()).info("plugins","Reloading " + plugin.getPrefix());
+            Debug.of(XG7Plugins.getInstance()).info("Reloading " + plugin.getPrefix());
             plugin.onReload(ReloadCause.ALL);
             Text.fromLang(sender,XG7Plugins.getInstance(), "reload-message.without-cause").join().replace("plugin", plugin.getPrefix()).send(sender);
 
@@ -52,7 +52,7 @@ public class ReloadCommand implements ICommand {
             return;
         }
 
-        Debug.of(XG7Plugins.getInstance()).info("plugins","Reloading " + plugin.getPrefix() + " with cause " + cause.getName());
+        Debug.of(XG7Plugins.getInstance()).info("Reloading " + plugin.getPrefix() + " with cause " + cause.getName());
 
         plugin.onReload(cause);
 

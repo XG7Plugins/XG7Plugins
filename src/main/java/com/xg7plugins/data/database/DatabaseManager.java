@@ -64,7 +64,7 @@ public class DatabaseManager {
         Config xg7PluginsConfig = Config.mainConfigOf(XG7Plugins.getInstance());
 
         if (!pluginConfig.get("sql", ConfigurationSection.class).isPresent()) {
-            plugin.getDebug().error("Connection aborted!");
+            plugin.getDebug().severe("Connection aborted!");
             return;
         }
 
@@ -126,7 +126,7 @@ public class DatabaseManager {
                     break;
             }
         } catch (ClassNotFoundException | IOException e) {
-            plugin.getDebug().error("Error while connecting to database: " + e.getMessage());
+            plugin.getDebug().severe("Error while connecting to database: " + e.getMessage());
             e.printStackTrace();
             return;
         } catch (SQLException e) {

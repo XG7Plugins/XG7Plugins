@@ -126,7 +126,7 @@ public class SkullItem extends Item {
 
 
             if (conn.getResponseCode() != 200) {
-                XG7Plugins.getInstance().getDebug().severe("menus", "Erro ao colocar valor de player na skin da cabeça!");
+                XG7Plugins.getInstance().getDebug().severe("Erro ao colocar valor de player na skin da cabeça!");
                 return this;
             }
             BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));

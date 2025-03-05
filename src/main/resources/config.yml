@@ -17,20 +17,7 @@ prefix: "&b[XG&37P&9lu&1gins]&r"
 plugin-server-name: "XG7PluginsServer"
 
 #Debug mode
-debug:
-  enabled: false
-
-  config-warn: true
-  lang: true
-  packet-events: true
-  tasks: true
-  sql: true
-  menus: true
-  hologram: true
-  scoreboards: true
-  commands: true
-  events: true
-  plugins: true
+debug-enabled: false
 
 #When disabled, the plugin will choose
 #the main language from the server
@@ -129,4 +116,4 @@ redis-cache:
 
 
 #DON'T CHANGE THIS
-config-version: 1.0
+config-version: 1.1

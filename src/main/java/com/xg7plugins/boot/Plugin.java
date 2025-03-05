@@ -74,6 +74,7 @@ public abstract class Plugin extends JavaPlugin {
 
         if (cause.equals(ReloadCause.CONFIG)) {
             configsManager.reloadConfigs();
+            this.debug = new Debug(this);
             return;
         }
         if (cause.equals(ReloadCause.EVENTS)) {

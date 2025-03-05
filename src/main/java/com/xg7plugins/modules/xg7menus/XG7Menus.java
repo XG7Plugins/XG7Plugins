@@ -60,17 +60,17 @@ public class XG7Menus implements Module {
     }
 
     public void registerPlayerMenuHolder(UUID playerId, PlayerMenuHolder holder) {
-        XG7Plugins.getInstance().getDebug().info("menus", "Registering player menu holder for " + playerId);
+        XG7Plugins.getInstance().getDebug().info("Registering player menu holder for " + playerId);
         playerMenusMap.put(playerId, holder);
     }
 
     public void removePlayerMenuHolder(UUID playerId) {
-        XG7Plugins.getInstance().getDebug().info("menus", "Removing player menu holder for " + playerId);
+        XG7Plugins.getInstance().getDebug().info("Removing player menu holder for " + playerId);
         playerMenusMap.remove(playerId);
     }
 
     public <T extends PlayerMenuHolder> T getPlayerMenuHolder(UUID playerId) {
-        XG7Plugins.getInstance().getDebug().info("menus", "Getting player menu holder for " + playerId);
+        XG7Plugins.getInstance().getDebug().info("Getting player menu holder for " + playerId);
         return (T) playerMenusMap.get(playerId);
     }
 

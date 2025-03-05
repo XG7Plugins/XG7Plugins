@@ -52,7 +52,7 @@ public class RestartTaskSubCommand implements ICommand {
 
         manager.runTask(task);
 
-        XG7Plugins.getInstance().getDebug().warn("tasks","Task " + id + " was restarted by " + sender.getName());
+        XG7Plugins.getInstance().getDebug().warn("Task " + id + " was restarted by " + sender.getName());
 
         Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.restarted").thenAccept(text -> text.send(sender));
     }

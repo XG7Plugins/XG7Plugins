@@ -86,11 +86,11 @@ public class Config {
 
     public <T> Optional<T> get(String path, Class<T> type, boolean ignoreNonexistent, Object... optionalTypeArgs) {
         if (!config.contains(path)) {
-            if (!ignoreNonexistent) plugin.getDebug().warn("config-warn", path + " not found in " + name + ".yml");
+            if (!ignoreNonexistent) plugin.getDebug().warn(path + " not found in " + name + ".yml");
             return Optional.empty();
         }
         if (config.get(path) == null) {
-            if (!ignoreNonexistent) plugin.getDebug().warn("config-warn", path + " in " + name + " is empty");
+            if (!ignoreNonexistent) plugin.getDebug().warn(path + " in " + name + " is empty");
             return Optional.empty();
         }
 
@@ -120,7 +120,7 @@ public class Config {
         ConfigTypeAdapter<T> adapter = (ConfigTypeAdapter<T>) configManager.getAdapters().get(type);
 
         if (adapter == null) {
-            plugin.getDebug().warn("config-warn", "Adapter not found for " + type.getName());
+            plugin.getDebug().warn("Adapter not found for " + type.getName());
             return Optional.empty();
         }
 
@@ -135,11 +135,11 @@ public class Config {
     @SuppressWarnings("unchecked")
     public <T> Optional<List<T>> getList(String path, Class<T> type, boolean ignoreNonexistent) {
         if (!config.contains(path)) {
-            if (!ignoreNonexistent) plugin.getDebug().warn("config-warn", " not found in " + name + ".yml");
+            if (!ignoreNonexistent) plugin.getDebug().warn(path + " not found in " + name + ".yml");
             return Optional.empty();
         }
         if (config.get(path) == null) {
-            if (!ignoreNonexistent) plugin.getDebug().warn("config-warn", " in " + name + " is empty");
+            if (!ignoreNonexistent) plugin.getDebug().warn(path + " in " + name + " is empty");
             return Optional.empty();
         }
 
@@ -161,7 +161,7 @@ public class Config {
     public Optional<Long> getTime(String path, boolean ignoreNonexistent) {
         String time = config.getString(path);
         if (time == null) {
-            if (!ignoreNonexistent) plugin.getDebug().warn("config-warn", path + " not found in " + name + ".yml");
+            if (!ignoreNonexistent) plugin.getDebug().warn(path + " not found in " + name + ".yml");
             return Optional.empty();
         }
         long milliseconds;
@@ -187,19 +187,19 @@ public class Config {
 
     @SneakyThrows
     public void save() {
-        plugin.getDebug().info("config-warn", "Saving " + name + ".yml...");
+        plugin.getDebug().info("Saving " + name + ".yml...");
         config.save(configFile);
-        plugin.getDebug().info("config-warn", "Saved!");
+        plugin.getDebug().info("Saved!");
     }
 
     public void reload() {
-        plugin.getDebug().info("config-warn", "Reloading " + name + ".yml...");
+        plugin.getDebug().info("Reloading " + name + ".yml...");
 
         this.config = YamlConfiguration.loadConfiguration(configFile);
 
         plugin.getConfigsManager().getConfigs().put(name,this);
 
-        plugin.getDebug().info("config-warn", "Reloaded");
+        plugin.getDebug().info("Reloaded");
     }
 
 }

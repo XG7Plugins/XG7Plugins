@@ -8,43 +8,39 @@ import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 
+import java.util.HashMap;
+
 /**
  * This class is used to debug
  */
-@AllArgsConstructor
 public class Debug {
 
-    private Plugin plugin;
+    private final Plugin plugin;
     @Setter
     private boolean debugEnabled;
-    private Config config;
 
     public Debug(Plugin plugin) {
         this.plugin = plugin;
         Config config = Config.mainConfigOf(plugin);
-        debugEnabled = config.get("debug.enabled", Boolean.class).orElse(false);
+        debugEnabled = config.getConfig().getBoolean("debug-enabled");
         if (plugin instanceof XG7Plugins) {
-            if (debugEnabled && config.get("debug.packet-events", Boolean.class).orElse(false)) PacketEvents.getAPI().getSettings().debug(true);
+            if (debugEnabled) PacketEvents.getAPI().getSettings().debug(true);
         }
-        this.config = config;
     }
 
     public void loading(String message) {
         Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + "§8]§r " + message);
     }
-    public void info(String condition, String message) {
-        if (!debugEnabled || !config.get("debug." + condition, Boolean.class).orElse(false)) return;
+    public void info(String message) {
+        if (!debugEnabled) return;
         Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " INFO§8]§r " + message);
     }
-    public void warn(String condition, String message) {
-        if (!debugEnabled || !config.get("debug." + condition, Boolean.class).orElse(false)) return;
+    public void warn(String message) {
+        if (!debugEnabled) return;
         Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §eWARNING§8]§e " + message);
     }
-    public void severe(String condition, String message) {
-        if (!debugEnabled || !config.get("debug." + condition, Boolean.class).orElse(false)) return;
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §cERROR§8]§c " + message);
-    }
-    public void error(String message) {
+    public void severe(String message) {
+        if (!debugEnabled) return;
         Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getPrefix() + " §cERROR§8]§c " + message);
     }
     public void log(String message) {
