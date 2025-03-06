@@ -5,10 +5,7 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -48,7 +45,7 @@ public abstract class Score {
     }
 
     public void removeAllPlayers() {
-        players.stream().map(Bukkit::getPlayer).collect(Collectors.toList()).forEach(this::removePlayer);
+        players.stream().map(Bukkit::getPlayer).filter(Objects::nonNull).collect(Collectors.toList()).forEach(this::removePlayer);
         updating = false;
     }
 

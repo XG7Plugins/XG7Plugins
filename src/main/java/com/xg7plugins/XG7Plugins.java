@@ -222,6 +222,9 @@ public final class XG7Plugins extends Plugin {
         debug.loading("Stopping tasks...");
         taskManager.shutdown();
 
+        debug.loading("Stopping scores...");
+        XG7Scores.getInstance().onDisable();
+
         debug.loading("Stopping cache...");
         cacheManager.shutdown();
 

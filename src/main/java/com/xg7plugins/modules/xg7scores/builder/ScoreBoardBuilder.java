@@ -11,6 +11,11 @@ public class ScoreBoardBuilder extends ScoreBuilder<ScoreBoard, ScoreBoardBuilde
     private List<String> title = new ArrayList<>();
     private List<String> lines = new ArrayList<>();
 
+    private boolean healthDisplay;
+    private boolean sideBar;
+
+    private String healthDisplaySuffix;
+
     public ScoreBoardBuilder(String id) {
         super(id);
     }
@@ -32,10 +37,24 @@ public class ScoreBoardBuilder extends ScoreBuilder<ScoreBoard, ScoreBoardBuilde
         return this;
     }
 
+    public ScoreBoardBuilder allowHealthDisplay(boolean healthDisplay) {
+        this.healthDisplay = healthDisplay;
+        return this;
+    }
+
+    public ScoreBoardBuilder allowSideBar(boolean sideBar) {
+        this.sideBar = sideBar;
+        return this;
+    }
+
+    public ScoreBoardBuilder healthDisplaySuffix(String healthDisplaySuffix) {
+        this.healthDisplaySuffix = healthDisplaySuffix;
+        return this;
+    }
     @Override
     public ScoreBoard build(Object... args) {
         if (id == null || delayToUpdate == 0) throw new IllegalArgumentException("You must specify the id and the delay to update the score");
 
-        return new ScoreBoard(title,lines,id,condition,delayToUpdate,(Plugin) args[0]);
+        return new ScoreBoard(title,lines,id,condition,delayToUpdate,(Plugin) args[0],healthDisplay,sideBar,healthDisplaySuffix);
     }
 }

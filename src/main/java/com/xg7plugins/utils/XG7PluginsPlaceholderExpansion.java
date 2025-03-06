@@ -29,6 +29,10 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
     public @NotNull String getVersion() {
         return "1.0";
     }
+    @Override
+    public boolean persist() {
+        return true;
+    }
 
     @Override
     public String onPlaceholderRequest(Player player, @NotNull String identifier) {

@@ -5,6 +5,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.Parser;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,23 +25,37 @@ public class ScoreBoard extends Score {
 
     private final HashMap<UUID, PlayerBoard> playerBoards = new HashMap<>();
 
+    private final boolean belowName;
+    private final boolean sideBar;
+    private final String healthDisplaySuffix;
 
-    public ScoreBoard(String title, List<String> lines, String id, Function<Player, Boolean> condition, long delay, Plugin plugin) {
+
+    public ScoreBoard(String title, List<String> lines, String id, Function<Player, Boolean> condition, long delay, Plugin plugin, boolean belowName, boolean sideBar, String healthDisplaySuffix) {
         super(delay, Collections.singletonList(title),id, condition, plugin);
         this.lines = lines;
 
+        this.belowName = belowName;
+        this.sideBar = sideBar;
+        this.healthDisplaySuffix = healthDisplaySuffix;
     }
 
-    public ScoreBoard(List<String> title, List<String> lines, String id, Function<Player, Boolean> condition, long taskDelay, Plugin plugin) {
+    public ScoreBoard(List<String> title, List<String> lines, String id, Function<Player, Boolean> condition, long taskDelay, Plugin plugin, boolean belowName, boolean sideBar, String healthDisplaySuffix) {
         super(taskDelay, title,id,condition,plugin);
         this.lines = lines;
+        this.belowName = belowName;
+        this.sideBar = sideBar;
+        this.healthDisplaySuffix = healthDisplaySuffix;
     }
 
     public void update() {
         for (UUID uuid : super.getPlayers()) {
 
             PlayerBoard playerBoard = playerBoards.get(uuid);
-            playerBoard.update();
+
+            if (playerBoard == null) continue;
+
+            if (sideBar) playerBoard.updateSidebar();
+            if (belowName) playerBoard.updateBelowName();
         }
     }
 
@@ -48,7 +63,14 @@ public class ScoreBoard extends Score {
     public synchronized void addPlayer(Player player) {
         if (!super.getPlayers().contains(player.getUniqueId())) {
             super.addPlayer(player);
-            playerBoards.put(player.getUniqueId(), new PlayerBoard(player, super.updateText, lines));
+
+            PlayerBoard playerBoard = new PlayerBoard(healthDisplaySuffix, player, super.updateText, lines);
+
+            if (sideBar) playerBoard.createSidebar();
+            if (belowName) playerBoard.createBelowname();
+
+            playerBoards.put(player.getUniqueId(), playerBoard);
+
         }
     }
 
@@ -63,44 +85,82 @@ public class ScoreBoard extends Score {
 
     private class PlayerBoard {
         private Scoreboard scoreboard;
-        private Objective objective;
+        private Objective sidebarObjective;
+        private Objective belowNameObjective;
+
         private final List<String> title;
         private final List<String> lines;
         private final HashMap<Integer, Pair<String, String>> lastLines;
+
+        private final String healthDisplaySuffix;
+
         private final Player player;
 
-        public PlayerBoard(Player player, List<String> title, List<String> lines) {
+        public PlayerBoard(String healthDisplaySuffix, Player player, List<String> title, List<String> lines) {
+            this.healthDisplaySuffix = healthDisplaySuffix;
             this.player = player;
             this.title = title;
             this.lastLines = new HashMap<>();
             this.lines = lines;
             Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> {
                 this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-                this.objective = scoreboard.registerNewObjective(getId(), "dummy");
-                objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-                objective.setDisplayName(title.get(0));
-
-                for (int i = 0; i < lines.size(); i++) {
-
-                    lastLines.put(i,Pair.of("Loading... " + i,"Loading... " + i));
-
-
-                    Team team = scoreboard.registerNewTeam("team_" + i);
-                    team.setPrefix("P ");
-                    team.setSuffix(" S");
-
-                    objective.getScore("Loading... " + i).setScore(lines.size() - i);
-
-                }
                 player.setScoreboard(scoreboard);
-
-                update();
             });
 
         }
 
-        public void update() {
+        public void createSidebar() {
+            if (sidebarObjective != null) return;
+            XG7Plugins.taskManager().runSyncTask(XG7Plugins.getInstance(), () -> {
+                this.sidebarObjective = scoreboard.registerNewObjective("sb-" + getId(), "dummy");
+                sidebarObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+                sidebarObjective.setDisplayName(title.get(0));
+
+                for (int i = 0; i < lines.size(); i++) {
+
+                    lastLines.put(i, Pair.of("Loading... " + i, "Loading... " + i));
+
+                    Team team = scoreboard.registerNewTeam("team_" + i);
+                    team.addEntry("Loading... " + i);
+                    team.setPrefix("P ");
+                    team.setSuffix(" S");
+
+                    sidebarObjective.getScore("Loading... " + i).setScore(lines.size() - i);
+                }
+
+                updateSidebar();
+            });
+        }
+
+        public void createBelowname() {
+            XG7Plugins.taskManager().runSyncTask(XG7Plugins.getInstance(), () -> {
+                this.belowNameObjective = scoreboard.registerNewObjective("bn-" + getId(), "health");
+
+                belowNameObjective.setDisplayName(Text.detectLangs(player, plugin, healthDisplaySuffix).join().getText());
+
+                belowNameObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+
+                updateBelowName();
+            });
+        }
+
+        public void updateBelowName() {
             if (scoreboard == null) return;
+            if (belowNameObjective == null) return;
+
+            try {
+                int score = (int) player.getHealth();
+                belowNameObjective.getScore(player.getName()).setScore(score);
+                belowNameObjective.setDisplayName(Text.detectLangs(player, plugin, healthDisplaySuffix).join().getText());
+            } catch (Exception e) {
+                XG7Plugins.getInstance().getDebug().warn("Error while updating belowname for player " + player.getName());
+                XG7Plugins.getInstance().getDebug().warn("Check if the placeholder is right!");
+            }
+        }
+
+        public void updateSidebar() {
+            if (scoreboard == null) return;
+            if (sidebarObjective == null) return;
             List<String> lastEntries = new ArrayList<>();
             for (int i = 0; i < lines.size(); i++) {
                 String translatedText = Text.detectLangs(player, plugin,lines.get(i)).join().getPlainText();
@@ -109,41 +169,35 @@ public class ScoreBoard extends Score {
                 String entry = translatedText.length() > 16 ? translatedText.substring(16, Math.min(translatedText.length(), 56)) : "";
                 String suffix = translatedText.length() > 56 ? translatedText.substring(56, Math.min(translatedText.length(), MinecraftVersion.isNewerThan(12) ? translatedText.length() : 72)) : "";
 
-                if (MinecraftVersion.isNewerThan(12)) {
+                if (MinecraftVersion.isNewerOrEqual(13)) {
                     suffix = ChatColor.getLastColors(prefix) + entry + suffix;
                     entry = "";
                 }
-
-                if (!lastLines.containsKey(i) || !lastLines.get(i).equals(translatedText)) {
-                    Team team = scoreboard.getTeam("team_" + i);
-                    if (team == null) {
-                        team = scoreboard.registerNewTeam("team_" + i);
-                    }
-
-                    if (lastLines.containsKey(i)) {
-                        scoreboard.resetScores(lastLines.get(i).getSecond());
-                    }
-
-                    team.setPrefix(prefix);
-                    team.setSuffix(suffix);
-
-                    while (lastEntries.contains(entry)) {
-                        entry = "§r" + ChatColor.getLastColors(prefix) + entry;
-                    }
-
-
-                    team.addEntry(entry);
-                    objective.getScore(entry).setScore(lines.size() - i);
-
-                    lastLines.put(i, Pair.of(translatedText,entry));
-                    lastEntries.add(entry);
-
+                while (lastEntries.contains(entry)) {
+                    entry += "§r" + ChatColor.getLastColors(prefix);
                 }
+                lastEntries.add(entry);
+                if (lastLines.get(i).getFirst().equals(translatedText)) continue;
+
+                Team team = scoreboard.getTeam("team_" + i);
+                if (team == null) {
+                    team = scoreboard.registerNewTeam("team_" + i);
+                }
+
+                scoreboard.resetScores(lastLines.get(i).getSecond());
+
+                team.addEntry(entry);
+
+                team.setPrefix(prefix);
+                team.setSuffix(suffix);
+
+                sidebarObjective.getScore(entry).setScore(lines.size() - i);
+
+                lastLines.put(i, Pair.of(translatedText,entry));
             }
 
-            objective.setDisplayName(Text.detectLangs(player, plugin,title.get(indexUpdating)).join().getText());
+            sidebarObjective.setDisplayName(Text.detectLangs(player, plugin,title.get(indexUpdating)).join().getText());
         }
-
 
     }
 }

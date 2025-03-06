@@ -35,6 +35,7 @@ public class PublicBossBar extends Score {
     @SneakyThrows
     @Override
     public synchronized void removePlayer(Player player) {
+        if (player == null) return;
         super.removePlayer(player);
         bossBar.removePlayer(player);
     }

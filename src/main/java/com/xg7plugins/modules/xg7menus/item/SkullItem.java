@@ -9,6 +9,9 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.server.ServerInfo;
+import com.xg7plugins.utils.reflection.ReflectionClass;
+import com.xg7plugins.utils.reflection.ReflectionObject;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -63,11 +66,34 @@ public class SkullItem extends Item {
             this.itemStack.setItemMeta(cachedSkulls.get(value).join());
             return this;
         }
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "null");
-        gameProfile.getProperties().put("textures", new Property("textures", value));
 
         SkullMeta skullMeta = (SkullMeta) this.itemStack.getItemMeta();
 
+        if (MinecraftVersion.isNewerThan(16) && XG7Plugins.serverInfo().getSoftware().isPaper()) {
+
+            ReflectionObject paperProfile = ReflectionClass.of(Bukkit.class).getMethod("createProfile", UUID.class).invokeToRObject(UUID.randomUUID());
+
+            paperProfile.getMethod(
+                    "setProperty",
+                            ReflectionClass.of("com.destroystokyo.paper.profile.ProfileProperty").getAClass()
+                    )
+                    .invoke(
+                            ReflectionClass.of("com.destroystokyo.paper.profile.ProfileProperty")
+                            .getConstructor(String.class, String.class)
+                            .newInstance("textures", value).getObject()
+                    );
+
+            ReflectionObject.of(skullMeta)
+                    .getMethod("setPlayerProfile", ReflectionClass.of("com.destroystokyo.paper.profile.PlayerProfile").getAClass())
+                    .invoke(paperProfile.getObject());
+
+            cachedSkulls.put(value, skullMeta);
+            super.meta(skullMeta);
+            return this;
+        }
+
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "null");
+        gameProfile.getProperties().put("textures", new Property("textures", value));
         try {
             Field profileField = skullMeta.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
@@ -98,6 +124,7 @@ public class SkullItem extends Item {
             return this;
         }
         SkullMeta meta = (SkullMeta) this.itemStack.getItemMeta();
+
         meta.setOwner(owner);
         cachedSkulls.put(owner, meta);
         super.meta(meta);
@@ -140,12 +167,33 @@ public class SkullItem extends Item {
             JsonObject profileData = new JsonParser().parse(sb.toString()).getAsJsonObject();
             JsonObject properties = profileData.getAsJsonArray("properties").get(0).getAsJsonObject();
 
+            SkullMeta skullMeta = (SkullMeta) this.itemStack.getItemMeta();
+
+            if (MinecraftVersion.isNewerThan(16) && XG7Plugins.serverInfo().getSoftware().isPaper()) {
+
+                ReflectionObject paperProfile = ReflectionClass.of(Bukkit.class).getMethod("createProfile", UUID.class).invokeToRObject(UUID.randomUUID());
+
+                paperProfile.getMethod(
+                                "setProperty",
+                                ReflectionClass.of("com.destroystokyo.paper.profile.ProfileProperty").getAClass()
+                        )
+                        .invoke(
+                                ReflectionClass.of("com.destroystokyo.paper.profile.ProfileProperty")
+                                        .getConstructor(String.class, String.class)
+                                        .newInstance("textures", properties.get("value").getAsString()).getObject()
+                        );
+
+                ReflectionObject.of(skullMeta)
+                        .getMethod("setPlayerProfile", ReflectionClass.of("com.destroystokyo.paper.profile.PlayerProfile").getAClass())
+                        .invoke(paperProfile.getObject());
+
+                cachedSkulls.put(properties.get("value").getAsString(), skullMeta);
+                super.meta(skullMeta);
+                return this;
+            }
 
             GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "null");
             gameProfile.getProperties().put("textures", new Property("textures", properties.get("value").getAsString()));
-
-            SkullMeta skullMeta = (SkullMeta) this.itemStack.getItemMeta();
-
 
             try {
                 Field profileField = skullMeta.getClass().getDeclaredField("profile");

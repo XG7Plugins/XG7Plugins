@@ -37,12 +37,15 @@ public class ServerInfo {
     }
 
     public void connectPlayer(Player player) throws IOException {
+        connectTo(name, player);
+    }
+    public void connectTo(String serverName, Player player) throws IOException {
         if (!bungercord) return;
 
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(byteArray);
         out.writeUTF("Connect");
-        out.writeUTF(name);
+        out.writeUTF(serverName);
         out.flush();
 
         player.sendPluginMessage(XG7Plugins.getInstance(), "BungeeCord", byteArray.toByteArray());

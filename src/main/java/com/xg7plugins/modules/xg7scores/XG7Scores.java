@@ -61,6 +61,7 @@ public class XG7Scores implements Module {
 
                                 if (score.getCondition().apply(p) && !p.isDead() && XG7Plugins.getInstance().isEnabled()) score.addPlayer(p);
                                 else if (score.getPlayers().contains(p.getUniqueId())) {
+                                    if (!XG7Plugins.getInstance().isEnabled()) return;
                                     Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> score.removePlayer(p));
                                 }
 
@@ -122,6 +123,11 @@ public class XG7Scores implements Module {
     public void removePlayer(Player player) {
         players.remove(player.getUniqueId());
         scores.values().forEach(score -> score.removePlayer(player));
+    }
+
+    public void disable() {
+        scores.values().forEach(Score::removeAllPlayers);
+        XG7Plugins.taskManager().cancelTask("score-task");
     }
 
     public void addPlayer(Player player) {

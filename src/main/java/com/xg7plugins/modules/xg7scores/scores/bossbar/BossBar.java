@@ -41,6 +41,7 @@ public class BossBar extends Score {
 
     @Override
     public void removePlayer(Player player) {
+        if (player == null) return;
         if (!bossBars.containsKey(player.getUniqueId())) return;
         super.removePlayer(player);
         bossBars.get(player.getUniqueId()).removePlayer(player);
