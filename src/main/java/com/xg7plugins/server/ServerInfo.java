@@ -18,7 +18,7 @@ public class ServerInfo {
     private String name;
     private String address;
     private int port;
-    private transient boolean bungercord;
+    private transient final boolean bungeecord;
     private transient Software software;
     private transient final HashMap<String, Object> atributes = new HashMap<>();
 
@@ -32,15 +32,16 @@ public class ServerInfo {
 
     private ServerInfo() {
         this.software = Software.getSoftware();
+        this.bungeecord = Bukkit.spigot().getConfig().getBoolean("settings.bungeecord");
 
-        if (bungercord) XG7Plugins.getInstance().getServer().getMessenger().registerOutgoingPluginChannel(XG7Plugins.getInstance(), "BungeeCord");
+        if (bungeecord) XG7Plugins.getInstance().getServer().getMessenger().registerOutgoingPluginChannel(XG7Plugins.getInstance(), "BungeeCord");
     }
 
     public void connectPlayer(Player player) throws IOException {
         connectTo(name, player);
     }
     public void connectTo(String serverName, Player player) throws IOException {
-        if (!bungercord) return;
+        if (!bungeecord) return;
 
         ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(byteArray);
