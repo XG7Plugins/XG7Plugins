@@ -11,9 +11,9 @@ https://github.com/DaviXG7/XG7Lobby
 ## FAQ
 
 ### Text system:
-How to zsend text in different ways
+How to send text in different ways
 
-<action> send a actionbar. Example: "<action> Hello, world"
+\<action\> send a actionbar. Example: "<action> Hello, world"
 <center:pixelsSize> get a centralized message. Example "<center:CHAT> Hello world"
 
 <click:ACTION:value> get a clickable text on chat. Example "<click:suggest_command:/lang>Click here to get lang command</click>"
