@@ -48,7 +48,7 @@ public class Debug {
     }
 
     public static Debug of(Plugin plugin) {
-        return new Debug(plugin);
+        return plugin.getDebug();
     }
 
 }

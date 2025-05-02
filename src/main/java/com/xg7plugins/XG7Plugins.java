@@ -10,6 +10,7 @@ import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.JsonManager;
+import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
 import com.xg7plugins.data.playerdata.PlayerData;
@@ -42,13 +43,11 @@ import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -88,6 +87,9 @@ public final class XG7Plugins extends Plugin {
 
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
+    /*
+        Carrega o plugin
+     */
     @Override
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
@@ -98,6 +100,10 @@ public final class XG7Plugins extends Plugin {
         super.onLoad();
     }
 
+    /*
+        Habilita o plugin
+
+     */
     @Override
     public void onEnable() {
         super.onEnable();
@@ -211,6 +217,9 @@ public final class XG7Plugins extends Plugin {
 
     }
 
+    /*
+        Desabilita o plugin
+     */
     @Override
     public void onDisable() {
         super.onDisable();
@@ -234,12 +243,18 @@ public final class XG7Plugins extends Plugin {
         PacketEvents.getAPI().terminate();
     }
 
+    /**
+        Recarrega o plugin
+
+        @param cause causa do reload
+
+     */
+
     @Override
     public void onReload(ReloadCause cause) {
         super.onReload(cause);
         if (cause.equals("json")) jsonManager.invalidateCache();
     }
-
     public Class<? extends Entity>[] loadEntites() {
         return new Class[]{PlayerData.class};
     }
@@ -247,21 +262,19 @@ public final class XG7Plugins extends Plugin {
     public ICommand[] loadCommands() {
         return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand()};
     }
-
     @Override
     public Listener[] loadEvents() {
         return new Listener[]{new JoinListener()};
     }
-
     @Override
     public PacketListener[] loadPacketEvents() {
         return null;
     }
-
     public Task[] loadRepeatingTasks() {
         return new Task[]{cooldownManager.getTask(), new DatabaseKeepAlive()};
     }
 
+    // Carregar ajuda
     @Override
     public void loadHelp() {
         this.helpCommandGUI = new HelpCommandGUI(this, new XG7PluginsHelpGUI(this));

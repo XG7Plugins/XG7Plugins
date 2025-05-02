@@ -1,7 +1,6 @@
 package com.xg7plugins.utils.text.component;
 
 import com.xg7plugins.utils.Pair;
-import com.xg7plugins.utils.text.TextCentralizer;
 import com.xg7plugins.utils.text.component.event.ClickEvent;
 import com.xg7plugins.utils.text.component.event.HoverEvent;
 import lombok.Data;
@@ -11,7 +10,6 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.regex.Pattern;
 
 @Data
 public class Component implements Cloneable {

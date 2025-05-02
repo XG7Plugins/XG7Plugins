@@ -7,12 +7,12 @@ import org.bukkit.entity.Entity;
 
 @Getter
 @Setter
-public class Area implements Cloneable {
+public class Region implements Cloneable {
 
     private Location startPoint;
     private Location endPoint;
 
-    public Area(Location startPoint, Location endPoint) {
+    public Region(Location startPoint, Location endPoint) {
         if (!startPoint.getWorldName().equals(endPoint.getWorldName())) {
             throw new IllegalArgumentException("Both locations must be in the same world");
         }

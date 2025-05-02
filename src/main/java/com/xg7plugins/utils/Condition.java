@@ -27,22 +27,6 @@ public enum Condition {
             throw new RuntimeException(e);
         }
     }),
-    EQUALS((conditionPack) -> {
-        try {
-            String[] split = conditionPack.conditionValue.split(", ");
-            return split[0].equals(split[1]);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }),
-    NOT_EQUALS((conditionPack) -> {
-        try {
-            String[] split = conditionPack.conditionValue.split(", ");
-            return !split[0].equals(split[1]);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }),
     PERMISSION((conditionPack -> conditionPack.getPlayer().hasPermission(conditionPack.getConditionValue()))),
     NO_PERMISSION((conditionPack) -> !conditionPack.getPlayer().hasPermission(conditionPack.getConditionValue()));
 
