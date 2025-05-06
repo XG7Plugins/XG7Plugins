@@ -3,7 +3,7 @@ package com.xg7plugins.data.playerdata;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.database.query.Query;
 import com.xg7plugins.data.database.query.Transaction;
-import com.xg7plugins.utils.DAO;
+import com.xg7plugins.data.database.DAO;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;

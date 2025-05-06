@@ -114,6 +114,9 @@ redis-cache:
 
   max-wait-time: 10s
 
+paid-keys:
+  - plugin: "XG7lobby"
+    key: "dkdfkansfpoansfopasdnfo"
 
 #DON'T CHANGE THIS
 config-version: 1.1

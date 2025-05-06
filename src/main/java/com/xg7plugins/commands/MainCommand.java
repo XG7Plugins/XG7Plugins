@@ -8,7 +8,6 @@ import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.server.SoftDependencies;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

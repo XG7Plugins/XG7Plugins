@@ -1,5 +1,6 @@
 package com.xg7plugins.events.bukkitevents;
 
+import com.xg7plugins.data.config.ConfigBoolean;
 import org.bukkit.event.EventPriority;
 
 import java.lang.annotation.ElementType;
@@ -14,6 +15,9 @@ public @interface EventHandler {
     boolean isOnlyInWorld() default false;
     boolean ignoreCancelled() default false;
     EventPriority priority() default EventPriority.NORMAL;
-    String[] enabledPath() default {"", "", "false"};
+    ConfigBoolean isEnabled() default @ConfigBoolean(
+            configName = "",
+            path = ""
+    );
 
 }

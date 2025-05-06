@@ -8,8 +8,8 @@ import lombok.Data;
 
 import java.util.UUID;
 
-@Table(name = "player_data")
 @Data
+@Table(name = "player_data")
 public class PlayerData implements Entity<UUID, PlayerData> {
 
     @Pkey

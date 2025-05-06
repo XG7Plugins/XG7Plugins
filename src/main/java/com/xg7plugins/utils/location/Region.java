@@ -40,7 +40,7 @@ public class Region implements Cloneable {
     }
     @Override
     public String toString() {
-        return "Area{" +
+        return "Region{" +
                 "startPoint=" + startPoint +
                 ", endPoint=" + endPoint +
                 '}';

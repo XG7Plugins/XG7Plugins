@@ -9,7 +9,6 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
 import com.xg7plugins.modules.xg7scores.scores.ActionBar;
 import com.xg7plugins.server.MinecraftVersion;
-import com.xg7plugins.server.SoftDependencies;
 import com.xg7plugins.utils.Condition;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.component.Component;

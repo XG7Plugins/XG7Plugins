@@ -119,18 +119,6 @@ public abstract class Plugin extends JavaPlugin {
         XG7Plugins.register(this);
     }
 
-    public Class<? extends Entity>[] loadEntites() {
-        return null;
-    }
-    public ICommand[] loadCommands() {
-        return null;
-    }
-    public Listener[] loadEvents() {
-        return null;
-    }
-    public PacketListener[] loadPacketEvents() {
-        return null;
-    }
     public Task[] loadRepeatingTasks() {
         return null;
     }

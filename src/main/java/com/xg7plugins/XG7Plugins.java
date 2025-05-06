@@ -10,7 +10,6 @@ import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.JsonManager;
-import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
 import com.xg7plugins.data.playerdata.PlayerData;
@@ -37,7 +36,6 @@ import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.server.ServerInfo;
-import com.xg7plugins.server.SoftDependencies;
 import com.xg7plugins.tasks.*;
 import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
@@ -320,6 +318,9 @@ public final class XG7Plugins extends Plugin {
     }
     public static Plugin getXG7Plugin(String name) {
         return XG7Plugins.getInstance().getPlugins().get(name);
+    }
+    public static <T extends Plugin> T getXG7Plugin(Class<? extends Plugin> pluginClass) {
+        return (T) XG7Plugins.getInstance().getPlugins().values().stream().filter(plugin -> pluginClass == plugin.getClass()).findFirst().orElse(null);
     }
     public static JsonManager json() {
         return XG7Plugins.getInstance().getJsonManager();

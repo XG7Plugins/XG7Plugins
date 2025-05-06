@@ -11,10 +11,6 @@ import java.util.List;
 
 public interface ICommand {
 
-    Plugin getPlugin();
-
-    default boolean isEnabled() {return true;}
-
     default ICommand[] getSubCommands() {
         return new ICommand[0];
     }
@@ -29,8 +25,4 @@ public interface ICommand {
 
     Item getIcon();
 
-    default void syntaxError(CommandSender sender, String syntax) {
-        Text.fromLang(sender, XG7Plugins.getInstance(),"commands.syntax-error")
-                .thenAccept(text -> text.replace("syntax", syntax).send(sender));
-    }
 }

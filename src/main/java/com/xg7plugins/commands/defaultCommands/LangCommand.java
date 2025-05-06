@@ -13,7 +13,6 @@ import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
-import com.xg7plugins.server.SoftDependencies;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;

@@ -1,4 +1,4 @@
-package com.xg7plugins.utils;
+package com.xg7plugins.data.database;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
