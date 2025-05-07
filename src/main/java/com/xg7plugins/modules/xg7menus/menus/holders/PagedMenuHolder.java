@@ -1,5 +1,6 @@
 package com.xg7plugins.modules.xg7menus.menus.holders;
 
+import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
 import lombok.Getter;
@@ -22,15 +23,17 @@ public class PagedMenuHolder extends MenuHolder {
     }
 
     public void goPage(int page) {
-        this.page = page;
-        getMenu().goPage(page);
+        getMenu().goPage(page, this).thenAccept((p) -> this.page = p);
     }
     public void nextPage() {
-        getMenu().goPage(page + 1).thenAccept((page) -> this.page = page);
+        goPage(page + 1);
     }
     public void previousPage() {
-        getMenu().goPage(page - 1).thenAccept((page) -> this.page = page);
+        goPage(page - 1);
+    }
 
+    public static void refresh(PagedMenuHolder menuHolder) {
+        IBasicMenu.refresh(menuHolder).thenRun(() -> menuHolder.goPage(0));
     }
 
 }

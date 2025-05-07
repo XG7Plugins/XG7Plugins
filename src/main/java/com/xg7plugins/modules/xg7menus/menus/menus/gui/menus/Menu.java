@@ -14,6 +14,7 @@ public abstract class Menu implements IBasicMenu {
 
     private IMenuConfigurations menuConfigs;
 
+    @Override
     public void open(Player player) {
         new MenuHolder(this, player);
     }

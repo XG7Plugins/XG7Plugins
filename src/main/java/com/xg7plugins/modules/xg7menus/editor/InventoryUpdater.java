@@ -8,6 +8,7 @@ import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,19 +27,45 @@ public class InventoryUpdater implements InventoryShaper {
 
     @Override
     public void setItem(Slot slot, Item item) {
-        holder.getInventory().setItem(slot.get(), item.getItemStack());
+        if (item.isAir()) {
+            holder.getInventory().clear(slot.get());
+            clickActions.remove(slot.get());
+            holder.getMenu().onUpdate(holder, MenuUpdateActions.ITEM_REMOVED);
+            return;
+        }
+        holder.getInventory().setItem(slot.get(), item.getItemFor(holder.getPlayer(), holder.getMenu().getPlugin()));
 
         if (item instanceof ClickableItem && item.getSlot() == slot.get()) {
             ClickableItem clickableItem = (ClickableItem) item;
             clickActions.put(slot.get(), clickableItem.getOnClick());
+            holder.getMenu().onUpdate(holder, MenuUpdateActions.ITEM_CHANGED);
+            return;
         }
+
+        clickActions.remove(slot.get());
 
         holder.getMenu().onUpdate(holder, MenuUpdateActions.ITEM_CHANGED);
     }
 
     @Override
+    public void addItem(Item item) {
+        if (item == null) return;
+        if (item.getSlot() >= 0) {
+            setItem(Slot.fromSlot(item.getSlot()), item);
+            return;
+        }
+        holder.getInventory().addItem(item.getItemFor(holder.getPlayer(), holder.getMenu().getPlugin()));
+    }
+
+
+    @Override
     public Item getItem(Slot slot) {
-        return holder.getInventory().getItem(slot.get()) == null ? null : new Item(holder.getInventory().getItem(slot.get()));
+        return Item.from(holder.getInventory().getItem(slot.get())).slot(slot);
+    }
+
+    @Override
+    public boolean hasItem(Slot slot) {
+        return !Item.from(holder.getInventory().getItem(slot.get())).isAir();
     }
 
     @Override

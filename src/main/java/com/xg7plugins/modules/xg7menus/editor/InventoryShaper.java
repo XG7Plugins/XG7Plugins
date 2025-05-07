@@ -9,9 +9,13 @@ public interface InventoryShaper {
 
     void setItem(Slot slot, Item item);
 
+    void addItem(Item item);
+
     Item getItem(Slot slot);
 
     void removeItem(Slot slot);
+
+    boolean hasItem(Slot slot);
 
     void clearInventory();
 

@@ -27,6 +27,16 @@ public class InventoryEditor implements InventoryShaper {
     }
 
     @Override
+    public void addItem(Item item) {
+        if (item == null) return;
+        if (item.getSlot() >= 0) {
+            setItem(Slot.fromSlot(item.getSlot()), item);
+            return;
+        }
+        items.put(Slot.fromSlot(items.size()), item);
+    }
+
+    @Override
     public Item getItem(Slot slot) {
         return items.get(slot);
     }
@@ -34,6 +44,11 @@ public class InventoryEditor implements InventoryShaper {
     @Override
     public void removeItem(Slot slot) {
         items.remove(slot);
+    }
+
+    @Override
+    public boolean hasItem(Slot slot) {
+        return items.containsKey(slot);
     }
 
     @Override

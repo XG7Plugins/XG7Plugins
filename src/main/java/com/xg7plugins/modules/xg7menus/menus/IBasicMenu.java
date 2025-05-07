@@ -51,11 +51,11 @@ public interface IBasicMenu {
             holder.getInventory().clear();
 
             for (Item item : holder.getMenu().getItems(holder.getPlayer())) {
-                holder.getInventoryUpdater().setItem(Slot.fromSlot(item.getSlot()), item);
+                holder.getInventoryUpdater().addItem(item);
             }
             if (holder.getMenu().getDefaultClickableItems() == null) return;
             for (ClickableItem item : holder.getMenu().getDefaultClickableItems()) {
-                holder.getInventoryUpdater().setItem(Slot.fromSlot(item.getSlot()), item);
+                holder.getInventoryUpdater().addItem(item);
             }
 
         });

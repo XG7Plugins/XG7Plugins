@@ -1,8 +1,12 @@
 package com.xg7plugins.modules.xg7menus.menus.menus.gui.menus;
 
 import com.xg7plugins.modules.xg7menus.Slot;
+import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
+import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
 import org.bukkit.entity.Player;
 
@@ -16,44 +20,56 @@ public abstract class PagedMenu extends Menu {
 
     public PagedMenu(IMenuConfigurations menuConfigs, Slot pos1, Slot pos2) {
         super(menuConfigs);
-        this.pos1 = pos1;
-        this.pos2 = pos2;
+
+        int startRow = Math.min(pos1.getRow(), pos2.getRow());
+        int finalRow = Math.max(pos1.getRow(), pos2.getRow());
+        int startColumn = Math.min(pos1.getColumn(), pos2.getColumn());
+        int finalColumn = Math.max(pos1.getColumn(), pos2.getColumn());
+
+        this.pos1 = Slot.of(startRow, startColumn);
+        this.pos2 = Slot.of(finalRow, finalColumn);
+    }
+
+    @Override
+    public void open(Player player) {
+        PagedMenuHolder menuHolder = new PagedMenuHolder(this, player);
+        refresh(menuHolder);
     }
 
     public abstract List<Item> pagedItems(Player player);
 
-    public CompletableFuture<Integer> goPage(int page, PlayerMenuHolder menuHolder) {
+    public CompletableFuture<Integer> goPage(int page, PagedMenuHolder menuHolder) {
         return CompletableFuture.supplyAsync(() -> {
 
             List<Item> pagedItems = pagedItems(menuHolder.getPlayer());
 
-            List<Item> itemsToAdd = pagedItems.subList(page * (pos1), pagedItems.size());
+            if (page < 0) return 0;
+            if (page * Slot.areaOf(pos1, pos2) >= pagedItems.size()) return 0;
+            List<Item> itemsToAdd = pagedItems.subList(page * (Slot.areaOf(pos1, pos2)), pagedItems.size());
 
             int index = 0;
 
-            for (int x = pageMenu.getStartEdge().getRow(); x <= pageMenu.getEndEdge().getRow(); x++) {
-                for (int y = pageMenu.getStartEdge().getColumn(); y <= pageMenu.getEndEdge().getColumn(); y++) {
-                    if (index >= itemsToAdd.size()) {
-                        if (inventory.getItem(Slot.get(x,y)) != null) inventory.setItem(Slot.get(x,y), new ItemStack(Material.AIR));
-                        continue;
-                    }
-                    inventory.setItem(Slot.get(x,y), itemsToAdd.get(index).getItemFor(player, plugin));
+            InventoryUpdater inventory = menuHolder.getInventoryUpdater();
 
-                    if (itemsToAdd.get(index) instanceof ClickableItem) {
-                        int finalIndexToAdd = index;
-                        this.updatedClickEvents.compute(Slot.get(x,y), (k, v) -> ((ClickableItem)itemsToAdd.get(finalIndexToAdd)).getOnClick());
-                        index++;
+            for (int x = pos1.getRow(); x <= pos2.getRow(); x++) {
+                for (int y = pos1.getColumn(); y <= pos2.getColumn(); y++) {
+
+                    if (index >= itemsToAdd.size()) {
+                        if (inventory.hasItem(Slot.of(x, y))) inventory.setItem(Slot.of(x,y), Item.air());
                         continue;
                     }
-                    this.updatedClickEvents.remove(Slot.get(x,y));
+                    inventory.setItem(Slot.of(x,y), itemsToAdd.get(index));
+
                     index++;
                 }
             }
-            // Logic to go to the specified page
+
+            return page;
         });
     }
 
-    public static void refresh() {
 
+    public static void refresh(PagedMenuHolder menuHolder) {
+        IBasicMenu.refresh(menuHolder).thenRun(() -> menuHolder.goPage(0));
     }
 }
