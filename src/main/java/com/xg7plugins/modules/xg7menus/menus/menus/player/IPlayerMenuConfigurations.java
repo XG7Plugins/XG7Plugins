@@ -1,8 +1,9 @@
-package com.xg7plugins.modules.xg7menus.menus.player;
+package com.xg7plugins.modules.xg7menus.menus.menus.player;
 
+import com.xg7plugins.modules.xg7menus.menus.IBasicMenuConfigs;
 import org.bukkit.entity.Player;
 
-public interface PlayerMenuMessages {
+public interface IPlayerMenuConfigurations extends IBasicMenuConfigs {
 
     default String getOnDropMessage(Player player) {
         return "";
@@ -25,5 +26,6 @@ public interface PlayerMenuMessages {
     default String getOnInteractMessage(Player player) {
         return "";
     }
+
 
 }

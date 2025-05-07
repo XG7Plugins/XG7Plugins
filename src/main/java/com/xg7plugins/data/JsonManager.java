@@ -64,7 +64,6 @@ public class JsonManager {
 
     }
 
-
     @SuppressWarnings("unchecked")
     public <T> CompletableFuture<T> load(Plugin plugin, String path, Class<T> clazz) {
         return (CompletableFuture<T>) CompletableFuture.supplyAsync(() -> {

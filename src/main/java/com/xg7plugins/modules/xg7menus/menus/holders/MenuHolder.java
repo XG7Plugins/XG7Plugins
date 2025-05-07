@@ -1,38 +1,48 @@
 package com.xg7plugins.modules.xg7menus.menus.holders;
 
-import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.modules.xg7menus.events.ClickEvent;
-import com.xg7plugins.modules.xg7menus.menus.BaseMenu;
+import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
+import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-
-import java.util.HashMap;
-import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
 
 @Getter
-public class MenuHolder implements InventoryHolder {
+public class MenuHolder extends BasicMenuHolder implements InventoryHolder {
 
-    protected final String id;
-    protected final Plugin plugin;
-    protected Inventory inventory;
-    protected final BaseMenu menu;
-    protected final Player player;
-    protected final HashMap<Integer, Consumer<ClickEvent>> updatedClickEvents = new HashMap<>();
+    private final Inventory inventory;
+    private final InventoryUpdater inventoryUpdater;
 
-    public MenuHolder(String id, Plugin plugin, String title, int size, InventoryType type, BaseMenu menu, Player player) {
-        this.id = id;
-        this.plugin = plugin;
-        if (title != null) this.inventory = type == null ? Bukkit.createInventory(this, size, title) : Bukkit.createInventory(this, type, title);
-        this.menu = menu;
-        this.player = player;
+    public MenuHolder(Menu menu, Player player) {
+        super(menu, player);
+        IMenuConfigurations menuConfigurations = menu.getMenuConfigs();
+
+       this.inventory = menuConfigurations.getInventoryType() == null ?
+               Bukkit.createInventory(this, menuConfigurations.getRows() * 9, menuConfigurations.getTitle())
+               :
+               Bukkit.createInventory(this, menuConfigurations.getInventoryType(), menuConfigurations.getTitle());
+
+       this.inventoryUpdater = new InventoryUpdater(this);
+
+       player.openInventory(inventory);
+
+       IBasicMenu.refresh(this);
+
     }
 
+
+    @NotNull
     @Override
     public Inventory getInventory() {
         return inventory;
+    }
+
+    @Override
+    public InventoryUpdater getInventoryUpdater() {
+        return inventoryUpdater;
     }
 }

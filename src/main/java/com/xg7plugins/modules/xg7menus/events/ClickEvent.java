@@ -1,23 +1,21 @@
 package com.xg7plugins.modules.xg7menus.events;
 
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
 import lombok.Getter;
-import org.bukkit.Location;
-import org.bukkit.entity.HumanEntity;
-
 
 @Getter
 public class ClickEvent extends MenuEvent {
 
-    private final int clickedSlot;
-    private final int clickedRawSlot;
-    private final Item clickedItem;
+    private final int rawSlot;
+    private final Slot slotClicked;
+    private final ClickAction clickAction;
 
-    public ClickEvent(HumanEntity whoClicked, ClickAction clickAction, MenuHolder menu, int clickedSlot, int clickedRawSlot, Item clickedItem, Location locationClicked) {
-        super(whoClicked, clickAction, menu, locationClicked);
-        this.clickedSlot = clickedSlot;
-        this.clickedItem = clickedItem;
-        this.clickedRawSlot = clickedRawSlot;
+
+    public ClickEvent(MenuHolder holder, ClickAction clickAction, int rawSlot, Slot slotClicked) {
+        super(holder);
+        this.clickAction = clickAction;
+        this.rawSlot = rawSlot;
+        this.slotClicked = slotClicked;
     }
 }

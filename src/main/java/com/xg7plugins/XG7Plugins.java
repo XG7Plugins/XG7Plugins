@@ -42,8 +42,6 @@ import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;

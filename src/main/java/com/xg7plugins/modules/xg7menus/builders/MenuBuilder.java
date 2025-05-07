@@ -2,7 +2,6 @@ package com.xg7plugins.modules.xg7menus.builders;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.MenuException;
-import com.xg7plugins.modules.xg7menus.MenuPermissions;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.gui.Menu;

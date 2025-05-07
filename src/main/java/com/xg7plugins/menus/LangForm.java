@@ -15,6 +15,7 @@ import org.geysermc.cumulus.util.FormImage;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class LangForm extends SimpleForm {
 
     public LangForm() {

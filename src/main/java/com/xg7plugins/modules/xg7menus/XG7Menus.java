@@ -6,9 +6,8 @@ import com.xg7plugins.events.Listener;
 import com.xg7plugins.modules.Module;
 import com.xg7plugins.modules.xg7menus.menuhandler.MenuHandler;
 import com.xg7plugins.modules.xg7menus.menuhandler.PlayerMenuHandler;
-import com.xg7plugins.modules.xg7menus.menus.BaseMenu;
+import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.player.PlayerMenu;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -20,8 +19,9 @@ public class XG7Menus implements Module {
     @Getter
     private static XG7Menus instance;
 
+    @Getter
     private final HashMap<UUID, PlayerMenuHolder> playerMenusMap = new HashMap<>();
-    private final HashMap<String, BaseMenu> registeredMenus = new HashMap<>();
+    private final HashMap<String, IBasicMenu> registeredMenus = new HashMap<>();
 
 
     @Override
@@ -39,7 +39,8 @@ public class XG7Menus implements Module {
     public void onDisable() {
         playerMenusMap.forEach((id, menu) -> {
             Player player = Bukkit.getPlayer(id);
-            ((PlayerMenu) menu.getMenu()).close(player);
+            if (player == null) return;
+            menu.getMenu().close(menu);
         });
     }
 
@@ -48,34 +49,35 @@ public class XG7Menus implements Module {
         return "XG7Menus";
     }
 
-    public void registerMenus(BaseMenu... menus) {
+    public void registerMenus(IBasicMenu... menus) {
         if (menus == null) return;
-        for (BaseMenu menu : menus) {
-            XG7Plugins.getInstance().getDebug().loading("Registering menu " + menu.getId());
-            registeredMenus.put(menu.getPlugin().getName() + ":" + menu.getId(), menu);
+        for (IBasicMenu menu : menus) {
+            XG7Plugins.getInstance().getDebug().loading("Registering menu " + menu.getMenuConfigs().getId());
+            registeredMenus.put(menu.getPlugin().getName() + ":" + menu.getMenuConfigs().getId(), menu);
         }
     }
-    public <T extends BaseMenu> T getMenu(Plugin plugin, String id) {
+    public <T extends IBasicMenu> T getMenu(Plugin plugin, String id) {
         return (T) registeredMenus.get(plugin.getName() + ":" + id);
     }
 
-    public void registerPlayerMenuHolder(UUID playerId, PlayerMenuHolder holder) {
-        XG7Plugins.getInstance().getDebug().info("Registering player menu holder for " + playerId);
-        playerMenusMap.put(playerId, holder);
+    public static void registerPlayerMenuHolder(PlayerMenuHolder holder) {
+        XG7Plugins.getInstance().getDebug().info("Registering player menu holder for " + holder.getPlayer().getUniqueId());
+        XG7Menus.getInstance().getPlayerMenusMap().put(holder.getPlayer().getUniqueId(), holder);
     }
 
-    public void removePlayerMenuHolder(UUID playerId) {
+    public static void removePlayerMenuHolder(UUID playerId) {
         XG7Plugins.getInstance().getDebug().info("Removing player menu holder for " + playerId);
-        playerMenusMap.remove(playerId);
+        XG7Menus.getInstance().getPlayerMenusMap().remove(playerId);
     }
 
-    public <T extends PlayerMenuHolder> T getPlayerMenuHolder(UUID playerId) {
+    public static <T extends PlayerMenuHolder> T getPlayerMenuHolder(UUID playerId) {
         XG7Plugins.getInstance().getDebug().info("Getting player menu holder for " + playerId);
-        return (T) playerMenusMap.get(playerId);
+        return (T) XG7Menus.getInstance().getPlayerMenusMap().get(playerId);
     }
 
-    public boolean hasPlayerMenuHolder(UUID playerId) {
-        return playerMenusMap.containsKey(playerId);
+    public static boolean hasPlayerMenuHolder(UUID playerId) {
+        return XG7Menus.getInstance().getPlayerMenusMap().containsKey(playerId);
     }
+
 
 }

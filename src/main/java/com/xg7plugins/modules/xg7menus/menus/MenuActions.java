@@ -1,6 +1,6 @@
-package com.xg7plugins.modules.xg7menus;
+package com.xg7plugins.modules.xg7menus.menus;
 
-public enum MenuPermissions {
+public enum MenuActions {
 
     DRAG,
     CLICK,

@@ -2,7 +2,6 @@ package com.xg7plugins.modules.xg7menus.menuhandler;
 
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
-import com.xg7plugins.modules.xg7menus.MenuPermissions;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.events.ClickEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;

@@ -25,7 +25,5 @@ public class LangItemTypeAdapter implements ConfigTypeAdapter<Item> {
         langItem.setNBTTag("lang-id", langid);
         return langItem;
 
-
-
     }
 }

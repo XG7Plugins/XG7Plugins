@@ -11,6 +11,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
@@ -107,6 +108,9 @@ public class Item {
     public Item slot(int slot) {
         this.slot = slot;
         return this;
+    }
+    public Item slot(Slot slot) {
+        return slot(slot.get());
     }
 
     public ClickableItem clickable() {

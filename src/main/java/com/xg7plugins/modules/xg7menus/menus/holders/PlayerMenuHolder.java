@@ -1,21 +1,40 @@
 package com.xg7plugins.modules.xg7menus.menus.holders;
 
-import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.modules.xg7menus.menus.BaseMenu;
+import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
+import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
+import lombok.Getter;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
-public class PlayerMenuHolder extends MenuHolder {
+import java.util.HashMap;
 
-    private final Player player;
+@Getter
+public class PlayerMenuHolder extends BasicMenuHolder {
 
-    public PlayerMenuHolder(String id, Plugin plugin, BaseMenu menu, Player player) {
-        super(id, plugin, null,9,null, menu, player);
-        this.player = player;
+    private final InventoryUpdater inventoryUpdater;
+    private final HashMap<Integer, ItemStack> oldItems = new HashMap<>();
+
+    public PlayerMenuHolder(IBasicMenu menu, Player player) {
+        super(menu, player);
+
+        this.inventoryUpdater = new InventoryUpdater(this);
+
+        for (int i = 0; i < player.getInventory().getSize(); i++) {
+            ItemStack item = player.getInventory().getItem(i);
+            if (item != null) oldItems.put(i, item);
+        }
+
+        IBasicMenu.refresh(this);
     }
 
     @Override
-    public Inventory getInventory() {
-        return player.getInventory();
+    public PlayerInventory getInventory() {
+        return getPlayer().getInventory();
+    }
+
+    @Override
+    public InventoryUpdater getInventoryUpdater() {
+        return inventoryUpdater;
     }
 }
