@@ -3,13 +3,18 @@ package com.xg7plugins.commands.defaultCommands.taskCommand.subCommands;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.modules.xg7menus.builders.MenuBuilder;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.BaseMenu;
+import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;
@@ -24,7 +29,8 @@ import java.util.Collections;
         name = "see",
         description = "See Task",
         syntax = "/xg7plugins tasks see <ID>",
-        permission = "xg7plugins.command.tasks.see"
+        permission = "xg7plugins.command.tasks.see",
+        pluginClass = XG7Plugins.class
 )
 public class SeeSubcommand implements ICommand {
 
@@ -36,7 +42,7 @@ public class SeeSubcommand implements ICommand {
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {
-            syntaxError(sender, "/xg7plugins tasks see <ID>");
+            CommandMessages.SYNTAX_ERROR.send(getPlugin(), sender, getCommandsConfigurations().syntax());
             return;
         }
 
@@ -59,19 +65,19 @@ public class SeeSubcommand implements ICommand {
                     if (task.getState() == TaskState.RUNNING) {
                         XG7Plugins.taskManager().cancelTask(task.getPlugin().getName() + ":" + task.getName());
                         Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
-                        BaseMenu.refresh(event.getInventoryHolder());
+                        IBasicMenu.refresh(event.getHolder());
                         return;
                     }
                     if ((task.getPlugin().getName() + ":" + task.getName()).equals("TPS calculator")) {
                         XG7Plugins.getInstance().getTpsCalculator().start();
                         Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
-                        BaseMenu.refresh(event.getInventoryHolder());
+                        IBasicMenu.refresh(event.getHolder());
                         return;
                     }
                     XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get(task.getPlugin().getName() + ":" + task.getName()));
                     Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.restarted").thenAccept(text -> text.send(sender));
 
-                    BaseMenu.refresh(event.getInventoryHolder());
+                    IBasicMenu.refresh(event.getHolder());
                     return;
                 }
                 if (event.getMenuAction().isLeftClick()) {
@@ -80,8 +86,7 @@ public class SeeSubcommand implements ICommand {
                                 text.replace("id", task.getPlugin().getName() + ":" + task.getName()).send(sender);
                             });
                 }
-
-                BaseMenu.refresh(event.getInventoryHolder());
+                IBasicMenu.refresh(event.getHolder());
             });
             builder.name("&e" + task.getName());
             builder.lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()));
@@ -98,7 +103,12 @@ public class SeeSubcommand implements ICommand {
             );
             builder.slot(13);
 
-            MenuBuilder.create("task-menu-for-task-" + id, XG7Plugins.getInstance()).addItem(builder).title("Task: " + id).size(27).build().open((Player) sender);
+            MenuBuilder.inicialize(IMenuConfigurations.of(
+                    getPlugin(),
+                    "task-menu-for-task-" + id,
+                    "Task: " + id,
+                    3
+            )).items(builder).build().open((Player) sender);
             return;
         }
 

@@ -1,4 +1,4 @@
-package com.xg7plugins.menus;
+package com.xg7plugins.plugin_menus;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;

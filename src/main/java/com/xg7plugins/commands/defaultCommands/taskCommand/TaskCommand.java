@@ -3,6 +3,7 @@ package com.xg7plugins.commands.defaultCommands.taskCommand;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.defaultCommands.taskCommand.subCommands.DeleteTaskSubCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.subCommands.RestartTaskSubCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.subCommands.SeeSubcommand;
@@ -20,14 +21,10 @@ import java.util.List;
         name = "tasks",
         description = "Task Manager",
         syntax = "/xg7plugins tasks [<stop | delete | restart | see> <ID>]",
-        permission = "xg7plugins.command.tasks"
+        permission = "xg7plugins.command.tasks",
+        pluginClass = XG7Plugins.class
 )
 public class TaskCommand implements ICommand {
-
-    @Override
-    public Plugin getPlugin() {
-        return XG7Plugins.getInstance();
-    }
 
     private final ICommand[] subCommands = new ICommand[]{new DeleteTaskSubCommand(), new SeeSubcommand(), new StopTaskSubCommand(), new RestartTaskSubCommand()};
 
@@ -43,7 +40,7 @@ public class TaskCommand implements ICommand {
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (!(sender instanceof  Player)) {
-            syntaxError(sender,"/xg7plugins tasks [<stop> <ID>, <delete> <ID>, <restart> <ID>, <see> <ID>]");
+            CommandMessages.SYNTAX_ERROR.send(getPlugin(), sender, getCommandsConfigurations().syntax());
             return;
         }
 

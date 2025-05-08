@@ -103,7 +103,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull org.bukkit.command.Command cmd, @NotNull String s, @NotNull String[] strings) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command cmd, @NotNull String s, @NotNull String[] strings) {
 
         PluginConfigurations plConfig = plugin.getClass().getAnnotation(PluginConfigurations.class);;
 
@@ -113,72 +113,32 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
 
         if (command instanceof MainCommand) {
-            if (!commandSender.hasPermission(commandConfig.permission())) {
-                CommandMessages.NO_PERMISSION.send(plugin, commandSender);
+            if (!sender.hasPermission(commandConfig.permission())) {
+                CommandMessages.NO_PERMISSION.send(plugin, sender);
                 return true;
             }
             if (strings.length == 0) {
-                CommandMessages.SYNTAX_ERROR.send(plugin, commandSender, commandConfig.syntax());
+                CommandMessages.SYNTAX_ERROR.send(plugin, sender, commandConfig.syntax());
                 return true;
             }
 
             if (strings[0].equalsIgnoreCase("help")) {
-                command.onCommand(commandSender,new CommandArgs(strings));
+                command.onCommand(sender,new CommandArgs(strings));
                 return true;
             }
 
             command = commands.get(plConfig.mainCommandName() + strings[0]);
 
             if (command == null) {
-                CommandMessages.COMMAND_NOT_FOUND.send(plugin,commandSender);
+                CommandMessages.COMMAND_NOT_FOUND.send(plugin,sender);
                 return true;
             }
 
             strings = Arrays.copyOfRange(strings, 1, strings.length);
 
-            commandConfig = command.getCommandsConfigurations();
-
         }
 
-
-        if (processSubCommands(command, commandSender, strings, 0)) return true;
-
-        if (!commandSender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
-            Text.fromLang(commandSender, XG7Plugins.getInstance(), "commands.no-permission").thenAccept(text -> text.send(commandSender));
-            return true;
-        }
-
-        if (commandConfig.isPlayerOnly() && !(commandSender instanceof Player)) {
-            Text.fromLang(commandSender, XG7Plugins.getInstance(), "commands.not-a-player").thenAccept(text -> text.send(commandSender));
-            return true;
-        }
-        if (commandConfig.isConsoleOnly() && commandSender instanceof Player) {
-            Text.fromLang(commandSender, XG7Plugins.getInstance(), "commands.is-a-player").thenAccept(text -> text.send(commandSender));
-            return true;
-        }
-        if (commandSender instanceof Player) {
-            if (commandConfig.isInEnabledWorldOnly() && !plugin.getEnabledWorlds().contains(((Player) commandSender).getWorld().getName())) {
-                Text.fromLang(commandSender, XG7Plugins.getInstance(), "commands.disabled-world").thenAccept(text -> text.send(commandSender));
-                return true;
-            }
-        }
-
-        CommandArgs commandArgs = new CommandArgs(strings);
-
-        if (commandConfig.isAsync()) {
-
-            final ICommand finalCommand = command;
-
-            XG7Plugins.taskManager().runAsyncTask(plugin,"commands", () -> finalCommand.onCommand(commandSender,commandArgs));
-
-            return true;
-        }
-
-        try {
-            command.onCommand(commandSender,commandArgs);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        processCommand(command, sender, strings);
 
         return true;
     }
@@ -206,52 +166,58 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         if (subCommandChosen.getSubCommands().length > 0 && processSubCommands(subCommandChosen, sender, args, index + 1)) return true;
 
-        Command commandConfig = subCommandChosen.getClass().getAnnotation(Command.class);
+        processCommand(subCommandChosen, sender, Arrays.copyOfRange(args, index + 1, args.length));
+
+        return true;
+    }
+    
+    private void processCommand(ICommand command, CommandSender sender, String[] strings) {
+        if (processSubCommands(command, sender, strings, 0)) return;
+        
+        Command commandConfig = command.getCommandsConfigurations();
 
         if (!sender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
-            Text.fromLang(sender, XG7Plugins.getInstance(), "commands.no-permission").thenAccept(text -> text.send(sender));
-            return true;
+            CommandMessages.NO_PERMISSION.send(plugin, sender);
+            return;
         }
 
         if (commandConfig.isPlayerOnly() && !(sender instanceof Player)) {
-            Text.fromLang(sender, XG7Plugins.getInstance(), "commands.not-a-player").thenAccept(text -> text.send(sender));
-            return true;
+            CommandMessages.NOT_A_PLAYER.send(plugin, sender);
+            return;
         }
         if (commandConfig.isConsoleOnly() && sender instanceof Player) {
-            Text.fromLang(sender, XG7Plugins.getInstance(), "commands.is-a-player").thenAccept(text -> text.send(sender));
-            return true;
+            CommandMessages.IS_A_PLAYER.send(plugin, sender);
+            return;
         }
         if (sender instanceof Player) {
             if (commandConfig.isInEnabledWorldOnly() && !plugin.getEnabledWorlds().contains(((Player) sender).getWorld().getName())) {
-                Text.fromLang(sender, XG7Plugins.getInstance(), "commands.disabled-world").thenAccept(text -> text.send(sender));
-                return true;
+                CommandMessages.DISABLED_WORLD.send(plugin, sender);
+                return;
             }
         }
 
-        CommandArgs commandArgs = new CommandArgs(Arrays.copyOfRange(args, index + 1, args.length));
+        CommandArgs commandArgs = new CommandArgs(strings);
 
         if (commandConfig.isAsync()) {
 
-            final ICommand finalSubCommand = subCommandChosen;
+            final ICommand finalCommand = command;
 
-            XG7Plugins.taskManager().runAsyncTask(plugin,"commands", () -> finalSubCommand.onCommand(sender,commandArgs));
+            XG7Plugins.taskManager().runAsyncTask(plugin,"commands", () -> finalCommand.onCommand(sender,commandArgs));
 
-            return true;
+            return;
         }
 
         try {
-            subCommandChosen.onCommand(sender,commandArgs);
+            command.onCommand(sender,commandArgs);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return true;
     }
 
 
     @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull org.bukkit.command.Command cmd, @NotNull String s, @NotNull String[] strings) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command cmd, @NotNull String s, @NotNull String[] strings) {
 
         PluginConfigurations plConfig = plugin.getClass().getAnnotation(PluginConfigurations.class);;
 
@@ -264,7 +230,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
                 return new ArrayList<>();
             }
 
-            if (commandSender.hasPermission(commandConfig.permission()) && !commandSender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
+            if (sender.hasPermission(commandConfig.permission()) && !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
                 return new ArrayList<>();
             }
 
@@ -272,7 +238,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
                 if (strings[0].equalsIgnoreCase("help")) {
 
-                    return command.onTabComplete(commandSender,new CommandArgs(strings));
+                    return command.onTabComplete(sender,new CommandArgs(strings));
                 }
 
                 command = commands.get(plConfig.mainCommandName() + strings[0]);
@@ -287,10 +253,10 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         }
 
-        if (commandSender.hasPermission(commandConfig.permission()) && !commandSender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
+        if (sender.hasPermission(commandConfig.permission()) && !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
             return new ArrayList<>();
         }
 
-        return command.onTabComplete(commandSender,new CommandArgs(strings));
+        return command.onTabComplete(sender,new CommandArgs(strings));
     }
 }

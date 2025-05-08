@@ -3,10 +3,12 @@ package com.xg7plugins.commands.defaultCommands;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.config.ConfigBoolean;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
@@ -22,19 +24,14 @@ import org.bukkit.entity.Player;
         name = "lang",
         description = "Sets the language of the player",
         syntax = "/xg7plugins lang (player, lang)",
-        permission = "xg7plugins.command.lang"
+        permission = "xg7plugins.command.lang",
+        pluginClass = XG7Plugins.class,
+        isEnabled = @ConfigBoolean(
+                configName = "config",
+                path = "lang-enabled"
+        )
 )
 public class LangCommand implements ICommand {
-
-    @Override
-    public Plugin getPlugin() {
-        return XG7Plugins.getInstance();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return Config.mainConfigOf(XG7Plugins.getInstance()).get("lang-enabled", Boolean.class).orElse(false);
-    }
 
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
@@ -43,7 +40,7 @@ public class LangCommand implements ICommand {
                 Text.fromLang(sender, XG7Plugins.getInstance(), "commands.not-a-player").thenAccept(text -> text.send(sender));
                 return;
             }
-            if (SoftDependencies.isGeyserFormsEnabled()) {
+            if (XG7Plugins.isDependencyEnabled("floodgate") && Config.mainConfigOf(XG7Plugins.getInstance()).get("enable-geyser-forms",Boolean.class).orElse(false)) {
                 if (XG7GeyserForms.getInstance().sendForm((Player) sender, "lang-form")) {
                     return;
                 }
@@ -58,14 +55,14 @@ public class LangCommand implements ICommand {
         }
 
         if (args.len() != 2) {
-            syntaxError(sender, "/lang (player, lang)");
+            CommandMessages.SYNTAX_ERROR.send(getPlugin(), sender, getCommandsConfigurations().syntax());
         }
 
         OfflinePlayer target = args.get(0, Player.class);
         String lang = XG7Plugins.getInstance().getName() + ":" + args.get(1, String.class);
 
         if (target == null || (!target.hasPlayedBefore() && !target.isOnline())) {
-            Text.fromLang(sender, XG7Plugins.getInstance(), "commands.player-not-found").thenAccept(text -> text.send(sender));
+            CommandMessages.PLAYER_NOT_FOUND.send(getPlugin(), sender);
             return;
         }
 

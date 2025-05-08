@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Command(name = "reload", description = "Reloads a plugin", syntax = "/xg7plugins reload (plugin) (cause)")
+@Command(name = "reload", description = "Reloads a plugin", syntax = "/xg7plugins reload (plugin) (cause)", pluginClass = XG7Plugins.class)
 public class ReloadCommand implements ICommand {
 
     @Override

@@ -1,4 +1,4 @@
-package com.xg7plugins.menus;
+package com.xg7plugins.plugin_menus;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.playerdata.PlayerData;
@@ -7,18 +7,26 @@ import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.gui.PageMenu;
-import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class LangMenu extends PageMenu {
-    public LangMenu(XG7Plugins plugin) {
-        super(plugin, "lang-menu", "lang:[lang-menu.title]", 54, Slot.of(2,2), Slot.of(5,8));
+public class LangMenu extends PagedMenu {
+    public LangMenu() {
+        super(IMenuConfigurations.of(
+                XG7Plugins.getInstance(),
+                "lang-menu",
+                "lang:[lang-menu.title]",
+                6,
+                XG7Plugins.getInstance().getConfig("config").get("enable-langs", Boolean.class).orElse(false)
+            ), Slot.of(2,2), Slot.of(5,8));
     }
 
     @Override
@@ -40,12 +48,7 @@ public class LangMenu extends PageMenu {
     }
 
     @Override
-    public boolean isEnabled() {
-        return XG7Plugins.getInstance().getConfig("config").get("enable-langs", Boolean.class).orElse(false);
-    }
-
-    @Override
-    protected List<Item> items(Player player) {
+    public List<Item> getItems(Player player) {
         return Arrays.asList(
                 Item.from(XMaterial.ARROW).name("lang:[go-back-item]").slot(45),
                 Item.from(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR)).name("lang:[close-item]").slot(49),
@@ -57,11 +60,11 @@ public class LangMenu extends PageMenu {
     public void onClick(ActionEvent event) {
         event.setCancelled(true);
 
-        Player player = (Player) event.getWhoClicked();
+        Player player = event.getHolder().getPlayer();
 
-        PageMenuHolder holder = (PageMenuHolder) event.getInventoryHolder();
+        PagedMenuHolder holder = (PagedMenuHolder) event.getHolder();
 
-        switch (event.getClickedSlot()) {
+        switch (event.getSlotClicked().get()) {
             case 45:
                 holder.previousPage();
                 break;
@@ -72,7 +75,7 @@ public class LangMenu extends PageMenu {
                 holder.nextPage();
                 break;
             default:
-                if (event.getClickedItem() == null || event.getClickedItem().isAir()) return;
+                if (event.getSlotClicked() == null || event.getClickedItem().isAir()) return;
 
                 String langName = event.getClickedItem().getTag("lang-id", String.class).orElse(null);
                 boolean selected = event.getClickedItem().getTag("selected", Boolean.class).orElse(false);

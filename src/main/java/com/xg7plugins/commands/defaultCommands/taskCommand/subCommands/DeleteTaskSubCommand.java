@@ -3,6 +3,7 @@ package com.xg7plugins.commands.defaultCommands.taskCommand.subCommands;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
@@ -16,19 +17,16 @@ import org.bukkit.command.CommandSender;
         description = "Delete Task",
         syntax = "/xg7plugins tasks delete <ID>",
         isAsync = true,
-        permission = "xg7plugins.command.tasks.delete"
+        permission = "xg7plugins.command.tasks.delete",
+        pluginClass = XG7Plugins.class
 )
 public class DeleteTaskSubCommand implements ICommand {
 
-    @Override
-    public Plugin getPlugin() {
-        return XG7Plugins.getInstance();
-    }
 
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {
-            syntaxError(sender, "/xg7plugins tasks delete <ID>");
+            CommandMessages.SYNTAX_ERROR.send(getPlugin(), sender, getCommandsConfigurations().syntax());
             return;
         }
 
