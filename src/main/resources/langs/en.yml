@@ -1,4 +1,4 @@
-config-version: 1.0
+config-version: 1.1
 
 locale: en_US
 formated-name: "English"
@@ -12,6 +12,7 @@ commands:
   disabled-world: "You cannot execute this command in a disabled world!"
   not-a-player: "You cannot execute this command in console!"
   is-a-player: "You cannot execute this command being a player!"
+  not-online: "This player is not online!"
   command-not-found: "Command not found!"
 
 reload-message:

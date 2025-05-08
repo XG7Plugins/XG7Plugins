@@ -2,18 +2,20 @@ package com.xg7plugins.modules.xg7menus.menus;
 
 import com.xg7plugins.boot.Plugin;
 
+import java.util.EnumSet;
+
 public interface IBasicMenuConfigs {
 
     String getId();
     Plugin getPlugin();
-    default MenuActions[] allowedActions() {
-        return new MenuActions[0];
+    default EnumSet<MenuAction> allowedActions() {
+        return EnumSet.noneOf(MenuAction.class);
     }
     default boolean isEnabled() {
         return true;
     }
     // -1 means no repeating update
-    default int repeatingUpdateMills(int slot) {
+    default int repeatingUpdateMills() {
         return -1;
     }
 
@@ -31,7 +33,7 @@ public interface IBasicMenuConfigs {
         };
     }
 
-    static IBasicMenuConfigs of(Plugin plugin, String id, MenuActions[] allowedActions, boolean enabled) {
+    static IBasicMenuConfigs of(Plugin plugin, String id, EnumSet<MenuAction> allowedActions, boolean enabled) {
         return new IBasicMenuConfigs() {
             @Override
             public String getId() {
@@ -44,7 +46,7 @@ public interface IBasicMenuConfigs {
             }
 
             @Override
-            public MenuActions[] allowedActions() {
+            public EnumSet<MenuAction> allowedActions() {
                 return allowedActions;
             }
             @Override

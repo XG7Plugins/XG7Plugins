@@ -1,5 +1,6 @@
 package com.xg7plugins.modules.xg7menus.menus.menus.gui.menus;
 
+import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
@@ -16,7 +17,9 @@ public abstract class Menu implements IBasicMenu {
 
     @Override
     public void open(Player player) {
-        new MenuHolder(this, player);
+        MenuHolder holder = new MenuHolder(this, player);
+
+        XG7Menus.registerHolder(holder);
     }
     @Override
     public void close(BasicMenuHolder menuHolder) {

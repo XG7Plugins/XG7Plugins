@@ -1,12 +1,11 @@
 package com.xg7plugins.modules.xg7menus.menus;
 
-import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.modules.xg7menus.Slot;
+import com.xg7plugins.modules.xg7menus.events.ActionEvent;
+import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
 import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -15,8 +14,6 @@ import java.util.concurrent.CompletableFuture;
 public interface IBasicMenu {
 
     IBasicMenuConfigs getMenuConfigs();
-
-    Plugin getPlugin();
 
     List<Item> getItems(Player player);
 
@@ -27,10 +24,10 @@ public interface IBasicMenu {
     void open(Player player);
     void close(BasicMenuHolder menuHolder);
 
-    default void onClick() {
+    default void onClick(ActionEvent event) {
 
     }
-    default void onDrag() {
+    default void onDrag(DragEvent event) {
 
     }
     default void onOpen(MenuEvent event) {

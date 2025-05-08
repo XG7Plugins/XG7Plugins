@@ -7,6 +7,8 @@ import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
 import com.xg7plugins.data.database.entity.Entity;
+import com.xg7plugins.dependencies.Dependency;
+import com.xg7plugins.dependencies.DependencyManager;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.help.chathelp.HelpInChat;
@@ -86,7 +88,7 @@ public abstract class Plugin extends JavaPlugin {
         }
         if (cause.equals(ReloadCause.DATABASE)) {
             xg7Plugin.getDatabaseManager().disconnectPlugin(this);
-            xg7Plugin.getDatabaseManager().connectPlugin(this, this.loadEntites());
+            xg7Plugin.getDatabaseManager().connectPlugin(this, this.loadEntities());
             return;
         }
         if (cause.equals(ReloadCause.LANGS)) {
@@ -119,10 +121,28 @@ public abstract class Plugin extends JavaPlugin {
         XG7Plugins.register(this);
     }
 
+    public Class<? extends Entity>[] loadEntities() {
+        return null;
+    }
+    public ICommand[] loadCommands() {
+        return null;
+    }
+    public Listener[] loadEvents() {
+        return null;
+    }
+    public PacketListener[] loadPacketEvents() {
+        return null;
+    }
     public Task[] loadRepeatingTasks() {
         return null;
     }
     public abstract void loadHelp();
+    public Dependency[] loadDependencies() {
+        return null;
+    }
+    public Dependency[] loadRequiredDependencies() {
+        return null;
+    }
 
     public Config getConfig(String name) {
         return configsManager.getConfig(name);

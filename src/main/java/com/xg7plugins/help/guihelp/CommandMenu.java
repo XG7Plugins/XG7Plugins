@@ -6,7 +6,7 @@ import com.xg7plugins.commands.MainCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.events.ClickEvent;
+import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.gui.PageMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
@@ -66,7 +66,7 @@ public class CommandMenu extends PageMenu {
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(ActionEvent event) {
         event.setCancelled(true);
 
         switch (event.getClickedSlot()) {

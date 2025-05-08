@@ -22,14 +22,4 @@ public @interface PluginConfigurations {
     String[] onEnableDraw() default {};
 
 
-    Class<? extends Entity<?,?>>[] entities() default {};
-
-    Class<? extends Listener>[] listeners() default {};
-
-    Class<? extends PacketListener>[] packetListeners() default {};
-
-    Class<? extends ICommand>[] commands() default {};
-
-
-
 }

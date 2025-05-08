@@ -2,6 +2,7 @@ package com.xg7plugins.modules.xg7menus.menus.holders;
 
 import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
+import com.xg7plugins.modules.xg7menus.menus.menus.player.PlayerMenu;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,7 +16,7 @@ public class PlayerMenuHolder extends BasicMenuHolder {
     private final InventoryUpdater inventoryUpdater;
     private final HashMap<Integer, ItemStack> oldItems = new HashMap<>();
 
-    public PlayerMenuHolder(IBasicMenu menu, Player player) {
+    public PlayerMenuHolder(PlayerMenu menu, Player player) {
         super(menu, player);
 
         this.inventoryUpdater = new InventoryUpdater(this);
@@ -36,5 +37,10 @@ public class PlayerMenuHolder extends BasicMenuHolder {
     @Override
     public InventoryUpdater getInventoryUpdater() {
         return inventoryUpdater;
+    }
+
+    @Override
+    public PlayerMenu getMenu() {
+        return (PlayerMenu) super.getMenu();
     }
 }

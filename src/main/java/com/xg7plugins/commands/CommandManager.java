@@ -5,6 +5,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.data.config.Config;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.text.Text;
@@ -50,14 +51,19 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
             if (command == null) return;
 
-            if (!command.isEnabled()) return;
-
             if (!command.getClass().isAnnotationPresent(Command.class)) {
                 plugin.getDebug().severe("Commands must be annotated with @Command interface!!");
                 return;
             }
 
-            Command commandSetup = command.getClass().getAnnotation(Command.class);
+            Command commandSetup = command.getCommandsConfigurations();
+
+            Config config = plugin.getConfig(commandSetup.isEnabled().configName());
+
+            boolean invert = commandSetup.isEnabled().invert();
+            if (config != null) {
+                if (config.get(commandSetup.isEnabled().path(), Boolean.class).orElse(false) == invert) return;
+            }
 
             List<String> aliases = plugin.getConfigsManager().getConfig("commands").getList(commandSetup.name(), String.class).orElse(null);
             if (aliases == null) return;
@@ -103,20 +109,16 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         ICommand command = commands.get(cmd.getName());
 
-        Command commandConfig = command.getClass().getAnnotation(Command.class);
+        Command commandConfig = command.getCommandsConfigurations();
 
 
         if (command instanceof MainCommand) {
             if (!commandSender.hasPermission(commandConfig.permission())) {
-                Text.fromLang(commandSender, XG7Plugins.getInstance(),"commands.no-permission").thenAccept(text -> text.send(commandSender));
+                CommandMessages.NO_PERMISSION.send(plugin, commandSender);
                 return true;
             }
             if (strings.length == 0) {
-                ICommand finalCommand1 = command;
-                Text.fromLang(commandSender, XG7Plugins.getInstance(), "commands.syntax-error").thenAccept(text -> {
-                        text.replace("syntax", finalCommand1.getClass().getAnnotation(Command.class).syntax())
-                            .send(commandSender);
-                });
+                CommandMessages.SYNTAX_ERROR.send(plugin, commandSender, commandConfig.syntax());
                 return true;
             }
 
@@ -128,14 +130,13 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             command = commands.get(plConfig.mainCommandName() + strings[0]);
 
             if (command == null) {
-                Text.fromLang(commandSender, XG7Plugins.getInstance(), "commands.command-not-found")
-                        .thenAccept(text -> text.send(commandSender));
+                CommandMessages.COMMAND_NOT_FOUND.send(plugin,commandSender);
                 return true;
             }
 
             strings = Arrays.copyOfRange(strings, 1, strings.length);
 
-            commandConfig = command.getClass().getAnnotation(Command.class);
+            commandConfig = command.getCommandsConfigurations();
 
         }
 

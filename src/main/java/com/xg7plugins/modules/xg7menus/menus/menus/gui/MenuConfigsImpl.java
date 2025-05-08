@@ -1,8 +1,10 @@
 package com.xg7plugins.modules.xg7menus.menus.menus.gui;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.modules.xg7menus.menus.MenuActions;
+import com.xg7plugins.modules.xg7menus.menus.MenuAction;
 import org.bukkit.event.inventory.InventoryType;
+
+import java.util.EnumSet;
 
 public class MenuConfigsImpl implements IMenuConfigurations {
 
@@ -11,10 +13,10 @@ public class MenuConfigsImpl implements IMenuConfigurations {
     private final String title;
     private InventoryType type;
     private int rows;
-    private final MenuActions[] allowedActions;
+    private final EnumSet<MenuAction> allowedActions;
     private final boolean enabled;
 
-    public MenuConfigsImpl(Plugin plugin, String id, String title, int rows, MenuActions[] allowedActions, boolean enabled) {
+    public MenuConfigsImpl(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled) {
         this.plugin = plugin;
         this.id = id;
         this.title = title;
@@ -22,7 +24,7 @@ public class MenuConfigsImpl implements IMenuConfigurations {
         this.allowedActions = allowedActions;
         this.enabled = enabled;
     }
-    public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type, MenuActions[] allowedActions, boolean enabled) {
+    public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type, EnumSet<MenuAction> allowedActions, boolean enabled) {
         this.plugin = plugin;
         this.id = id;
         this.title = title;
@@ -73,7 +75,7 @@ public class MenuConfigsImpl implements IMenuConfigurations {
     }
 
     @Override
-    public MenuActions[] allowedActions() {
+    public EnumSet<MenuAction> allowedActions() {
         return allowedActions;
     }
 

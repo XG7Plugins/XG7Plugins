@@ -1,14 +1,13 @@
 package com.xg7plugins.modules.xg7menus.editor;
 
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.events.ClickEvent;
+import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +22,7 @@ public class InventoryUpdater implements InventoryShaper {
     private final BasicMenuHolder holder;
 
     @Getter
-    private final HashMap<Integer, Consumer<ClickEvent>> clickActions = new HashMap<>();
+    private final HashMap<Integer, Consumer<ActionEvent>> clickActions = new HashMap<>();
 
     @Override
     public void setItem(Slot slot, Item item) {
@@ -107,6 +106,8 @@ public class InventoryUpdater implements InventoryShaper {
 
             index++;
         }
+
+        holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
     }
 
     @Override
@@ -130,11 +131,14 @@ public class InventoryUpdater implements InventoryShaper {
             setItem(Slot.of(row, i + 1), itemList.get(index));
             index++;
         }
+
+        holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
     }
 
     @Override
     public void fillCol(int col, Item item) {
         IntStream.range(0, holder.getInventory().getSize() / 9).forEach(i -> setItem(Slot.of(i + 1, col), item));
+        holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
     }
 
     @Override
@@ -153,6 +157,8 @@ public class InventoryUpdater implements InventoryShaper {
             setItem(Slot.of(i + 1, col), itemList.get(index));
             index++;
         }
+
+        holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
     }
 
     @Override
@@ -162,6 +168,8 @@ public class InventoryUpdater implements InventoryShaper {
                 setItem(Slot.of(i, j), item);
             }
         }
+
+        holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
     }
 
     @Override
@@ -183,6 +191,8 @@ public class InventoryUpdater implements InventoryShaper {
             }
         }
 
+        holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
+
     }
 
     @Override
@@ -193,6 +203,8 @@ public class InventoryUpdater implements InventoryShaper {
                 setItem(Slot.of(i, j), item);
             }
         }
+
+        holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
     }
 
     public void frame(Slot startSlot, Slot endSlot, List<Item> items, boolean randomize, boolean fillAll) {
@@ -213,6 +225,8 @@ public class InventoryUpdater implements InventoryShaper {
                 index++;
             }
         }
+
+        holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
     }
 
     @Override
@@ -220,12 +234,16 @@ public class InventoryUpdater implements InventoryShaper {
         return Collections.emptyList();
     }
 
-    public Consumer<ClickEvent> getClickAction(Slot slot) {
+    public Consumer<ActionEvent> getClickAction(Slot slot) {
         return clickActions.get(slot.get());
     }
 
-    public void setClickAction(Slot slot, Consumer<ClickEvent> action) {
+    public void setClickAction(Slot slot, Consumer<ActionEvent> action) {
         clickActions.put(slot.get(), action);
+    }
+
+    public boolean hasClickActionOn(Slot slot) {
+        return clickActions.containsKey(slot.get());
     }
 
 }

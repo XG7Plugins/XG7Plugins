@@ -1,6 +1,7 @@
 package com.xg7plugins.modules.xg7menus.menus.menus.gui.menus;
 
 import com.xg7plugins.modules.xg7menus.Slot;
+import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
@@ -34,6 +35,9 @@ public abstract class PagedMenu extends Menu {
     public void open(Player player) {
         PagedMenuHolder menuHolder = new PagedMenuHolder(this, player);
         refresh(menuHolder);
+
+        XG7Menus.registerHolder(menuHolder);
+
     }
 
     public abstract List<Item> pagedItems(Player player);

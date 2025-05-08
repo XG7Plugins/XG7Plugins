@@ -1,5 +1,6 @@
 package com.xg7plugins.modules.xg7menus.menus.holders;
 
+import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;

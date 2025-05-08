@@ -2,10 +2,13 @@ package com.xg7plugins.modules.xg7menus.menuhandler;
 
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
-import com.xg7plugins.modules.xg7menus.events.ClickEvent;
+import com.xg7plugins.modules.xg7menus.Slot;
+import com.xg7plugins.modules.xg7menus.XG7Menus;
+import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.menus.MenuAction;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -13,6 +16,8 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MenuHandler implements Listener {
@@ -27,16 +32,15 @@ public class MenuHandler implements Listener {
 
         Inventory inventory = event.getInventory();
 
-        if (inventory.getHolder() instanceof MenuHolder) {
+        if (!(inventory.getHolder() instanceof MenuHolder)) return;
 
-            MenuHolder holder = (MenuHolder) inventory.getHolder();
+        MenuHolder holder = (MenuHolder) inventory.getHolder();
 
-            MenuEvent menuEvent = new MenuEvent(holder.getPlayer(), MenuEvent.ClickAction.UNKNOWN, holder, null);
-            holder.getMenu().onOpen(menuEvent);
+        MenuEvent menuEvent = new MenuEvent(holder);
+        holder.getMenu().onOpen(menuEvent);
 
-            if (menuEvent.isCancelled()) event.setCancelled(true);
+        if (menuEvent.isCancelled()) event.setCancelled(true);
 
-        }
 
     }
 
@@ -44,14 +48,15 @@ public class MenuHandler implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) {
         Inventory inventory = event.getInventory();
 
-        if (inventory.getHolder() instanceof MenuHolder) {
+        if (!(inventory.getHolder() instanceof MenuHolder)) return;
 
-            MenuHolder holder = (MenuHolder) inventory.getHolder();
+        MenuHolder holder = (MenuHolder) inventory.getHolder();
 
-            MenuEvent menuEvent = new MenuEvent(holder.getPlayer(), MenuEvent.ClickAction.UNKNOWN, holder, null);
-            holder.getMenu().onClose(menuEvent);
+        MenuEvent menuEvent = new MenuEvent(holder);
+        holder.getMenu().onClose(menuEvent);
 
-        }
+        XG7Menus.removeHolder(holder.getPlayer().getUniqueId());
+
     }
 
     @EventHandler
@@ -59,39 +64,49 @@ public class MenuHandler implements Listener {
         Inventory inventory = event.getClickedInventory();
         if (inventory == null) return;
 
-        if (inventory.getHolder() instanceof MenuHolder) {
+        if (!(inventory.getHolder() instanceof MenuHolder)) return;
 
-            MenuHolder holder = (MenuHolder) inventory.getHolder();
+        MenuHolder holder = (MenuHolder) inventory.getHolder();
 
-            event.setCancelled(!holder.getMenu().getMenuPermissions().contains(MenuPermissions.CLICK));
+        MenuAction menuAction = MenuAction.from(event.getClick());
+        Slot slotClicked = Slot.fromSlot(event.getSlot());
 
-            ClickEvent clickEvent = new ClickEvent(holder.getPlayer(), MenuEvent.ClickAction.valueOf(event.getClick().name()), holder, event.getSlot(), event.getRawSlot(), Item.from(event.getCurrentItem()), null);
-            if (holder.getUpdatedClickEvents().containsKey(event.getSlot())) {
-                holder.getUpdatedClickEvents().get(event.getSlot()).accept(clickEvent);
-                if (clickEvent.isCancelled()) event.setCancelled(true);
-                return;
-            }
-            holder.getMenu().onClick(clickEvent);
+        event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(menuAction));
 
-            if (clickEvent.isCancelled()) event.setCancelled(true);
+        ActionEvent actionEvent = new ActionEvent(holder, menuAction, event.getRawSlot(), slotClicked, holder);
 
+        if (holder.getInventoryUpdater().hasClickActionOn(slotClicked)) {
+            holder.getInventoryUpdater().getClickAction(slotClicked).accept(actionEvent);
+            if (actionEvent.isCancelled()) event.setCancelled(true);
+            return;
         }
+        holder.getMenu().onClick(actionEvent);
+
+        if (actionEvent.isCancelled()) event.setCancelled(true);
+
     }
 
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
         Inventory inventory = event.getInventory();
 
-        if (inventory.getHolder() instanceof MenuHolder) {
+        if (!(inventory.getHolder() instanceof MenuHolder)) return;
 
-            MenuHolder holder = (MenuHolder) inventory.getHolder();
+        MenuHolder holder = (MenuHolder) inventory.getHolder();
 
-            event.setCancelled(!holder.getMenu().getMenuPermissions().contains(MenuPermissions.DRAG));
-            DragEvent dragEvent = new DragEvent(holder.getPlayer(), holder, event.getNewItems().entrySet().stream().map(entry -> new Item(entry.getValue()).slot(entry.getKey())).collect(Collectors.toList()), event.getInventorySlots(),event.getRawSlots());
+        List<Item> draggedItems = event.getNewItems().entrySet().stream().map((e) -> Item.from(e.getValue()).slot(e.getKey())).collect(Collectors.toList());
 
-            holder.getMenu().onDrag(dragEvent);
+        Set<Slot> slotsClicked = event.getInventorySlots().stream().map(Slot::fromSlot).collect(Collectors.toSet());
+        Set<Integer> rawSlots = event.getRawSlots();
 
-        }
+        event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(MenuAction.DRAG));
+
+        DragEvent dragEvent = new DragEvent(holder, draggedItems, slotsClicked, rawSlots);
+
+        holder.getMenu().onDrag(dragEvent);
+
+        if (dragEvent.isCancelled()) event.setCancelled(true);
+
     }
 
 

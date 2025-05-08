@@ -1,6 +1,8 @@
 package com.xg7plugins.modules.xg7menus.menus.menus.player;
 
 import com.xg7plugins.modules.xg7menus.XG7Menus;
+import com.xg7plugins.modules.xg7menus.events.ActionEvent;
+import com.xg7plugins.modules.xg7menus.events.MenuEvent;
 import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
@@ -37,4 +39,11 @@ public abstract class PlayerMenu implements IBasicMenu {
         XG7Menus.removePlayerMenuHolder(player.getUniqueId());
 
     }
+
+    public void onDrop(ActionEvent event) {}
+    public void onPickup(ActionEvent event) {}
+
+    public void onBreakBlocks(ActionEvent event) {}
+    public void onPlaceBlocks(ActionEvent event) {}
+
 }

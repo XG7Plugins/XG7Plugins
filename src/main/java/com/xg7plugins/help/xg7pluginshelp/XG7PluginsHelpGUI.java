@@ -4,7 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.modules.xg7menus.events.ClickEvent;
+import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.BookItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.item.SkullItem;
@@ -44,7 +44,7 @@ public class XG7PluginsHelpGUI extends Menu {
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(ActionEvent event) {
         event.setCancelled(true);
 
         Player player = (Player) event.getWhoClicked();

@@ -1,4 +1,4 @@
-config-version: 1.0
+config-version: 1.1
 
 locale: sp_SP
 formated-name: "Español"
@@ -12,6 +12,7 @@ commands:
   disabled-world: "¡No puedes ejecutar este comando en un mundo deshabilitado!"
   not-a-player: "¡No puedes ejecutar este comando en la consola!"
   is-a-player: "¡No puedes ejecutar este comando siendo un jugador!"
+  not-online: "¡Este jugador no fue encontrado!"
   command-not-found: "¡Comando no encontrado!"
 
 reload-message:

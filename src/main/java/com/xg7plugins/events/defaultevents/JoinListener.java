@@ -10,8 +10,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.concurrent.ExecutionException;
 
-@Listener
-public class JoinListener {
+public class JoinListener implements Listener {
+
     @Override
     public boolean isEnabled() {
         return true;

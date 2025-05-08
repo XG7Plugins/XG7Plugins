@@ -5,7 +5,7 @@ import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.events.ClickEvent;
+import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.gui.PageMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
@@ -54,7 +54,7 @@ public class LangMenu extends PageMenu {
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(ActionEvent event) {
         event.setCancelled(true);
 
         Player player = (Player) event.getWhoClicked();

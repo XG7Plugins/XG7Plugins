@@ -1,9 +1,11 @@
 package com.xg7plugins.modules.xg7menus.menus.menus.gui;
 
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.modules.xg7menus.menus.MenuAction;
 import com.xg7plugins.modules.xg7menus.menus.IBasicMenuConfigs;
-import com.xg7plugins.modules.xg7menus.menus.MenuActions;
 import org.bukkit.event.inventory.InventoryType;
+
+import java.util.EnumSet;
 
 public interface IMenuConfigurations extends IBasicMenuConfigs {
 
@@ -15,10 +17,10 @@ public interface IMenuConfigurations extends IBasicMenuConfigs {
     }
     String getTitle();
 
-    static MenuConfigsImpl of(Plugin plugin, String id, String title, int rows, MenuActions[] allowedActions, boolean enabled) {
+    static MenuConfigsImpl of(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled) {
         return new MenuConfigsImpl(plugin, id, title, rows, allowedActions, enabled);
     }
-    static MenuConfigsImpl of(Plugin plugin, String id, String title, InventoryType type, MenuActions[] allowedActions, boolean enabled) {
+    static MenuConfigsImpl of(Plugin plugin, String id, String title, InventoryType type, EnumSet<MenuAction> allowedActions, boolean enabled) {
         return new MenuConfigsImpl(plugin, id, title, type, allowedActions, enabled);
     }
     static MenuConfigsImpl of(Plugin plugin, String id, String title, int rows, boolean enabled) {

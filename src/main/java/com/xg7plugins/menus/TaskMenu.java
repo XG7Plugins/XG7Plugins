@@ -5,7 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.events.ClickEvent;
+import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.gui.PageMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
@@ -92,7 +92,7 @@ public class TaskMenu extends PageMenu {
     }
 
     @Override
-    public void onClick(ClickEvent event) {
+    public void onClick(ActionEvent event) {
         event.setCancelled(true);
 
         Player player = (Player) event.getWhoClicked();
@@ -123,7 +123,7 @@ public class TaskMenu extends PageMenu {
                     return;
                 }
 
-                if (event.getClickAction().isRightClick()) {
+                if (event.getMenuAction().isRightClick()) {
                     if (taskState == TaskState.RUNNING) {
                         if (taskId.equals("TPS calculator")) {
                             XG7Plugins.getInstance().getTpsCalculator().cancel();
@@ -147,7 +147,7 @@ public class TaskMenu extends PageMenu {
                     refresh(holder);
                     return;
                 }
-                if (event.getClickAction().isLeftClick()) {
+                if (event.getMenuAction().isLeftClick()) {
                     Text.fromLang(player, XG7Plugins.getInstance(),"tasks-menu.copy-to-clipboard")
                             .thenAccept(text -> text.replace("id", taskId).send(player));
                 }

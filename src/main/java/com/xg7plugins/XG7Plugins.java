@@ -10,10 +10,13 @@ import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
 import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.JsonManager;
+import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
+import com.xg7plugins.dependencies.Dependency;
+import com.xg7plugins.dependencies.DependencyManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.help.formhelp.HelpCommandForm;
 import com.xg7plugins.help.guihelp.HelpCommandGUI;
@@ -42,8 +45,10 @@ import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -78,6 +83,7 @@ public final class XG7Plugins extends Plugin {
     private PacketEventManager packetEventManager;
     private JsonManager jsonManager;
     private ModuleManager moduleManager;
+    private DependencyManager dependencyManager;
 
     private PlayerDataDAO playerDataDAO;
 
@@ -105,7 +111,29 @@ public final class XG7Plugins extends Plugin {
         super.onEnable();
         debug.loading("Enabling XG7Plugins...");
         PacketEvents.getAPI().init();
-        SoftDependencies.initialize();
+        debug.loading("Checking dependencies...");
+
+        dependencyManager = new DependencyManager();
+
+        Set<String> toRemove = new HashSet<>();
+
+        plugins.forEach((name, pl) -> {
+            Dependency[] requiredDependencies = pl.loadRequiredDependencies();
+            if (requiredDependencies != null) {
+                if (dependencyManager.loadRequiredDependencies(pl, requiredDependencies)) {
+                    toRemove.add(name);
+                    return;
+                }
+            }
+
+            Dependency[] dependencies = pl.loadDependencies();
+            if (dependencies != null) {
+                dependencyManager.loadDependencies(dependencies);
+            }
+        });
+
+        toRemove.forEach(plugins::remove);
+
         debug.loading("Loading metrics...");
         Metrics.getMetrics(this, 24626);
         debug.loading("Starting tps calculator...");
@@ -160,7 +188,7 @@ public final class XG7Plugins extends Plugin {
 
         menus.registerMenus(new LangMenu(this), new TaskMenu(this));
 
-        if (SoftDependencies.isGeyserFormsEnabled()) {
+        if (XG7Plugins.isDependencyEnabled("floodgate") && Config.mainConfigOf(this).get("enable-geyser-forms",Boolean.class).orElse(false)) {
             debug.loading("Loading GeyserForms...");
             XG7GeyserForms geyserForms = XG7GeyserForms.getInstance();
             geyserForms.registerForm(new LangForm());
@@ -179,7 +207,7 @@ public final class XG7Plugins extends Plugin {
             debug.loading("Enabling " + plugin.getName() + "...");
 
             plugin.getDebug().loading("Connecting plugin to database...");
-            databaseManager.connectPlugin(plugin, plugin.loadEntites());
+            databaseManager.connectPlugin(plugin, plugin.loadEntities());
 
             if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
 
@@ -206,7 +234,7 @@ public final class XG7Plugins extends Plugin {
         getConfigsManager().registerAdapter(Item.class, new LangItemTypeAdapter());
 
         debug.loading("Registering PlaceholderAPI expansion...");
-        if (SoftDependencies.hasPlaceholderAPI()) new XG7PluginsPlaceholderExpansion().register();
+        if (dependencyManager.isLoaded("PlaceholderAPI")) new XG7PluginsPlaceholderExpansion().register();
 
 
         debug.loading("XG7Plugins enabled.");
@@ -251,7 +279,7 @@ public final class XG7Plugins extends Plugin {
         super.onReload(cause);
         if (cause.equals("json")) jsonManager.invalidateCache();
     }
-    public Class<? extends Entity>[] loadEntites() {
+    public Class<? extends Entity>[] loadEntities() {
         return new Class[]{PlayerData.class};
     }
     @Override
@@ -266,15 +294,20 @@ public final class XG7Plugins extends Plugin {
     public PacketListener[] loadPacketEvents() {
         return null;
     }
+    @Override
     public Task[] loadRepeatingTasks() {
         return new Task[]{cooldownManager.getTask(), new DatabaseKeepAlive()};
+    }
+    @Override
+    public Dependency[] loadDependencies() {
+        return new Dependency[]{Dependency.of("PlaceholderAPI", "https://www.spigotmc.org/resources/placeholderapi.6245/download?version=541946")};
     }
 
     // Carregar ajuda
     @Override
     public void loadHelp() {
         this.helpCommandGUI = new HelpCommandGUI(this, new XG7PluginsHelpGUI(this));
-        if (SoftDependencies.isGeyserFormsEnabled()) this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
+        if (XG7Plugins.isDependencyEnabled("floodgate") && Config.mainConfigOf(this).get("enable-geyser-forms",Boolean.class).orElse(false)) this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
         this.helpInChat = new XG7PluginsChatHelp();
     }
 
@@ -322,6 +355,9 @@ public final class XG7Plugins extends Plugin {
     }
     public static JsonManager json() {
         return XG7Plugins.getInstance().getJsonManager();
+    }
+    public static boolean isDependencyEnabled(String name) {
+        return XG7Plugins.getInstance().getDependencyManager().isLoaded(name);
     }
 
     public static @NotNull XG7Plugins getInstance() {

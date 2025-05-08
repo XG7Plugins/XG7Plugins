@@ -2,7 +2,8 @@ package com.xg7plugins.modules.xg7menus.events;
 
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.MenuAction;
+import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
 import lombok.Getter;
 
 import java.util.List;
@@ -14,9 +15,9 @@ public class DragEvent extends MenuEvent {
     private final List<Item> draggedItems;
     private final Set<Slot> draggedSlots;
     private final Set<Integer> draggedRawSlots;
-    private final ClickAction clickAction = ClickAction.DRAG;
+    private final MenuAction menuAction = MenuAction.DRAG;
 
-    public DragEvent(MenuHolder holder, List<Item> draggedItems, Set<Slot> draggedSlots, Set<Integer> draggedRawSlots) {
+    public DragEvent(BasicMenuHolder holder, List<Item> draggedItems, Set<Slot> draggedSlots, Set<Integer> draggedRawSlots) {
         super(holder);
 
         this.draggedItems = draggedItems;

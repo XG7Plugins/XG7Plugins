@@ -23,16 +23,12 @@ import java.util.stream.Collectors;
         name = "",
         description = "",
         syntax = "/xg7plugins (command)",
-        permission = "xg7plugins.command"
+        permission = "xg7plugins.command",
+        pluginClass = Plugin.class
 )
 public class MainCommand implements ICommand {
 
     private final Plugin plugin;
-
-    @Override
-    public Plugin getPlugin() {
-        return plugin;
-    }
 
 
     public void onCommand(CommandSender sender, CommandArgs args) {
@@ -50,7 +46,7 @@ public class MainCommand implements ICommand {
 
         Player player = (Player) sender;
 
-        if (SoftDependencies.isGeyserFormsEnabled()) {
+        if (XG7Plugins.isDependencyEnabled("floodgate") && Config.mainConfigOf(XG7Plugins.getInstance()).get("enable-geyser-forms",Boolean.class).orElse(false)) {
             boolean commandFormEnabled = config.get("help-command-form", Boolean.class).orElse(false);
             if (commandFormEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
                 plugin.getHelpCommandForm().getForm("index").send(player);
@@ -78,7 +74,7 @@ public class MainCommand implements ICommand {
         if (args.len() == 1) {
             suggestions.add("help");
             suggestions.addAll(plugin.getCommandManager().getCommands().entrySet().stream().filter(cmd -> !cmd.getKey().isEmpty()).map(cmd -> {
-                PluginConfigurations configurations = cmd.getValue().getPlugin().getClass().getAnnotation(PluginConfigurations.class);
+                PluginConfigurations configurations = cmd.getValue().getCommandsConfigurations().pluginClass().getAnnotation(PluginConfigurations.class);
                 return cmd.getKey().replace(configurations.mainCommandName(), "");
             }).collect(Collectors.toList()));
             return suggestions;

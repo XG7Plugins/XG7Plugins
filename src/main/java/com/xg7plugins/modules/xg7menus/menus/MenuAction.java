@@ -1,6 +1,9 @@
-package com.xg7plugins.modules.xg7menus.events;
+package com.xg7plugins.modules.xg7menus.menus;
 
-public enum ClickAction {
+import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.ClickType;
+
+public enum MenuAction {
     LEFT,
     SHIFT_LEFT,
     RIGHT,
@@ -18,6 +21,11 @@ public enum ClickAction {
     UNKNOWN,
 
     DRAG,
+
+    PLAYER_DROP,
+    PLAYER_PICKUP,
+    PLAYER_BREAK_BLOCK,
+    PLAYER_PLACE_BLOCK,
 
     LEFT_CLICK_BLOCK,
     RIGHT_CLICK_BLOCK,
@@ -42,5 +50,21 @@ public enum ClickAction {
 
     public boolean isShiftClick() {
         return this == SHIFT_LEFT || this == SHIFT_RIGHT || this == CONTROL_DROP;
+    }
+
+    public static MenuAction from(ClickType clickType) {
+        return MenuAction.valueOf(clickType.name());
+    }
+
+    public static MenuAction from(Action action) {
+        return MenuAction.valueOf(action.name());
+    }
+
+    public static MenuAction from(String name) {
+        try {
+            return MenuAction.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return MenuAction.UNKNOWN;
+        }
     }
 }

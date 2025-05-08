@@ -7,7 +7,6 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.modules.xg7menus.builders.MenuBuilder;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.BaseMenu;
@@ -56,7 +55,7 @@ public class SeeSubcommand implements ICommand {
             Config lang = XG7Plugins.getInstance().getLangManager() == null ? XG7Plugins.getInstance().getConfig("messages") : XG7Plugins.getInstance().getLangManager().getLangByPlayer(XG7Plugins.getInstance(), (Player) sender).join().getLangConfiguration();
 
             ClickableItem builder = Item.from(XMaterial.REPEATER.parseMaterial()).clickable().onClick(event -> {
-                if (event.getClickAction().isRightClick()) {
+                if (event.getMenuAction().isRightClick()) {
                     if (task.getState() == TaskState.RUNNING) {
                         XG7Plugins.taskManager().cancelTask(task.getPlugin().getName() + ":" + task.getName());
                         Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
@@ -75,7 +74,7 @@ public class SeeSubcommand implements ICommand {
                     BaseMenu.refresh(event.getInventoryHolder());
                     return;
                 }
-                if (event.getClickAction().isLeftClick()) {
+                if (event.getMenuAction().isLeftClick()) {
                     Text.fromLang(sender, XG7Plugins.getInstance(), "tasks-menu.copy-to-clipboard")
                             .thenAccept(text -> {
                                 text.replace("id", task.getPlugin().getName() + ":" + task.getName()).send(sender);

@@ -1,9 +1,8 @@
 package com.xg7plugins.commands.setup;
-
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
@@ -16,7 +15,7 @@ public interface ICommand {
     }
 
     default void onCommand(CommandSender sender, CommandArgs args) {
-        syntaxError(sender,this.getClass().getAnnotation(Command.class).syntax());
+        CommandMessages.SYNTAX_ERROR.send(getPlugin(), sender, getCommandsConfigurations().syntax());
     }
 
     default List<String> onTabComplete (CommandSender sender, CommandArgs args) {
@@ -25,4 +24,10 @@ public interface ICommand {
 
     Item getIcon();
 
+    default Command getCommandsConfigurations() {
+        return this.getClass().getAnnotation(Command.class);
+    }
+    default Plugin getPlugin() {
+        return XG7Plugins.getXG7Plugin(getCommandsConfigurations().pluginClass());
+    }
 }
