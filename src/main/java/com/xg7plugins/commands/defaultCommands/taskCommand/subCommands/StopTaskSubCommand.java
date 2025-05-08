@@ -32,7 +32,7 @@ public class StopTaskSubCommand implements ICommand {
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {
-            CommandMessages.SYNTAX_ERROR.send(getPlugin(), sender, getCommandsConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
             return;
         }
 

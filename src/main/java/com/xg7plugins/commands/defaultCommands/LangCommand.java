@@ -50,19 +50,19 @@ public class LangCommand implements ICommand {
         }
 
         if (!sender.hasPermission("xg7plugins.command.lang.other")) {
-            Text.fromLang(sender, XG7Plugins.getInstance(), "commands.no-permission").thenAccept(text -> text.send(sender));
+            CommandMessages.NO_PERMISSION.send(sender);
             return;
         }
 
         if (args.len() != 2) {
-            CommandMessages.SYNTAX_ERROR.send(getPlugin(), sender, getCommandsConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
         }
 
         OfflinePlayer target = args.get(0, Player.class);
         String lang = XG7Plugins.getInstance().getName() + ":" + args.get(1, String.class);
 
         if (target == null || (!target.hasPlayedBefore() && !target.isOnline())) {
-            CommandMessages.PLAYER_NOT_FOUND.send(getPlugin(), sender);
+            CommandMessages.PLAYER_NOT_FOUND.send(sender);
             return;
         }
 

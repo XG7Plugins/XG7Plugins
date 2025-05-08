@@ -15,7 +15,7 @@ public interface ICommand {
     }
 
     default void onCommand(CommandSender sender, CommandArgs args) {
-        CommandMessages.SYNTAX_ERROR.send(getPlugin(), sender, getCommandsConfigurations().syntax());
+        CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
     }
 
     default List<String> onTabComplete (CommandSender sender, CommandArgs args) {

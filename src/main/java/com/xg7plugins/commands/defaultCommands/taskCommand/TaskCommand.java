@@ -40,7 +40,7 @@ public class TaskCommand implements ICommand {
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (!(sender instanceof  Player)) {
-            CommandMessages.SYNTAX_ERROR.send(getPlugin(), sender, getCommandsConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
             return;
         }
 

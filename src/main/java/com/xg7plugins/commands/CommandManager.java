@@ -114,11 +114,11 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         if (command instanceof MainCommand) {
             if (!sender.hasPermission(commandConfig.permission())) {
-                CommandMessages.NO_PERMISSION.send(plugin, sender);
+                CommandMessages.NO_PERMISSION.send(sender);
                 return true;
             }
             if (strings.length == 0) {
-                CommandMessages.SYNTAX_ERROR.send(plugin, sender, commandConfig.syntax());
+                CommandMessages.SYNTAX_ERROR.send(sender, commandConfig.syntax());
                 return true;
             }
 
@@ -130,7 +130,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             command = commands.get(plConfig.mainCommandName() + strings[0]);
 
             if (command == null) {
-                CommandMessages.COMMAND_NOT_FOUND.send(plugin,sender);
+                CommandMessages.COMMAND_NOT_FOUND.send(sender);
                 return true;
             }
 
@@ -177,21 +177,21 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         Command commandConfig = command.getCommandsConfigurations();
 
         if (!sender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
-            CommandMessages.NO_PERMISSION.send(plugin, sender);
+            CommandMessages.NO_PERMISSION.send(sender);
             return;
         }
 
         if (commandConfig.isPlayerOnly() && !(sender instanceof Player)) {
-            CommandMessages.NOT_A_PLAYER.send(plugin, sender);
+            CommandMessages.NOT_A_PLAYER.send(sender);
             return;
         }
         if (commandConfig.isConsoleOnly() && sender instanceof Player) {
-            CommandMessages.IS_A_PLAYER.send(plugin, sender);
+            CommandMessages.IS_A_PLAYER.send(sender);
             return;
         }
         if (sender instanceof Player) {
             if (commandConfig.isInEnabledWorldOnly() && !plugin.getEnabledWorlds().contains(((Player) sender).getWorld().getName())) {
-                CommandMessages.DISABLED_WORLD.send(plugin, sender);
+                CommandMessages.DISABLED_WORLD.send(sender);
                 return;
             }
         }
