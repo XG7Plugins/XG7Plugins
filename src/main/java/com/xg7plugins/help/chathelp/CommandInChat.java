@@ -2,13 +2,11 @@ package com.xg7plugins.help.chathelp;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.utils.text.component.Component;
 import com.xg7plugins.utils.text.component.event.ClickEvent;
 import com.xg7plugins.utils.text.component.event.action.ClickAction;
-import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 

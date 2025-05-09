@@ -1,6 +1,7 @@
 package com.xg7plugins.dependencies;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.managers.Manager;
 import com.xg7plugins.utils.Debug;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidDescriptionException;
@@ -11,7 +12,7 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class DependencyManager {
+public class DependencyManager implements Manager {
 
     private final HashMap<String, Dependency> loadedDependencies = new HashMap<>();
 

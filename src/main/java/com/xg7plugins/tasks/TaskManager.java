@@ -3,6 +3,7 @@ package com.xg7plugins.tasks;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.managers.Manager;
 import com.xg7plugins.utils.Time;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -11,7 +12,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 @Getter
-public class TaskManager {
+public class TaskManager implements Manager {
 
 
     private final Map<String, Task> tasks = new ConcurrentHashMap<>();

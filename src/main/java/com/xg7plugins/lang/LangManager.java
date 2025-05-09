@@ -5,6 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
+import com.xg7plugins.managers.Manager;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.Getter;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 
 @Getter
-public class LangManager {
+public class LangManager implements Manager {
 
     private final XG7Plugins plugin;
     private final ObjectCache<String, Config> langs;

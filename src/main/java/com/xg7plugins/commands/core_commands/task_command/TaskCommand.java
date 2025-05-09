@@ -1,13 +1,12 @@
-package com.xg7plugins.commands.defaultCommands.taskCommand;
+package com.xg7plugins.commands.core_commands.task_command;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.CommandMessages;
-import com.xg7plugins.commands.defaultCommands.taskCommand.subCommands.DeleteTaskSubCommand;
-import com.xg7plugins.commands.defaultCommands.taskCommand.subCommands.RestartTaskSubCommand;
-import com.xg7plugins.commands.defaultCommands.taskCommand.subCommands.SeeSubcommand;
-import com.xg7plugins.commands.defaultCommands.taskCommand.subCommands.StopTaskSubCommand;
+import com.xg7plugins.commands.core_commands.task_command.sub_commands.DeleteTaskSubCommand;
+import com.xg7plugins.commands.core_commands.task_command.sub_commands.RestartTaskSubCommand;
+import com.xg7plugins.commands.core_commands.task_command.sub_commands.SeeSubcommand;
+import com.xg7plugins.commands.core_commands.task_command.sub_commands.StopTaskSubCommand;
 import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.item.Item;
@@ -17,7 +16,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-@Command(
+@CommandSetup(
         name = "tasks",
         description = "Task Manager",
         syntax = "/xg7plugins tasks [<stop | delete | restart | see> <ID>]",

@@ -4,6 +4,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
+import com.xg7plugins.managers.Manager;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockEvent;
@@ -16,7 +17,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 
-public class EventManager {
+public class EventManager implements Manager {
 
     private final HashMap<String, org.bukkit.event.Listener> listeners = new HashMap<>();
 

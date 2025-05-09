@@ -4,6 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
+import com.xg7plugins.managers.Manager;
 import lombok.Getter;
 
 import java.io.File;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
-public class ModuleManager {
+public class ModuleManager implements Manager {
 
     private final HashMap<String, Module> extensions = new HashMap<>();
     private final Plugin plugin;

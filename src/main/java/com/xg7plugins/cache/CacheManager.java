@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.gson.Gson;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.managers.Manager;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -15,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class CacheManager {
+public class CacheManager implements Manager {
 
     private JedisPool pool;
     private final Gson gson = new Gson();

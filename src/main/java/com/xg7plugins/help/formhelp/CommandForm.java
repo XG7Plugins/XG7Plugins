@@ -3,7 +3,6 @@ package com.xg7plugins.help.formhelp;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.MainCommand;
-import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.modules.xg7geyserforms.forms.ModalForm;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;

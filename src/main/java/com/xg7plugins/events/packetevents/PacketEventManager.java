@@ -5,12 +5,13 @@ import com.github.retrooper.packetevents.event.*;
 import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.events.PacketListener;
+import com.xg7plugins.managers.Manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class PacketEventManager {
+public class PacketEventManager implements Manager {
 
     private final HashMap<String, List<PacketListenerCommon>> packetListeners = new HashMap<>();
 

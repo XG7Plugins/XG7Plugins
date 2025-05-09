@@ -1,10 +1,8 @@
-package com.xg7plugins.commands.defaultCommands;
+package com.xg7plugins.commands.core_commands;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.CommandMessages;
-import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;

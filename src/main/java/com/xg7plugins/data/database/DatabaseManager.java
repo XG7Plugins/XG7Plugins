@@ -7,6 +7,7 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.TableCreator;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
+import com.xg7plugins.managers.Manager;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.Getter;
@@ -25,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Getter
-public class DatabaseManager {
+public class DatabaseManager implements Manager {
 
     private final ConcurrentHashMap<String, HikariDataSource> connections = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, Connection> sqliteConnections = new ConcurrentHashMap<>();

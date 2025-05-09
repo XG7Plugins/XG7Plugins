@@ -3,7 +3,6 @@ package com.xg7plugins.help.guihelp;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.MainCommand;
-import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;

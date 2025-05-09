@@ -1,6 +1,7 @@
 package com.xg7plugins.data.config;
 
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.managers.Manager;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -8,7 +9,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 @Getter
-public class ConfigManager {
+public class ConfigManager implements Manager {
 
     private final HashMap<String, Config> configs = new HashMap<>();
     private final HashMap<Class<?>, ConfigTypeAdapter<?>> adapters = new HashMap<>();

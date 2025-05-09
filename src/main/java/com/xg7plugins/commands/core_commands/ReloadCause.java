@@ -1,4 +1,4 @@
-package com.xg7plugins.commands.defaultCommands.reloadCommand;
+package com.xg7plugins.commands.core_commands;
 
 import com.xg7plugins.boot.Plugin;
 import lombok.AllArgsConstructor;

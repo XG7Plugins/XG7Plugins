@@ -6,12 +6,13 @@ import com.google.gson.reflect.TypeToken;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.cache.ObjectCache;
+import com.xg7plugins.managers.Manager;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
 
-public class JsonManager {
+public class JsonManager implements Manager {
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 

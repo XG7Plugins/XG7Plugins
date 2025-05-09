@@ -9,7 +9,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.server.MinecraftVersion;

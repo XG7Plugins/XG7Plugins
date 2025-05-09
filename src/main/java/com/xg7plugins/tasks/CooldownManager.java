@@ -1,6 +1,7 @@
 package com.xg7plugins.tasks;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.managers.Manager;
 import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class CooldownManager {
+public class CooldownManager implements Manager {
 
     private final ConcurrentHashMap<UUID, Map<String, CooldownTask>> cooldowns = new ConcurrentHashMap<>();
     private final long timeFactor;

@@ -3,7 +3,6 @@ package com.xg7plugins.commands;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginConfigurations;
-import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;

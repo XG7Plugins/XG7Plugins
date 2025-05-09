@@ -2,18 +2,19 @@ package com.xg7plugins.boot;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.CommandManager;
-import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCause;
+import com.xg7plugins.commands.core_commands.ReloadCause;
+import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.dependencies.Dependency;
-import com.xg7plugins.dependencies.DependencyManager;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.help.chathelp.HelpInChat;
 import com.xg7plugins.help.formhelp.HelpCommandForm;
 import com.xg7plugins.help.guihelp.HelpCommandGUI;
+import com.xg7plugins.managers.ManagerRegistery;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.utils.Debug;
 import lombok.*;
@@ -37,6 +38,14 @@ public abstract class Plugin extends JavaPlugin {
     @Setter
     private List<String> enabledWorlds;
 
+    private ManagerRegistery managers;
+    private Debug debug;
+
+    private HelpCommandGUI helpCommandGUI;
+    private HelpInChat helpInChat;
+    private HelpCommandForm helpCommandForm;
+
+
     public Plugin() {
         configurations = getClass().getAnnotation(PluginConfigurations.class);
         if (configurations == null) throw new IllegalClassException("PluginConfigurations annotation not found in " + getClass().getName());
@@ -44,7 +53,6 @@ public abstract class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-
         if (configurations.onEnableDraw().length != 0) Arrays.stream(configurations.onEnableDraw()).forEach(Bukkit.getConsoleSender()::sendMessage);
 
         Config config = Config.mainConfigOf(this);
@@ -54,18 +62,15 @@ public abstract class Plugin extends JavaPlugin {
         this.enabledWorlds = config.getList("enabled-worlds", String.class).orElse(Collections.emptyList());
 
         Debug.of(this).loading("Custom prefix: " + customPrefix);
-
     }
 
     public void onReload(ReloadCause cause) {
 
         XG7Plugins xg7Plugin = XG7Plugins.getInstance();
 
-        PluginContext context = getContext();
-
         if (cause.equals(ReloadCause.CONFIG)) {
-            context.getConfigsManager().reloadConfigs();
-            context.setDebug(new Debug(this));
+            configsManager.reloadConfigs();
+            debug = new Debug(this);
             return;
         }
         if (cause.equals(ReloadCause.EVENTS)) {
@@ -100,54 +105,42 @@ public abstract class Plugin extends JavaPlugin {
     }
     @Override
     public void onLoad() {
-        PluginConfigurations configurations = getClass().getAnnotation(PluginConfigurations.class);
-
-        PluginContext context = getContext();
-
         this.prefix = ChatColor.translateAlternateColorCodes('&', configurations.prefix());
         this.customPrefix = this.prefix;
 
-        context.setConfigsManager(new ConfigManager(this, configurations.configs()));
-        context.setDebug(new Debug(this));
+        configsManager = new ConfigManager(this, configurations.configs());
+        debug = new Debug(this);
         Debug.of(this).loading("Loading " + prefix + "...");
-        context.setCommandManager(new CommandManager(this));
+        commandManager = new CommandManager(this);
+
+        for (String cause : configurations.reloadCauses()) ReloadCause.registerCause(this, ReloadCause.of(this, cause));
 
         XG7Plugins.register(this);
     }
 
-    public Class<? extends Entity>[] loadEntities() {
+    public Class<? extends Entity<?,?>>[] loadEntities() {
         return null;
     }
-    public ICommand[] loadCommands() {
+    public List<Command> loadCommands() {
         return null;
     }
-    public Listener[] loadEvents() {
+    public List<Listener> loadEvents() {
         return null;
     }
-    public PacketListener[] loadPacketEvents() {
+    public List<PacketListener> loadPacketEvents() {
         return null;
     }
-    public Task[] loadRepeatingTasks() {
+    public List<Task> loadRepeatingTasks() {
         return null;
     }
     public abstract void loadHelp();
-    public Dependency[] loadDependencies() {
+    public List<Dependency> loadDependencies() {
         return null;
     }
-    public Dependency[] loadRequiredDependencies() {
+    public List<Dependency> loadRequiredDependencies() {
         return null;
     }
-
-    public abstract <T extends PluginContext> T getContext();
-
-    public boolean isWorldEnabled(String world) {
-        return enabledWorlds.contains(world);
+    public List<ReloadCause> loadReloadCauses() {
+        return null;
     }
-    public boolean isWorldEnabled(World world) {
-        return enabledWorlds.contains(world.getName());
-    }
-    public boolean isInWorldEnabled(Player player) {
-        return enabledWorlds.contains(player.getWorld().getName());
-    }
-
 }

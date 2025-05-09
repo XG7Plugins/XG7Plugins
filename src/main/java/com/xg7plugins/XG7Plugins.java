@@ -4,10 +4,10 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.cache.CacheManager;
-import com.xg7plugins.commands.defaultCommands.LangCommand;
-import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCause;
-import com.xg7plugins.commands.defaultCommands.reloadCommand.ReloadCommand;
-import com.xg7plugins.commands.defaultCommands.taskCommand.TaskCommand;
+import com.xg7plugins.commands.core_commands.LangCommand;
+import com.xg7plugins.commands.core_commands.ReloadCause;
+import com.xg7plugins.commands.core_commands.ReloadCommand;
+import com.xg7plugins.commands.core_commands.task_command.TaskCommand;
 import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.config.Config;
@@ -48,10 +48,8 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 
 @Getter(AccessLevel.PUBLIC)
 @PluginConfigurations(
@@ -84,6 +82,7 @@ public final class XG7Plugins extends Plugin {
     private JsonManager jsonManager;
     private ModuleManager moduleManager;
     private DependencyManager dependencyManager;
+    private ReloadService reloadService;
 
     private PlayerDataDAO playerDataDAO;
 
@@ -291,6 +290,7 @@ public final class XG7Plugins extends Plugin {
     }
 
     public static void unregister(Plugin plugin) {
+
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
         xg7Plugins.getDebug().loading("Unregistering " + plugin.getName() + "...");
 
@@ -304,34 +304,6 @@ public final class XG7Plugins extends Plugin {
         xg7Plugins.getPlugins().remove(plugin.getName());
         xg7Plugins.getDebug().loading(plugin.getName() + " unregistered.");
 
-    }
-
-    public static TaskManager taskManager() {
-        return XG7Plugins.getInstance().getTaskManager();
-    }
-    public static DatabaseManager database(){
-        return XG7Plugins.getInstance().getDatabaseManager();
-    }
-    public static DatabaseProcessor dbProcessor() {
-        return XG7Plugins.getInstance().getDatabaseManager().getProcessor();
-    }
-    public static ServerInfo serverInfo() {
-        return XG7Plugins.getInstance().getServerInfo();
-    }
-    public static Plugin getXG7Plugin(String name) {
-        return XG7Plugins.getInstance().getPlugins().get(name);
-    }
-    public static <T extends Plugin> T getXG7Plugin(Class<? extends Plugin> pluginClass) {
-        return (T) XG7Plugins.getInstance().getPlugins().values().stream().filter(plugin -> pluginClass == plugin.getClass()).findFirst().orElse(null);
-    }
-    public static JsonManager json() {
-        return XG7Plugins.getInstance().getJsonManager();
-    }
-    public static boolean isDependencyEnabled(String name) {
-        return XG7Plugins.getInstance().getDependencyManager().isLoaded(name);
-    }
-    public static boolean isGeyserFormsEnabled() {
-        return XG7Plugins.isDependencyEnabled("floodgate") && Config.mainConfigOf(XG7Plugins.getInstance()).get("enable-geyser-forms",Boolean.class).orElse(false);
     }
 
     public static @NotNull XG7Plugins getInstance() {

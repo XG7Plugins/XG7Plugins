@@ -1,30 +1,34 @@
 package com.xg7plugins.commands.setup;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.ConfigBoolean;
+import com.xg7plugins.commands.CommandMessages;
+import com.xg7plugins.modules.xg7menus.item.Item;
+import org.bukkit.command.CommandSender;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Collections;
+import java.util.List;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-public @interface Command {
+public interface Command {
 
-    String name();
-    String description();
-    String syntax();
-    String permission() default "";
-    Class<? extends Plugin> pluginClass();
+    default Command[] getSubCommands() {
+        return new Command[0];
+    }
 
-    ConfigBoolean isEnabled() default @ConfigBoolean(
-            configName = "",
-            path = ""
-    );
-    boolean isAsync() default false;
-    boolean isPlayerOnly() default false;
-    boolean isConsoleOnly() default false;
-    boolean isInEnabledWorldOnly() default false;
+    default void onCommand(CommandSender sender, CommandArgs args) {
+        CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
+    }
 
+    default List<String> onTabComplete (CommandSender sender, CommandArgs args) {
+        return Collections.emptyList();
+    }
+
+    Item getIcon();
+
+    default CommandSetup getCommandsConfigurations() {
+        return this.getClass().getAnnotation(CommandSetup.class);
+    }
+    default Plugin getPlugin() {
+        return XG7Plugins.getXG7Plugin(getCommandsConfigurations().pluginClass());
+    }
 }

@@ -4,11 +4,10 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.PluginConfigurations;
 import com.xg7plugins.commands.setup.*;
-import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.managers.Manager;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
-import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -22,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 @AllArgsConstructor
-public class CommandManager implements CommandExecutor, TabCompleter {
+public class CommandManager implements CommandExecutor, TabCompleter, Manager {
 
     private final Plugin plugin;
     @Getter
