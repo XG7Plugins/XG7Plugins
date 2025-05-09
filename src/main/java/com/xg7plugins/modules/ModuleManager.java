@@ -24,6 +24,10 @@ public class ModuleManager {
             this.extensions.put(extension.getName(), extension);
         }
 
+        initModules();
+        loadTasks();
+        loadExecutors();
+        loadListeners();
     }
 
     public void initModules() {

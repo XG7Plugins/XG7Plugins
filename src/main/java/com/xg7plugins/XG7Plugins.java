@@ -110,46 +110,25 @@ public final class XG7Plugins extends Plugin {
     public void onEnable() {
         super.onEnable();
         debug.loading("Enabling XG7Plugins...");
+
         PacketEvents.getAPI().init();
+        ReloadCause.registerCause(this, new ReloadCause("json"));
+
         debug.loading("Checking dependencies...");
 
         dependencyManager = new DependencyManager();
 
-        Set<String> toRemove = new HashSet<>();
-
-        plugins.forEach((name, pl) -> {
-            Dependency[] requiredDependencies = pl.loadRequiredDependencies();
-            if (requiredDependencies != null) {
-                if (dependencyManager.loadRequiredDependencies(pl, requiredDependencies)) {
-                    toRemove.add(name);
-                    return;
-                }
-            }
-
-            Dependency[] dependencies = pl.loadDependencies();
-            if (dependencies != null) {
-                dependencyManager.loadDependencies(dependencies);
-            }
-        });
-
-        toRemove.forEach(plugins::remove);
-
         debug.loading("Loading metrics...");
+
         Metrics.getMetrics(this, 24626);
+
         debug.loading("Starting tps calculator...");
         this.tpsCalculator = new TPSCalculator();
         tpsCalculator.start();
-        ReloadCause.registerCause(this, new ReloadCause("json"));
 
         debug.loading("Loading managers...");
 
-        debug.loading("Loading task manager...");
         this.taskManager = new TaskManager(this);
-        taskManager().registerExecutor("commands", Executors.newCachedThreadPool());
-        taskManager().registerExecutor("database", Executors.newCachedThreadPool());
-        taskManager().registerExecutor("files", Executors.newCachedThreadPool());
-        taskManager().registerExecutor("menus", Executors.newCachedThreadPool());
-        taskManager().registerExecutor("cache", Executors.newSingleThreadExecutor());
 
         debug.loading("Loading cache manager...");
         this.cacheManager = new CacheManager(this);
@@ -174,13 +153,7 @@ public final class XG7Plugins extends Plugin {
         this.cooldownManager = new CooldownManager(this);
 
         debug.loading("Loading modules...");
-
         this.moduleManager = new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores());
-
-        moduleManager.initModules();
-        moduleManager.loadTasks();
-        moduleManager.loadExecutors();
-        moduleManager.loadListeners();
 
         debug.loading("Loading Menus...");
 
@@ -283,9 +256,7 @@ public final class XG7Plugins extends Plugin {
         return new Class[]{PlayerData.class};
     }
     @Override
-    public ICommand[] loadCommands() {
-        return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand()};
-    }
+    public ICommand[] loadCommands() {return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand()};}
     @Override
     public Listener[] loadEvents() {
         return new Listener[]{new JoinListener()};
@@ -358,6 +329,9 @@ public final class XG7Plugins extends Plugin {
     }
     public static boolean isDependencyEnabled(String name) {
         return XG7Plugins.getInstance().getDependencyManager().isLoaded(name);
+    }
+    public static boolean isGeyserFormsEnabled() {
+        return XG7Plugins.isDependencyEnabled("floodgate") && Config.mainConfigOf(XG7Plugins.getInstance()).get("enable-geyser-forms",Boolean.class).orElse(false);
     }
 
     public static @NotNull XG7Plugins getInstance() {

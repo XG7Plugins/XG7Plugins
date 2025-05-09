@@ -32,7 +32,7 @@ public class InventoryUpdater implements InventoryShaper {
             holder.getMenu().onUpdate(holder, MenuUpdateActions.ITEM_REMOVED);
             return;
         }
-        holder.getInventory().setItem(slot.get(), item.getItemFor(holder.getPlayer(), holder.getMenu().getPlugin()));
+        holder.getInventory().setItem(slot.get(), item.getItemFor(holder.getPlayer(), holder.getMenu().getMenuConfigs().getPlugin()));
 
         if (item instanceof ClickableItem && item.getSlot() == slot.get()) {
             ClickableItem clickableItem = (ClickableItem) item;
@@ -53,7 +53,7 @@ public class InventoryUpdater implements InventoryShaper {
             setItem(Slot.fromSlot(item.getSlot()), item);
             return;
         }
-        holder.getInventory().addItem(item.getItemFor(holder.getPlayer(), holder.getMenu().getPlugin()));
+        holder.getInventory().addItem(item.getItemFor(holder.getPlayer(), holder.getMenu().getMenuConfigs().getPlugin()));
     }
 
 

@@ -19,8 +19,15 @@ public class TaskManager {
     private final Map<String, ExecutorService> asyncExecutors = new HashMap<>();
 
     public TaskManager(XG7Plugins plugin) {
+        plugin.getDebug().loading("Loading task manager...");
         Config config = plugin.getConfigsManager().getConfig("config");
         repeatingAsyncTasksExecutor = Executors.newScheduledThreadPool(config.get("repeating-tasks-threads", Integer.class).orElse(1));
+
+        registerExecutor("commands", Executors.newCachedThreadPool());
+        registerExecutor("database", Executors.newCachedThreadPool());
+        registerExecutor("files", Executors.newCachedThreadPool());
+        registerExecutor("menus", Executors.newCachedThreadPool());
+        registerExecutor("cache", Executors.newSingleThreadExecutor());
     }
 
     public void registerExecutor(String name, ExecutorService executor) {
