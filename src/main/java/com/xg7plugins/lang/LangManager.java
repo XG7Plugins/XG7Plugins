@@ -32,7 +32,7 @@ public class LangManager implements Manager {
         this.defLangs = defaultLangs;
         this.langEnabled = Config.mainConfigOf(plugin).get("lang-enabled", Boolean.class).orElse(true);
 
-        Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
+        Config config = Config.mainConfigOf(plugin);
 
         this.mainLang = config.get("main-lang", String.class).orElse("en");
         this.langs = new ObjectCache<>(
@@ -54,9 +54,8 @@ public class LangManager implements Manager {
                 loadLang(plugin, mainLang).join();
                 return;
             }
-            for (String lang : defLangs) {
-                loadLang(plugin, lang).join();
-            }
+            for (String lang : defLangs) loadLang(plugin, lang).join();
+
         }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
     }
 
@@ -75,7 +74,7 @@ public class LangManager implements Manager {
 
     public CompletableFuture<Lang> getLang(Plugin plugin, String lang, boolean selected) {
         return CompletableFuture.supplyAsync(() -> {
-
+            if (!langEnabled) return new Lang(plugin, Config.of("messages", plugin), "message");
             String finalLang = lang;
 
             if (!langEnabled) finalLang = mainLang;
@@ -125,6 +124,14 @@ public class LangManager implements Manager {
             return langs.stream().filter(lang -> lang.get("locale", String.class).orElse("en_US").equals(locale)).findFirst().map(config -> config.getName().replace("langs/", "")).orElse(mainLang);
         });
 
+    }
+
+    public void clearCache() {
+        langs.clear().join();
+    }
+
+    public boolean hasLang(String lang) {
+        return langs.containsKey(lang).join();
     }
 
 

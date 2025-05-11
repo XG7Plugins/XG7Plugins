@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
 import com.github.retrooper.packetevents.protocol.chat.message.ChatMessageLegacy;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
 import com.xg7plugins.modules.xg7scores.scores.ActionBar;
@@ -22,6 +23,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
@@ -64,7 +66,7 @@ public class Text {
 
         this.text = Condition.processCondition(this.text, player);
 
-        if (SoftDependencies.hasPlaceholderAPI()) this.text = PlaceholderAPI.setPlaceholders(player, this.text);
+        if (XG7PluginsAPI.isDependencyEnabled("PlaceholderAPI")) this.text = PlaceholderAPI.setPlaceholders(player, this.text);
 
         return this;
     }
@@ -75,15 +77,11 @@ public class Text {
     }
     @SafeVarargs
     public final Text replaceAll(Pair<String, String>... replacements) {
-        for (Pair<String,String> replacement : replacements) {
-            this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond());
-        }
+        Arrays.stream(replacements).forEach(replacement -> this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond()));
         return this;
     }
     public final Text replaceAll(List<Pair<String,String>> replacements) {
-        for (Pair<String,String> replacement : replacements) {
-            this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond());
-        }
+        replacements.forEach(replacement -> this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond()));
         return this;
     }
 
@@ -93,7 +91,6 @@ public class Text {
         if (this.text.isEmpty()) return;
 
         Component component = ComponentDeserializer.deserialize(this.text);
-
 
         send(component,sender, centered, pixels);
 
@@ -136,6 +133,7 @@ public class Text {
 
             if (MinecraftVersion.isNewerThan(8)) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(rawText));
+                Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId()), 60L);
                 return;
             }
 
@@ -198,8 +196,8 @@ public class Text {
 
             String text = rawText;
 
-            text = text.replace("%prefix%", plugin.getCustomPrefix());
-            text = text.replace("%player%", sender == null ? "No name" : sender.getName());
+            text = text.replace("%prefix%", plugin.getEnvironmentConfig().getCustomPrefix())
+                    .replace("%player%", sender == null ? "No name" : sender.getName());
 
             Matcher langMatch = LANG_PATTERN.matcher(text);
 
@@ -207,15 +205,12 @@ public class Text {
 
             while (langMatch.find()) {
                 String path = langMatch.group(1);
-
                 result.replace(langMatch.start(), langMatch.end(), lang.get(path));
             }
 
             Text objectText = new Text(result.toString());
 
-            if (sender instanceof Player && textForSender) {
-                objectText.textFor((Player) sender);
-            }
+            if (sender instanceof Player && textForSender) objectText.textFor((Player) sender);
 
             return objectText;
         }).exceptionally(throwable -> {
@@ -230,14 +225,12 @@ public class Text {
         return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
             String text = lang.get(path);
 
-            text = text.replace("%prefix%", plugin.getCustomPrefix());
-            text = text.replace("%player%", sender == null ? "No name" : sender.getName());
+            text = text.replace("%prefix%", plugin.getEnvironmentConfig().getCustomPrefix())
+                    .replace("%player%", sender == null ? "No name" : sender.getName());
 
             Text objectText = new Text(text);
 
-            if (sender instanceof Player && textForSender) {
-                objectText.textFor((Player) sender);
-            }
+            if (sender instanceof Player && textForSender) objectText.textFor((Player) sender);
 
             return objectText;
         }).exceptionally(throwable -> {
@@ -247,6 +240,20 @@ public class Text {
     }
     public static CompletableFuture<Text> fromLang(CommandSender sender, Plugin plugin, String path) {
         return fromLang(sender, plugin, path, true);
+    }
+    public static CompletableFuture<Void> sendTextFromLang(CommandSender sender, Plugin plugin, String path) {
+        return fromLang(sender, plugin, path).thenAccept(text -> text.send(sender));
+    }
+    @SafeVarargs
+    public static CompletableFuture<Void> sendTextFromLang(CommandSender sender, Plugin plugin, String path, Pair<String, String>... replacements) {
+        return fromLang(sender, plugin, path).thenAccept(text -> text.replaceAll(replacements).send(sender));
+    }
+    public static CompletableFuture<Void> detectLangsAndSend(CommandSender sender, Plugin plugin, String rawText) {
+        return detectLangs(sender, plugin, rawText).thenAccept(text -> text.send(sender));
+    }
+    @SafeVarargs
+    public static CompletableFuture<Void> detectLangsAndSend(CommandSender sender, Plugin plugin, String rawText, Pair<String, String>... replacements) {
+        return detectLangs(sender, plugin, rawText).thenAccept(text -> text.replaceAll(replacements).send(sender));
     }
 
     public static Text format(String text) {

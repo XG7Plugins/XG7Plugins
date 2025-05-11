@@ -37,8 +37,11 @@ public class DatabaseProcessor {
 
     public DatabaseProcessor(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
-        this.executorService = Executors.newScheduledThreadPool(XG7Plugins.getInstance().getConfig("config").get("sql.query-processor-threads", Integer.class).orElse(3));
-        process(XG7Plugins.getInstance().getConfig("config").getTime("sql.sql-command-processing-interval").orElse(20L));
+
+        Config config = Config.mainConfigOf(XG7Plugins.getInstance());
+
+        this.executorService = Executors.newScheduledThreadPool(config.get("sql.query-processor-threads", Integer.class).orElse(3));
+        process(config.getTime("sql.sql-command-processing-interval").orElse(20L));
     }
 
 
@@ -70,12 +73,10 @@ public class DatabaseProcessor {
     private void processTransaction() throws SQLException {
         if (transactionQueue.isEmpty()) return;
 
-
         Transaction transaction = transactionQueue.poll();
 
         Connection connection = databaseManager.getConnection(transaction.getPlugin());
         if (connection == null) return;
-
 
         PreparedStatement ps = null;
         String currentQuery = "";
@@ -88,14 +89,10 @@ public class DatabaseProcessor {
                 ps = connection.prepareStatement(currentQuery);
                 ps.setQueryTimeout((int) (timeout / 1000));
 
-                // Configura os parâmetros da query
                 for (int i = 0; i < query.getSecond().size(); i++) {
                     Object o = query.getSecond().get(i);
-                    if (o instanceof UUID) {
-                        ps.setString(i + 1, o.toString());
-                    } else {
-                        ps.setObject(i + 1, o);
-                    }
+                    if (o instanceof UUID) ps.setString(i + 1, o.toString());
+                    else ps.setObject(i + 1, o);
                 }
 
                 ps.executeUpdate();
@@ -105,9 +102,7 @@ public class DatabaseProcessor {
 
             connection.commit();
 
-            if (transaction.getSuccess() != null) {
-                transaction.getSuccess().run();
-            }
+            if (transaction.getSuccess() != null) transaction.getSuccess().run();
 
             transaction.completeTask();
 
@@ -120,22 +115,19 @@ public class DatabaseProcessor {
 
                 if (ps != null) ps.close();
 
-                if (transaction.getError() != null) {
-                    transaction.getError().accept(e);
-                }
+                if (transaction.getError() != null) transaction.getError().accept(e);
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
 
-            // Marca a transação como concluída (mesmo em caso de erro)
             transaction.completeTask();
 
             throw new RuntimeException(e);
         }
     }
     private void processQuery() throws SQLException {
-        if (queryQueue == null || databaseManager == null) {
-            System.err.println("queryQueue or databaseManager is null!");
+        if (databaseManager == null) {
+            System.err.println("databaseManager is null!");
             return;
         }
 
@@ -158,11 +150,8 @@ public class DatabaseProcessor {
             ps.setQueryTimeout((int) (timeout / 1000));
             for (int i = 0; i < query.getParams().size(); i++) {
                 Object o = query.getParams().get(i);
-                if (o instanceof UUID) {
-                    ps.setString(i + 1, o.toString());
-                } else {
-                    ps.setObject(i + 1, o);
-                }
+                if (o instanceof UUID) ps.setString(i + 1, o.toString());
+                else ps.setObject(i + 1, o);
             }
 
             Debug.of(XG7Plugins.getInstance()).info("Executing query: " + query.getQuery());

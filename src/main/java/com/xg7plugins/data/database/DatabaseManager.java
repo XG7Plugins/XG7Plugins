@@ -163,8 +163,17 @@ public class DatabaseManager implements Manager {
     public void cacheEntity(@NotNull Plugin plugin, String id, Entity entity) {
         cachedEntities.put(plugin.getName() + ":" + id, entity);
     }
-    public void uncacheEntity(@NotNull Plugin plugin, String id) {
+    public void unCacheEntity(@NotNull Plugin plugin, String id) {
         cachedEntities.remove(plugin.getName() + ":" + id);
+    }
+
+    public void reloadConnection(Plugin plugin) {
+        plugin.getDebug().loading("Reloading database connection...");
+
+        disconnectPlugin(plugin);
+        connectPlugin(plugin);
+
+        plugin.getDebug().loading("Reloaded database connection!");
     }
 
 }

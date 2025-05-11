@@ -4,7 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.CommandArgs;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.utils.text.Text;
@@ -18,13 +18,13 @@ import org.bukkit.command.CommandSender;
         permission = "xg7plugins.command.tasks.delete",
         pluginClass = XG7Plugins.class
 )
-public class DeleteTaskSubCommand implements ICommand {
+public class DeleteTaskSubCommand implements Command {
 
 
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandConfigurations().syntax());
             return;
         }
 

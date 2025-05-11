@@ -110,5 +110,10 @@ public class PacketEventManager implements Manager {
         packetListeners.get(plugin.getName()).clear();
     }
 
+    public void reloadListeners(Plugin plugin) {
+        unregisterListeners(plugin);
+        registerListeners(plugin, plugin.loadPacketEvents());
+    }
+
 
 }

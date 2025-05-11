@@ -2,7 +2,7 @@ package com.xg7plugins.help.chathelp;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.MainCommand;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
@@ -22,7 +22,7 @@ public class HelpInChat {
         this.pages.put("index", index);
         this.plugin = plugin;
 
-        List<ICommand> commands = plugin.getCommandManager().getCommands().values().stream().filter(cmd -> !(cmd instanceof MainCommand)).collect(Collectors.toList());
+        List<Command> commands = plugin.getCommandManager().getCommands().values().stream().filter(cmd -> !(cmd instanceof MainCommand)).collect(Collectors.toList());
 
         int maxPage = (int) Math.ceil(commands.size() / 7.0);
         for (int i = 0; i < maxPage; i++) {

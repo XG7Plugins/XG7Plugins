@@ -1,10 +1,11 @@
 package com.xg7plugins.commands;
 
-import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.boot.PluginConfigurations;
+import com.xg7plugins.boot.PluginSetup;
 import com.xg7plugins.commands.setup.CommandArgs;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import lombok.AllArgsConstructor;
@@ -18,20 +19,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
-@Command(
+@CommandSetup(
         name = "",
         description = "",
         syntax = "/xg7plugins (command)",
         permission = "xg7plugins.command",
         pluginClass = Plugin.class
 )
-public class MainCommand implements ICommand {
+public class MainCommand implements Command {
 
     private final Plugin plugin;
 
 
     public void onCommand(CommandSender sender, CommandArgs args) {
-        Config config = XG7Plugins.getInstance().getConfig("config");
+        Config config = Config.mainConfigOf(plugin);
 
         if (args.len() > 1){
             plugin.getHelpInChat().sendPage(args.get(1, String.class), sender);
@@ -45,7 +46,7 @@ public class MainCommand implements ICommand {
 
         Player player = (Player) sender;
 
-        if (XG7Plugins.isDependencyEnabled("floodgate") && Config.mainConfigOf(XG7Plugins.getInstance()).get("enable-geyser-forms",Boolean.class).orElse(false)) {
+        if (XG7PluginsAPI.isGeyserFormsEnabled()) {
             boolean commandFormEnabled = config.get("help-command-form", Boolean.class).orElse(false);
             if (commandFormEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
                 plugin.getHelpCommandForm().getForm("index").send(player);
@@ -72,8 +73,8 @@ public class MainCommand implements ICommand {
         List<String> suggestions = new ArrayList<>();
         if (args.len() == 1) {
             suggestions.add("help");
-            suggestions.addAll(plugin.getCommandManager().getCommands().entrySet().stream().filter(cmd -> !cmd.getKey().isEmpty()).map(cmd -> {
-                PluginConfigurations configurations = cmd.getValue().getCommandsConfigurations().pluginClass().getAnnotation(PluginConfigurations.class);
+            suggestions.addAll(XG7PluginsAPI.commandManager(plugin).getCommands().entrySet().stream().filter(cmd -> !cmd.getKey().isEmpty()).map(cmd -> {
+                PluginSetup configurations = cmd.getValue().getCommandConfigurations().pluginClass().getAnnotation(PluginSetup.class);
                 return cmd.getKey().replace(configurations.mainCommandName(), "");
             }).collect(Collectors.toList()));
             return suggestions;

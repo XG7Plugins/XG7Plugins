@@ -9,7 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.Pair;
@@ -84,7 +84,7 @@ public class Item {
         return new Item(new ItemStack(Material.AIR));
     }
 
-    public static Item commandIcon(XMaterial material, ICommand command) {
+    public static Item commandIcon(XMaterial material, Command command) {
         Item item = new Item(material.parseItem());
         Command commandConfig = command.getClass().getAnnotation(Command.class);
         item.name("&b/&f" + commandConfig.name());

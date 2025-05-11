@@ -2,6 +2,7 @@ package com.xg7plugins.commands.core_commands.task_command;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.core_commands.task_command.sub_commands.DeleteTaskSubCommand;
 import com.xg7plugins.commands.core_commands.task_command.sub_commands.RestartTaskSubCommand;
@@ -14,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @CommandSetup(
@@ -23,9 +25,9 @@ import java.util.List;
         permission = "xg7plugins.command.tasks",
         pluginClass = XG7Plugins.class
 )
-public class TaskCommand implements ICommand {
+public class TaskCommand implements Command {
 
-    private final ICommand[] subCommands = new ICommand[]{new DeleteTaskSubCommand(), new SeeSubcommand(), new StopTaskSubCommand(), new RestartTaskSubCommand()};
+    private final List<Command> subCommands = Arrays.asList(new DeleteTaskSubCommand(), new SeeSubcommand(), new StopTaskSubCommand(), new RestartTaskSubCommand());
 
     @Override
     public Item getIcon() {
@@ -33,13 +35,13 @@ public class TaskCommand implements ICommand {
     }
 
     @Override
-    public ICommand[] getSubCommands() {
+    public List<Command> getSubCommands() {
         return subCommands;
     }
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (!(sender instanceof  Player)) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandConfigurations().syntax());
             return;
         }
 
@@ -56,9 +58,7 @@ public class TaskCommand implements ICommand {
             suggestions.add("restart");
             suggestions.add("see");
         }
-        if (args.len() == 2) {
-            suggestions.addAll(XG7Plugins.taskManager().getTasks().keySet());
-        }
+        if (args.len() == 2) suggestions.addAll(XG7PluginsAPI.taskManager().getTasks().keySet());
         return suggestions;
     }
 

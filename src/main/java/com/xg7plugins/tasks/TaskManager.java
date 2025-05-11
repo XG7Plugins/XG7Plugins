@@ -168,13 +168,26 @@ public class TaskManager implements Manager {
 
         deleteTask(task);
     }
-
-
     public void shutdown() {
         repeatingAsyncTasksExecutor.shutdown();
         asyncExecutors.values().forEach(ExecutorService::shutdown);
         this.tasks.clear();
         this.asyncExecutors.clear();
+    }
+
+    public void reloadTasks(Plugin plugin) {
+        tasks.values().stream().filter(task -> task.getPlugin().getName().equals(plugin.getName())).forEach(this::runTask);
+    }
+    public ExecutorService getExecutor(String name) {
+        return asyncExecutors.get(name);
+    }
+
+    public Task getTask(String id) {
+        return tasks.get(id);
+    }
+
+    public boolean containsTask(String id) {
+        return tasks.containsKey(id);
     }
 
 }

@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.gson.Gson;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.managers.Manager;
 import org.jetbrains.annotations.NotNull;
@@ -27,42 +28,41 @@ public class CacheManager implements Manager {
 
     public CacheManager(XG7Plugins plugin) {
 
-        Config config = plugin.getConfigsManager().getConfig("config");
+        Config config = Config.mainConfigOf(plugin);
 
         this.caches = new HashMap<>();
 
-        if (config.get("redis-cache.enabled", Boolean.class).orElse(false)) {
+        if (!config.get("redis-cache.enabled", Boolean.class).orElse(false)) return;
 
-            this.cacheExpires = config.get("redis-cache.cache-expires", Boolean.class).orElse(true);
+        this.cacheExpires = config.get("redis-cache.cache-expires", Boolean.class).orElse(true);
 
-            String host = config.get("redis-cache.host", String.class).orElse(null);
-            int port = config.get("redis-cache.port", Integer.class).orElse(0);
+        String host = config.get("redis-cache.host", String.class).orElse(null);
+        int port = config.get("redis-cache.port", Integer.class).orElse(0);
 
-            boolean authEnabled = config.get("redis-cache.user-auth-enabled", Boolean.class).orElse(false);
+        boolean authEnabled = config.get("redis-cache.user-auth-enabled", Boolean.class).orElse(false);
 
-            String user = config.get("redis-cache.username", String.class).orElse(null);
-            String password = config.get("redis-cache.password", String.class).orElse(null);
-            try {
-                pool = authEnabled ? new JedisPool(host, port, user, password) : new JedisPool(host,port);
+        String user = config.get("redis-cache.username", String.class).orElse(null);
+        String password = config.get("redis-cache.password", String.class).orElse(null);
+        try {
+            pool = authEnabled ? new JedisPool(host, port, user, password) : new JedisPool(host, port);
 
-                int minIdle = config.get("redis-cache.min-idle-connections", Integer.class).orElse(10);
-                int maxIdle = config.get("redis-cache.max-idle-connections", Integer.class).orElse(50);
-                int maxPoolSize = config.get("redis-cache.max-connections", Integer.class).orElse(100);
+            int minIdle = config.get("redis-cache.min-idle-connections", Integer.class).orElse(10);
+            int maxIdle = config.get("redis-cache.max-idle-connections", Integer.class).orElse(50);
+            int maxPoolSize = config.get("redis-cache.max-connections", Integer.class).orElse(100);
 
-                long timeout = config.getTime("redis-cache.max-wait-time").orElse(1000L);
+            long timeout = config.getTime("redis-cache.max-wait-time").orElse(1000L);
 
-                pool.setMinIdle(minIdle);
-                pool.setMaxIdle(maxIdle);
-                pool.setMaxTotal(maxPoolSize);
-                pool.setMaxWaitMillis(timeout);
+            pool.setMinIdle(minIdle);
+            pool.setMaxIdle(maxIdle);
+            pool.setMaxTotal(maxPoolSize);
+            pool.setMaxWaitMillis(timeout);
 
-                Jedis jedis = pool.getResource();
-                if (authEnabled) jedis.auth(password);
-                jedis.close();
-            } catch (Exception e) {
-                plugin.getDebug().severe("Failed to connect to Redis: " + e.getMessage());
-                plugin.getDebug().severe("Using local cache instead.");
-            }
+            Jedis jedis = pool.getResource();
+            if (authEnabled) jedis.auth(password);
+            jedis.close();
+        } catch (Exception e) {
+            plugin.getDebug().severe("Failed to connect to Redis: " + e.getMessage());
+            plugin.getDebug().severe("Using local cache instead.");
         }
 
 
@@ -96,10 +96,10 @@ public class CacheManager implements Manager {
                     if (cacheExpires) jedis.hexpire(cache.getPlugin().getName() + ":" + cache.getName(), cache.getExpireTime() / 1000, key.toString());
                 }
 
-            }, XG7Plugins.taskManager().getAsyncExecutors().get("cache"));
+            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
         }
-
-        return CompletableFuture.runAsync(() -> caches.get(cache.getPlugin().getName() + ":" + cache.getName()).put(key, value));
+        caches.get(cache.getPlugin().getName() + ":" + cache.getName()).put(key, value);
+        return CompletableFuture.completedFuture(null);
     }
 
     public <T> CompletableFuture<T> getCachedObject(ObjectCache<?,T> cache, Object key) {
@@ -111,7 +111,7 @@ public class CacheManager implements Manager {
                     e.printStackTrace();
                     return null;
                 }
-            }, XG7Plugins.taskManager().getAsyncExecutors().get("cache"));
+            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
 
         }
 
@@ -125,10 +125,11 @@ public class CacheManager implements Manager {
                     jedis.hdel(cache.getPlugin().getName() + ":" + cache.getName(), gson.toJson(key));
                     if (jedis.hlen(cache.getPlugin().getName() + ":" + cache.getName()) == 0) clearCache(cache);
                 }
-            }, XG7Plugins.taskManager().getAsyncExecutors().get("cache"));
+            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
         }
 
-        return CompletableFuture.runAsync(() -> caches.get(cache.getPlugin().getName() + ":" + cache.getName()).invalidate(key));
+        caches.get(cache.getPlugin().getName() + ":" + cache.getName()).invalidate(key);
+        return CompletableFuture.completedFuture(null);
     }
 
     public CompletableFuture<Void> clearCache(ObjectCache<?,?> cache) {
@@ -137,10 +138,11 @@ public class CacheManager implements Manager {
                 try (Jedis jedis = pool.getResource()) {
                     jedis.del(cache.getPlugin().getName() + ":" + cache.getName());
                 }
-            }, XG7Plugins.taskManager().getAsyncExecutors().get("cache"));
+            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
         }
 
-        return CompletableFuture.runAsync(() -> caches.get(cache.getPlugin().getName() + ":" + cache.getName()).invalidateAll());
+        caches.get(cache.getPlugin().getName() + ":" + cache.getName()).invalidateAll();
+        return CompletableFuture.completedFuture(null);
     }
 
     public CompletableFuture<Boolean> containsKey(ObjectCache<?,?> cache, Object key) {
@@ -152,7 +154,7 @@ public class CacheManager implements Manager {
                     e.printStackTrace();
                     return false;
                 }
-            }, XG7Plugins.taskManager().getAsyncExecutors().get("cache"));
+            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
         }
 
         return CompletableFuture.completedFuture(caches.get(cache.getPlugin().getName() + ":" + cache.getName()).getIfPresent(key) != null);
@@ -173,7 +175,7 @@ public class CacheManager implements Manager {
                     e.printStackTrace();
                     return null;
                 }
-            }, XG7Plugins.taskManager().getAsyncExecutors().get("cache"));
+            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
         }
 
         return CompletableFuture.completedFuture((Map<K, V>) caches.get(cache.getPlugin().getName() + ":" + cache.getName()).asMap());

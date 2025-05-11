@@ -2,6 +2,7 @@ package com.xg7plugins.commands;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
@@ -27,14 +28,10 @@ public enum CommandMessages {
     }
 
     public CompletableFuture<Void> send(CommandSender sender) {
-        return Text.fromLang(sender, XG7Plugins.getInstance(),path).thenAccept(t -> t.send(sender));
+        return Text.sendTextFromLang(sender, XG7Plugins.getInstance(),path);
     }
     public CompletableFuture<Void> send(CommandSender sender, String syntax) {
-        return Text.fromLang(sender,XG7Plugins.getInstance(),path).thenAccept(t -> t.replace("syntax", syntax).send(sender));
-    }
-
-    public static CompletableFuture<Void> send(CommandSender sender, Plugin plugin, String path) {
-        return Text.fromLang(sender, plugin, path).thenAccept(t -> t.send(sender));
+        return Text.sendTextFromLang(sender,XG7Plugins.getInstance(), path, Pair.of("syntax", syntax));
     }
 
 }

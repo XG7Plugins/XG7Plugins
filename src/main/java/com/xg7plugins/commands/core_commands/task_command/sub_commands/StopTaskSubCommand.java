@@ -2,18 +2,20 @@ package com.xg7plugins.commands.core_commands.task_command.sub_commands;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.CommandArgs;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
 
+import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
-@Command(
+@CommandSetup(
         name = "stop",
         description = "Stop Task",
         syntax = "/xg7plugins tasks stop <ID>",
@@ -21,32 +23,26 @@ import org.bukkit.command.CommandSender;
         permission = "xg7plugins.command.tasks.stop",
         pluginClass = XG7Plugins.class
 )
-public class StopTaskSubCommand implements ICommand {
-
-    @Override
-    public Plugin getPlugin() {
-        return XG7Plugins.getInstance();
-    }
+public class StopTaskSubCommand implements Command {
 
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandConfigurations().syntax());
             return;
         }
-
-        TaskManager manager = XG7Plugins.getInstance().getTaskManager();
+        TaskManager manager = XG7PluginsAPI.taskManager();
         String id = args.get(0, String.class);
 
-        if (!manager.getTasks().containsKey(id)) {
-            Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.not-found").thenAccept(text -> text.send(sender));
+        if (!manager.containsTask(id)) {
+            Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.not-found");
             return;
         }
 
-        TaskState state = manager.getTasks().get(id).getState();
+        TaskState state = manager.getTask(id).getState();
 
         if (state == TaskState.IDLE) {
-            Text.fromLang(sender,XG7Plugins.getInstance(), "task-command.already-stopped").thenAccept(text -> text.send(sender));
+            Text.sendTextFromLang(sender,XG7Plugins.getInstance(), "task-command.already-stopped");
             return;
         }
 
@@ -56,7 +52,7 @@ public class StopTaskSubCommand implements ICommand {
         XG7Plugins.getInstance().getDebug().warn("It can cause errors in the plugin of the task!");
         XG7Plugins.getInstance().getDebug().warn("To resume the task to execution use /xg7plugins tasks restart " + id + "!");
 
-        Text.fromLang(sender,XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
+        Text.sendTextFromLang(sender,XG7Plugins.getInstance(), "task-command.stopped");
     }
 
     @Override

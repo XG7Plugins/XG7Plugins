@@ -3,7 +3,7 @@ package com.xg7plugins.help.guihelp;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.MainCommand;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
@@ -16,12 +16,12 @@ import java.util.stream.Collectors;
 
 public class CommandMenu extends PageMenu {
 
-    private final Map<String, ICommand> commands;
+    private final Map<String, Command> commands;
     private final CommandMenu superMenu;
 
     private final HelpCommandGUI guiOrigin;
 
-    public CommandMenu(List<ICommand> commands, String customTitle, CommandMenu superMenu, HelpCommandGUI guiOrigin) {
+    public CommandMenu(List<Command> commands, String customTitle, CommandMenu superMenu, HelpCommandGUI guiOrigin) {
         super(XG7Plugins.getInstance(), "command_menu" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, 54, Slot.of(2,2), Slot.of(5,8));
         this.commands = commands.stream().collect(
                 Collectors.toMap(
@@ -90,7 +90,7 @@ public class CommandMenu extends PageMenu {
 
         if (item.isAir()) return;
 
-        ICommand command = commands.get(item.getTag("command", String.class).orElse(null));
+        Command command = commands.get(item.getTag("command", String.class).orElse(null));
 
         if (command == null) return;
 

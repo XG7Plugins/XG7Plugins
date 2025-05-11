@@ -2,17 +2,17 @@ package com.xg7plugins;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.boot.PluginConfigurations;
+import com.xg7plugins.boot.PluginSetup;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.core_commands.LangCommand;
 import com.xg7plugins.commands.core_commands.ReloadCause;
 import com.xg7plugins.commands.core_commands.ReloadCommand;
 import com.xg7plugins.commands.core_commands.task_command.TaskCommand;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.entity.Entity;
-import com.xg7plugins.data.database.processor.DatabaseProcessor;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.dependencies.Dependency;
@@ -40,6 +40,7 @@ import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.server.ServerInfo;
 import com.xg7plugins.tasks.*;
+import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
@@ -48,11 +49,14 @@ import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 @Getter(AccessLevel.PUBLIC)
-@PluginConfigurations(
+@PluginSetup(
         prefix = "§bXG§37P§9lu§1gins§r",
         onEnableDraw = {
                 "§b __   _______ §3______ §9_____  _             §1_           ",
@@ -65,24 +69,14 @@ import java.util.concurrent.ExecutionException;
                 "§9                                    |___/             "
         },
         mainCommandName = "xg7plugins",
-        mainCommandAliases = {"7plugins", "7pl", "7pls", "xg7pl"}
+        mainCommandAliases = {"7plugins", "7pl", "7pls", "xg7pl"},
+        reloadCauses = {"json"}
 )
 public final class XG7Plugins extends Plugin {
 
     private ServerInfo serverInfo;
 
-    private DatabaseManager databaseManager;
-    private CacheManager cacheManager;
     private TPSCalculator tpsCalculator;
-    private LangManager langManager;
-    private EventManager eventManager;
-    private TaskManager taskManager;
-    private CooldownManager cooldownManager;
-    private PacketEventManager packetEventManager;
-    private JsonManager jsonManager;
-    private ModuleManager moduleManager;
-    private DependencyManager dependencyManager;
-    private ReloadService reloadService;
 
     private PlayerDataDAO playerDataDAO;
 
@@ -109,13 +103,11 @@ public final class XG7Plugins extends Plugin {
     public void onEnable() {
         super.onEnable();
         debug.loading("Enabling XG7Plugins...");
-
         PacketEvents.getAPI().init();
-        ReloadCause.registerCause(this, new ReloadCause("json"));
 
         debug.loading("Checking dependencies...");
 
-        dependencyManager = new DependencyManager();
+        managerRegistry.registerManagers(new DependencyManager());
 
         debug.loading("Loading metrics...");
 
@@ -127,44 +119,19 @@ public final class XG7Plugins extends Plugin {
 
         debug.loading("Loading managers...");
 
-        this.taskManager = new TaskManager(this);
+        managerRegistry.registerManagers(
+                new TaskManager(this),
+                new CacheManager(this),
+                new DatabaseManager(this),
+                new LangManager(this, new String[]{"en", "pt", "es"}),
+                new JsonManager(this),
+                new EventManager(),
+                new PacketEventManager(),
+                new CooldownManager(this),
+                new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores())
+        );
 
-        debug.loading("Loading cache manager...");
-        this.cacheManager = new CacheManager(this);
-
-        debug.loading("Loading database...");
-        this.databaseManager = new DatabaseManager(this);
         this.playerDataDAO = new PlayerDataDAO();
-
-        debug.loading("Loading lang manager...");
-        this.langManager = new LangManager(this, new String[]{"en", "pt", "es"});
-
-        debug.loading("Loading JSON manager...");
-        this.jsonManager = new JsonManager(this);
-
-        debug.loading("Loading events manager...");
-        this.eventManager = new EventManager();
-
-        debug.loading("Loading packet events manager...");
-        this.packetEventManager = new PacketEventManager();
-
-        debug.loading("Loading cooldown manager...");
-        this.cooldownManager = new CooldownManager(this);
-
-        debug.loading("Loading modules...");
-        this.moduleManager = new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores());
-
-        debug.loading("Loading Menus...");
-
-        XG7Menus menus = XG7Menus.getInstance();
-
-        menus.registerMenus(new LangMenu(this), new TaskMenu(this));
-
-        if (XG7Plugins.isDependencyEnabled("floodgate") && Config.mainConfigOf(this).get("enable-geyser-forms",Boolean.class).orElse(false)) {
-            debug.loading("Loading GeyserForms...");
-            XG7GeyserForms geyserForms = XG7GeyserForms.getInstance();
-            geyserForms.registerForm(new LangForm());
-        }
 
         debug.loading("Loading server info...");
         try {
@@ -173,41 +140,26 @@ public final class XG7Plugins extends Plugin {
             throw new RuntimeException(e);
         }
 
+        debug.loading("Loading Menus...");
+
+        XG7Menus menus = XG7Menus.getInstance();
+
+        menus.registerMenus(new LangMenu(this), new TaskMenu(this));
+
+        if (XG7PluginsAPI.isGeyserFormsEnabled()) {
+            debug.loading("Loading GeyserForms...");
+            XG7GeyserForms geyserForms = XG7GeyserForms.getInstance();
+            geyserForms.registerForm(new LangForm());
+        }
+
         debug.loading("Loading plugins...");
         register(this);
-        plugins.forEach((name, plugin) -> {
-            debug.loading("Enabling " + plugin.getName() + "...");
+        plugins.forEach((name, plugin) -> loadPlugin(plugin));
 
-            plugin.getDebug().loading("Connecting plugin to database...");
-            databaseManager.connectPlugin(plugin, plugin.loadEntities());
-
-            if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
-
-            plugin.getDebug().loading("Registering listeners...");
-            eventManager.registerListeners(plugin, plugin.loadEvents());
-
-            plugin.getDebug().loading("Registering commands...");
-            plugin.getCommandManager().registerCommands(plugin.loadCommands());
-
-            plugin.getDebug().loading("Registering packet events...");
-            packetEventManager.registerListeners(plugin, plugin.loadPacketEvents());
-
-            plugin.getDebug().loading("Registering tasks...");
-            taskManager.registerTasks(plugin.loadRepeatingTasks());
-
-            plugin.getDebug().loading("Loading langs...");
-            langManager.loadLangsFrom(plugin);
-
-            plugin.getDebug().loading("Loading help...");
-            plugin.loadHelp();
-
-        });
-
-        getConfigsManager().registerAdapter(Item.class, new LangItemTypeAdapter());
+        XG7PluginsAPI.configManager(this).registerAdapter(Item.class, new LangItemTypeAdapter());
 
         debug.loading("Registering PlaceholderAPI expansion...");
-        if (dependencyManager.isLoaded("PlaceholderAPI")) new XG7PluginsPlaceholderExpansion().register();
-
+        if (XG7PluginsAPI.isDependencyEnabled("PlaceholderAPI")) new XG7PluginsPlaceholderExpansion().register();
 
         debug.loading("XG7Plugins enabled.");
 
@@ -225,15 +177,16 @@ public final class XG7Plugins extends Plugin {
         this.plugins.forEach((name, plugin) -> unregister(plugin));
 
         debug.loading("Stopping tasks...");
-        taskManager.shutdown();
+        XG7PluginsAPI.taskManager().shutdown();
 
         debug.loading("Stopping scores...");
         XG7Scores.getInstance().onDisable();
 
         debug.loading("Stopping cache...");
-        cacheManager.shutdown();
+        XG7PluginsAPI.cacheManager().shutdown();
 
-        moduleManager.disableModules();
+        debug.loading("Disabling modules...");
+        XG7PluginsAPI.moduleManager().disableModules();
 
         debug.loading("Stopping PacketEvents...");
         PacketEvents.getAPI().terminate();
@@ -249,28 +202,26 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void onReload(ReloadCause cause) {
         super.onReload(cause);
-        if (cause.equals("json")) jsonManager.invalidateCache();
+        if (cause.equals("json")) XG7PluginsAPI.jsonManager().invalidateCache();
     }
-    public Class<? extends Entity>[] loadEntities() {
+    public Class<? extends Entity<?,?>>[] loadEntities() {
         return new Class[]{PlayerData.class};
     }
     @Override
-    public ICommand[] loadCommands() {return new ICommand[]{new LangCommand(), new ReloadCommand(), new TaskCommand()};}
-    @Override
-    public Listener[] loadEvents() {
-        return new Listener[]{new JoinListener()};
+    public List<Command> loadCommands() {
+        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand());
     }
     @Override
-    public PacketListener[] loadPacketEvents() {
-        return null;
+    public List<Listener> loadEvents() {
+        return Collections.singletonList(new JoinListener());
     }
     @Override
-    public Task[] loadRepeatingTasks() {
-        return new Task[]{cooldownManager.getTask(), new DatabaseKeepAlive()};
+    public List<Task> loadRepeatingTasks() {
+        return Arrays.asList(XG7PluginsAPI.cooldowns().getTask(), new DatabaseKeepAlive());
     }
     @Override
-    public Dependency[] loadDependencies() {
-        return new Dependency[]{Dependency.of("PlaceholderAPI", "https://www.spigotmc.org/resources/placeholderapi.6245/download?version=541946")};
+    public List<Dependency> loadDependencies() {
+        return Collections.singletonList(Dependency.of("PlaceholderAPI", "https://www.spigotmc.org/resources/placeholderapi.6245/download?version=541946"));
     }
 
     // Carregar ajuda
@@ -281,28 +232,58 @@ public final class XG7Plugins extends Plugin {
         this.helpInChat = new XG7PluginsChatHelp();
     }
 
+    private void loadPlugin(Plugin plugin) {
+        debug.loading("Enabling " + plugin.getName() + "...");
+
+        plugin.getDebug().loading("Connecting plugin to database...");
+        XG7PluginsAPI.database().connectPlugin(plugin, plugin.loadEntities());
+
+        if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
+
+        plugin.getDebug().loading("Registering listeners...");
+        XG7PluginsAPI.eventManager().registerListeners(plugin, plugin.loadEvents());
+
+        plugin.getDebug().loading("Registering commands...");
+        XG7PluginsAPI.commandManager(plugin).registerCommands(plugin.loadCommands());
+
+        plugin.getDebug().loading("Registering packet events...");
+        XG7PluginsAPI.packetEventManager().registerListeners(plugin, plugin.loadPacketEvents());
+
+        plugin.getDebug().loading("Registering tasks...");
+        XG7PluginsAPI.taskManager().registerTasks(plugin.loadRepeatingTasks());
+
+        plugin.getDebug().loading("Loading langs...");
+        XG7PluginsAPI.langManager().loadLangsFrom(plugin);
+
+        plugin.getDebug().loading("Loading help...");
+        plugin.loadHelp();
+    }
+
     public static void register(Plugin plugin) {
-        XG7Plugins.getInstance().getDebug().loading("Registering " + plugin.getName() + "...");
+        Debug.of(XG7Plugins.getInstance()).loading("Registering " + plugin.getName() + "...");
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
 
         xg7Plugins.getPlugins().put(plugin.getName().split(" ")[0], plugin);
-        XG7Plugins.getInstance().getDebug().loading(plugin.getName() + " registered.");
+        Debug.of(XG7Plugins.getInstance()).loading(plugin.getName() + " registered.");
     }
 
     public static void unregister(Plugin plugin) {
 
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
-        xg7Plugins.getDebug().loading("Unregistering " + plugin.getName() + "...");
 
-        xg7Plugins.getDebug().loading("Disabling plugin events...");
-        xg7Plugins.getEventManager().unregisterListeners(plugin);
-        xg7Plugins.getPacketEventManager().unregisterListeners(plugin);
+        Debug debug = Debug.of(xg7Plugins);
 
-        xg7Plugins.getDebug().loading("Disconnecting plugin from database...");
-        xg7Plugins.getDatabaseManager().disconnectPlugin(plugin);
+        debug.loading("Unregistering " + plugin.getName() + "...");
+
+        debug.loading("Disabling plugin events...");
+        XG7PluginsAPI.eventManager().unregisterListeners(plugin);
+        XG7PluginsAPI.packetEventManager().unregisterListeners(plugin);
+
+        debug.loading("Disconnecting plugin from database...");
+        XG7PluginsAPI.database().disconnectPlugin(plugin);
 
         xg7Plugins.getPlugins().remove(plugin.getName());
-        xg7Plugins.getDebug().loading(plugin.getName() + " unregistered.");
+        debug.loading(plugin.getName() + " unregistered.");
 
     }
 

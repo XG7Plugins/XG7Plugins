@@ -1,10 +1,10 @@
 package com.xg7plugins.boot;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.commands.CommandManager;
 import com.xg7plugins.commands.core_commands.ReloadCause;
 import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.commands.setup.ICommand;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
 import com.xg7plugins.data.database.entity.Entity;
@@ -14,15 +14,13 @@ import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.help.chathelp.HelpInChat;
 import com.xg7plugins.help.formhelp.HelpCommandForm;
 import com.xg7plugins.help.guihelp.HelpCommandGUI;
-import com.xg7plugins.managers.ManagerRegistery;
+import com.xg7plugins.managers.ManagerRegistry;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.utils.Debug;
 import lombok.*;
 import org.apache.commons.lang.IllegalClassException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
@@ -30,16 +28,12 @@ import java.util.*;
 @Getter
 public abstract class Plugin extends JavaPlugin {
 
-    private final PluginConfigurations configurations;
+    private final PluginSetup configurations;
 
-    @Setter
-    private String customPrefix;
-    private String prefix;
-    @Setter
-    private List<String> enabledWorlds;
+    private final EnvironmentConfig environmentConfig;
 
-    private ManagerRegistery managers;
-    private Debug debug;
+    protected ManagerRegistry managerRegistry;
+    protected Debug debug;
 
     private HelpCommandGUI helpCommandGUI;
     private HelpInChat helpInChat;
@@ -47,8 +41,29 @@ public abstract class Plugin extends JavaPlugin {
 
 
     public Plugin() {
-        configurations = getClass().getAnnotation(PluginConfigurations.class);
+        configurations = getClass().getAnnotation(PluginSetup.class);
         if (configurations == null) throw new IllegalClassException("PluginConfigurations annotation not found in " + getClass().getName());
+
+        managerRegistry = new ManagerRegistry(this);
+        this.environmentConfig = new EnvironmentConfig();
+    }
+
+    @Override
+    public void onLoad() {
+        environmentConfig.setPrefix(ChatColor.translateAlternateColorCodes('&', configurations.prefix()));
+        environmentConfig.setCustomPrefix(environmentConfig.getPrefix());
+
+        managerRegistry.registerManagers(new ConfigManager(this, configurations.configs()));
+
+        debug = new Debug(this);
+
+        debug.loading("Loading " + environmentConfig.getCustomPrefix() + "...");
+
+        managerRegistry.registerManagers(new CommandManager(this));
+
+        for (String cause : configurations.reloadCauses()) ReloadCause.registerCause(this, ReloadCause.of(this, cause));
+
+        XG7Plugins.register(this);
     }
 
     @Override
@@ -57,11 +72,11 @@ public abstract class Plugin extends JavaPlugin {
 
         Config config = Config.mainConfigOf(this);
 
-        this.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix", String.class).orElse(prefix)));
+        environmentConfig.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix", String.class).orElse(environmentConfig.getPrefix())));
 
-        this.enabledWorlds = config.getList("enabled-worlds", String.class).orElse(Collections.emptyList());
+        environmentConfig.setEnabledWorlds(config.getList("enabled-worlds", String.class).orElse(Collections.emptyList()));
 
-        Debug.of(this).loading("Custom prefix: " + customPrefix);
+        debug.loading("Custom prefix: " + environmentConfig.getCustomPrefix());
     }
 
     public void onReload(ReloadCause cause) {
@@ -69,30 +84,27 @@ public abstract class Plugin extends JavaPlugin {
         XG7Plugins xg7Plugin = XG7Plugins.getInstance();
 
         if (cause.equals(ReloadCause.CONFIG)) {
-            configsManager.reloadConfigs();
+            XG7PluginsAPI.configManager(xg7Plugin).reloadConfigs();
             debug = new Debug(this);
             return;
         }
         if (cause.equals(ReloadCause.EVENTS)) {
-            xg7Plugin.getEventManager().unregisterListeners(this);
-            xg7Plugin.getEventManager().registerListeners(this, this.loadEvents());
-            xg7Plugin.getPacketEventManager().unregisterListeners(this);
-            xg7Plugin.getPacketEventManager().registerListeners(this, this.loadPacketEvents());
+            XG7PluginsAPI.eventManager().reloadEvents(this);
+            XG7PluginsAPI.packetEventManager().reloadListeners(this);
             return;
         }
         if (cause.equals(ReloadCause.DATABASE)) {
-            xg7Plugin.getDatabaseManager().disconnectPlugin(this);
-            xg7Plugin.getDatabaseManager().connectPlugin(this, this.loadEntities());
+            XG7PluginsAPI.database().reloadConnection(this);
             return;
         }
         if (cause.equals(ReloadCause.LANGS)) {
-            xg7Plugin.getLangManager().getLangs().clear().join();
-            xg7Plugin.getLangManager().loadLangsFrom(this);
+            XG7PluginsAPI.langManager().clearCache();
+            XG7PluginsAPI.langManager().loadLangsFrom(this);
             return;
         }
         if (cause.equals(ReloadCause.TASKS)) {
-            xg7Plugin.getTaskManager().cancelTasks(this);
-            xg7Plugin.getTaskManager().getTasks().values().stream().filter(task -> task.getPlugin().getName().equals(this.getName())).forEach(task -> xg7Plugin.getTaskManager().runTask(task));
+            XG7PluginsAPI.taskManager().cancelTasks(this);
+            XG7PluginsAPI.taskManager().reloadTasks(this);
         }
 
     };
@@ -100,22 +112,11 @@ public abstract class Plugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Debug.of(this).loading("Disabling " + prefix + "...");
-        Debug.of(this).loading("Disabling extensions...");
+        debug.loading("Disabling " + environmentConfig.getCustomPrefix() + "...");
     }
-    @Override
-    public void onLoad() {
-        this.prefix = ChatColor.translateAlternateColorCodes('&', configurations.prefix());
-        this.customPrefix = this.prefix;
 
-        configsManager = new ConfigManager(this, configurations.configs());
-        debug = new Debug(this);
-        Debug.of(this).loading("Loading " + prefix + "...");
-        commandManager = new CommandManager(this);
-
-        for (String cause : configurations.reloadCauses()) ReloadCause.registerCause(this, ReloadCause.of(this, cause));
-
-        XG7Plugins.register(this);
+    public <T extends EnvironmentConfig> T getEnvironmentConfig() {
+        return (T) environmentConfig;
     }
 
     public Class<? extends Entity<?,?>>[] loadEntities() {

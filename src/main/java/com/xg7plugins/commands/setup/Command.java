@@ -1,22 +1,23 @@
 package com.xg7plugins.commands.setup;
 
-import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public interface Command {
 
-    default Command[] getSubCommands() {
-        return new Command[0];
+    default List<Command> getSubCommands() {
+        return new ArrayList<>();
     }
 
     default void onCommand(CommandSender sender, CommandArgs args) {
-        CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
+        CommandMessages.SYNTAX_ERROR.send(sender, getCommandConfigurations().syntax());
     }
 
     default List<String> onTabComplete (CommandSender sender, CommandArgs args) {
@@ -25,10 +26,10 @@ public interface Command {
 
     Item getIcon();
 
-    default CommandSetup getCommandsConfigurations() {
+    default CommandSetup getCommandConfigurations() {
         return this.getClass().getAnnotation(CommandSetup.class);
     }
     default Plugin getPlugin() {
-        return XG7Plugins.getXG7Plugin(getCommandsConfigurations().pluginClass());
+        return XG7PluginsAPI.getXG7Plugin(getCommandConfigurations().pluginClass());
     }
 }

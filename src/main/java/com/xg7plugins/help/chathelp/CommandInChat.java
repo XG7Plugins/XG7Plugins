@@ -2,7 +2,7 @@ package com.xg7plugins.help.chathelp;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.utils.text.component.Component;
 import com.xg7plugins.utils.text.component.event.ClickEvent;
@@ -17,7 +17,7 @@ public class CommandInChat extends HelpPage {
 
     private final Plugin plugin;
 
-    public CommandInChat(Plugin plugin, List<ICommand> commands, int page, int maxPage) {
+    public CommandInChat(Plugin plugin, List<Command> commands, int page, int maxPage) {
         super("command-in-chat" + UUID.randomUUID());
         this.plugin = plugin;
 
@@ -28,7 +28,7 @@ public class CommandInChat extends HelpPage {
                         .replace("max_page", maxPage + "")
                         .build()
         );
-        for (ICommand command : commands) {
+        for (Command command : commands) {
 
             Item commandIcon = command.getIcon();
 
@@ -47,9 +47,9 @@ public class CommandInChat extends HelpPage {
     public static class CommandComponent extends HelpComponent {
 
         private final Item commandIcon;
-        private final ICommand command;
+        private final Command command;
 
-        public CommandComponent(Plugin plugin, ICommand command, Item commandIcon) {
+        public CommandComponent(Plugin plugin, Command command, Item commandIcon) {
             super(
                     plugin,
                     null

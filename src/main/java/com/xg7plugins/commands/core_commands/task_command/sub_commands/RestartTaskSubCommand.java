@@ -5,7 +5,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.CommandArgs;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
@@ -21,7 +21,7 @@ import org.bukkit.command.CommandSender;
         permission = "xg7plugins.command.tasks.restart",
         pluginClass = XG7Plugins.class
 )
-public class RestartTaskSubCommand implements ICommand {
+public class RestartTaskSubCommand implements Command {
 
     @Override
     public Plugin getPlugin() {
@@ -31,7 +31,7 @@ public class RestartTaskSubCommand implements ICommand {
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandConfigurations().syntax());
             return;
         }
 

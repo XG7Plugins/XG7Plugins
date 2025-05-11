@@ -3,7 +3,7 @@ package com.xg7plugins.help.formhelp;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.MainCommand;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.modules.xg7geyserforms.forms.ModalForm;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;
 import com.xg7plugins.modules.xg7menus.item.Item;
@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 
 public class CommandForm extends SimpleForm {
 
-    private final Map<String, ICommand> commands;
+    private final Map<String, Command> commands;
     private final CommandForm superForm;
 
     @Getter
     private final HelpCommandForm guiOrigin;
 
-    public CommandForm(Plugin plugin, List<ICommand> commands, String customTitle, CommandForm superForm, HelpCommandForm guiOrigin) {
+    public CommandForm(Plugin plugin, List<Command> commands, String customTitle, CommandForm superForm, HelpCommandForm guiOrigin) {
         super("command-form" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, plugin);
 
         this.commands = commands.stream().collect(
@@ -77,7 +77,7 @@ public class CommandForm extends SimpleForm {
             return;
         }
 
-        ICommand command = commands.get(clickedButton.text());
+        Command command = commands.get(clickedButton.text());
         if (command == null) {
             guiOrigin.getForm("index").send(player);
             return;
@@ -101,9 +101,9 @@ public class CommandForm extends SimpleForm {
 
         private final CommandForm origin;
         private final HelpCommandForm guiOrigin;
-        private final ICommand command;
+        private final Command command;
 
-        public CommandDescription(CommandForm origin, ICommand command, Item commandIcon, HelpCommandForm guiOrigin) {
+        public CommandDescription(CommandForm origin, Command command, Item commandIcon, HelpCommandForm guiOrigin) {
             super(
                     "command-desc" + UUID.randomUUID(),
                     "Contents of command: " + command.getClass().getAnnotation(Command.class).name(),

@@ -2,15 +2,16 @@ package com.xg7plugins.commands.core_commands.task_command.sub_commands;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.CommandArgs;
-import com.xg7plugins.commands.setup.ICommand;
+import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.modules.xg7menus.builders.MenuBuilder;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.BaseMenu;
 import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
 import com.xg7plugins.tasks.Task;
@@ -23,14 +24,14 @@ import org.bukkit.entity.Player;
 
 import java.util.Collections;
 
-@Command(
+@CommandSetup(
         name = "see",
         description = "See Task",
         syntax = "/xg7plugins tasks see <ID>",
         permission = "xg7plugins.command.tasks.see",
         pluginClass = XG7Plugins.class
 )
-public class SeeSubcommand implements ICommand {
+public class SeeSubcommand implements Command {
 
     @Override
     public Plugin getPlugin() {
@@ -40,83 +41,84 @@ public class SeeSubcommand implements ICommand {
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandsConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandConfigurations().syntax());
             return;
         }
 
-        TaskManager manager = XG7Plugins.getInstance().getTaskManager();
+        TaskManager manager = XG7PluginsAPI.taskManager();
 
         String id = args.get(0, String.class);
 
-        if (!manager.getTasks().containsKey(id)) {
-            Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.not-found").thenAccept(text -> text.send(sender));
+        if (!manager.containsTask(id)) {
+            Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.not-found");
             return;
         }
-        Task task = manager.getTasks().get(id);
+        Task task = manager.getTask(id);
 
-        if (sender instanceof Player) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage("Task info: " + task.getName());
+            sender.sendMessage("Task state: " + task.getState().name());
+            sender.sendMessage("Task plugin: " + task.getPlugin().getName());
+            sender.sendMessage("Task repeating: " + task.isRepeating());
+            sender.sendMessage("Task executor: " + task.getExecutorName());
+            sender.sendMessage("Task delay: " + task.getDelay());
+            sender.sendMessage("Task async: " + task.isAsync());
+            return;
+        }
 
-            Config lang = XG7Plugins.getInstance().getLangManager() == null ? XG7Plugins.getInstance().getConfig("messages") : XG7Plugins.getInstance().getLangManager().getLangByPlayer(XG7Plugins.getInstance(), (Player) sender).join().getLangConfiguration();
+        Player player = (Player) sender;
 
-            ClickableItem builder = Item.from(XMaterial.REPEATER.parseMaterial()).clickable().onClick(event -> {
-                if (event.getMenuAction().isRightClick()) {
-                    if (task.getState() == TaskState.RUNNING) {
-                        XG7Plugins.taskManager().cancelTask(task.getPlugin().getName() + ":" + task.getName());
-                        Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
-                        IBasicMenu.refresh(event.getHolder());
-                        return;
-                    }
-                    if ((task.getPlugin().getName() + ":" + task.getName()).equals("TPS calculator")) {
-                        XG7Plugins.getInstance().getTpsCalculator().start();
-                        Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
-                        IBasicMenu.refresh(event.getHolder());
-                        return;
-                    }
-                    XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get(task.getPlugin().getName() + ":" + task.getName()));
-                    Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.restarted").thenAccept(text -> text.send(sender));
+        Config lang = XG7PluginsAPI.langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getLangConfiguration();
 
+        ClickableItem builder = Item.from(XMaterial.REPEATER.parseMaterial()).clickable().onClick(event -> {
+            if (event.getMenuAction().isRightClick()) {
+                if (task.getState() == TaskState.RUNNING) {
+                    XG7Plugins.taskManager().cancelTask(task.getPlugin().getName() + ":" + task.getName());
+                    Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
                     IBasicMenu.refresh(event.getHolder());
                     return;
                 }
-                if (event.getMenuAction().isLeftClick()) {
-                    Text.fromLang(sender, XG7Plugins.getInstance(), "tasks-menu.copy-to-clipboard")
-                            .thenAccept(text -> {
-                                text.replace("id", task.getPlugin().getName() + ":" + task.getName()).send(sender);
-                            });
+                if ((task.getPlugin().getName() + ":" + task.getName()).equals("TPS calculator")) {
+                    XG7Plugins.getInstance().getTpsCalculator().start();
+                    Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
+                    IBasicMenu.refresh(event.getHolder());
+                    return;
                 }
+                XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get(task.getPlugin().getName() + ":" + task.getName()));
+                Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.restarted").thenAccept(text -> text.send(sender));
+
                 IBasicMenu.refresh(event.getHolder());
-            });
-            builder.name("&e" + task.getName());
-            builder.lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()));
+                return;
+            }
+            if (event.getMenuAction().isLeftClick()) {
+                Text.fromLang(sender, XG7Plugins.getInstance(), "tasks-menu.copy-to-clipboard")
+                        .thenAccept(text -> {
+                            text.replace("id", task.getPlugin().getName() + ":" + task.getName()).send(sender);
+                        });
+            }
+            IBasicMenu.refresh(event.getHolder());
+        });
+        builder.name("&e" + task.getName());
+        builder.lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()));
 
-            builder.setNBTTag("task-id", task.getPlugin().getName() + ":" + task.getName());
-            builder.setNBTTag("task-state", task.getState().name());
+        builder.setNBTTag("task-id", task.getPlugin().getName() + ":" + task.getName());
+        builder.setNBTTag("task-state", task.getState().name());
 
-            builder.setBuildPlaceholders(
+        builder.setBuildPlaceholders(
                 Pair.of("plugin", task.getPlugin().getName()),
                 Pair.of("id", task.getPlugin().getName() + ":" + task.getName()),
                 Pair.of("state", task.getState().name()),
                 Pair.of("task_is_running", String.valueOf(task.getState() == TaskState.RUNNING)),
                 Pair.of("task_is_not_running", String.valueOf(task.getState() == TaskState.IDLE))
-            );
-            builder.slot(13);
+        );
+        builder.slot(13);
 
-            MenuBuilder.inicialize(IMenuConfigurations.of(
-                    getPlugin(),
-                    "task-menu-for-task-" + id,
-                    "Task: " + id,
-                    3
-            )).items(builder).build().open((Player) sender);
-            return;
-        }
-
-        sender.sendMessage("Task info: " + task.getName());
-        sender.sendMessage("Task state: " + task.getState().name());
-        sender.sendMessage("Task plugin: " + task.getPlugin().getName());
-        sender.sendMessage("Task repeating: " + task.isRepeating());
-        sender.sendMessage("Task executor: " + task.getExecutorName());
-        sender.sendMessage("Task delay: " + task.getDelay());
-        sender.sendMessage("Task async: " + task.isAsync());
+        MenuBuilder.inicialize(IMenuConfigurations.of(
+                getPlugin(),
+                "task-menu-for-task-" + id,
+                "Task: " + id,
+                3
+        )).items(builder).build().open((Player) sender);
 
     }
 

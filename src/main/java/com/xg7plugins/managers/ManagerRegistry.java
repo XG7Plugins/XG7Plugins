@@ -4,13 +4,13 @@ import com.xg7plugins.boot.Plugin;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ManagerRegistery {
+public class ManagerRegistry {
 
     private final Plugin plugin;
 
     private final ConcurrentHashMap<Class<? extends Manager>, Manager> managers = new ConcurrentHashMap<>();
 
-    public ManagerRegistery(Plugin plugin) {
+    public ManagerRegistry(Plugin plugin) {
         this.plugin = plugin;
     }
 
@@ -30,6 +30,6 @@ public class ManagerRegistery {
     }
 
     public static <T extends Manager> T get(Plugin plugin, Class<T> tClass) {
-        return plugin.getManagers().getManager(tClass);
+        return plugin.getManagerRegistery().getManager(tClass);
     }
 }

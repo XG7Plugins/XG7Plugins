@@ -18,12 +18,12 @@ public class ConfigManager implements Manager {
 
         plugin.getLogger().log(Level.CONFIG, "Loading configs of " + plugin.getName());
 
-        this.configs.put("config", new Config(plugin,"config"));
-        this.configs.put("commands", new Config(plugin,"commands"));
+        putConfig("config", new Config(plugin,"config"));
+        putConfig("commands", new Config(plugin,"commands"));
 
         if (configs == null) return;
 
-        Arrays.stream(configs).forEach(config -> this.configs.put(config, new Config(plugin, config)));
+        Arrays.stream(configs).forEach(config -> putConfig(config, new Config(plugin, config)));
     }
 
     public void reloadConfigs() {

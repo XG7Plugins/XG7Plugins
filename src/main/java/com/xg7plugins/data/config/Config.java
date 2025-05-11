@@ -1,5 +1,6 @@
 package com.xg7plugins.data.config;
 
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.Time;
 import lombok.Getter;
@@ -31,7 +32,7 @@ public class Config {
     public Config(Plugin plugin, String name) {
         this.plugin = plugin;
         this.name = name;
-        this.configManager = plugin.getConfigsManager();
+        this.configManager = XG7PluginsAPI.configManager(plugin);
 
         plugin.getLogger().info("Loading " + name + ".yml...");
 
@@ -65,14 +66,14 @@ public class Config {
     public Config(Plugin plugin, YamlConfiguration config, String name) {
         this.plugin = plugin;
         this.name = name;
-        this.configManager = plugin.getConfigsManager();
+        this.configManager = XG7PluginsAPI.configManager(plugin);
         this.config = config;
         this.configFile = new File(plugin.getDataFolder(), "config.yml");
     }
 
     public static Config of(String name, Plugin plugin) {
-        if (plugin.getConfigsManager().getConfigs().containsKey(name)) {
-            return plugin.getConfigsManager().getConfigs().get(name);
+        if (XG7PluginsAPI.configManager(plugin).getConfigs().containsKey(name)) {
+            return XG7PluginsAPI.configManager(plugin).getConfigs().get(name);
         }
         return new Config(plugin, name);
     }
@@ -85,14 +86,7 @@ public class Config {
     }
 
     public <T> Optional<T> get(String path, Class<T> type, boolean ignoreNonexistent, Object... optionalTypeArgs) {
-        if (!config.contains(path)) {
-            if (!ignoreNonexistent) plugin.getDebug().warn(path + " not found in " + name + ".yml");
-            return Optional.empty();
-        }
-        if (config.get(path) == null) {
-            if (!ignoreNonexistent) plugin.getDebug().warn(path + " in " + name + " is empty");
-            return Optional.empty();
-        }
+        if (!verifyExists(path, ignoreNonexistent)) return Optional.empty();
 
         if (type == String.class) return Optional.ofNullable(type.cast(config.getString(path)));
         if (type == Integer.class || type == int.class) return Optional.of(type.cast(config.getInt(path)));
@@ -127,6 +121,18 @@ public class Config {
         return Optional.ofNullable(adapter.fromConfig(get(path, ConfigurationSection.class).orElse(null), optionalTypeArgs));
     }
 
+    private boolean verifyExists(String path, boolean ignoreNonexistent) {
+        if (!config.contains(path)) {
+            if (!ignoreNonexistent) plugin.getDebug().warn(path + " not found in " + name + ".yml");
+            return false;
+        }
+        if (config.get(path) == null) {
+            if (!ignoreNonexistent) plugin.getDebug().warn(path + " in " + name + " is empty");
+            return false;
+        }
+        return true;
+    }
+
     public <T> Optional<T> get(String path, Class<T> type, Object... optionalTypeArgs) {
         return get(path,type,false,optionalTypeArgs);
     }
@@ -134,14 +140,7 @@ public class Config {
 
     @SuppressWarnings("unchecked")
     public <T> Optional<List<T>> getList(String path, Class<T> type, boolean ignoreNonexistent) {
-        if (!config.contains(path)) {
-            if (!ignoreNonexistent) plugin.getDebug().warn(path + " not found in " + name + ".yml");
-            return Optional.empty();
-        }
-        if (config.get(path) == null) {
-            if (!ignoreNonexistent) plugin.getDebug().warn(path + " in " + name + " is empty");
-            return Optional.empty();
-        }
+        if (verifyExists(path, ignoreNonexistent)) return Optional.empty();
 
         if (type == String.class) return Optional.of((List<T>) config.getStringList(path));
         if (type == Integer.class || type == int.class) return Optional.of((List<T>) config.getIntegerList(path));
@@ -197,7 +196,7 @@ public class Config {
 
         this.config = YamlConfiguration.loadConfiguration(configFile);
 
-        plugin.getConfigsManager().getConfigs().put(name,this);
+        configManager.putConfig(name,this);
 
         plugin.getDebug().info("Reloaded");
     }

@@ -1,6 +1,7 @@
 package com.xg7plugins.data.database.query;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.database.entity.*;
 import com.xg7plugins.utils.Pair;
@@ -229,7 +230,7 @@ public class Query {
 
         this.query = query.toString();
 
-        XG7Plugins.getInstance().getDatabaseManager().getProcessor().queueQuery(this);
+        XG7PluginsAPI.dbProcessor().queueQuery(this);
 
         return this;
     }

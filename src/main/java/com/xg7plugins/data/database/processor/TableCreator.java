@@ -1,6 +1,7 @@
 package com.xg7plugins.data.database.processor;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.database.entity.*;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.boot.Plugin;
@@ -35,7 +36,7 @@ public class TableCreator {
 
     public CompletableFuture<Void> createTableOf(Plugin plugin, Class<? extends Entity> clazz) {
 
-        DatabaseManager databaseManager = XG7Plugins.getInstance().getDatabaseManager();
+        DatabaseManager databaseManager = XG7PluginsAPI.database();
 
         return CompletableFuture.runAsync(() -> {
             try {
@@ -45,7 +46,7 @@ public class TableCreator {
                 List<Class<? extends Entity>> childs = new ArrayList<>();
                 List<String> fkeys = new ArrayList<>();
                 List<Field> fields = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
-                int i = 0; // Índice inicial
+                int i = 0;
                 while (i < fields.size()) {
                     Field field = fields.get(i);
                     field.setAccessible(true);
@@ -60,19 +61,13 @@ public class TableCreator {
                         ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
                         Class<?> genericType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
 
-                        if (Entity.class.isAssignableFrom(genericType)) {
-                            childs.add((Class<? extends Entity>) genericType);
-                        }
+                        if (Entity.class.isAssignableFrom(genericType)) childs.add((Class<? extends Entity>) genericType);
                         i++;
                         continue;
                     }
 
                     if (getSQLType(field.getType()) == null) {
-
-                        for (Field objectField : field.getType().getDeclaredFields()) {
-                            fields.add(objectField);
-                        }
-
+                        Collections.addAll(fields, field.getType().getDeclaredFields());
                         i++;
                         continue;
                     }
@@ -93,13 +88,9 @@ public class TableCreator {
 
                 }
 
-                for (String fkey : fkeys) {
-                    query.append(fkey).append(", ");
-                }
+                fkeys.forEach(fkey -> query.append(fkey).append(", "));
 
-                if (query.toString().endsWith(", ")) {
-                    query.setLength(query.length() - 2);
-                }
+                if (query.toString().endsWith(", ")) query.setLength(query.length() - 2);
 
                 query.append(")");
 
@@ -109,8 +100,7 @@ public class TableCreator {
                 connection.commit();
 
 
-                for (Class<? extends Entity> child : childs) createTableOf(plugin, child).join();
-
+                childs.forEach(child -> createTableOf(plugin, child).join());
 
             } catch (Throwable e) {
                 e.printStackTrace();

@@ -1,6 +1,7 @@
 package com.xg7plugins.data.database.query;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.database.entity.Column;
 import com.xg7plugins.data.database.entity.Table;
@@ -137,7 +138,7 @@ public class QueryResult {
         }
 
         if (cache && id != null) {
-            XG7Plugins.getInstance().getDatabaseManager().cacheEntity(plugin, id.toString(), instance);
+            XG7PluginsAPI.database().cacheEntity(plugin, id.toString(), instance);
         }
 
         return instance;

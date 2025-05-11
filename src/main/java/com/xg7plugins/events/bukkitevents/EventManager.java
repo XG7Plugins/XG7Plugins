@@ -1,5 +1,6 @@
 package com.xg7plugins.events.bukkitevents;
 
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.events.Listener;
@@ -96,6 +97,11 @@ public class EventManager implements Manager {
     public void unregisterListeners(Plugin plugin) {
         HandlerList.unregisterAll(listeners.get(plugin.getName()));
         listeners.remove(plugin.getName());
+    }
+
+    public void reloadEvents(Plugin plugin) {
+        unregisterListeners(plugin);
+        registerListeners(plugin, plugin.loadEvents());
     }
 
 }
