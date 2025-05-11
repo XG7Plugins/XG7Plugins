@@ -113,6 +113,7 @@ public abstract class Plugin extends JavaPlugin {
     @Override
     public void onDisable() {
         debug.loading("Disabling " + environmentConfig.getCustomPrefix() + "...");
+
     }
 
     public <T extends EnvironmentConfig> T getEnvironmentConfig() {

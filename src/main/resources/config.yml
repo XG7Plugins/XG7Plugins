@@ -41,6 +41,10 @@ cooldown-to-toggle-lang: 5s
 #Cache expires of json
 json-cache-expires: 10m
 
+#Http request timeout
+#for http requests
+http-request-timeout: 10s
+
 #This plugins can use Floodgate
 #forms, make it enabled if you have
 enable-geyser-forms: true

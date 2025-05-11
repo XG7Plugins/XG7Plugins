@@ -10,7 +10,6 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class DependencyManager implements Manager {
 
@@ -20,111 +19,80 @@ public class DependencyManager implements Manager {
         return loadedDependencies.containsKey(name) || Bukkit.getPluginManager().isPluginEnabled(name);
     }
 
-    public void loadDependencies(Dependency... dependencies) {
+    private boolean checkDependency(Dependency dependency) {
 
-        Debug debug = Debug.of(XG7Plugins.getInstance());
-
-        Arrays.stream(dependencies).forEach(d -> {
-            debug.loading("Loading dependency: " + d.getName());
-            if (Bukkit.getPluginManager().isPluginEnabled(d.getName())) {
-                debug.loading("Dependency already loaded");
-                loadedDependencies.put(d.getName(), d);
-                return;
-            }
-            CompletableFuture.runAsync(() -> {
-                debug.loading("Loading from file (async)");
-                File file = new File(XG7Plugins.getInstance().getDataFolder().getParentFile(), d.getName());
-
-                try {
-                    Plugin loaded = Bukkit.getPluginManager().loadPlugin(file);
-
-                    if (loaded != null) {
-                        Bukkit.getPluginManager().enablePlugin(loaded);
-                        debug.loading("Loaded!");
-                        loadedDependencies.put(d.getName(), d);
-                        return;
-                    }
-                    try {
-                        debug.loading("Plugin not found, downloading!");
-                        d.downloadDependency();
-                        debug.loading("Plugin downlaoded!");
-
-                        Plugin newDownloaded = Bukkit.getPluginManager().loadPlugin(file);
-
-                        if (newDownloaded != null) {
-                            Bukkit.getPluginManager().enablePlugin(newDownloaded);
-                            loadedDependencies.put(d.getName(), d);
-                            return;
-                        }
-
-                        debug.severe("Error on loading dependency " + d.getName());
-                    } catch (Exception e) {
-                        debug.severe("Error on loading dependency " + d.getName() + " " + Arrays.toString(e.getStackTrace()));
-                        e.printStackTrace();
-                    }
-
-                } catch (InvalidPluginException | InvalidDescriptionException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        });
-    }
-    public boolean loadRequiredDependencies(Plugin plugin, Dependency... dependencies) {
         Debug debug = Debug.of(XG7Plugins.getInstance());
 
         boolean error = false;
 
-        for (Dependency d : dependencies) {
-            debug.loading("Loading required dependency: " + d.getName());
-            if (Bukkit.getPluginManager().isPluginEnabled(d.getName())) {
-                debug.loading("Dependency already loaded");
-                loadedDependencies.put(d.getName(), d);
+        debug.loading("Loading dependency: " + dependency.getName());
+        if (Bukkit.getPluginManager().isPluginEnabled(dependency.getName())) {
+            debug.loading("Dependency already loaded");
+            loadedDependencies.put(dependency.getName(), dependency);
 
-                continue;
+            return true;
+        }
+        debug.loading("Loading from file");
+        File file = new File(XG7Plugins.getInstance().getDataFolder().getParentFile(), dependency.getName());
+
+        try {
+            Plugin loaded = Bukkit.getPluginManager().loadPlugin(file);
+
+            if (loaded != null) {
+                Bukkit.getPluginManager().enablePlugin(loaded);
+                debug.loading("Loaded!");
+                loadedDependencies.put(dependency.getName(), dependency);
+                return true;
             }
-            debug.loading("Loading from file");
-            File file = new File(XG7Plugins.getInstance().getDataFolder().getParentFile(), d.getName());
-
             try {
-                Plugin loaded = Bukkit.getPluginManager().loadPlugin(file);
+                debug.loading("Plugin not found, downloading!");
+                dependency.downloadDependency();
+                debug.loading("Plugin downlaoded!");
 
-                if (loaded != null) {
-                    Bukkit.getPluginManager().enablePlugin(loaded);
+                Plugin newDownloaded = Bukkit.getPluginManager().loadPlugin(file);
+
+                if (newDownloaded != null) {
+                    Bukkit.getPluginManager().enablePlugin(newDownloaded);
                     debug.loading("Loaded!");
-                    loadedDependencies.put(d.getName(), d);
-                    continue;
-                }
-                try {
-                    debug.loading("Plugin not found, downloading!");
-                    d.downloadDependency();
-                    debug.loading("Plugin downlaoded!");
-
-                    Plugin newDownloaded = Bukkit.getPluginManager().loadPlugin(file);
-
-                    if (newDownloaded != null) {
-                        Bukkit.getPluginManager().enablePlugin(newDownloaded);
-                        debug.loading("Loaded!");
-                        loadedDependencies.put(d.getName(), d);
-                        continue;
-                    }
-
-                    debug.severe("Error on loading dependency " + d.getName() + " disabling plugin...");
-
-
-                    error = true;
-
-                } catch (Exception e) {
-                    debug.severe("Error on loading dependency " + d.getName() + " disabling plugin... " + Arrays.toString(e.getStackTrace()));
-
-                    error = true;
+                    loadedDependencies.put(dependency.getName(), dependency);
+                    return true;
                 }
 
-            } catch (InvalidPluginException | InvalidDescriptionException e) {
-                throw new RuntimeException(e);
+                debug.severe("Error on loading dependency " + dependency.getName());
+
+                return false;
+
+            } catch (Exception e) {
+                debug.severe("Error on loading dependency " + dependency.getName() + " " + Arrays.toString(e.getStackTrace()));
+
+                return false;
+            }
+
+        } catch (InvalidPluginException | InvalidDescriptionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadDependencies(com.xg7plugins.boot.Plugin plugin) {
+
+        List<Dependency> dependencies = plugin.loadDependencies();
+
+        if (dependencies == null) return;
+
+
+        dependencies.forEach(this::checkDependency);
+    }
+    public boolean loadRequiredDependencies(com.xg7plugins.boot.Plugin plugin) {
+        List<Dependency> dependencies = plugin.loadRequiredDependencies();
+
+        if (dependencies == null) return true;
+
+        for (Dependency dependency : dependencies) {
+            if (!checkDependency(dependency)) {
+                return false;
             }
         }
-
-        return error;
+        return true;
     }
 
 }

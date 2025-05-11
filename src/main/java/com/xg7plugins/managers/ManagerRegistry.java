@@ -30,6 +30,6 @@ public class ManagerRegistry {
     }
 
     public static <T extends Manager> T get(Plugin plugin, Class<T> tClass) {
-        return plugin.getManagerRegistery().getManager(tClass);
+        return plugin.getManagerRegistry().getManager(tClass);
     }
 }

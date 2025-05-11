@@ -1,6 +1,7 @@
 package com.xg7plugins.utils;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.tasks.TaskState;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -41,9 +42,9 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
 
         switch (identifier) {
             case "tasks_running":
-                return XG7Plugins.getInstance().getTaskManager().getTasks().values().stream().filter(task -> task.getState() == TaskState.RUNNING).count() + "";
+                return XG7PluginsAPI.taskManager().getTasks().values().stream().filter(task -> task.getState() == TaskState.RUNNING).count() + "";
             case "tasks_idle":
-                return XG7Plugins.getInstance().getTaskManager().getTasks().values().stream().filter(task -> task.getState() == TaskState.IDLE).count() + "";
+                return XG7PluginsAPI.taskManager().getTasks().values().stream().filter(task -> task.getState() == TaskState.IDLE).count() + "";
         }
 
         if (identifier.startsWith("player_")) {

@@ -1,7 +1,8 @@
-package com.xg7plugins.tasks;
+package com.xg7plugins.tasks.tasks;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.tasks.TaskState;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 

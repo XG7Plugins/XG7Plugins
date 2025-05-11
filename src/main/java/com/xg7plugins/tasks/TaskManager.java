@@ -21,7 +21,7 @@ public class TaskManager implements Manager {
 
     public TaskManager(XG7Plugins plugin) {
         plugin.getDebug().loading("Loading task manager...");
-        Config config = plugin.getConfigsManager().getConfig("config");
+        Config config = Config.mainConfigOf(plugin);
         repeatingAsyncTasksExecutor = Executors.newScheduledThreadPool(config.get("repeating-tasks-threads", Integer.class).orElse(1));
 
         registerExecutor("commands", Executors.newCachedThreadPool());
@@ -40,15 +40,7 @@ public class TaskManager implements Manager {
     }
 
     public void registerTasks(Task... tasks) {
-        if (tasks == null) return;
-        Arrays.stream(tasks).forEach(task -> {
-            if (task == null) return;
-            if (task.getState() == TaskState.RUNNING) {
-                task.setState(TaskState.IDLE);
-                runTask(task);
-            } else this.tasks.put(task.getPlugin().getName() + ":" + task.getName(), task);
-
-        });
+        registerTasks(Arrays.asList(tasks));
     }
     public void registerTasks(List<Task> tasks) {
         if (tasks == null) return;
@@ -97,9 +89,7 @@ public class TaskManager implements Manager {
         };
 
         if (task.isRepeating()) {
-            if (task.isAsync()) {
-                task.setFuture(repeatingAsyncTasksExecutor.scheduleWithFixedDelay(taskRunnable, 0, task.getDelay(), TimeUnit.MILLISECONDS));
-            } else {
+            if (!task.isAsync()) {
                 task.setBukkitTaskId(
                         Bukkit.getScheduler().runTaskTimer(
                                 task.getPlugin(),
@@ -108,16 +98,21 @@ public class TaskManager implements Manager {
                                 Time.convertMillisToTicks(task.getDelay())
                         ).getTaskId()
                 );
-            }
+            } else task.setFuture(repeatingAsyncTasksExecutor.scheduleWithFixedDelay(taskRunnable, 0, task.getDelay(), TimeUnit.MILLISECONDS));
+
         } else {
-            if (task.isAsync()) {
-                asyncExecutors.get(task.getExecutorName()).submit(taskRunnable);
-            } else {
-                Bukkit.getScheduler().runTask(task.getPlugin(), taskRunnable);
-            }
+            if (task.isAsync()) asyncExecutors.get(task.getExecutorName()).submit(taskRunnable);
+            else Bukkit.getScheduler().runTask(task.getPlugin(), taskRunnable);
         }
 
         task.setState(TaskState.RUNNING);
+    }
+
+    public void runTask(Plugin plugin, String id) {
+        Task task = tasks.get(plugin.getName() + ":" + id);
+        if (task == null) return;
+
+        runTask(task);
     }
 
     public void cancelTask(Plugin plugin, String id) {

@@ -1,5 +1,6 @@
 package com.xg7plugins.modules.xg7menus.menus.menus.gui.menus;
 
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
@@ -69,7 +70,7 @@ public abstract class PagedMenu extends Menu {
             }
 
             return page;
-        });
+        }, XG7PluginsAPI.taskManager().getExecutor("menus"));
     }
 
 

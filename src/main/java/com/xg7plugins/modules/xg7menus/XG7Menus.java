@@ -9,6 +9,7 @@ import com.xg7plugins.modules.xg7menus.menuhandler.PlayerMenuHandler;
 import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
+import com.xg7plugins.modules.xg7menus.task.MenuTask;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
 import lombok.Getter;
@@ -18,14 +19,13 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+@Getter
 public class XG7Menus implements Module {
 
     @Getter
     private static XG7Menus instance;
 
-    @Getter
     private final HashMap<UUID, PlayerMenuHolder> playerMenusMap = new HashMap<>();
-    @Getter
     private final HashMap<UUID, MenuHolder> menuHolders = new HashMap<>();
 
     private final HashMap<String, IBasicMenu> registeredMenus = new HashMap<>();
@@ -100,34 +100,7 @@ public class XG7Menus implements Module {
 
     @Override
     public List<Task> loadTasks() {
-        AtomicLong counter = new AtomicLong();
-        return Collections.singletonList(new Task(
-                XG7Plugins.getInstance(),
-                "menu-task",
-                true,
-                true,
-                1,
-                TaskState.IDLE,
-                () -> {
-                    registeredMenus.values().forEach(menu -> {
-                        if (menu.getMenuConfigs().repeatingUpdateMills() < 0) return;
-                        if (counter.get() % menu.getMenuConfigs().repeatingUpdateMills() != 0) return;
-
-                        menuHolders.values()
-                                .stream()
-                                .filter(holder -> holder.getMenu().getMenuConfigs().getId().equals(menu.getMenuConfigs().getId()))
-                                .forEach(holder -> holder.getMenu().onRepeatingUpdate(holder));
-
-                        playerMenusMap.values()
-                                .stream()
-                                .filter(holder -> holder.getMenu().getMenuConfigs().getId().equals(menu.getMenuConfigs().getId()))
-                                .forEach(holder -> holder.getMenu().onRepeatingUpdate(holder));
-
-
-                    });
-                    counter.incrementAndGet();
-                }
-        ));
+        return Collections.singletonList(new MenuTask(this));
     }
 
 

@@ -1,7 +1,7 @@
 package com.xg7plugins.modules.xg7scores.builder;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.modules.xg7scores.scores.ScoreBoard;
+import com.xg7plugins.modules.xg7scores.scores.scoreboard.ScoreBoard;
 
 import java.util.ArrayList;
 import java.util.List;

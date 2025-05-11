@@ -1,8 +1,10 @@
 package com.xg7plugins.modules.xg7scores;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.modules.Module;
+import com.xg7plugins.modules.xg7scores.tasks.ScoreTask;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
 import lombok.Getter;
@@ -14,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+@Getter
 public class XG7Scores implements Module {
 
     @Getter
@@ -35,56 +38,13 @@ public class XG7Scores implements Module {
     public void onDisable() {
         XG7Plugins.getInstance().getDebug().loading("Disabling XG7Scores");
         scores.values().forEach(Score::removeAllPlayers);
-        XG7Plugins.taskManager().cancelTask("score-task");
+        XG7PluginsAPI.taskManager().cancelTask("score-task");
         XG7Plugins.getInstance().getDebug().loading("XG7Scores disabled");
     }
 
     @Override
     public List<Task> loadTasks() {
-        AtomicLong counter = new AtomicLong();
-        return Collections.singletonList(new Task(
-                XG7Plugins.getInstance(),
-                "score-task",
-                true,
-                true,
-                1,
-                TaskState.IDLE,
-                () -> {
-                    scores.values().forEach(score -> {
-                        players.forEach(uuid -> {
-                            try {
-
-                                Player p = Bukkit.getPlayer(uuid);
-
-                                if (p == null) return;
-
-
-                                if (score.getCondition().apply(p) && !p.isDead() && XG7Plugins.getInstance().isEnabled()) score.addPlayer(p);
-                                else if (score.getPlayers().contains(p.getUniqueId())) {
-                                    if (!XG7Plugins.getInstance().isEnabled()) return;
-                                    Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> score.removePlayer(p));
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-                        try {
-                            if (counter.get() % score.getDelay() == 0) {
-                                score.update();
-                                score.incrementIndex();
-                            }
-
-                            if (counter.get() == Long.MAX_VALUE) counter.set(0);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-
-                    });
-                    counter.incrementAndGet();
-                }
-        ));
+        return Collections.singletonList(new ScoreTask(this));
     }
 
     @Override
@@ -127,7 +87,7 @@ public class XG7Scores implements Module {
 
     public void disable() {
         scores.values().forEach(Score::removeAllPlayers);
-        XG7Plugins.taskManager().cancelTask("score-task");
+        XG7PluginsAPI.taskManager().cancelTask("score-task");
     }
 
     public void addPlayer(Player player) {

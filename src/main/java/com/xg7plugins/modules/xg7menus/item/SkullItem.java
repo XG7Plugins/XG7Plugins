@@ -2,14 +2,16 @@ package com.xg7plugins.modules.xg7menus.item;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.server.MinecraftVersion;
-import com.xg7plugins.server.ServerInfo;
+import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.http.HTTP;
+import com.xg7plugins.utils.http.HTTPResponse;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import org.bukkit.Bukkit;
@@ -19,11 +21,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.Collections;
 import java.util.UUID;
 
 public class SkullItem extends Item {
@@ -69,38 +68,7 @@ public class SkullItem extends Item {
 
         SkullMeta skullMeta = (SkullMeta) this.itemStack.getItemMeta();
 
-        if (MinecraftVersion.isNewerThan(16) && XG7Plugins.serverInfo().getSoftware().isPaper()) {
-
-            ReflectionObject paperProfile = ReflectionClass.of(Bukkit.class).getMethod("createProfile", UUID.class).invokeToRObject(UUID.randomUUID());
-
-            paperProfile.getMethod(
-                    "setProperty",
-                            ReflectionClass.of("com.destroystokyo.paper.profile.ProfileProperty").getAClass()
-                    )
-                    .invoke(
-                            ReflectionClass.of("com.destroystokyo.paper.profile.ProfileProperty")
-                            .getConstructor(String.class, String.class)
-                            .newInstance("textures", value).getObject()
-                    );
-
-            ReflectionObject.of(skullMeta)
-                    .getMethod("setPlayerProfile", ReflectionClass.of("com.destroystokyo.paper.profile.PlayerProfile").getAClass())
-                    .invoke(paperProfile.getObject());
-
-            cachedSkulls.put(value, skullMeta);
-            super.meta(skullMeta);
-            return this;
-        }
-
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "null");
-        gameProfile.getProperties().put("textures", new Property("textures", value));
-        try {
-            Field profileField = skullMeta.getClass().getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(skullMeta, gameProfile);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        setValueOf(skullMeta, value);
 
         cachedSkulls.put(value, skullMeta);
         super.meta(skullMeta);
@@ -145,63 +113,22 @@ public class SkullItem extends Item {
             return this;
         }
         try {
-            URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + player);
+            HTTPResponse response = HTTP.get(
+                    "https://sessionserver.mojang.com/session/minecraft/profile/" + player,
+                    Collections.singletonList(Pair.of("Accept", "application/json"))
+            );
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            conn.setRequestProperty("Accept", "application/json");
-
-
-            if (conn.getResponseCode() != 200) {
-                XG7Plugins.getInstance().getDebug().severe("Erro ao colocar valor de player na skin da cabeça!");
+            if (response.getStatusCode() != 200) {
+                XG7Plugins.getInstance().getDebug().severe("Error to put skin value on player head!");
                 return this;
             }
-            BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-            StringBuilder sb = new StringBuilder();
-            String output;
-            while ((output = br.readLine()) != null) {
-                sb.append(output);
-            }
-            conn.disconnect();
 
-            JsonObject profileData = new JsonParser().parse(sb.toString()).getAsJsonObject();
+            JsonObject profileData = response.getJson();
             JsonObject properties = profileData.getAsJsonArray("properties").get(0).getAsJsonObject();
 
             SkullMeta skullMeta = (SkullMeta) this.itemStack.getItemMeta();
 
-            if (MinecraftVersion.isNewerThan(16) && XG7Plugins.serverInfo().getSoftware().isPaper()) {
-
-                ReflectionObject paperProfile = ReflectionClass.of(Bukkit.class).getMethod("createProfile", UUID.class).invokeToRObject(UUID.randomUUID());
-
-                paperProfile.getMethod(
-                                "setProperty",
-                                ReflectionClass.of("com.destroystokyo.paper.profile.ProfileProperty").getAClass()
-                        )
-                        .invoke(
-                                ReflectionClass.of("com.destroystokyo.paper.profile.ProfileProperty")
-                                        .getConstructor(String.class, String.class)
-                                        .newInstance("textures", properties.get("value").getAsString()).getObject()
-                        );
-
-                ReflectionObject.of(skullMeta)
-                        .getMethod("setPlayerProfile", ReflectionClass.of("com.destroystokyo.paper.profile.PlayerProfile").getAClass())
-                        .invoke(paperProfile.getObject());
-
-                cachedSkulls.put(properties.get("value").getAsString(), skullMeta);
-                super.meta(skullMeta);
-                return this;
-            }
-
-            GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "null");
-            gameProfile.getProperties().put("textures", new Property("textures", properties.get("value").getAsString()));
-
-            try {
-                Field profileField = skullMeta.getClass().getDeclaredField("profile");
-                profileField.setAccessible(true);
-                profileField.set(skullMeta, gameProfile);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            setValueOf(skullMeta, properties.get("value").getAsString());
 
             cachedSkulls.put(player.toString(),skullMeta);
             super.meta(skullMeta);
@@ -220,6 +147,41 @@ public class SkullItem extends Item {
 
         return prepared;
 
+    }
+
+    private void setValueOf(SkullMeta meta, String value) {
+        if (MinecraftVersion.isNewerThan(16) && XG7PluginsAPI.getServerSoftware().isPaper()) {
+
+            ReflectionObject paperProfile = ReflectionClass.of(Bukkit.class).getMethod("createProfile", UUID.class).invokeToRObject(UUID.randomUUID());
+
+            paperProfile.getMethod(
+                            "setProperty",
+                            ReflectionClass.of("com.destroystokyo.paper.profile.ProfileProperty").getAClass()
+                    )
+                    .invoke(
+                            ReflectionClass.of("com.destroystokyo.paper.profile.ProfileProperty")
+                                    .getConstructor(String.class, String.class)
+                                    .newInstance("textures", value).getObject()
+                    );
+
+            ReflectionObject.of(meta)
+                    .getMethod("setPlayerProfile", ReflectionClass.of("com.destroystokyo.paper.profile.PlayerProfile").getAClass())
+                    .invoke(paperProfile.getObject());
+
+            cachedSkulls.put(value, meta);
+            super.meta(meta);
+            return;
+        }
+
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "null");
+        gameProfile.getProperties().put("textures", new Property("textures", value));
+        try {
+            Field profileField = meta.getClass().getDeclaredField("profile");
+            profileField.setAccessible(true);
+            profileField.set(meta, gameProfile);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
 }

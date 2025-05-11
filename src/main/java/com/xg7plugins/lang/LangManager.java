@@ -7,6 +7,7 @@ import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.managers.Manager;
+import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.Getter;

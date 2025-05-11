@@ -10,6 +10,7 @@ import com.google.gson.JsonParser;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.Pair;
@@ -86,14 +87,14 @@ public class Item {
 
     public static Item commandIcon(XMaterial material, Command command) {
         Item item = new Item(material.parseItem());
-        Command commandConfig = command.getClass().getAnnotation(Command.class);
+        CommandSetup commandConfig = command.getCommandConfigurations();
         item.name("&b/&f" + commandConfig.name());
         item.lore(
                 "lang:[commands-display.command-item.usage]",
                 "lang:[commands-display.command-item.desc]",
                 "lang:[commands-display.command-item.perm]",
                 "lang:[commands-display.command-item.player-only]",
-                command.getSubCommands().length == 0 ? "" : "lang:[commands-display.if-subcommand]"
+                command.getSubCommands().isEmpty() ? "" : "lang:[commands-display.if-subcommand]"
         );
         item.setBuildPlaceholders(
                 Pair.of("syntax", commandConfig.syntax()),

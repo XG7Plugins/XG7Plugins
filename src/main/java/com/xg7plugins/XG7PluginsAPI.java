@@ -15,6 +15,7 @@ import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.managers.ManagerRegistry;
 import com.xg7plugins.modules.ModuleManager;
+import com.xg7plugins.server.ServerInfo;
 import com.xg7plugins.tasks.CooldownManager;
 import com.xg7plugins.tasks.TaskManager;
 import org.bukkit.Bukkit;
@@ -118,7 +119,13 @@ public class XG7PluginsAPI {
         return new HashSet<>(Bukkit.getOnlinePlayers());
     }
 
+    public static ServerInfo.Software getServerSoftware() {
+        return XG7Plugins.getInstance().getServerInfo().getSoftware();
+    }
 
+    public static ServerInfo getServerInfo() {
+        return XG7Plugins.getInstance().getServerInfo();
+    }
 
 
 

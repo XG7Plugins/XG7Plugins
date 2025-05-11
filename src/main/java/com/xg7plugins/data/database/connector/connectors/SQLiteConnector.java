@@ -1,9 +1,12 @@
 package com.xg7plugins.data.database.connector.connectors;
 
+import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.database.ConnectionType;
 import com.xg7plugins.data.database.connector.Connector;
 import com.xg7plugins.data.database.connector.SQLConfigs;
+import lombok.Getter;
 
 import java.io.File;
 import java.sql.Connection;
@@ -11,6 +14,7 @@ import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Getter
 public class SQLiteConnector implements Connector {
 
     protected final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
@@ -28,6 +32,8 @@ public class SQLiteConnector implements Connector {
         sqliteConnection.setAutoCommit(false);
 
         connections.put(plugin.getName(), sqliteConnection);
+
+        XG7PluginsAPI.taskManager().runTask(XG7Plugins.getInstance(), "keep-alive-database");
     }
 
     @Override

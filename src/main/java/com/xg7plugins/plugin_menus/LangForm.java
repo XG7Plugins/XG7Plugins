@@ -1,6 +1,7 @@
 package com.xg7plugins.plugin_menus;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
@@ -32,9 +33,9 @@ public class LangForm extends SimpleForm {
 
         List<ButtonComponent> components = new ArrayList<>();
 
-        XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin).join();
+        XG7PluginsAPI.langManager().loadLangsFrom(plugin).join();
 
-        XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().entrySet().stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
+        XG7PluginsAPI.langManager().getLangs().asMap().join().entrySet().stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
 
             PlayerData language = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();
 
@@ -42,13 +43,15 @@ public class LangForm extends SimpleForm {
 
             String[] icon = map.getValue().get("bedrock-icon",String.class).orElse("").split(", ");
 
+            String formattedName = map.getValue().get("formated-name",String.class).orElse(null) != null ? selected ? "§a" + map.getValue().get("formated-name",String.class).orElse(null) : "§8" + map.getValue().get("formated-name",String.class).orElse(null) : selected ? "§a" + map.getKey() : "§8" + map.getKey();
+
             if (icon.length == 1) {
-                components.add(ButtonComponent.of(map.getValue().get("formated-name",String.class).orElse(null) != null ? selected ? "§a" + map.getValue().get("formated-name",String.class).orElse(null) : "§8" + map.getValue().get("formated-name",String.class).orElse(null) : selected ? "§a" + map.getKey() : "§8" + map.getKey()));
+                components.add(ButtonComponent.of(formattedName));
                 return;
             }
             components.add(
                     ButtonComponent.of(
-                            map.getValue().get("formated-name",String.class).orElse(null) != null ? selected ? "§a" + map.getValue().get("formated-name",String.class).orElse(null) : "§8" + map.getValue().get("formated-name",String.class).orElse(null) : selected ? "§a" + map.getKey() : "§8" + map.getKey(),
+                            formattedName,
                             FormImage.Type.valueOf(icon[0]),
                             icon[1]
                     )
@@ -62,23 +65,23 @@ public class LangForm extends SimpleForm {
 
     @Override
     public boolean isEnabled() {
-        Config config = XG7Plugins.getInstance().getConfigsManager().getConfig("config");
+        Config config = Config.mainConfigOf(XG7Plugins.getInstance());
         return config.get("enable-langs", Boolean.class).orElse(false) && config.get("enable-lang-form", Boolean.class).orElse(false);
     }
 
     @Override
     public void onFinish(org.geysermc.cumulus.form.SimpleForm form, SimpleFormResponse result, Player player) {
 
-        XG7Plugins.getInstance().getLangManager().loadLangsFrom(plugin).thenRun(() -> XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).thenAccept(language -> {
+        XG7PluginsAPI.langManager().loadLangsFrom(plugin).thenRun(() -> XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).thenAccept(language -> {
 
-            String lang = XG7Plugins.getInstance().getLangManager().getLangs().asMap().join().keySet().toArray(new String[0])[result.clickedButtonId()];
+            String lang = XG7PluginsAPI.langManager().getLangs().asMap().join().keySet().toArray(new String[0])[result.clickedButtonId()];
             if (language != null && language.getLangId().equals(lang)) {
                 Text.fromLang(player, plugin, "lang-menu.already-selected").thenAccept(text -> text.send(player));
                 return;
             }
-            if (XG7Plugins.getInstance().getCooldownManager().containsPlayer("lang-change", player)) {
+            if (XG7PluginsAPI.cooldowns().containsPlayer("lang-change", player)) {
 
-                double cooldownToToggle = XG7Plugins.getInstance().getCooldownManager().getReamingTime("lang-change", player);
+                double cooldownToToggle = XG7PluginsAPI.cooldowns().getReamingTime("lang-change", player);
 
                 Text.fromLang(player, plugin, "lang-menu.cooldown-to-toggle").thenAccept(
                         text -> text.replace("milliseconds", String.valueOf((cooldownToToggle)))
@@ -100,12 +103,12 @@ public class LangForm extends SimpleForm {
             data.setLangId(dbLang);
 
             dao.update(data).thenAccept(r -> {
-                XG7Plugins.getInstance().getLangManager().loadLangsFrom(XG7Plugins.getInstance()).join();
+                XG7PluginsAPI.langManager().loadLangsFrom(XG7Plugins.getInstance()).join();
                 Text.fromLang(player, plugin, "lang-menu.toggle-success").thenAccept(text -> text.send(player));
                 send(player);
             });
 
-            XG7Plugins.getInstance().getCooldownManager().addCooldown(player, "lang-change", XG7Plugins.getInstance().getConfig("config").getTime("cooldown-to-toggle-lang").orElse(5000L));
+            XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", Config.mainConfigOf(plugin).getTime("cooldown-to-toggle-lang").orElse(5000L));
 
         }));
     }

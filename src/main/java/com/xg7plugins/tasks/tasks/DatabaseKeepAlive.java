@@ -1,8 +1,13 @@
-package com.xg7plugins.tasks;
+package com.xg7plugins.tasks.tasks;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.database.ConnectionType;
 import com.xg7plugins.data.database.DatabaseManager;
+import com.xg7plugins.data.database.connector.connectors.SQLiteConnector;
+import com.xg7plugins.tasks.Task;
+import com.xg7plugins.tasks.TaskState;
 
 public class DatabaseKeepAlive extends Task {
 
@@ -13,11 +18,12 @@ public class DatabaseKeepAlive extends Task {
     @Override
     public void run() {
 
-        DatabaseManager databaseManager = XG7Plugins.database();
+        DatabaseManager databaseManager = XG7PluginsAPI.database();
 
-        databaseManager.getConnections().forEach((pluginName, dataSource) -> {
+        ((SQLiteConnector) databaseManager.getConnectorRegistry().getConnector(ConnectionType.SQLITE))
+                .getConnections().forEach((pluginName, connection) -> {
             try {
-                dataSource.getConnection().createStatement().execute("SELECT 1");
+                connection.createStatement().execute("SELECT 1");
             } catch (Exception e) {
                 e.printStackTrace();
             }

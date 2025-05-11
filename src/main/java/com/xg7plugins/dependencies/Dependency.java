@@ -1,9 +1,10 @@
 package com.xg7plugins.dependencies;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.Debug;
-import lombok.AllArgsConstructor;
+import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.http.HTTPMethod;
+import com.xg7plugins.utils.http.HTTP;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +12,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
+import java.util.Collections;
 
 @Data
 @Getter
@@ -48,12 +44,17 @@ public class Dependency {
             }
 
             debug.loading("§eDownloading dependency: " + name);
-            URL url = new URL(downloadLink);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-            try (InputStream in = connection.getInputStream();
-                 FileOutputStream out = new FileOutputStream(file)) {
+
+            try (
+                    InputStream in = HTTP.makeRequest(
+                        downloadLink,
+                        HTTPMethod.GET,
+                        Collections.singletonList(Pair.of("User-Agent", "Mozilla/5.0")),
+                        null
+                    ).getInputStream();
+                    FileOutputStream out = new FileOutputStream(file)
+            ) {
 
                 byte[] buffer = new byte[8192];
                 int bytesRead;

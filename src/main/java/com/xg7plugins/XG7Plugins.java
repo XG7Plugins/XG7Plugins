@@ -9,7 +9,6 @@ import com.xg7plugins.commands.core_commands.ReloadCause;
 import com.xg7plugins.commands.core_commands.ReloadCommand;
 import com.xg7plugins.commands.core_commands.task_command.TaskCommand;
 import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.entity.Entity;
@@ -31,7 +30,6 @@ import com.xg7plugins.lang.LangItemTypeAdapter;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.events.Listener;
-import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.events.defaultevents.JoinListener;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
@@ -40,6 +38,8 @@ import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.server.ServerInfo;
 import com.xg7plugins.tasks.*;
+import com.xg7plugins.tasks.tasks.DatabaseKeepAlive;
+import com.xg7plugins.tasks.tasks.TPSCalculator;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
@@ -105,10 +105,6 @@ public final class XG7Plugins extends Plugin {
         debug.loading("Enabling XG7Plugins...");
         PacketEvents.getAPI().init();
 
-        debug.loading("Checking dependencies...");
-
-        managerRegistry.registerManagers(new DependencyManager());
-
         debug.loading("Loading metrics...");
 
         Metrics.getMetrics(this, 24626);
@@ -120,6 +116,7 @@ public final class XG7Plugins extends Plugin {
         debug.loading("Loading managers...");
 
         managerRegistry.registerManagers(
+                new DependencyManager(),
                 new TaskManager(this),
                 new CacheManager(this),
                 new DatabaseManager(this),
@@ -198,7 +195,6 @@ public final class XG7Plugins extends Plugin {
         @param cause causa do reload
 
      */
-
     @Override
     public void onReload(ReloadCause cause) {
         super.onReload(cause);
@@ -234,6 +230,15 @@ public final class XG7Plugins extends Plugin {
 
     private void loadPlugin(Plugin plugin) {
         debug.loading("Enabling " + plugin.getName() + "...");
+
+        debug.loading("Checking dependencies...");
+        XG7PluginsAPI.dependencyManager().loadDependencies(plugin);
+
+        if (!XG7PluginsAPI.dependencyManager().loadRequiredDependencies(plugin)) {
+            debug.severe("Error on loading dependencies for " + plugin.getName() + ", disabling plugin...");
+            Bukkit.getPluginManager().disablePlugin(plugin);
+            return;
+        }
 
         plugin.getDebug().loading("Connecting plugin to database...");
         XG7PluginsAPI.database().connectPlugin(plugin, plugin.loadEntities());

@@ -1,6 +1,7 @@
 package com.xg7plugins.plugin_menus;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.cryptomorin.xseries.XMaterial;
@@ -9,6 +10,9 @@ import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.gui.PageMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.utils.Pair;
@@ -18,19 +22,24 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-public class TaskMenu extends PageMenu {
+public class TaskMenu extends PagedMenu {
 
     public TaskMenu(Plugin plugin) {
-        super(plugin, "task-menu", "lang:[tasks-menu.title]", 54, Slot.of(2,2), Slot.of(5,8));
+        super(IMenuConfigurations.of(
+                plugin,
+                "tasks-menu",
+                "lang:[tasks-menu.title]",
+                6
+                ), Slot.of(2,2), Slot.of(5,8));
     }
     @Override
     public List<Item> pagedItems(Player player) {
 
-        Collection<Task> tasks = XG7Plugins.taskManager().getTasks().values();
+        Collection<Task> tasks = XG7PluginsAPI.taskManager().getTasks().values();
 
         List<Item> pagedItems = new ArrayList<>();
 
-        Config lang = XG7Plugins.getInstance().getLangManager() == null ? XG7Plugins.getInstance().getConfig("messages") : XG7Plugins.getInstance().getLangManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getLangConfiguration();
+        Config lang = XG7PluginsAPI.langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getLangConfiguration();
 
         tasks.forEach(task -> {
             Item builder = Item.from(XMaterial.REPEATER.parseMaterial());
@@ -70,14 +79,9 @@ public class TaskMenu extends PageMenu {
     }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    public List<Item> getItems(Player player) {
 
-    @Override
-    protected List<Item> items(Player player) {
-
-        Config lang = XG7Plugins.getInstance().getLangManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getLangConfiguration();
+        Config lang = XG7PluginsAPI.langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getLangConfiguration();
 
         return Arrays.asList(
                 Item.from(XMaterial.ARROW).name("lang:[go-back-item]").slot(45),
@@ -85,7 +89,7 @@ public class TaskMenu extends PageMenu {
                 Item.from(XMaterial.ENDER_PEARL).name("lang:[refresh-item]").slot(0),
                 Item.from(Material.PAPER).name(" ").lore(lang.getList("tasks-menu.notes", String.class).orElse(Collections.emptyList()))
                         .setBuildPlaceholders(
-                                Pair.of("tasks", String.valueOf(XG7Plugins.taskManager().getTasks().size())),
+                                Pair.of("tasks", String.valueOf(XG7PluginsAPI.taskManager().getTasks().size())),
                                 Pair.of("ram", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + " / " + Runtime.getRuntime().totalMemory() / 1024 / 1024),
                                 Pair.of("tps", String.format("%.2f", XG7Plugins.getInstance().getTpsCalculator().getTPS()))
                         ).slot(49));
@@ -95,11 +99,11 @@ public class TaskMenu extends PageMenu {
     public void onClick(ActionEvent event) {
         event.setCancelled(true);
 
-        Player player = (Player) event.getWhoClicked();
+        Player player = event.getHolder().getPlayer();
 
-        PageMenuHolder holder = (PageMenuHolder) event.getInventoryHolder();
+        PagedMenuHolder holder = (PagedMenuHolder) event.getHolder();
 
-        switch (event.getClickedSlot()) {
+        switch (event.getSlotClicked().get()) {
             case 0:
                 refresh(holder);
                 break;
@@ -118,8 +122,8 @@ public class TaskMenu extends PageMenu {
 
                 if (taskId == null) return;
 
-                if (!XG7Plugins.taskManager().getTasks().containsKey(taskId) && !taskId.equals("TPS calculator")) {
-                    Text.fromLang(player, XG7Plugins.getInstance(),"task-command.not-found").thenAccept(text -> text.send(player));
+                if (!XG7PluginsAPI.taskManager().getTasks().containsKey(taskId) && !taskId.equals("TPS calculator")) {
+                    Text.sendTextFromLang(player, XG7Plugins.getInstance(),"task-command.not-found");
                     return;
                 }
 
@@ -127,22 +131,22 @@ public class TaskMenu extends PageMenu {
                     if (taskState == TaskState.RUNNING) {
                         if (taskId.equals("TPS calculator")) {
                             XG7Plugins.getInstance().getTpsCalculator().cancel();
-                            Text.fromLang(player, XG7Plugins.getInstance(),"task-command.stopped").thenAccept(text -> text.send(player));
+                            Text.sendTextFromLang(player, XG7Plugins.getInstance(),"task-command.stopped");
                             refresh(holder);
                             return;
                         }
-                        XG7Plugins.taskManager().cancelTask(taskId);
-                        Text.fromLang(player, XG7Plugins.getInstance(),"task-command.stopped").thenAccept(text -> text.send(player));
+                        XG7PluginsAPI.taskManager().cancelTask(taskId);
+                        Text.sendTextFromLang(player, XG7Plugins.getInstance(),"task-command.stopped");
                         return;
                     }
                     if (taskId.equals("TPS calculator")) {
                         XG7Plugins.getInstance().getTpsCalculator().start();
-                        Text.fromLang(player, XG7Plugins.getInstance(),"task-command.restarted").thenAccept(text -> text.send(player));
+                        Text.sendTextFromLang(player, XG7Plugins.getInstance(),"task-command.restarted");
                         refresh(holder);
                         return;
                     }
-                    XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get(taskId));
-                    Text.fromLang(player, XG7Plugins.getInstance(),"task-command.restarted").thenAccept(text -> text.send(player));
+                    XG7PluginsAPI.taskManager().runTask(XG7PluginsAPI.taskManager().getTasks().get(taskId));
+                    Text.sendTextFromLang(player, XG7Plugins.getInstance(),"task-command.restarted");
 
                     refresh(holder);
                     return;

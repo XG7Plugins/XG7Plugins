@@ -1,5 +1,6 @@
 package com.xg7plugins.modules.xg7menus.menus;
 
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
@@ -55,6 +56,6 @@ public interface IBasicMenu {
                 holder.getInventoryUpdater().addItem(item);
             }
 
-        });
+        }, XG7PluginsAPI.taskManager().getExecutor("menus"));
     }
 }

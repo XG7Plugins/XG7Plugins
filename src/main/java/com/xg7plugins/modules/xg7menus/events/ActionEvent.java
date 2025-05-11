@@ -12,14 +12,14 @@ public class ActionEvent extends MenuEvent {
     private final int rawSlot;
     private final Slot slotClicked;
     private final MenuAction menuAction;
-    private final Item itemClicked;
+    private final Item clickedItem;
 
 
-    public ActionEvent(BasicMenuHolder holder, MenuAction menuAction, int rawSlot, Slot slotClicked, Item itemClicked) {
+    public ActionEvent(BasicMenuHolder holder, MenuAction menuAction, int rawSlot, Slot slotClicked, Item clickedItem) {
         super(holder);
         this.menuAction = menuAction;
         this.rawSlot = rawSlot;
         this.slotClicked = slotClicked;
-        this.itemClicked = itemClicked;
+        this.clickedItem = clickedItem;
     }
 }
