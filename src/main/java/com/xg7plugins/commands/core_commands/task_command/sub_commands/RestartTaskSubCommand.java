@@ -2,10 +2,12 @@ package com.xg7plugins.commands.core_commands.task_command.sub_commands;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
@@ -13,7 +15,7 @@ import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
-@Command(
+@CommandSetup(
         name = "restart",
         description = "Restart Task",
         syntax = "/xg7plugins tasks restart <ID>",
@@ -35,19 +37,19 @@ public class RestartTaskSubCommand implements Command {
             return;
         }
 
-        TaskManager manager = XG7Plugins.getInstance().getTaskManager();
+        TaskManager manager = XG7PluginsAPI.taskManager();
 
         String id = args.get(0, String.class);
 
         if (!manager.getTasks().containsKey(id)) {
-            Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.not-found").thenAccept(text -> text.send(sender));
+            Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.not-found");
             return;
         }
 
         Task task = manager.getTasks().get(id);
 
         if (task.getState() == TaskState.RUNNING) {
-            Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.already-running").thenAccept(text -> text.send(sender));
+            Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.already-running");
             return;
         }
 
@@ -55,7 +57,7 @@ public class RestartTaskSubCommand implements Command {
 
         XG7Plugins.getInstance().getDebug().warn("Task " + id + " was restarted by " + sender.getName());
 
-        Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.restarted").thenAccept(text -> text.send(sender));
+        Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.restarted");
     }
 
     @Override

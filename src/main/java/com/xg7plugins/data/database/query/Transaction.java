@@ -1,6 +1,7 @@
 package com.xg7plugins.data.database.query;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.database.entity.*;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.database.processor.TableCreator;
@@ -267,7 +268,7 @@ public class Transaction {
     }
 
     public Transaction queue() {
-        XG7Plugins.getInstance().getDatabaseManager().getProcessor().queueTransaction(this);
+        XG7PluginsAPI.database().getProcessor().queueTransaction(this);
         return this;
     }
 

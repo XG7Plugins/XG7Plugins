@@ -38,7 +38,7 @@ public class EventManager implements Manager {
                 if (!method.isAnnotationPresent(EventHandler.class)) continue;
                 EventHandler eventHandler = method.getAnnotation(EventHandler.class);
 
-                Config config = plugin.getConfig(eventHandler.isEnabled().configName());
+                Config config = Config.of(eventHandler.isEnabled().configName(), plugin);
 
                 boolean invert = eventHandler.isEnabled().invert();
                 if (config != null) {
@@ -56,22 +56,22 @@ public class EventManager implements Manager {
                             if (eventHandler.isOnlyInWorld()) {
                                 if (event2 instanceof PlayerEvent) {
                                     PlayerEvent playerEvent = (PlayerEvent) event2;
-                                    if (!plugin.getEnabledWorlds().contains(playerEvent.getPlayer().getWorld().getName()))
+                                    if (!XG7PluginsAPI.isInWorldEnabled(plugin, playerEvent.getPlayer()))
                                         return;
                                 }
                                 if (event2 instanceof EntityEvent) {
                                     EntityEvent entityEvent = (EntityEvent) event2;
-                                    if (!plugin.getEnabledWorlds().contains(entityEvent.getEntity().getWorld().getName()))
+                                    if (!XG7PluginsAPI.isWorldEnabled(plugin, entityEvent.getEntity().getWorld()))
                                         return;
                                 }
                                 if (event2 instanceof WorldEvent) {
                                     WorldEvent worldEvent = (WorldEvent) event2;
-                                    if (!plugin.getEnabledWorlds().contains(worldEvent.getWorld().getName()))
+                                    if (!XG7PluginsAPI.isWorldEnabled(plugin, worldEvent.getWorld()))
                                         return;
                                 }
                                 if (event2 instanceof BlockEvent) {
                                     BlockEvent blockEvent = (BlockEvent) event2;
-                                    if (!plugin.getEnabledWorlds().contains(blockEvent.getBlock().getWorld().getName()))
+                                    if (!XG7PluginsAPI.isWorldEnabled(plugin, blockEvent.getBlock().getWorld()))
                                         return;
                                 }
                             }

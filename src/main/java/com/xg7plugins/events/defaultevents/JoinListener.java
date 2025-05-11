@@ -1,6 +1,7 @@
 package com.xg7plugins.events.defaultevents;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
@@ -34,11 +35,11 @@ public class JoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         XG7Plugins plugin = XG7Plugins.getInstance();
         try {
-            plugin.getPlayerDataDAO().get(event.getPlayer().getUniqueId()).thenAccept(playerData -> {
+            XG7PluginsAPI.requestPlayerData(event.getPlayer()).thenAccept(playerData -> {
                 if (playerData == null) return;
 
                 if (playerData.getLangId() == null) {
-                    playerData.setLangId(plugin.getLangManager().getNewLangFor(event.getPlayer()).join());
+                    playerData.setLangId(XG7PluginsAPI.langManager().getNewLangFor(event.getPlayer()).join());
                     plugin.getPlayerDataDAO().update(playerData);
                 }
             });

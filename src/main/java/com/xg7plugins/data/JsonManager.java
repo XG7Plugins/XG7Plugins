@@ -3,9 +3,11 @@ package com.xg7plugins.data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.cache.ObjectCache;
+import com.xg7plugins.data.config.Config;
 import com.xg7plugins.managers.Manager;
 
 import java.io.*;
@@ -20,7 +22,7 @@ public class JsonManager implements Manager {
     public JsonManager(XG7Plugins plugin) {
         cache = new ObjectCache<>(
                 plugin,
-                XG7Plugins.getInstance().getConfigsManager().getConfig("config").getTime("json-cache-expires").orElse(60 * 10 * 1000L),
+                Config.mainConfigOf(plugin).getTime("json-cache-expires").orElse(60 * 10 * 1000L),
                 false,
                 "json-cache",
                 false,
@@ -61,7 +63,7 @@ public class JsonManager implements Manager {
             cache.put(plugin + ":" + path, object);
 
             plugin.getDebug().info("Saved!");
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
+        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("files"));
 
     }
 
@@ -81,7 +83,7 @@ public class JsonManager implements Manager {
             }
             cache.put(plugin.getName() + ":" + path, t);
             return t;
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
+        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("files"));
     }
     @SuppressWarnings("unchecked")
     public <T> CompletableFuture<T> load(Plugin plugin, String path, TypeToken<T> type) {
@@ -99,7 +101,7 @@ public class JsonManager implements Manager {
             }
             cache.put(plugin.getName() + ":" + path, t);
             return t;
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
+        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("files"));
     }
 
 

@@ -1,8 +1,6 @@
 package com.xg7plugins.events.packetevents;
 
 import com.github.retrooper.packetevents.event.PacketListenerPriority;
-import com.github.retrooper.packetevents.protocol.packettype.PacketType;
-import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,6 +1,7 @@
 package com.xg7plugins.lang;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
@@ -56,7 +57,7 @@ public class LangManager implements Manager {
             }
             for (String lang : defLangs) loadLang(plugin, lang).join();
 
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
+        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("files"));
     }
 
     public CompletableFuture<Void> loadLang(Plugin plugin, String lang) {
@@ -69,12 +70,11 @@ public class LangManager implements Manager {
             File langFile = new File(langFolder, lang + ".yml");
             if (!langFile.exists()) plugin.saveResource("langs/" + lang + ".yml", false);
             langs.put(plugin.getName() + ":" + lang, Config.of("langs/" + lang, plugin));
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("files"));
+        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("files"));
     }
 
     public CompletableFuture<Lang> getLang(Plugin plugin, String lang, boolean selected) {
         return CompletableFuture.supplyAsync(() -> {
-            if (!langEnabled) return new Lang(plugin, Config.of("messages", plugin), "message");
             String finalLang = lang;
 
             if (!langEnabled) finalLang = mainLang;

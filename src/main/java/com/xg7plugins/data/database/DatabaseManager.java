@@ -4,6 +4,12 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.database.connector.Connector;
+import com.xg7plugins.data.database.connector.ConnectorRegistry;
+import com.xg7plugins.data.database.connector.SQLConfigs;
+import com.xg7plugins.data.database.connector.connectors.MariaDBConnector;
+import com.xg7plugins.data.database.connector.connectors.MySQLConnector;
+import com.xg7plugins.data.database.connector.connectors.SQLiteConnector;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.TableCreator;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
@@ -22,25 +28,22 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 @Getter
 public class DatabaseManager implements Manager {
 
-    private final ConcurrentHashMap<String, HikariDataSource> connections = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, Connection> sqliteConnections = new ConcurrentHashMap<>();
-    private final TableCreator tableCreator = new TableCreator();
-    private final ObjectCache<String, Entity> cachedEntities;
     private final DatabaseProcessor processor = new DatabaseProcessor(this);
+    private final TableCreator tableCreator = new TableCreator();
+    private final ConnectorRegistry connectorRegistry;
 
-    public Connection getConnection(Plugin plugin) throws SQLException {
-        if (sqliteConnections.containsKey(plugin.getName())) return sqliteConnections.get(plugin.getName());
-        return connections.get(plugin.getName()).getConnection();
+    private final ObjectCache<String, Entity> cachedEntities;
+
+    public Connection getConnection(Plugin plugin) throws Exception {
+        return connectorRegistry.getConnection(plugin);
     }
 
     public DatabaseManager(XG7Plugins plugin) {
-        Config config = plugin.getConfigsManager().getConfig("config");
+        Config config = Config.mainConfigOf(plugin);
 
         cachedEntities = new ObjectCache<>(
                 plugin,
@@ -51,6 +54,11 @@ public class DatabaseManager implements Manager {
                 String.class,
                 Entity.class
         );
+
+        connectorRegistry = new ConnectorRegistry();
+        connectorRegistry.registerConnector(new SQLiteConnector());
+        connectorRegistry.registerConnector(new MySQLConnector());
+        connectorRegistry.registerConnector(new MariaDBConnector());
 
     }
 
@@ -71,67 +79,22 @@ public class DatabaseManager implements Manager {
 
         ConnectionType connectionType = pluginConfig.get("sql.type", ConnectionType.class).orElse(ConnectionType.SQLITE);
 
-        String host = pluginConfig.get("sql.host", String.class).orElse(null);
-        String port = pluginConfig.get("sql.port", String.class).orElse(null);
-        String database = pluginConfig.get("sql.database", String.class).orElse(null);
-        String username = pluginConfig.get("sql.username", String.class).orElse(null);
-        String password = pluginConfig.get("sql.password", String.class).orElse(null);
-
-        String additionalArgs = pluginConfig.get("sql.additional-url-args", String.class).orElse("");
-
         plugin.getDebug().loading("Connection type: " + connectionType);
 
-        HikariConfig hikariConfig = new HikariConfig();
+        Connector connector = connectorRegistry.getConnector(connectionType);
 
-        hikariConfig.setAutoCommit(false);
-        hikariConfig.setUsername(username);
-        hikariConfig.setPassword(password);
-        hikariConfig.setMaximumPoolSize(xg7PluginsConfig.get("sql.max-pool-size", Integer.class).orElse(10));
-        hikariConfig.setPoolName(plugin.getName() + "-pool");
-        hikariConfig.setMinimumIdle(xg7PluginsConfig.get("sql.min-idle-connections", Integer.class).orElse(5));
-        hikariConfig.setConnectionTimeout(xg7PluginsConfig.getTime("sql.connection-timeout").orElse(5000L));
-        hikariConfig.setIdleTimeout(xg7PluginsConfig.getTime("sql.idle-timeout").orElse(600000L));
-        hikariConfig.setConnectionTestQuery("SELECT 1");
+        if (connector == null) {
+            plugin.getDebug().severe("Connection type not found!");
+            plugin.getDebug().severe("Connection aborted!");
+            return;
+        }
 
         try {
-            switch (connectionType) {
-                case SQLITE:
-
-                    Class.forName("org.sqlite.JDBC");
-
-                    File file = new File(plugin.getDataFolder(), "data.db");
-                    if (!file.exists()) file.createNewFile();
-
-                    Connection sqliteConnection = DriverManager.getConnection("jdbc:sqlite:" + plugin.getDataFolder().getPath() + "/data.db", username, password);
-
-                    sqliteConnection.setAutoCommit(false);
-
-                    sqliteConnections.put(plugin.getName(), sqliteConnection);
-
-                    break;
-                case MARIADB:
-
-                    Class.forName("org.mariadb.jdbc.Driver");
-
-                    hikariConfig.setJdbcUrl("jdbc:mariadb://" + host + ":" + port + "/" + database + "?" + additionalArgs);
-
-                    connections.put(plugin.getName(), new HikariDataSource(hikariConfig));
-
-                    break;
-                case MYSQL:
-
-                    hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?" + additionalArgs);
-
-                    connections.put(plugin.getName(), new HikariDataSource(hikariConfig));
-
-                    break;
-            }
-        } catch (ClassNotFoundException | IOException e) {
+            connector.connect(plugin, SQLConfigs.of(pluginConfig, xg7PluginsConfig));
+        } catch (Exception e) {
             plugin.getDebug().severe("Error while connecting to database: " + e.getMessage());
             e.printStackTrace();
             return;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
 
         plugin.getDebug().loading("Successfully connected to database!");
@@ -142,15 +105,12 @@ public class DatabaseManager implements Manager {
 
         plugin.getDebug().loading("Successfully checked tables!");
 
-
-
     }
 
     @SneakyThrows
     public void disconnectPlugin(Plugin plugin) {
         plugin.getDebug().loading("Disconnecting database...");
-        if (connections.get(plugin.getName()) != null) connections.get(plugin.getName()).close();
-        connections.remove(plugin.getName());
+        connectorRegistry.getConnector(plugin).disconnect(plugin);
         plugin.getDebug().loading("Disconnected database!");
     }
 

@@ -2,15 +2,17 @@ package com.xg7plugins.commands.core_commands.task_command.sub_commands;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
-@Command(
+@CommandSetup(
         name = "delete",
         description = "Delete Task",
         syntax = "/xg7plugins tasks delete <ID>",
@@ -28,7 +30,7 @@ public class DeleteTaskSubCommand implements Command {
             return;
         }
 
-        TaskManager manager = XG7Plugins.getInstance().getTaskManager();
+        TaskManager manager = XG7PluginsAPI.taskManager();
 
         String id = args.get(0, String.class);
 
@@ -41,7 +43,7 @@ public class DeleteTaskSubCommand implements Command {
         XG7Plugins.getInstance().getDebug().warn("Task " + id + " was deleted by " + sender.getName());
         XG7Plugins.getInstance().getDebug().warn("To back up the task, you need to restart the plugin of the task!");
 
-        Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.deleted").thenAccept(text -> text.send(sender));
+        Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.deleted");
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.xg7plugins.lang;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import lombok.AllArgsConstructor;
@@ -25,7 +26,7 @@ public class Lang {
 
     public static CompletableFuture<Lang> of(Plugin plugin, Player player) {
         return CompletableFuture.supplyAsync(() -> {
-            LangManager langManager = XG7Plugins.getInstance().getLangManager();
+            LangManager langManager = XG7PluginsAPI.langManager();
             return langManager.getLangByPlayer(plugin, player).join();
         });
     }

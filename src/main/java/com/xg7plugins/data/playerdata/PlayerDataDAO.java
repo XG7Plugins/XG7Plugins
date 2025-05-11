@@ -1,6 +1,7 @@
 package com.xg7plugins.data.playerdata;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.database.query.Query;
 import com.xg7plugins.data.database.query.Transaction;
 import com.xg7plugins.data.database.DAO;
@@ -16,7 +17,7 @@ public class PlayerDataDAO implements DAO<UUID, PlayerData> {
     public CompletableFuture<Boolean> add(PlayerData data) throws ExecutionException, InterruptedException {
         if(data == null || data.getPlayerUUID() == null) return CompletableFuture.completedFuture(null);
 
-        return XG7Plugins.dbProcessor().exists(
+        return XG7PluginsAPI.dbProcessor().exists(
                 XG7Plugins.getInstance(), PlayerData.class, "player_id", data.getPlayerUUID()
         ).thenApply(exists -> {
             if (exists) return false;
@@ -39,8 +40,8 @@ public class PlayerDataDAO implements DAO<UUID, PlayerData> {
     public CompletableFuture<PlayerData> get(UUID uuid) {
         if (uuid == null) return null;
 
-        return XG7Plugins.database().containsCachedEntity(XG7Plugins.getInstance(), uuid.toString()).thenComposeAsync(exists -> {
-            if (exists) return XG7Plugins.database().getCachedEntity(XG7Plugins.getInstance(), uuid.toString());
+        return XG7PluginsAPI.database().containsCachedEntity(XG7Plugins.getInstance(), uuid.toString()).thenComposeAsync(exists -> {
+            if (exists) return XG7PluginsAPI.database().getCachedEntity(XG7Plugins.getInstance(), uuid.toString());
 
             try {
                 return CompletableFuture.completedFuture(Query.selectFrom(XG7Plugins.getInstance(), PlayerData.class, uuid).onError(e -> {
@@ -49,7 +50,7 @@ public class PlayerDataDAO implements DAO<UUID, PlayerData> {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        } ,XG7Plugins.taskManager().getAsyncExecutors().get("database"));
+        } ,XG7PluginsAPI.taskManager().getAsyncExecutors().get("database"));
 
 
     }
@@ -63,13 +64,13 @@ public class PlayerDataDAO implements DAO<UUID, PlayerData> {
                 Transaction.update(XG7Plugins.getInstance(), data).onError(e -> {
                     throw new RuntimeException(e);
                 }).waitForResult();
-                XG7Plugins.getInstance().getDatabaseManager().cacheEntity(XG7Plugins.getInstance(), data.getPlayerUUID().toString(), data);
+                XG7PluginsAPI.database().cacheEntity(XG7Plugins.getInstance(), data.getPlayerUUID().toString(), data);
                 return true;
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException |
                      InstantiationException e) {
                 throw new RuntimeException(e);
             }
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("database"));
+        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("database"));
 
     }
 }

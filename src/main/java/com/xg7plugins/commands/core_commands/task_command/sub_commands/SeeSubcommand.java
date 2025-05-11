@@ -73,28 +73,25 @@ public class SeeSubcommand implements Command {
         ClickableItem builder = Item.from(XMaterial.REPEATER.parseMaterial()).clickable().onClick(event -> {
             if (event.getMenuAction().isRightClick()) {
                 if (task.getState() == TaskState.RUNNING) {
-                    XG7Plugins.taskManager().cancelTask(task.getPlugin().getName() + ":" + task.getName());
-                    Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
+                    XG7PluginsAPI.taskManager().cancelTask(task.getPlugin().getName() + ":" + task.getName());
+                    Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.stopped");
                     IBasicMenu.refresh(event.getHolder());
                     return;
                 }
                 if ((task.getPlugin().getName() + ":" + task.getName()).equals("TPS calculator")) {
                     XG7Plugins.getInstance().getTpsCalculator().start();
-                    Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.stopped").thenAccept(text -> text.send(sender));
+                    Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.stopped");
                     IBasicMenu.refresh(event.getHolder());
                     return;
                 }
-                XG7Plugins.taskManager().runTask(XG7Plugins.taskManager().getTasks().get(task.getPlugin().getName() + ":" + task.getName()));
-                Text.fromLang(sender, XG7Plugins.getInstance(), "task-command.restarted").thenAccept(text -> text.send(sender));
+                XG7PluginsAPI.taskManager().runTask(XG7PluginsAPI.taskManager().getTask(task.getPlugin().getName() + ":" + task.getName()));
+                Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.restarted");
 
                 IBasicMenu.refresh(event.getHolder());
                 return;
             }
             if (event.getMenuAction().isLeftClick()) {
-                Text.fromLang(sender, XG7Plugins.getInstance(), "tasks-menu.copy-to-clipboard")
-                        .thenAccept(text -> {
-                            text.replace("id", task.getPlugin().getName() + ":" + task.getName()).send(sender);
-                        });
+                Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "tasks-menu.copy-to-clipboard", Pair.of("id", task.getPlugin().getName() + ":" + task.getName()));
             }
             IBasicMenu.refresh(event.getHolder());
         });
