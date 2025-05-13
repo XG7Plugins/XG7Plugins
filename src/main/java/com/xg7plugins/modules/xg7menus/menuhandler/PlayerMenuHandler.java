@@ -6,12 +6,14 @@ import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
-import com.xg7plugins.modules.xg7menus.events.MenuEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;
 import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.player.PlayerMenu;
+import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.AllArgsConstructor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -22,7 +24,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,7 +46,7 @@ public class PlayerMenuHandler implements Listener {
 
         event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(menuAction));
 
-        ActionEvent actionEvent = new ActionEvent(holder, menuAction, slotClicked.get(), slotClicked);
+        ActionEvent actionEvent = new ActionEvent(holder, menuAction, slotClicked.get(), slotClicked, Item.from(event.getItem()).slot(slotClicked));
 
         if (holder.getInventoryUpdater().hasClickActionOn(slotClicked)) {
             holder.getInventoryUpdater().getClickAction(slotClicked).accept(actionEvent);
@@ -72,7 +73,7 @@ public class PlayerMenuHandler implements Listener {
 
         event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(menuAction));
 
-        ActionEvent actionEvent = new ActionEvent(holder, menuAction, slotClicked.get(), slotClicked);
+        ActionEvent actionEvent = new ActionEvent(holder, menuAction, slotClicked.get(), slotClicked,Item.from(event.getCurrentItem()).slot(slotClicked));
 
         if (holder.getInventoryUpdater().hasClickActionOn(slotClicked)) {
             holder.getInventoryUpdater().getClickAction(slotClicked).accept(actionEvent);
@@ -113,76 +114,40 @@ public class PlayerMenuHandler implements Listener {
 
     @EventHandler
     public void onDrop(PlayerDropItemEvent event) {
-        if (!XG7Menus.hasPlayerMenuHolder(event.getPlayer().getUniqueId())) return;
+        handleItemOrBlock(event, MenuAction.PLAYER_DROP);
 
-        PlayerMenuHolder holder = XG7Menus.getPlayerMenuHolder(event.getPlayer().getUniqueId());
-
-        Slot slotHeld = Slot.fromSlot(event.getPlayer().getInventory().getHeldItemSlot());
-
-
-        event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(MenuAction.PLAYER_DROP));
-
-        ActionEvent actionEvent = new ActionEvent(holder, MenuAction.PLAYER_DROP, slotHeld.get(), slotHeld);
-
-        holder.getMenu().onDrop(actionEvent);
-
-        String message = holder.getMenu().getMenuConfigs().getOnDropMessage(holder.getPlayer());
-        if (!message.isEmpty()) holder.getPlayer().sendMessage(message);
-
-        if (actionEvent.isCancelled()) event.setCancelled(true);
     }
 
     @EventHandler
     public void onPickUp(PlayerPickupItemEvent event) {
-        if (!XG7Menus.hasPlayerMenuHolder(event.getPlayer().getUniqueId())) return;
+        handleItemOrBlock(event, MenuAction.PLAYER_PICKUP);
 
-        PlayerMenuHolder holder = XG7Menus.getPlayerMenuHolder(event.getPlayer().getUniqueId());
-
-        Slot slotHeld = Slot.fromSlot(event.getPlayer().getInventory().getHeldItemSlot());
-
-        event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(MenuAction.PLAYER_PICKUP));
-
-        ActionEvent actionEvent = new ActionEvent(holder, MenuAction.PLAYER_PICKUP, slotHeld.get(), slotHeld);
-
-        holder.getMenu().onPickup(actionEvent);
-
-        String message = holder.getMenu().getMenuConfigs().getOnPickupMessage(holder.getPlayer());
-        if (!message.isEmpty()) holder.getPlayer().sendMessage(message);
-
-        if (actionEvent.isCancelled()) event.setCancelled(true);
     }
 
     @EventHandler
     public void onBreakBlocks(BlockBreakEvent event) {
-        if (!XG7Menus.hasPlayerMenuHolder(event.getPlayer().getUniqueId())) return;
+        handleItemOrBlock(event, MenuAction.PLAYER_BREAK_BLOCK);
 
-        PlayerMenuHolder holder = XG7Menus.getPlayerMenuHolder(event.getPlayer().getUniqueId());
-
-        Slot slotHeld = Slot.fromSlot(event.getPlayer().getInventory().getHeldItemSlot());
-
-        event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(MenuAction.PLAYER_BREAK_BLOCK));
-
-        ActionEvent actionEvent = new ActionEvent(holder, MenuAction.PLAYER_BREAK_BLOCK, slotHeld.get(), slotHeld);
-
-        holder.getMenu().onBreakBlocks(actionEvent);
-
-        String message = holder.getMenu().getMenuConfigs().getOnBreakMessage(holder.getPlayer());
-        if (!message.isEmpty()) holder.getPlayer().sendMessage(message);
-
-        if (actionEvent.isCancelled()) event.setCancelled(true);
     }
 
     @EventHandler
     public void onPlaceBlocks(BlockPlaceEvent event) {
-        if (!XG7Menus.hasPlayerMenuHolder(event.getPlayer().getUniqueId())) return;
+        handleItemOrBlock(event, MenuAction.PLAYER_PLACE_BLOCK);
+    }
 
-        PlayerMenuHolder holder = XG7Menus.getPlayerMenuHolder(event.getPlayer().getUniqueId());
+    private <T extends Event & Cancellable> void handleItemOrBlock(T event, MenuAction action) {
 
-        Slot slotHeld = Slot.fromSlot(event.getPlayer().getInventory().getHeldItemSlot());
+        Player player = ReflectionObject.of(event).getMethod("getPlayer").invoke();
 
-        event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(MenuAction.PLAYER_PLACE_BLOCK));
+        if (!XG7Menus.hasPlayerMenuHolder(player.getUniqueId())) return;
 
-        ActionEvent actionEvent = new ActionEvent(holder, MenuAction.PLAYER_PLACE_BLOCK, slotHeld.get(), slotHeld);
+        PlayerMenuHolder holder = XG7Menus.getPlayerMenuHolder(player.getUniqueId());
+
+        Slot slotHeld = Slot.fromSlot(player.getInventory().getHeldItemSlot());
+
+        if (holder.getMenu().getMenuConfigs().allowedActions() != null) event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(action));
+
+        ActionEvent actionEvent = new ActionEvent(holder, action, slotHeld.get(), slotHeld,null);
 
         holder.getMenu().onPlaceBlocks(actionEvent);
 

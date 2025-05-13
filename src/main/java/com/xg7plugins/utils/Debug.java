@@ -27,22 +27,22 @@ public class Debug {
     }
 
     public void loading(String message) {
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getCustomPrefix() + "§8]§r " + message);
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getPrefix() + "§8]§r " + message);
     }
     public void info(String message) {
         if (!debugEnabled) return;
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getCustomPrefix()+ " INFO§8]§r " + message);
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getPrefix()+ " INFO§8]§r " + message);
     }
     public void warn(String message) {
         if (!debugEnabled) return;
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getCustomPrefix() + " §eWARNING§8]§e " + message);
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getPrefix() + " §eWARNING§8]§e " + message);
     }
     public void severe(String message) {
         if (!debugEnabled) return;
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getCustomPrefix() + " §cERROR§8]§c " + message);
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getPrefix() + " §cERROR§8]§c " + message);
     }
     public void log(String message) {
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getCustomPrefix() + " LOG§8]§r " + message);
+        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getPrefix() + " LOG§8]§r " + message);
     }
 
     public static Debug of(Plugin plugin) {

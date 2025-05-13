@@ -24,7 +24,7 @@ public class Slot {
         return 9 * row - (9 - column) - 1;
     }
     public int get() {
-        return 9 * (row - 1) + (column - 1);
+        return 9 * row - (9 - column) - 1;
     }
     public static Slot fromSlot(int slot) {
         if (slot == 0) return new Slot(1, 1);

@@ -25,14 +25,12 @@ public class Config {
     private final Plugin plugin;
     private final String name;
     private final File configFile;
-    private final ConfigManager configManager;
     private YamlConfiguration config;
 
     @SneakyThrows
     public Config(Plugin plugin, String name) {
         this.plugin = plugin;
         this.name = name;
-        this.configManager = XG7PluginsAPI.configManager(plugin);
 
         plugin.getLogger().info("Loading " + name + ".yml...");
 
@@ -66,7 +64,6 @@ public class Config {
     public Config(Plugin plugin, YamlConfiguration config, String name) {
         this.plugin = plugin;
         this.name = name;
-        this.configManager = XG7PluginsAPI.configManager(plugin);
         this.config = config;
         this.configFile = new File(plugin.getDataFolder(), "config.yml");
     }
@@ -111,7 +108,7 @@ public class Config {
             return Optional.of((T) Bukkit.getWorld(config.getString(path)));
         }
 
-        ConfigTypeAdapter<T> adapter = (ConfigTypeAdapter<T>) configManager.getAdapters().get(type);
+        ConfigTypeAdapter<T> adapter = (ConfigTypeAdapter<T>) XG7PluginsAPI.configManager(plugin).getAdapters().get(type);
 
         if (adapter == null) {
             plugin.getDebug().warn("Adapter not found for " + type.getName());
@@ -140,7 +137,7 @@ public class Config {
 
     @SuppressWarnings("unchecked")
     public <T> Optional<List<T>> getList(String path, Class<T> type, boolean ignoreNonexistent) {
-        if (verifyExists(path, ignoreNonexistent)) return Optional.empty();
+        if (!verifyExists(path, ignoreNonexistent)) return Optional.empty();
 
         if (type == String.class) return Optional.of((List<T>) config.getStringList(path));
         if (type == Integer.class || type == int.class) return Optional.of((List<T>) config.getIntegerList(path));
@@ -196,7 +193,7 @@ public class Config {
 
         this.config = YamlConfiguration.loadConfiguration(configFile);
 
-        configManager.putConfig(name,this);
+        XG7PluginsAPI.configManager(plugin).putConfig(name,this);
 
         plugin.getDebug().info("Reloaded");
     }

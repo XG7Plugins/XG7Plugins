@@ -11,9 +11,7 @@ import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.dependencies.Dependency;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
-import com.xg7plugins.help.chathelp.HelpInChat;
-import com.xg7plugins.help.formhelp.HelpCommandForm;
-import com.xg7plugins.help.guihelp.HelpCommandGUI;
+import com.xg7plugins.help.HelpMessenger;
 import com.xg7plugins.managers.ManagerRegistry;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.utils.Debug;
@@ -35,9 +33,7 @@ public abstract class Plugin extends JavaPlugin {
     protected ManagerRegistry managerRegistry;
     protected Debug debug;
 
-    private HelpCommandGUI helpCommandGUI;
-    private HelpInChat helpInChat;
-    private HelpCommandForm helpCommandForm;
+    protected HelpMessenger helpMessenger;
 
 
     public Plugin() {
@@ -53,15 +49,15 @@ public abstract class Plugin extends JavaPlugin {
         environmentConfig.setPrefix(ChatColor.translateAlternateColorCodes('&', configurations.prefix()));
         environmentConfig.setCustomPrefix(environmentConfig.getPrefix());
 
-        managerRegistry.registerManagers(new ConfigManager(this, configurations.configs()));
-
+        managerRegistry.registerManagers(
+                new ConfigManager(this, configurations.configs()),
+                new CommandManager(this)
+        );
         debug = new Debug(this);
 
         debug.loading("Loading " + environmentConfig.getCustomPrefix() + "...");
 
-        managerRegistry.registerManagers(new CommandManager(this));
-
-        for (String cause : configurations.reloadCauses()) ReloadCause.registerCause(this, ReloadCause.of(this, cause));
+        for (String cause : configurations.reloadCauses()) ReloadCause.registerCause(this, new ReloadCause(cause));
 
         XG7Plugins.register(this);
     }

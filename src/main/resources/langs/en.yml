@@ -138,6 +138,10 @@ help-menu:
     - ""
     - "&oDeveloped by DaviXG7"
 
+  command-help:
+    title: "&7Commands of %plugin_name%"
+    subcommands-title: "&7Subcommands of %subcommand%"
+
 help-in-chat:
 
   title: "&7Welcome to the &6XG7Plugins &7help page!"

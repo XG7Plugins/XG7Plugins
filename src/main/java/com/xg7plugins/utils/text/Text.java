@@ -95,6 +95,9 @@ public class Text {
         send(component,sender, centered, pixels);
 
     }
+    public static void send (Component component, CommandSender sender) {
+        send(component, sender, false, 0);
+    }
 
     public static void send(Component component, CommandSender sender, boolean centered, int pixels) {
         if (component.isEmpty()) return;

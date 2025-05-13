@@ -2,13 +2,15 @@ package com.xg7plugins.help.xg7pluginshelp;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.BookItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.item.SkullItem;
-import com.xg7plugins.modules.xg7menus.menus.gui.Menu;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
@@ -22,17 +24,12 @@ public class XG7PluginsHelpGUI extends Menu {
     private final Plugin plugin;
 
     public XG7PluginsHelpGUI(Plugin plugin) {
-        super(plugin, "help-command-index", "lang:[help-menu.index.title]", 45);
+        super(IMenuConfigurations.of(plugin, "help-command-index", "lang:[help-menu.index.title]", 5));
         this.plugin = plugin;
     }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    protected List<Item> items(Player player) {
+    public List<Item> getItems(Player player) {
         return Arrays.asList(
                 SkullItem.newSkull().renderPlayerSkull(true).name("lang:[help-menu.index.profile-item.name]").lore("lang:[help-menu.index.profile-item.lang-chose]").slot(13),
                 Item.from(XMaterial.BOOK).name("lang:[help-menu.index.lang-item.name]").lore("lang:[help-menu.index.lang-item.lore]").slot(29),
@@ -47,9 +44,9 @@ public class XG7PluginsHelpGUI extends Menu {
     public void onClick(ActionEvent event) {
         event.setCancelled(true);
 
-        Player player = (Player) event.getWhoClicked();
+        Player player = event.getHolder().getPlayer();
 
-        switch (event.getClickedSlot()) {
+        switch (event.getClickedSlot().get()) {
             case 29:
                 player.closeInventory();
                 player.performCommand("lang");
@@ -60,7 +57,7 @@ public class XG7PluginsHelpGUI extends Menu {
                 break;
             case 31:
 
-                Config lang = XG7Plugins.getInstance().getLangManager().getLangByPlayer(plugin, player).join().getLangConfiguration();
+                Config lang = XG7PluginsAPI.langManager().getLangByPlayer(plugin, player).join().getLangConfiguration();
 
                 List<String> about = lang.getList("help-menu.about", String.class).orElse(new ArrayList<>());
 
@@ -94,11 +91,11 @@ public class XG7PluginsHelpGUI extends Menu {
                 bookItem.openBook(player);
                 return;
             case 32:
-                plugin.getHelpCommandGUI().getMenu("commands").open(player);
+                plugin.getHelpMessenger().getGui().getMenu("commands").open(player);
                 break;
             case 33:
                 player.closeInventory();
-                plugin.getHelpInChat().sendPage("index", player);
+                plugin.getHelpMessenger().getChat().send(player);
                 break;
 
         }

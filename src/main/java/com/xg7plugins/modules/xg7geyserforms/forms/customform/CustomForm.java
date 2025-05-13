@@ -1,6 +1,7 @@
 package com.xg7plugins.modules.xg7geyserforms.forms.customform;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7geyserforms.forms.Form;
 import com.xg7plugins.utils.text.Text;
@@ -30,13 +31,13 @@ public abstract class CustomForm extends Form<org.geysermc.cumulus.form.CustomFo
 
             components(player).stream().map(component -> component.build(player, plugin)).forEach(builder::component);
 
-            builder.invalidResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onError(form, response, player)));
-            builder.validResultHandler((form, response) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onFinish(form, response, player)));
-            builder.closedResultHandler((form) -> XG7Plugins.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onClose(form, player)));
+            builder.invalidResultHandler((form, response) -> XG7PluginsAPI.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onError(form, response, player)));
+            builder.validResultHandler((form, response) -> XG7PluginsAPI.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onFinish(form, response, player)));
+            builder.closedResultHandler((form) -> XG7PluginsAPI.taskManager().runAsyncTask(XG7Plugins.getInstance(),"menus", () -> onClose(form, player)));
 
             FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
 
             return true;
-        }, XG7Plugins.taskManager().getAsyncExecutors().get("menus"));
+        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("menus"));
     }
 }

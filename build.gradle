@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com'
-version = '1.1'
+version = '1.2'
 
 repositories {
     mavenCentral()
@@ -37,7 +37,7 @@ repositories {
 
 dependencies {
 
-    compileOnly files("C:\\Users\\davis\\Documents\\Build tools\\spigot-1.16.5.jar")
+    compileOnly files("D:\\buildTools\\spigot-1.16.1.jar")
 
     implementation("com.github.cryptomorin:XSeries:13.0.0")
 

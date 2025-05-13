@@ -58,10 +58,12 @@ public class CommandManager implements CommandExecutor, TabCompleter, Manager {
 
             CommandSetup commandSetup = command.getCommandConfigurations();
 
-            Config config = Config.of(commandSetup.isEnabled().configName(), plugin);
+            if (!commandSetup.isEnabled().configName().isEmpty()) {
+                Config config = Config.of(commandSetup.isEnabled().configName(), plugin);
 
-            boolean invert = commandSetup.isEnabled().invert();
-            if (config != null && config.get(commandSetup.isEnabled().path(), Boolean.class).orElse(false) == invert) return;
+                boolean invert = commandSetup.isEnabled().invert();
+                if (config != null && config.get(commandSetup.isEnabled().path(), Boolean.class).orElse(false) == invert) return;
+            }
 
             List<String> aliases = Config.of("commands", plugin).getList(commandSetup.name(), String.class).orElse(null);
             if (aliases == null) return;

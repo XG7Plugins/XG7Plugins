@@ -1,6 +1,7 @@
 package com.xg7plugins.help.xg7pluginshelp;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;
@@ -22,7 +23,7 @@ public class XG7PluginsHelpForm extends SimpleForm {
     @Override
     public String content(Player player) {
 
-        Config lang = XG7Plugins.getInstance().getLangManager().getLangByPlayer(plugin, player).join().getLangConfiguration();
+        Config lang = XG7PluginsAPI.langManager().getLangByPlayer(plugin, player).join().getLangConfiguration();
 
         String about = String.join("\n", lang.getList("help-menu.about", String.class).orElse(new ArrayList<>()));
 
@@ -54,13 +55,13 @@ public class XG7PluginsHelpForm extends SimpleForm {
     public void onFinish(org.geysermc.cumulus.form.SimpleForm form, SimpleFormResponse result, Player player) {
         switch (result.clickedButtonId()) {
             case 0:
-                XG7Plugins.taskManager().runSyncTask(XG7Plugins.getInstance(), () -> player.performCommand("lang"));
+                XG7PluginsAPI.taskManager().runSyncTask(XG7Plugins.getInstance(), () -> player.performCommand("lang"));
                 break;
             case 1:
-                XG7Plugins.taskManager().runSyncTask(XG7Plugins.getInstance(), () -> player.performCommand("tasks"));
+                XG7PluginsAPI.taskManager().runSyncTask(XG7Plugins.getInstance(), () -> player.performCommand("tasks"));
                 break;
             case 2:
-                plugin.getHelpCommandForm().getForm("commands").send(player);
+                plugin.getHelpMessenger().getForm().getForm("commands").send(player);
                 break;
         }
     }

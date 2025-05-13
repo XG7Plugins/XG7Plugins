@@ -10,15 +10,16 @@ import com.xg7plugins.commands.core_commands.ReloadCommand;
 import com.xg7plugins.commands.core_commands.task_command.TaskCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.JsonManager;
-import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.dependencies.Dependency;
 import com.xg7plugins.dependencies.DependencyManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
-import com.xg7plugins.help.formhelp.HelpCommandForm;
-import com.xg7plugins.help.guihelp.HelpCommandGUI;
+import com.xg7plugins.help.HelpMessenger;
+import com.xg7plugins.help.chat.HelpChat;
+import com.xg7plugins.help.form.HelpForm;
+import com.xg7plugins.help.menu.HelpGUI;
 import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpForm;
 import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpGUI;
 import com.xg7plugins.help.xg7pluginshelp.chathelp.XG7PluginsChatHelp;
@@ -115,18 +116,16 @@ public final class XG7Plugins extends Plugin {
 
         debug.loading("Loading managers...");
 
-        managerRegistry.registerManagers(
-                new DependencyManager(),
-                new TaskManager(this),
-                new CacheManager(this),
-                new DatabaseManager(this),
-                new LangManager(this, new String[]{"en", "pt", "es"}),
-                new JsonManager(this),
-                new EventManager(),
-                new PacketEventManager(),
-                new CooldownManager(this),
-                new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores())
-        );
+        managerRegistry.registerManager(new DependencyManager());
+        managerRegistry.registerManager(new CacheManager(this));
+        managerRegistry.registerManager(new TaskManager(this));
+        managerRegistry.registerManager(new DatabaseManager(this));
+        managerRegistry.registerManager(new LangManager(this, new String[]{"en", "pt", "es"}));
+        managerRegistry.registerManager(new JsonManager(this));
+        managerRegistry.registerManager(new EventManager());
+        managerRegistry.registerManager(new PacketEventManager());
+        managerRegistry.registerManager(new CooldownManager(this));
+        managerRegistry.registerManager(new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores()));
 
         this.playerDataDAO = new PlayerDataDAO();
 
@@ -141,7 +140,7 @@ public final class XG7Plugins extends Plugin {
 
         XG7Menus menus = XG7Menus.getInstance();
 
-        menus.registerMenus(new LangMenu(this), new TaskMenu(this));
+        menus.registerMenus(new LangMenu(), new TaskMenu(this));
 
         if (XG7PluginsAPI.isGeyserFormsEnabled()) {
             debug.loading("Loading GeyserForms...");
@@ -187,6 +186,13 @@ public final class XG7Plugins extends Plugin {
 
         debug.loading("Stopping PacketEvents...");
         PacketEvents.getAPI().terminate();
+
+        debug.loading("Stopping database...");
+        try {
+            XG7PluginsAPI.database().shutdown();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -217,15 +223,24 @@ public final class XG7Plugins extends Plugin {
     }
     @Override
     public List<Dependency> loadDependencies() {
-        return Collections.singletonList(Dependency.of("PlaceholderAPI", "https://www.spigotmc.org/resources/placeholderapi.6245/download?version=541946"));
+        return Collections.singletonList(Dependency.of("PlaceholderAPI", "https://ci.extendedclip.com/job/PlaceholderAPI/197/artifact/build/libs/PlaceholderAPI-2.11.6.jar"));
     }
 
     // Carregar ajuda
     @Override
     public void loadHelp() {
-        this.helpCommandGUI = new HelpCommandGUI(this, new XG7PluginsHelpGUI(this));
-        if (XG7Plugins.isDependencyEnabled("floodgate") && Config.mainConfigOf(this).get("enable-geyser-forms",Boolean.class).orElse(false)) this.helpCommandForm = new HelpCommandForm(new XG7PluginsHelpForm(this));
-        this.helpInChat = new XG7PluginsChatHelp();
+
+        HelpGUI helpCommandGUI = new HelpGUI(this, new XG7PluginsHelpGUI(this));
+
+        HelpForm helpCommandForm = null;
+
+        if (XG7PluginsAPI.isGeyserFormsEnabled()) {
+            helpCommandForm = new HelpForm(new XG7PluginsHelpForm(this));
+        }
+
+        HelpChat helpInChat = new XG7PluginsChatHelp();
+
+        this.helpMessenger = new HelpMessenger(this, helpCommandGUI, helpCommandForm, helpInChat);
     }
 
     private void loadPlugin(Plugin plugin) {

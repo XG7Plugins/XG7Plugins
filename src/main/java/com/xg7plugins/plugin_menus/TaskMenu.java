@@ -8,8 +8,6 @@ import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.gui.PageMenu;
-import com.xg7plugins.modules.xg7menus.menus.holders.PageMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
@@ -103,7 +101,7 @@ public class TaskMenu extends PagedMenu {
 
         PagedMenuHolder holder = (PagedMenuHolder) event.getHolder();
 
-        switch (event.getSlotClicked().get()) {
+        switch (event.getClickedSlot().get()) {
             case 0:
                 refresh(holder);
                 break;

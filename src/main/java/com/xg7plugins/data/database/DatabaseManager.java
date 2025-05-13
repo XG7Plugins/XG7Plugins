@@ -1,6 +1,7 @@
 package com.xg7plugins.data.database;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
@@ -112,6 +113,18 @@ public class DatabaseManager implements Manager {
         plugin.getDebug().loading("Disconnecting database...");
         connectorRegistry.getConnector(plugin).disconnect(plugin);
         plugin.getDebug().loading("Disconnected database!");
+    }
+
+    public void shutdown() throws Exception {
+        processor.shutdown();
+        XG7PluginsAPI.getAllXG7Plugins().forEach(plugin -> {
+            try {
+                disconnectPlugin(plugin);
+            } catch (Exception e) {
+                plugin.getDebug().severe("Error while disconnecting database: " + e.getMessage());
+                e.printStackTrace();
+            }
+        });
     }
 
     public <T extends Entity> CompletableFuture<T> getCachedEntity(@NotNull Plugin plugin, String id) {

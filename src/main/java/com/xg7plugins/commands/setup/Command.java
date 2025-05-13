@@ -27,7 +27,7 @@ public interface Command {
     Item getIcon();
 
     default CommandSetup getCommandConfigurations() {
-        return this.getClass().getAnnotation(CommandSetup.class);
+        return getClass().getAnnotation(CommandSetup.class);
     }
     default Plugin getPlugin() {
         return XG7PluginsAPI.getXG7Plugin(getCommandConfigurations().pluginClass());

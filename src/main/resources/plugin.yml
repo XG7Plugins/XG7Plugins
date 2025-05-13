@@ -1,5 +1,5 @@
 name: XG7Plugins
-version: '1.1'
+version: '1.2'
 main: com.xg7plugins.XG7Plugins
 api-version: '1.13'
 loadbefore:

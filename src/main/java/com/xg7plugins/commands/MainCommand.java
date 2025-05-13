@@ -32,34 +32,11 @@ public class MainCommand implements Command {
 
 
     public void onCommand(CommandSender sender, CommandArgs args) {
-        Config config = Config.mainConfigOf(plugin);
-
         if (args.len() > 1){
-            plugin.getHelpInChat().sendPage(args.get(1, String.class), sender);
+            plugin.getHelpMessenger().sendChat(sender);
             return;
         }
-
-        if (!(sender instanceof Player)) {
-            plugin.getHelpInChat().sendPage("index", sender);
-            return;
-        }
-
-        Player player = (Player) sender;
-
-        if (XG7PluginsAPI.isGeyserFormsEnabled()) {
-            boolean commandFormEnabled = config.get("help-command-form", Boolean.class).orElse(false);
-            if (commandFormEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
-                plugin.getHelpCommandForm().getForm("index").send(player);
-                return;
-            }
-        }
-
-        if (config.get("help-command-in-gui", Boolean.class).orElse(false)) {
-            plugin.getHelpCommandGUI().getMenu("index").open(player);
-            return;
-        }
-
-        plugin.getHelpInChat().sendPage("index", player);
+        plugin.getHelpMessenger().send(sender);
      }
 
     @Override
@@ -74,17 +51,22 @@ public class MainCommand implements Command {
         if (args.len() == 1) {
             suggestions.add("help");
             suggestions.addAll(XG7PluginsAPI.commandManager(plugin).getCommands().entrySet().stream().filter(cmd -> !cmd.getKey().isEmpty()).map(cmd -> {
-                PluginSetup configurations = cmd.getValue().getCommandConfigurations().pluginClass().getAnnotation(PluginSetup.class);
+                PluginSetup configurations = cmd.getValue().getPlugin().getConfigurations();
                 return cmd.getKey().replace(configurations.mainCommandName(), "");
             }).collect(Collectors.toList()));
             return suggestions;
         }
 
         if (args.len() == 2 && args.get(0, String.class).equalsIgnoreCase("help")) {
-            suggestions.addAll(plugin.getHelpInChat().getPages().keySet());
+            suggestions.addAll(plugin.getHelpMessenger().getChat().getPages().keySet());
             return suggestions;
         }
 
         return Collections.emptyList();
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return plugin;
     }
 }

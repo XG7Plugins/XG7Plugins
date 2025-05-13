@@ -38,13 +38,15 @@ public class EventManager implements Manager {
                 if (!method.isAnnotationPresent(EventHandler.class)) continue;
                 EventHandler eventHandler = method.getAnnotation(EventHandler.class);
 
-                Config config = Config.of(eventHandler.isEnabled().configName(), plugin);
+                if (!eventHandler.isEnabled().configName().isEmpty()) {
+                    Config config = Config.of(eventHandler.isEnabled().configName(), plugin);
 
-                boolean invert = eventHandler.isEnabled().invert();
-                if (config != null) {
-                    if (config.get(eventHandler.isEnabled().path(), Boolean.class).orElse(false) == invert) continue;
+                    boolean invert = eventHandler.isEnabled().invert();
+                    if (config != null) {
+                        if (config.get(eventHandler.isEnabled().path(), Boolean.class).orElse(false) == invert) continue;
+                    }
+                    else if (invert) continue;
                 }
-                else if (invert) continue;
 
                 plugin.getServer().getPluginManager().registerEvent(
                         (Class<? extends org.bukkit.event.Event>) method.getParameterTypes()[0],
@@ -91,6 +93,7 @@ public class EventManager implements Manager {
 
     }
     public void registerListeners(Plugin plugin, List<Listener> listeners) {
+        if (listeners == null) return;
         registerListeners(plugin, listeners.toArray(new Listener[0]));
     }
 

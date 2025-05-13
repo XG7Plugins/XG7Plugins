@@ -2,7 +2,6 @@ package com.xg7plugins.dependencies;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.Debug;
-import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.http.HTTPMethod;
 import com.xg7plugins.utils.http.HTTP;
 import lombok.Data;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.Collections;
 
 @Data
 @Getter
@@ -43,24 +41,24 @@ public class Dependency {
                 return;
             }
 
-            debug.loading("§eDownloading dependency: " + name);
-
-
-            try (
-                    InputStream in = HTTP.makeRequest(
+            try {
+                InputStream in = HTTP.makeRequest(
                         downloadLink,
                         HTTPMethod.GET,
-                        Collections.singletonList(Pair.of("User-Agent", "Mozilla/5.0")),
+                        null,
                         null
-                    ).getInputStream();
-                    FileOutputStream out = new FileOutputStream(file)
-            ) {
+                ).getInputStream();
+                FileOutputStream out = new FileOutputStream(file);
+
 
                 byte[] buffer = new byte[8192];
                 int bytesRead;
                 while ((bytesRead = in.read(buffer)) != -1) {
                     out.write(buffer, 0, bytesRead);
                 }
+            } catch (Exception e) {
+                debug.severe("Error on downloading dependency " + name);
+                throw new RuntimeException();
             }
 
             debug.loading("§aDependency '" + name + "' downloaded with success.");

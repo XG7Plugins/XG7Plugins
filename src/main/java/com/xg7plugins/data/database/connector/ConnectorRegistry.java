@@ -27,7 +27,7 @@ public class ConnectorRegistry {
     public Connection getConnection(Plugin plugin) throws Exception {
         Config config = Config.mainConfigOf(plugin);
         Connector connector = connectors.get(config.get("sql.type", ConnectionType.class).orElse(null));
-        if (connector != null) return connector.getConnection(null);
+        if (connector != null) return connector.getConnection(plugin);
         return null;
     }
 }

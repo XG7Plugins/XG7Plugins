@@ -57,20 +57,20 @@ public class DatabaseProcessor {
         executorService.scheduleWithFixedDelay(() -> {
             try {
                 processTransaction();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }, 0, delay, TimeUnit.MILLISECONDS);
         executorService.scheduleWithFixedDelay(() -> {
             try {
                 processQuery();
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }, 0, delay, TimeUnit.MILLISECONDS);
     }
 
-    private void processTransaction() throws SQLException {
+    private void processTransaction() throws Exception {
         if (transactionQueue.isEmpty()) return;
 
         Transaction transaction = transactionQueue.poll();
@@ -125,7 +125,7 @@ public class DatabaseProcessor {
             throw new RuntimeException(e);
         }
     }
-    private void processQuery() throws SQLException {
+    private void processQuery() throws Exception {
         if (databaseManager == null) {
             System.err.println("databaseManager is null!");
             return;
@@ -186,7 +186,7 @@ public class DatabaseProcessor {
 
     }
 
-    public void shutdown() throws SQLException {
+    public void shutdown() throws Exception {
         executorService.shutdown();
 
         while (!queryQueue.isEmpty()) {
@@ -207,7 +207,7 @@ public class DatabaseProcessor {
             Connection connection;
             try {
                 connection = databaseManager.getConnection(plugin);
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 

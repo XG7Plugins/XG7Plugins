@@ -1,6 +1,7 @@
 package com.xg7plugins.modules;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
@@ -36,18 +37,18 @@ public class ModuleManager implements Manager {
     }
 
     public void loadTasks() {
-        extensions.values().forEach(extension -> XG7Plugins.taskManager().registerTasks(extension.loadTasks()));
+        extensions.values().forEach(extension -> XG7PluginsAPI.taskManager().registerTasks(extension.loadTasks()));
     }
     public void loadExecutors() {
-        extensions.values().forEach(extension -> extension.getExecutors().forEach(XG7Plugins.taskManager()::registerExecutor));
+        extensions.values().forEach(extension -> extension.getExecutors().forEach(XG7PluginsAPI.taskManager()::registerExecutor));
     }
 
     public void loadListeners() {
         extensions.values().forEach(extension -> {
             List<Listener> listeners = extension.loadListeners();
 
-            XG7Plugins.getInstance().getPacketEventManager().registerListeners(XG7Plugins.getInstance(), listeners.stream().filter(l -> l instanceof PacketListener).map(l -> (PacketListener) l).collect(Collectors.toList()));
-            XG7Plugins.getInstance().getEventManager().registerListeners(XG7Plugins.getInstance(), listeners);
+            XG7PluginsAPI.packetEventManager().registerListeners(XG7Plugins.getInstance(), listeners.stream().filter(l -> l instanceof PacketListener).map(l -> (PacketListener) l).collect(Collectors.toList()));
+            XG7PluginsAPI.eventManager().registerListeners(XG7Plugins.getInstance(), listeners);
 
         });
     }

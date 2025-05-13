@@ -69,7 +69,7 @@ public class LangMenu extends PagedMenu {
 
         PagedMenuHolder holder = (PagedMenuHolder) event.getHolder();
 
-        switch (event.getSlotClicked().get()) {
+        switch (event.getClickedSlot().get()) {
             case 45:
                 holder.previousPage();
                 break;
@@ -80,7 +80,7 @@ public class LangMenu extends PagedMenu {
                 holder.nextPage();
                 break;
             default:
-                if (event.getSlotClicked() == null || event.getClickedItem().isAir()) return;
+                if (event.getClickedSlot() == null || event.getClickedItem().isAir()) return;
 
                 String langName = event.getClickedItem().getTag("lang-id", String.class).orElse(null);
                 boolean selected = event.getClickedItem().getTag("selected", Boolean.class).orElse(false);

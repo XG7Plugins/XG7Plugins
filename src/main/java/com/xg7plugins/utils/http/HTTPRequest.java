@@ -2,6 +2,7 @@ package com.xg7plugins.utils.http;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
 
@@ -23,40 +24,43 @@ public class HTTPRequest {
     private final String body;
 
     public HTTPResponse send() throws IOException {
-        URL url = new URL(this.url);
-
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod(method.name());
-
-        conn.setConnectTimeout(Config.mainConfigOf(XG7Plugins.getInstance()).getTime("http-request-timeout").orElse(5000L).intValue());
-
-        for (Pair<String,String> header : headers) conn.setRequestProperty(header.getFirst(), header.getSecond());
-
-        if (body != null && !body.isEmpty()) {
-            conn.setDoOutput(true);
-            try (OutputStream os = conn.getOutputStream()) {
-                byte[] input = body.getBytes("utf-8");
-                os.write(input, 0, input.length);
-            }
-        }
+        HttpURLConnection conn = request();
         BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
         StringBuilder sb = new StringBuilder();
         String output;
         while ((output = br.readLine()) != null) {
             sb.append(output);
         }
+        br.close();
         conn.disconnect();
         return new HTTPResponse(sb.toString(), conn.getResponseCode(), conn.getResponseMessage());
     }
     public InputStream getInputStream() throws IOException {
+        HttpURLConnection conn = request();
+        return conn.getInputStream();
+    }
+
+    private HttpURLConnection request() throws IOException {
+
+        Debug debug = Debug.of(XG7Plugins.getInstance());
+
+        debug.info("Making request to: " + this.url);
+
         URL url = new URL(this.url);
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod(method.name());
 
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36");
+        conn.setRequestProperty("Accept", "*/*");
+        conn.setRequestProperty("Accept-Language", "en-US,en;q=0.9");
+        conn.setRequestProperty("Connection", "keep-alive");
+        conn.setRequestProperty("Cache-Control", "no-cache");
+        conn.setRequestProperty("Pragma", "no-cache");
+
         conn.setConnectTimeout(Config.mainConfigOf(XG7Plugins.getInstance()).getTime("http-request-timeout").orElse(5000L).intValue());
 
-        for (Pair<String,String> header : headers) conn.setRequestProperty(header.getFirst(), header.getSecond());
+        if (headers != null) for (Pair<String,String> header : headers) conn.setRequestProperty(header.getFirst(), header.getSecond());
 
         if (body != null && !body.isEmpty()) {
             conn.setDoOutput(true);
@@ -65,7 +69,14 @@ public class HTTPRequest {
                 os.write(input, 0, input.length);
             }
         }
-        return conn.getInputStream();
+
+        debug.info("Request made to: " + this.url);
+        debug.info("Response code: " + conn.getResponseCode());
+        debug.info("Response message: " + conn.getResponseMessage());
+        debug.info("Response headers: " + conn.getHeaderFields());
+        debug.info("Response body: " + conn.getResponseMessage());
+
+        return conn;
     }
 
     public static Builder builder() {

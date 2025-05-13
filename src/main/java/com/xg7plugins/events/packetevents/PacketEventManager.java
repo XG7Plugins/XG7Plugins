@@ -101,6 +101,7 @@ public class PacketEventManager implements Manager {
     }
 
     public void registerListeners(Plugin plugin, List<PacketListener> listeners) {
+        if (listeners == null) return;
         registerListeners(plugin, listeners.toArray(new PacketListener[0]));
     }
 

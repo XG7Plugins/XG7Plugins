@@ -80,6 +80,9 @@ public class XG7Menus implements Module {
     public static <T extends PlayerMenuHolder> T getPlayerMenuHolder(UUID playerId) {
         return (T) XG7Menus.getInstance().getPlayerMenusMap().get(playerId);
     }
+    public static boolean hasPlayerMenuHolder(UUID playerId) {
+        return XG7Menus.getInstance().getPlayerMenusMap().containsKey(playerId);
+    }
 
     public static void registerHolder(MenuHolder holder) {
         XG7Plugins.getInstance().getDebug().info("Registering menu holder for " + holder.getPlayer().getUniqueId());

@@ -2,9 +2,12 @@ package com.xg7plugins.modules.xg7menus.menus.menus.gui;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;
+import com.xg7plugins.utils.Pair;
 import org.bukkit.event.inventory.InventoryType;
 
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 
 public class MenuConfigsImpl implements IMenuConfigurations {
 
@@ -15,37 +18,45 @@ public class MenuConfigsImpl implements IMenuConfigurations {
     private int rows;
     private final EnumSet<MenuAction> allowedActions;
     private final boolean enabled;
+    private final List<Pair<String,String>> placeholders;
 
-    public MenuConfigsImpl(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled) {
+    public MenuConfigsImpl(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String,String>> placeholders) {
         this.plugin = plugin;
         this.id = id;
         this.title = title;
-       this.rows = rows;
+        this.rows = rows;
         this.allowedActions = allowedActions;
         this.enabled = enabled;
+        this.placeholders = placeholders;
     }
-    public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type, EnumSet<MenuAction> allowedActions, boolean enabled) {
+    public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String,String>> placeholders) {
         this.plugin = plugin;
         this.id = id;
         this.title = title;
         this.type = type;
         this.allowedActions = allowedActions;
         this.enabled = enabled;
+        this.placeholders = placeholders;
+    }
+    public MenuConfigsImpl(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled) {
+        this(plugin, id, title, rows, allowedActions, enabled, Collections.emptyList());
+    }
+    public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type, EnumSet<MenuAction> allowedActions, boolean enabled) {
+        this(plugin, id, title, type, allowedActions, enabled, Collections.emptyList());
     }
     public MenuConfigsImpl(Plugin plugin, String id, String title, int rows, boolean enabled) {
-        this(plugin, id, title, rows, null, enabled);
+        this(plugin, id, title, rows, null, enabled, Collections.emptyList());
     }
-
     public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type, boolean enabled) {
-        this(plugin, id, title, type, null, enabled);
+        this(plugin, id, title, type, null, enabled, Collections.emptyList());
     }
 
     public MenuConfigsImpl(Plugin plugin, String id, String title, int rows) {
-        this(plugin, id, title, rows, null, true);
+        this(plugin, id, title, rows, null, true, Collections.emptyList());
     }
 
     public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type) {
-        this(plugin, id, title, type, null, true);
+        this(plugin, id, title, type, null, true, Collections.emptyList());
     }
 
 
@@ -82,5 +93,10 @@ public class MenuConfigsImpl implements IMenuConfigurations {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public List<Pair<String, String>> getPlaceholders() {
+        return placeholders;
     }
 }

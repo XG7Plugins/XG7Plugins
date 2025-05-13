@@ -71,15 +71,21 @@ public class MenuHandler implements Listener {
         MenuAction menuAction = MenuAction.from(event.getClick());
         Slot slotClicked = Slot.fromSlot(event.getSlot());
 
-        event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(menuAction));
+        System.out.println("Clicked slot: " + slotClicked.get() + " | Raw slot: " + event.getRawSlot());
+        System.out.println("Clicked item: " + event.getCurrentItem());
 
-        ActionEvent actionEvent = new ActionEvent(holder, menuAction, event.getRawSlot(), slotClicked, holder);
+        if (holder.getMenu().getMenuConfigs().allowedActions() != null) event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(menuAction));
+
+        ActionEvent actionEvent = new ActionEvent(holder, menuAction, event.getRawSlot(), slotClicked, Item.from(event.getCurrentItem()).slot(slotClicked));
+
+        System.out.println();
 
         if (holder.getInventoryUpdater().hasClickActionOn(slotClicked)) {
             holder.getInventoryUpdater().getClickAction(slotClicked).accept(actionEvent);
             if (actionEvent.isCancelled()) event.setCancelled(true);
             return;
         }
+        System.out.println("Clicked item: " + event.getCurrentItem());
         holder.getMenu().onClick(actionEvent);
 
         if (actionEvent.isCancelled()) event.setCancelled(true);
@@ -99,7 +105,7 @@ public class MenuHandler implements Listener {
         Set<Slot> slotsClicked = event.getInventorySlots().stream().map(Slot::fromSlot).collect(Collectors.toSet());
         Set<Integer> rawSlots = event.getRawSlots();
 
-        event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(MenuAction.DRAG));
+        if (holder.getMenu().getMenuConfigs().allowedActions() != null) event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(MenuAction.DRAG));
 
         DragEvent dragEvent = new DragEvent(holder, draggedItems, slotsClicked, rawSlots);
 
