@@ -7,7 +7,7 @@ import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
 import org.bukkit.entity.Player;
 
@@ -28,11 +28,11 @@ public class SimpleMenu extends Menu {
     private BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer = (h, a) -> {};
     private Consumer<BasicMenuHolder> repeatingUpdateConsumer = h -> {};
 
-    public SimpleMenu(IMenuConfigurations menuConfigs) {
+    public SimpleMenu(MenuConfigurations menuConfigs) {
         super(menuConfigs);
     }
 
-    public SimpleMenu(IMenuConfigurations menuConfigs, List<Item> items, List<ClickableItem> defaultClickableItems, Consumer<ActionEvent> clickConsumer, Consumer<DragEvent> dragConsumer, Consumer<MenuEvent> openEventConsumer, Consumer<MenuEvent> closeEventConsumer, BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer, Consumer<BasicMenuHolder> repeatingUpdateConsumer) {
+    public SimpleMenu(MenuConfigurations menuConfigs, List<Item> items, List<ClickableItem> defaultClickableItems, Consumer<ActionEvent> clickConsumer, Consumer<DragEvent> dragConsumer, Consumer<MenuEvent> openEventConsumer, Consumer<MenuEvent> closeEventConsumer, BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer, Consumer<BasicMenuHolder> repeatingUpdateConsumer) {
         super(menuConfigs);
         this.items = items;
         this.defaultClickableItems = defaultClickableItems;

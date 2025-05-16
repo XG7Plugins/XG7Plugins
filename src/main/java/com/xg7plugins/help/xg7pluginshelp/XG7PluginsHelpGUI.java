@@ -9,7 +9,7 @@ import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.BookItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.item.SkullItem;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
@@ -24,7 +24,7 @@ public class XG7PluginsHelpGUI extends Menu {
     private final Plugin plugin;
 
     public XG7PluginsHelpGUI(Plugin plugin) {
-        super(IMenuConfigurations.of(plugin, "help-command-index", "lang:[help-menu.index.title]", 5));
+        super(MenuConfigurations.of(plugin, "help-command-index", "lang:[help-menu.index.title]", 5));
         this.plugin = plugin;
     }
 

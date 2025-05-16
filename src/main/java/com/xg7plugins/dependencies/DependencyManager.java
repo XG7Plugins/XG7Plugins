@@ -23,7 +23,7 @@ public class DependencyManager implements Manager {
 
         Debug debug = Debug.of(XG7Plugins.getInstance());
 
-        debug.loading("\nLoading dependency: " + dependency.getName());
+        debug.loading("Loading dependency: " + dependency.getName());
         if (Bukkit.getPluginManager().isPluginEnabled(dependency.getName())) {
             debug.loading("Dependency already loaded");
             loadedDependencies.put(dependency.getName(), dependency);

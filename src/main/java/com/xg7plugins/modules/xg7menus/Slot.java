@@ -1,5 +1,6 @@
 package com.xg7plugins.modules.xg7menus;
 
+import com.xg7plugins.utils.Pair;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -24,11 +25,10 @@ public class Slot {
         return 9 * row - (9 - column) - 1;
     }
     public int get() {
-        return 9 * row - (9 - column) - 1;
+        return get(row, column);
     }
     public static Slot fromSlot(int slot) {
-        if (slot == 0) return new Slot(1, 1);
-        return new Slot((int) Math.ceil((double) slot / 9), slot % 9 == 0 ? 9 : slot % 9);
+        return slot == 0 ? new Slot(1, 1) : new Slot((int)Math.ceil((double)slot / 9.0), slot % 9 == 0 ? 9 : slot % 9);
     }
     public static Slot of(int row, int column) {
         return new Slot(row, column);
@@ -38,6 +38,9 @@ public class Slot {
     }
     public static Slot fromList(List<Integer> list) {
         return new Slot(list.get(0), list.get(1));
+    }
+    public static Slot fromPair(Pair<Integer, Integer> pair) {
+        return new Slot(pair.getFirst(), pair.getSecond());
     }
 
     public static int areaOf(Slot slot1, Slot slot2) {

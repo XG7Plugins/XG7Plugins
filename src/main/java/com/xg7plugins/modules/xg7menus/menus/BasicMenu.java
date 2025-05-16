@@ -12,9 +12,9 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public interface IBasicMenu {
+public interface BasicMenu {
 
-    IBasicMenuConfigs getMenuConfigs();
+    BasicMenuConfigs getMenuConfigs();
 
     List<Item> getItems(Player player);
 

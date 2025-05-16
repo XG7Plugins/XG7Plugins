@@ -1,18 +1,15 @@
 package com.xg7plugins.modules.xg7menus.builders;
 
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
-import com.xg7plugins.modules.xg7menus.menus.IBasicMenuConfigs;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenuConfigs;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
 import com.xg7plugins.utils.Builder;
-import lombok.AllArgsConstructor;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,9 +17,9 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extends IBasicMenu> implements Builder<M> {
+public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extends BasicMenu> implements Builder<M> {
 
-    protected IBasicMenuConfigs menuConfigs;
+    protected BasicMenuConfigs menuConfigs;
 
     protected List<Item> items = new ArrayList<>();
     protected List<ClickableItem> clickableItems = null;
@@ -33,7 +30,7 @@ public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extend
     protected Consumer<MenuEvent> closeEventConsumer = e -> {};
     protected BiConsumer<BasicMenuHolder, MenuUpdateActions> updateAction = (h, a) -> {};
     protected Consumer<BasicMenuHolder> repeatingUpdateAction = h -> {};
-    public BasicMenuBuilder(IBasicMenuConfigs configs) {
+    public BasicMenuBuilder(BasicMenuConfigs configs) {
         this.menuConfigs = configs;
     }
 

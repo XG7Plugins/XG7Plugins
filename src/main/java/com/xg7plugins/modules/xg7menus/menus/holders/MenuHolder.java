@@ -1,8 +1,8 @@
 package com.xg7plugins.modules.xg7menus.menus.holders;
 
-import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
@@ -20,7 +20,7 @@ public class MenuHolder extends BasicMenuHolder implements InventoryHolder {
 
     public MenuHolder(Menu menu, Player player) {
         super(menu, player);
-        IMenuConfigurations menuConfigurations = menu.getMenuConfigs();
+        MenuConfigurations menuConfigurations = menu.getMenuConfigs();
 
        this.inventory = menuConfigurations.getInventoryType() == null ?
                Bukkit.createInventory(this, menuConfigurations.getRows() * 9, Text.detectLangs(player, menuConfigurations.getPlugin(), menuConfigurations.getTitle()).join().replaceAll(menuConfigurations.getPlaceholders()).getText())
@@ -31,7 +31,7 @@ public class MenuHolder extends BasicMenuHolder implements InventoryHolder {
 
        player.openInventory(inventory);
 
-       IBasicMenu.refresh(this);
+       BasicMenu.refresh(this);
 
     }
 

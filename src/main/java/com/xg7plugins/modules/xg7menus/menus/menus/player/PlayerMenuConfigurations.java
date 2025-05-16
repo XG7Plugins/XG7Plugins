@@ -1,9 +1,9 @@
 package com.xg7plugins.modules.xg7menus.menus.menus.player;
 
-import com.xg7plugins.modules.xg7menus.menus.IBasicMenuConfigs;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenuConfigs;
 import org.bukkit.entity.Player;
 
-public interface IPlayerMenuConfigurations extends IBasicMenuConfigs {
+public interface PlayerMenuConfigurations extends BasicMenuConfigs {
 
     default String getOnDropMessage(Player player) {
         return "";

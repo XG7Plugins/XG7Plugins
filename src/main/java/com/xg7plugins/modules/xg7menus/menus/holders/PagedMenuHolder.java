@@ -1,7 +1,6 @@
 package com.xg7plugins.modules.xg7menus.menus.holders;
 
-import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +32,7 @@ public class PagedMenuHolder extends MenuHolder {
     }
 
     public static void refresh(PagedMenuHolder menuHolder) {
-        IBasicMenu.refresh(menuHolder).thenRun(() -> menuHolder.goPage(0));
+        BasicMenu.refresh(menuHolder).thenRun(() -> menuHolder.goPage(0));
     }
 
 }

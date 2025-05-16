@@ -7,7 +7,7 @@ import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.menus.player.IPlayerMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.player.PlayerMenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.player.PlayerMenu;
 import org.bukkit.entity.Player;
 
@@ -33,11 +33,11 @@ public class SimplePlayerMenu extends PlayerMenu {
     private Consumer<ActionEvent> breakBlocksConsumer = e -> {};
     private Consumer<ActionEvent> placeBlocksConsumer = e -> {};
 
-    public SimplePlayerMenu(IPlayerMenuConfigurations menuConfigurations) {
+    public SimplePlayerMenu(PlayerMenuConfigurations menuConfigurations) {
         super(menuConfigurations);
     }
 
-    public SimplePlayerMenu(IPlayerMenuConfigurations menuConfigs, List<Item> items, List<ClickableItem> defaultClickableItems, Consumer<ActionEvent> clickConsumer, Consumer<DragEvent> dragConsumer, Consumer<MenuEvent> openEventConsumer, Consumer<MenuEvent> closeEventConsumer, BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer, Consumer<BasicMenuHolder> repeatingUpdateConsumer, Consumer<ActionEvent> dropConsumer, Consumer<ActionEvent> pickupConsumer, Consumer<ActionEvent> breakBlocksConsumer, Consumer<ActionEvent> placeBlocksConsumer) {
+    public SimplePlayerMenu(PlayerMenuConfigurations menuConfigs, List<Item> items, List<ClickableItem> defaultClickableItems, Consumer<ActionEvent> clickConsumer, Consumer<DragEvent> dragConsumer, Consumer<MenuEvent> openEventConsumer, Consumer<MenuEvent> closeEventConsumer, BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer, Consumer<BasicMenuHolder> repeatingUpdateConsumer, Consumer<ActionEvent> dropConsumer, Consumer<ActionEvent> pickupConsumer, Consumer<ActionEvent> breakBlocksConsumer, Consumer<ActionEvent> placeBlocksConsumer) {
         super(menuConfigs);
         this.items = items;
         this.defaultClickableItems = defaultClickableItems;

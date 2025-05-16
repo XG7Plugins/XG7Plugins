@@ -66,7 +66,7 @@ public class LangForm extends SimpleForm {
     @Override
     public boolean isEnabled() {
         Config config = Config.mainConfigOf(XG7Plugins.getInstance());
-        return config.get("enable-langs", Boolean.class).orElse(false) && config.get("enable-lang-form", Boolean.class).orElse(false);
+        return config.get("lang-enabled", Boolean.class).orElse(false) && config.get("enable-lang-form", Boolean.class).orElse(false);
     }
 
     @Override

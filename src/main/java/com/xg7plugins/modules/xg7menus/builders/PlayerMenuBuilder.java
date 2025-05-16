@@ -1,7 +1,7 @@
 package com.xg7plugins.modules.xg7menus.builders;
 
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.menus.menus.player.IPlayerMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.player.PlayerMenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.player.PlayerMenu;
 import com.xg7plugins.modules.xg7menus.simple.SimplePlayerMenu;
 
@@ -15,7 +15,7 @@ public class PlayerMenuBuilder extends BasicMenuBuilder<PlayerMenuBuilder, Playe
     protected Consumer<ActionEvent> placeConsumer = e -> {};
 
 
-    public PlayerMenuBuilder(IPlayerMenuConfigurations configs) {
+    public PlayerMenuBuilder(PlayerMenuConfigurations configs) {
         super(configs);
     }
 
@@ -42,7 +42,7 @@ public class PlayerMenuBuilder extends BasicMenuBuilder<PlayerMenuBuilder, Playe
     @Override
     public PlayerMenu build(Object... args) {
         return new SimplePlayerMenu(
-                (IPlayerMenuConfigurations) menuConfigs,
+                (PlayerMenuConfigurations) menuConfigs,
                 items,
                 clickableItems,
                 clickConsumer,
@@ -58,7 +58,7 @@ public class PlayerMenuBuilder extends BasicMenuBuilder<PlayerMenuBuilder, Playe
         );
     }
 
-    public static PlayerMenuBuilder inicialize(IPlayerMenuConfigurations configurations) {
+    public static PlayerMenuBuilder inicialize(PlayerMenuConfigurations configurations) {
         return new PlayerMenuBuilder(configurations);
     }
 }

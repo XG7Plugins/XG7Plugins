@@ -9,7 +9,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-public class MenuConfigsImpl implements IMenuConfigurations {
+public class MenuConfigsImpl implements MenuConfigurations {
 
     private final Plugin plugin;
     private final String id;

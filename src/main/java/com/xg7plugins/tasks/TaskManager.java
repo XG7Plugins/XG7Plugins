@@ -20,7 +20,6 @@ public class TaskManager implements Manager {
     private final Map<String, ExecutorService> asyncExecutors = new HashMap<>();
 
     public TaskManager(XG7Plugins plugin) {
-        plugin.getDebug().loading("Loading task manager...");
         Config config = Config.mainConfigOf(plugin);
         repeatingAsyncTasksExecutor = Executors.newScheduledThreadPool(config.get("repeating-tasks-threads", Integer.class).orElse(1));
 

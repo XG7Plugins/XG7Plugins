@@ -5,11 +5,9 @@ import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
-import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -20,7 +18,7 @@ public abstract class PagedMenu extends Menu {
     private final Slot pos1;
     private final Slot pos2;
 
-    public PagedMenu(IMenuConfigurations menuConfigs, Slot pos1, Slot pos2) {
+    public PagedMenu(MenuConfigurations menuConfigs, Slot pos1, Slot pos2) {
         super(menuConfigs);
 
         int startRow = Math.min(pos1.getRow(), pos2.getRow());
@@ -75,6 +73,6 @@ public abstract class PagedMenu extends Menu {
 
 
     public static void refresh(PagedMenuHolder menuHolder) {
-        IBasicMenu.refresh(menuHolder).thenRun(() -> menuHolder.goPage(0));
+        BasicMenu.refresh(menuHolder).thenRun(() -> menuHolder.goPage(0));
     }
 }

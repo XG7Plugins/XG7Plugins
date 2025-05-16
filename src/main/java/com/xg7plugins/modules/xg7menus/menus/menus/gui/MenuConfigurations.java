@@ -2,14 +2,14 @@ package com.xg7plugins.modules.xg7menus.menus.menus.gui;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;
-import com.xg7plugins.modules.xg7menus.menus.IBasicMenuConfigs;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenuConfigs;
 import com.xg7plugins.utils.Pair;
 import org.bukkit.event.inventory.InventoryType;
 
 import java.util.EnumSet;
 import java.util.List;
 
-public interface IMenuConfigurations extends IBasicMenuConfigs {
+public interface MenuConfigurations extends BasicMenuConfigs {
 
     default InventoryType getInventoryType() {
         return null;

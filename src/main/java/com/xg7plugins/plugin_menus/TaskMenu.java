@@ -9,7 +9,7 @@ import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
@@ -23,7 +23,7 @@ import java.util.*;
 public class TaskMenu extends PagedMenu {
 
     public TaskMenu(Plugin plugin) {
-        super(IMenuConfigurations.of(
+        super(MenuConfigurations.of(
                 plugin,
                 "tasks-menu",
                 "lang:[tasks-menu.title]",

@@ -11,7 +11,7 @@ import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
@@ -23,12 +23,12 @@ import java.util.List;
 
 public class LangMenu extends PagedMenu {
     public LangMenu() {
-        super(IMenuConfigurations.of(
+        super(MenuConfigurations.of(
                 XG7Plugins.getInstance(),
                 "lang-menu",
                 "lang:[lang-menu.title]",
                 6,
-                Config.mainConfigOf(XG7Plugins.getInstance()).get("enable-langs", Boolean.class).orElse(false)
+                Config.mainConfigOf(XG7Plugins.getInstance()).get("lang-enabled", Boolean.class).orElse(false)
             ), Slot.of(2,2), Slot.of(5,8));
     }
 

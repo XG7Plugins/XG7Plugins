@@ -12,8 +12,8 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.modules.xg7menus.builders.MenuBuilder;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;
@@ -75,25 +75,25 @@ public class SeeSubcommand implements Command {
                 if (task.getState() == TaskState.RUNNING) {
                     XG7PluginsAPI.taskManager().cancelTask(task.getPlugin().getName() + ":" + task.getName());
                     Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.stopped");
-                    IBasicMenu.refresh(event.getHolder());
+                    BasicMenu.refresh(event.getHolder());
                     return;
                 }
                 if ((task.getPlugin().getName() + ":" + task.getName()).equals("TPS calculator")) {
                     XG7Plugins.getInstance().getTpsCalculator().start();
                     Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.stopped");
-                    IBasicMenu.refresh(event.getHolder());
+                    BasicMenu.refresh(event.getHolder());
                     return;
                 }
                 XG7PluginsAPI.taskManager().runTask(XG7PluginsAPI.taskManager().getTask(task.getPlugin().getName() + ":" + task.getName()));
                 Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.restarted");
 
-                IBasicMenu.refresh(event.getHolder());
+                BasicMenu.refresh(event.getHolder());
                 return;
             }
             if (event.getMenuAction().isLeftClick()) {
                 Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "tasks-menu.copy-to-clipboard", Pair.of("id", task.getPlugin().getName() + ":" + task.getName()));
             }
-            IBasicMenu.refresh(event.getHolder());
+            BasicMenu.refresh(event.getHolder());
         });
         builder.name("&e" + task.getName());
         builder.lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()));
@@ -110,7 +110,7 @@ public class SeeSubcommand implements Command {
         );
         builder.slot(13);
 
-        MenuBuilder.inicialize(IMenuConfigurations.of(
+        MenuBuilder.inicialize(MenuConfigurations.of(
                 getPlugin(),
                 "task-menu-for-task-" + id,
                 "Task: " + id,

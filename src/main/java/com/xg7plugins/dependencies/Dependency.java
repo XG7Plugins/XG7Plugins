@@ -29,7 +29,7 @@ public class Dependency {
         Debug debug = Debug.of(XG7Plugins.getInstance());
         try {
 
-            debug.loading("Downloading dependency: " + name);
+            debug.info("Downloading dependency: " + name);
 
             File pluginsFolder = new File(XG7Plugins.getInstance().getDataFolder().getParent());
             if (!pluginsFolder.exists()) pluginsFolder.mkdirs();
@@ -37,7 +37,7 @@ public class Dependency {
 
             File file = new File(pluginsFolder, name + ".jar");
             if (file.exists()) {
-                debug.loading("§aDependency '" + name + "' is already installed.");
+                debug.info("§aDependency '" + name + "' is already installed.");
                 return;
             }
 
@@ -61,7 +61,7 @@ public class Dependency {
                 throw new RuntimeException();
             }
 
-            debug.loading("§aDependency '" + name + "' downloaded with success.");
+            debug.info("§aDependency '" + name + "' downloaded with success.");
 
         } catch (Exception e) {
             debug.severe("Error on install dependency " + name);

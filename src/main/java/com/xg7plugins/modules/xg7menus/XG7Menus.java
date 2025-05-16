@@ -6,18 +6,16 @@ import com.xg7plugins.events.Listener;
 import com.xg7plugins.modules.Module;
 import com.xg7plugins.modules.xg7menus.menuhandler.MenuHandler;
 import com.xg7plugins.modules.xg7menus.menuhandler.PlayerMenuHandler;
-import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
 import com.xg7plugins.modules.xg7menus.task.MenuTask;
 import com.xg7plugins.tasks.Task;
-import com.xg7plugins.tasks.TaskState;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
 public class XG7Menus implements Module {
@@ -28,7 +26,7 @@ public class XG7Menus implements Module {
     private final HashMap<UUID, PlayerMenuHolder> playerMenusMap = new HashMap<>();
     private final HashMap<UUID, MenuHolder> menuHolders = new HashMap<>();
 
-    private final HashMap<String, IBasicMenu> registeredMenus = new HashMap<>();
+    private final HashMap<String, BasicMenu> registeredMenus = new HashMap<>();
 
     @Override
     public void onInit() {
@@ -55,15 +53,15 @@ public class XG7Menus implements Module {
         return "XG7Menus";
     }
 
-    public void registerMenus(IBasicMenu... menus) {
+    public void registerMenus(BasicMenu... menus) {
         if (menus == null) return;
-        for (IBasicMenu menu : menus) {
+        for (BasicMenu menu : menus) {
             if (!menu.getMenuConfigs().isEnabled()) continue;
             XG7Plugins.getInstance().getDebug().loading("Registering menu " + menu.getMenuConfigs().getId());
             registeredMenus.put(menu.getMenuConfigs().getPlugin().getName() + ":" + menu.getMenuConfigs().getId(), menu);
         }
     }
-    public <T extends IBasicMenu> T getMenu(Plugin plugin, String id) {
+    public <T extends BasicMenu> T getMenu(Plugin plugin, String id) {
         return (T) registeredMenus.get(plugin.getName() + ":" + id);
     }
 

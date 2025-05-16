@@ -1,6 +1,6 @@
 package com.xg7plugins.modules.xg7menus.menus.holders;
 
-import com.xg7plugins.modules.xg7menus.menus.IBasicMenu;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.menus.menus.player.PlayerMenu;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class PlayerMenuHolder extends BasicMenuHolder {
             if (item != null) oldItems.put(i, item);
         }
 
-        IBasicMenu.refresh(this);
+        BasicMenu.refresh(this);
     }
 
     @Override

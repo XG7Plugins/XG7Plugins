@@ -2,7 +2,7 @@ package com.xg7plugins.modules.xg7menus.editor;
 
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.IMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
 @AllArgsConstructor
 public class InventoryEditor implements InventoryShaper {
 
-    private final IMenuConfigurations menuConfigurations;
+    private final MenuConfigurations menuConfigurations;
     private final HashMap<Slot, Item> items = new HashMap<>();
 
     @Override

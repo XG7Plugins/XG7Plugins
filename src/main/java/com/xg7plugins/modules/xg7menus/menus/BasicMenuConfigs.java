@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
-public interface IBasicMenuConfigs {
+public interface BasicMenuConfigs {
 
     String getId();
     Plugin getPlugin();
@@ -26,8 +26,8 @@ public interface IBasicMenuConfigs {
         return Collections.emptyList();
     }
 
-    static IBasicMenuConfigs of(Plugin plugin, String id) {
-        return new IBasicMenuConfigs() {
+    static BasicMenuConfigs of(Plugin plugin, String id) {
+        return new BasicMenuConfigs() {
             @Override
             public String getId() {
                 return id;
@@ -40,8 +40,8 @@ public interface IBasicMenuConfigs {
         };
     }
 
-    static IBasicMenuConfigs of(Plugin plugin, String id, EnumSet<MenuAction> allowedActions, boolean enabled) {
-        return new IBasicMenuConfigs() {
+    static BasicMenuConfigs of(Plugin plugin, String id, EnumSet<MenuAction> allowedActions, boolean enabled) {
+        return new BasicMenuConfigs() {
             @Override
             public String getId() {
                 return id;
@@ -62,8 +62,8 @@ public interface IBasicMenuConfigs {
             }
         };
     }
-    static IBasicMenuConfigs of(Plugin plugin, String id, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String,String>> placeholders) {
-        return new IBasicMenuConfigs() {
+    static BasicMenuConfigs of(Plugin plugin, String id, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String,String>> placeholders) {
+        return new BasicMenuConfigs() {
             @Override
             public String getId() {
                 return id;
