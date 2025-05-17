@@ -28,7 +28,7 @@ public class Slot {
         return get(row, column);
     }
     public static Slot fromSlot(int slot) {
-        return slot == 0 ? new Slot(1, 1) : new Slot((int)Math.ceil((double)slot / 9.0), slot % 9 == 0 ? 9 : slot % 9);
+        return slot == 0 ? new Slot(1, 1) : new Slot((int) (slot / 9) + 1, (slot % 9) + 1);
     }
     public static Slot of(int row, int column) {
         return new Slot(row, column);

@@ -15,6 +15,7 @@ import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

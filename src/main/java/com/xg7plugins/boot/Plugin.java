@@ -3,7 +3,7 @@ package com.xg7plugins.boot;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.commands.CommandManager;
-import com.xg7plugins.commands.core_commands.ReloadCause;
+import com.xg7plugins.commands.core_commands.reload.ReloadCause;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
@@ -82,21 +82,17 @@ public abstract class Plugin extends JavaPlugin {
         if (cause.equals(ReloadCause.CONFIG)) {
             XG7PluginsAPI.configManager(xg7Plugin).reloadConfigs();
             debug = new Debug(this);
-            return;
         }
         if (cause.equals(ReloadCause.EVENTS)) {
             XG7PluginsAPI.eventManager().reloadEvents(this);
             XG7PluginsAPI.packetEventManager().reloadListeners(this);
-            return;
         }
         if (cause.equals(ReloadCause.DATABASE)) {
             XG7PluginsAPI.database().reloadConnection(this);
-            return;
         }
         if (cause.equals(ReloadCause.LANGS)) {
             XG7PluginsAPI.langManager().clearCache();
             XG7PluginsAPI.langManager().loadLangsFrom(this);
-            return;
         }
         if (cause.equals(ReloadCause.TASKS)) {
             XG7PluginsAPI.taskManager().cancelTasks(this);

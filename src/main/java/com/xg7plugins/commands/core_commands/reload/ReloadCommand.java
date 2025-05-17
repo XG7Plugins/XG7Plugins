@@ -1,4 +1,4 @@
-package com.xg7plugins.commands.core_commands;
+package com.xg7plugins.commands.core_commands.reload;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
@@ -75,7 +75,7 @@ public class ReloadCommand implements Command {
 
             if (plugin == null) return Collections.emptyList();
 
-            List<String> completions = Arrays.asList("all", "database", "langs", "events", "config", "tasks");
+            List<String> completions = new ArrayList<>(Arrays.asList("all", "database", "langs", "events", "config", "tasks"));
 
             List<ReloadCause> causes = ReloadCause.getCausesOf(plugin);
 

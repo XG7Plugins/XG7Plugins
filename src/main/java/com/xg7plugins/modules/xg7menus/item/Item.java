@@ -20,6 +20,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
@@ -277,7 +278,7 @@ public class Item {
         return gson.toJson(inventoryItem);
     }
 
-    public <T extends HumanEntity> ItemStack getItemFor(T player, Plugin plugin) {
+    public ItemStack getItemFor(CommandSender player, Plugin plugin) {
 
 
             if (this.itemStack.getType().equals(Material.AIR)) return this.itemStack;

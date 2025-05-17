@@ -40,7 +40,7 @@ public class CommandGUIConfiguration implements MenuConfigurations {
     @Override
     public List<Pair<String,String>> getPlaceholders() {
         return Arrays.asList(
-                Pair.of("subcommand", commandName),
+                Pair.of("subcommand", commandName == null ? "" : commandName),
                 Pair.of("plugin_name", plugin.getName())
         );
     }

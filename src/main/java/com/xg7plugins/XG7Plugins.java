@@ -5,8 +5,8 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginSetup;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.core_commands.LangCommand;
-import com.xg7plugins.commands.core_commands.ReloadCause;
-import com.xg7plugins.commands.core_commands.ReloadCommand;
+import com.xg7plugins.commands.core_commands.reload.ReloadCause;
+import com.xg7plugins.commands.core_commands.reload.ReloadCommand;
 import com.xg7plugins.commands.core_commands.task_command.TaskCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.JsonManager;
@@ -153,9 +153,6 @@ public final class XG7Plugins extends Plugin {
         plugins.forEach((name, plugin) -> loadPlugin(plugin));
 
         XG7PluginsAPI.configManager(this).registerAdapter(Item.class, new LangItemTypeAdapter());
-
-        debug.loading("Registering PlaceholderAPI expansion...");
-        if (XG7PluginsAPI.isDependencyEnabled("PlaceholderAPI")) new XG7PluginsPlaceholderExpansion().register();
 
         debug.loading("XG7Plugins enabled.");
 

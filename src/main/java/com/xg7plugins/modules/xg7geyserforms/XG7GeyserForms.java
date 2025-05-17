@@ -38,7 +38,7 @@ public class XG7GeyserForms implements Module {
     public void unregisterForm(String id) {
         forms.remove(id);
     }
-    public boolean contaninsForm(String id) {
+    public boolean containsForm(String id) {
         return forms.containsKey(id);
     }
 

@@ -1,4 +1,4 @@
-package com.xg7plugins.commands.core_commands;
+package com.xg7plugins.commands.core_commands.reload;
 
 import com.xg7plugins.boot.Plugin;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,7 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
@@ -24,12 +25,19 @@ public class ReloadCause {
     private final String name;
 
     public boolean equals(String cause) {
-        if (name.equalsIgnoreCase("ALL")) return true;
-        return name.equalsIgnoreCase(cause);
+        return name.equalsIgnoreCase("ALL") || name.equalsIgnoreCase(cause);
     }
-    public boolean equals(ReloadCause other) {
-        if (name.equalsIgnoreCase("ALL")) return true;
-        return equals(other.getName());
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        ReloadCause that = (ReloadCause) o;
+        return equals(that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 
     public static void registerCause(Plugin plugin, ReloadCause cause) {

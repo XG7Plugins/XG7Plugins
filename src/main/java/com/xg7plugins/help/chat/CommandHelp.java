@@ -1,5 +1,6 @@
 package com.xg7plugins.help.chat;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.modules.xg7menus.item.Item;
@@ -37,7 +38,7 @@ public class CommandHelp implements HelpChatPage {
         List<Component> components = new ArrayList<>();
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").getComponent());
-        components.add(Text.fromLang(sender, plugin, "lang:[help-in-chat.commands-title]").join()
+        components.add(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands-title").join()
                 .replace("page", (page + 1) + "")
                 .replace("max_page", maxPage + "")
                 .getComponent());
@@ -45,7 +46,7 @@ public class CommandHelp implements HelpChatPage {
         for (Command command : commands) {
             Item commandIcon = command.getIcon();
 
-            ItemStack itemStack = commandIcon.getItemStack();
+            ItemStack itemStack = commandIcon.getItemFor(sender, plugin);
 
             Component component = Component.text(
                     itemStack.getItemMeta().getDisplayName() + "\n" +

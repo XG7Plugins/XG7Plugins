@@ -15,6 +15,7 @@ import com.xg7plugins.utils.http.HTTPResponse;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -140,8 +141,10 @@ public class SkullItem extends Item {
 
 
     @Override
-    public <T extends HumanEntity> ItemStack getItemFor(T player, Plugin plugin) {
+    public ItemStack getItemFor(CommandSender player, Plugin plugin) {
         ItemStack prepared = super.getItemFor(player, plugin);
+
+        if (!(player instanceof Player)) return prepared;
 
         if (renderSkullPlayer) setOwner(((Player) player).getDisplayName());
 

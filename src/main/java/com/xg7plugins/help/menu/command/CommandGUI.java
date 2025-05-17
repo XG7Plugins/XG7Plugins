@@ -24,9 +24,9 @@ public class CommandGUI extends PagedMenu {
 
     private final HelpGUI guiOrigin;
 
-    public CommandGUI(Plugin plugin, List<Command> commands, String title, CommandGUI superMenu, HelpGUI guiOrigin) {
+    public CommandGUI(Plugin plugin, List<Command> commands, String title, CommandGUI superMenu, HelpGUI guiOrigin, String commandName) {
         super(
-                new CommandGUIConfiguration(null, plugin,title),
+                new CommandGUIConfiguration(commandName, plugin,title),
                 Slot.of(2,2), Slot.of(5,8)
         );
         this.commands = commands.stream().collect(
@@ -38,6 +38,10 @@ public class CommandGUI extends PagedMenu {
         this.guiOrigin = guiOrigin;
         this.superMenu = superMenu;
 
+    }
+
+    public CommandGUI(Plugin plugin, List<Command> commands, String title, CommandGUI superMenu, HelpGUI guiOrigin) {
+        this(plugin, commands, title, superMenu, guiOrigin, null);
     }
 
     @Override
@@ -96,7 +100,7 @@ public class CommandGUI extends PagedMenu {
 
                 if (command.getSubCommands().isEmpty()) return;
 
-                CommandGUI commandMenu = new CommandGUI(guiOrigin.getPlugin(), command.getSubCommands(), "lang:[help-menu.command-help.subcommands-title]", this, guiOrigin);
+                CommandGUI commandMenu = new CommandGUI(guiOrigin.getPlugin(), command.getSubCommands(), "lang:[help-menu.command-help.subcommands-title]", this, guiOrigin, command.getCommandConfigurations().name());
 
                 commandMenu.open(holder.getPlayer());
                 break;

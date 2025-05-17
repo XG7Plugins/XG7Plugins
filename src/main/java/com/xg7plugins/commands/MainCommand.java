@@ -33,7 +33,7 @@ public class MainCommand implements Command {
 
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() > 1){
-            plugin.getHelpMessenger().sendChat(sender);
+            plugin.getHelpMessenger().sendChat(sender, args.get(1, String.class));
             return;
         }
         plugin.getHelpMessenger().send(sender);

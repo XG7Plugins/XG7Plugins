@@ -23,27 +23,27 @@ public class Index implements HelpChatPage {
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").getComponent());
 
-        components.add(Text.fromLang(sender, XG7Plugins.getInstance(), "lang:[help-in-chat.title]").join()
+        components.add(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.title").join()
                 .getComponent());
 
         components.add(Component.EMPTY);
 
-        Component content = Text.fromLang(sender, XG7Plugins.getInstance(), "lang:[help-in-chat.content]").join().getComponent();
+        Component content = Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.content").join().getComponent();
         content.setClickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins help about"));
         content.setHoverEvent(HoverEvent.of(HoverAction.SHOW_TEXT, "Click to see about the plugins"));
         components.add(content);
 
         components.add(Component.EMPTY);
 
-        Component lang = Text.fromLang(sender, XG7Plugins.getInstance(), "lang:[help-in-chat.lang]").join().getComponent();
+        Component lang = Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.lang").join().getComponent();
         lang.setClickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins lang"));
         components.add(lang);
 
-        Component tasks = Text.fromLang(sender, XG7Plugins.getInstance(), "lang:[help-in-chat.tasks]").join().getComponent();
+        Component tasks = Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.tasks").join().getComponent();
         tasks.setClickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins tasks"));
         components.add(tasks);
 
-        Component commands = Text.fromLang(sender, XG7Plugins.getInstance(), "lang:[help-in-chat.commands]").join().getComponent();
+        Component commands = Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands").join().getComponent();
         commands.setClickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins help command-page1"));
         components.add(commands);
 

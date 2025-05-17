@@ -40,7 +40,7 @@ public class DependencyManager implements Manager {
             try {
                 debug.loading("Plugin not found, downloading!");
                 dependency.downloadDependency();
-                debug.loading("Plugin downlaoded!");
+                debug.loading("Plugin downloaded!");
 
                 return loadpl(dependency, debug, file);
 

@@ -5,8 +5,10 @@ import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.help.chat.HelpChat;
+import com.xg7plugins.help.chat.HelpChatPage;
 import com.xg7plugins.help.form.HelpForm;
 import com.xg7plugins.help.menu.HelpGUI;
+import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
@@ -51,6 +53,14 @@ public class HelpMessenger {
 
     public void sendChat(CommandSender sender) {
         chat.send(sender);
+    }
+    public void sendChat(CommandSender sender, String page) {
+        HelpChatPage helpChatPage = chat.getPage(page);
+        if (helpChatPage == null) {
+            Text.sendTextFromLang(sender, plugin, "help-in-chat.page-not-found");
+            return;
+        }
+        helpChatPage.send(sender);
     }
     public void sendGUI(CommandSender sender) {
         gui.send(sender);

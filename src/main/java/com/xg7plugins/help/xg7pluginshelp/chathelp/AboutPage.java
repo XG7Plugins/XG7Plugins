@@ -40,7 +40,7 @@ public class AboutPage implements HelpChatPage {
 
         components.add(Component.EMPTY);
 
-        Component back = Text.fromLang(sender, XG7Plugins.getInstance(), "lang:[help-in-chat.back]").join()
+        Component back = Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.back").join()
                 .replace("command", "/xg7plugins help")
                 .getComponent();
 

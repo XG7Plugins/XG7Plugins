@@ -139,10 +139,12 @@ help-menu:
     - "&oDeveloped by DaviXG7"
 
   command-help:
-    title: "&7Commands of %plugin_name%"
-    subcommands-title: "&7Subcommands of %subcommand%"
+    title: "Commands of &e%plugin_name%"
+    subcommands-title: "Subcommands of &b%subcommand%"
 
 help-in-chat:
+
+  page-not-found: "&cPage not found"
 
   title: "&7Welcome to the &6XG7Plugins &7help page!"
 

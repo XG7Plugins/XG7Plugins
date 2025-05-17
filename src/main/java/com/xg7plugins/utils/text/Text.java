@@ -77,10 +77,12 @@ public class Text {
     }
     @SafeVarargs
     public final Text replaceAll(Pair<String, String>... replacements) {
+        if (replacements == null) return this;
         Arrays.stream(replacements).forEach(replacement -> this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond()));
         return this;
     }
     public final Text replaceAll(List<Pair<String,String>> replacements) {
+        if (replacements == null) return this;
         replacements.forEach(replacement -> this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond()));
         return this;
     }

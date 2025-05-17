@@ -71,21 +71,15 @@ public class MenuHandler implements Listener {
         MenuAction menuAction = MenuAction.from(event.getClick());
         Slot slotClicked = Slot.fromSlot(event.getSlot());
 
-        System.out.println("Clicked slot: " + slotClicked.get() + " | Raw slot: " + event.getRawSlot());
-        System.out.println("Clicked item: " + event.getCurrentItem());
-
         if (holder.getMenu().getMenuConfigs().allowedActions() != null) event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(menuAction));
 
         ActionEvent actionEvent = new ActionEvent(holder, menuAction, event.getRawSlot(), slotClicked, Item.from(event.getCurrentItem()).slot(slotClicked));
-
-        System.out.println();
 
         if (holder.getInventoryUpdater().hasClickActionOn(slotClicked)) {
             holder.getInventoryUpdater().getClickAction(slotClicked).accept(actionEvent);
             if (actionEvent.isCancelled()) event.setCancelled(true);
             return;
         }
-        System.out.println("Clicked item: " + event.getCurrentItem());
         holder.getMenu().onClick(actionEvent);
 
         if (actionEvent.isCancelled()) event.setCancelled(true);
