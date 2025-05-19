@@ -35,14 +35,14 @@ public class DependencyManager implements Manager {
 
         try {
             if (file.exists()) {
-                return loadpl(dependency, debug, file);
+                return loadPl(dependency, debug, file);
             }
             try {
                 debug.loading("Plugin not found, downloading!");
                 dependency.downloadDependency();
                 debug.loading("Plugin downloaded!");
 
-                return loadpl(dependency, debug, file);
+                return loadPl(dependency, debug, file);
 
             } catch (Exception e) {
                 debug.severe("Error on loading dependency " + dependency.getName() + " " + Arrays.toString(e.getStackTrace()));
@@ -55,7 +55,7 @@ public class DependencyManager implements Manager {
         }
     }
 
-    private boolean loadpl(Dependency dependency, Debug debug, File file) throws InvalidPluginException, InvalidDescriptionException {
+    private boolean loadPl(Dependency dependency, Debug debug, File file) throws InvalidPluginException, InvalidDescriptionException {
         Plugin loaded = Bukkit.getPluginManager().loadPlugin(file);
 
         if (loaded != null) {

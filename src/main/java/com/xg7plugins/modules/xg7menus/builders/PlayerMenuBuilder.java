@@ -40,7 +40,7 @@ public class PlayerMenuBuilder extends BasicMenuBuilder<PlayerMenuBuilder, Playe
     }
 
     @Override
-    public PlayerMenu build(Object... args) {
+    public PlayerMenu build() {
         return new SimplePlayerMenu(
                 (PlayerMenuConfigurations) menuConfigs,
                 items,

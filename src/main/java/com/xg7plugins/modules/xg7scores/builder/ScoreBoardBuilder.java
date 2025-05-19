@@ -51,10 +51,10 @@ public class ScoreBoardBuilder extends ScoreBuilder<ScoreBoard, ScoreBoardBuilde
         this.healthDisplaySuffix = healthDisplaySuffix;
         return this;
     }
-    @Override
-    public ScoreBoard build(Object... args) {
+
+    public ScoreBoard build(Plugin plugin) {
         if (id == null || delayToUpdate == 0) throw new IllegalArgumentException("You must specify the id and the delay to update the score");
 
-        return new ScoreBoard(title,lines,id,condition,delayToUpdate,(Plugin) args[0],healthDisplay,sideBar,healthDisplaySuffix);
+        return new ScoreBoard(title,lines,id,condition,delayToUpdate,plugin,healthDisplay,sideBar,healthDisplaySuffix);
     }
 }

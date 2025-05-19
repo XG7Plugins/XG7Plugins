@@ -1,11 +1,11 @@
 package com.xg7plugins.modules.xg7scores.builder;
 
-import com.xg7plugins.utils.Builder;
+import com.xg7plugins.boot.Plugin;
 import org.bukkit.entity.Player;
 
 import java.util.function.Function;
 
-public abstract class ScoreBuilder<S,B extends ScoreBuilder<S,B>> implements Builder<S> {
+public abstract class ScoreBuilder<S,B extends ScoreBuilder<S,B>> {
 
     protected String id;
     protected long delayToUpdate;
@@ -25,6 +25,8 @@ public abstract class ScoreBuilder<S,B extends ScoreBuilder<S,B>> implements Bui
         return (B) this;
     }
 
+    public abstract S build(Plugin plugin);
+
     public static ScoreBoardBuilder scoreBoard(String id) {
         return new ScoreBoardBuilder(id);
     }
@@ -40,10 +42,5 @@ public abstract class ScoreBuilder<S,B extends ScoreBuilder<S,B>> implements Bui
     public static ActionBarBuilder actionBar(String id) {
         return new ActionBarBuilder(id);
     }
-
-
-
-
-
 
 }

@@ -9,7 +9,6 @@ import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenuConfigs;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
-import com.xg7plugins.utils.Builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extends BasicMenu> implements Builder<M> {
+public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extends BasicMenu> {
 
     protected BasicMenuConfigs menuConfigs;
 
@@ -91,6 +90,5 @@ public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extend
         return (B) this;
     }
 
-    @Override
-    public abstract M build(Object... args);
+    public abstract M build();
 }

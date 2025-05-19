@@ -64,13 +64,13 @@ public class ServerInfo {
         return port == serverInfo.port && name.equals(serverInfo.name) && address.equals(serverInfo.address);
     }
 
-    public void setAtribute(String key, Object value) {
+    public void setAttribute(String key, Object value) {
         atributes.put(key, value);
     }
     public <T> Optional<T> getAtribute(String key, Class<T> type) {
         return Optional.ofNullable(type.cast(atributes.get(key)));
     }
-    public boolean hasAtribute(String key) {
+    public boolean hasAttribute(String key) {
         return atributes.containsKey(key);
     }
 

@@ -6,8 +6,10 @@ import com.xg7plugins.utils.text.component.event.HoverEvent;
 import lombok.Data;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -61,42 +63,25 @@ public class Component implements Cloneable {
     }
 
     public BaseComponent[] toBukkitComponent() {
-        ComponentBuilder builder = new ComponentBuilder(text);
-        if (events != null) {
-            if (events.getFirst() != null) {
-                builder.event((net.md_5.bungee.api.chat.HoverEvent) events.getFirst().toBukkitEvent());
-            }
-            if (events.getSecond() != null) {
-                builder.event((net.md_5.bungee.api.chat.ClickEvent) events.getSecond().toBukkitEvent());
+        ComponentBuilder builder = new ComponentBuilder("");
+
+        // Adiciona o componente principal primeiro
+        if (!text.isEmpty()) {
+            builder.append(text);
+            if (events != null) {
+                if (events.getFirst() != null) {
+                    builder.event((net.md_5.bungee.api.chat.HoverEvent) events.getFirst().toBukkitEvent());
+                }
+                if (events.getSecond() != null) {
+                    builder.event((net.md_5.bungee.api.chat.ClickEvent) events.getSecond().toBukkitEvent());
+                }
             }
         }
+        if (components != null && !components.isEmpty()) {
+            for (Component component : components) {
+                BaseComponent[] subComponents = component.toBukkitComponent();
 
-        if (components != null) {
-
-            List<Component> toProcess = new ArrayList<>();
-            Stack<Component> stack = new Stack<>();
-
-            for (int i = components.size() - 1; i >= 0; i--) stack.push(components.get(i));
-
-
-            while (!stack.isEmpty()) {
-                Component currentComponent = stack.pop();
-                toProcess.add(currentComponent);
-
-                List<Component> subComponents = currentComponent.getComponents();
-                for (int i = subComponents.size() - 1; i >= 0; i--) stack.push(subComponents.get(i));
-            }
-
-            for (Component component : toProcess) {
-                builder.append(component.getText());
-                if (component.getEvents() != null) {
-                    if (component.getEvents().getFirst() != null) {
-                        builder.event((net.md_5.bungee.api.chat.HoverEvent) component.getEvents().getFirst().toBukkitEvent());
-                    }
-                    if (component.getEvents().getSecond() != null) {
-                        builder.event((net.md_5.bungee.api.chat.ClickEvent) component.getEvents().getSecond().toBukkitEvent());
-                    }
-                }
+                builder.append(subComponents);
             }
         }
 

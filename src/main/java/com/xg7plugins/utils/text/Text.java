@@ -121,7 +121,7 @@ public class Text {
 
 
         if (!isPlayer) {
-            if (MinecraftVersion.isOlderThan(8)) {
+            if (MinecraftVersion.isOlderOrEqual(8)) {
                 sender.sendMessage(rawText);
                 return;
             }

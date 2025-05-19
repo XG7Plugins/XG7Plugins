@@ -24,9 +24,9 @@ public class ActionBarBuilder extends ScoreBuilder<ActionBar, ActionBarBuilder> 
     }
 
     @Override
-    public ActionBar build(Object... args) {
+    public ActionBar build(Plugin plugin) {
         if (id == null || delayToUpdate == 0) throw new IllegalArgumentException("You must specify the id and the delay to update the score");
 
-        return new ActionBar(delayToUpdate,text,id,condition, (Plugin) args[0]);
+        return new ActionBar(delayToUpdate,text,id,condition, plugin);
     }
 }

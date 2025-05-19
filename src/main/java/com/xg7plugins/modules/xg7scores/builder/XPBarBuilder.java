@@ -30,9 +30,9 @@ public class XPBarBuilder extends ScoreBuilder<XPBar, XPBarBuilder> {
 
 
     @Override
-    public XPBar build(Object... args) {
+    public XPBar build(Plugin plugin) {
         if (id == null || delayToUpdate == 0) throw new IllegalArgumentException("You must specify the id and the delay to update the score");
 
-        return new XPBar(delayToUpdate, xp, id, condition, (Plugin) args[0]);
+        return new XPBar(delayToUpdate, xp, id, condition, plugin);
     }
 }

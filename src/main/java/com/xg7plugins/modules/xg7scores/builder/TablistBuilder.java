@@ -45,8 +45,7 @@ public class TablistBuilder extends ScoreBuilder<Tablist, TablistBuilder> {
         return this;
     }
 
-    @Override
-    public Tablist build(Object... args) {
-        return new Tablist(delayToUpdate, header, footer, playerPrefix,playerSuffix,id, condition, (Plugin) args[0]);
+    public Tablist build(Plugin plugin) {
+        return new Tablist(delayToUpdate, header, footer, playerPrefix,playerSuffix,id, condition, plugin);
     }
 }

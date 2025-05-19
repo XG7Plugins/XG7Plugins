@@ -10,7 +10,7 @@ public class MenuBuilder extends BasicMenuBuilder<MenuBuilder, Menu> {
     }
 
     @Override
-    public Menu build(Object... args) {
+    public Menu build() {
         return new SimpleMenu(
                 (MenuConfigurations) menuConfigs,
                 items,

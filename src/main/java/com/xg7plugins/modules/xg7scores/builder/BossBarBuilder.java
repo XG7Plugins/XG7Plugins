@@ -52,10 +52,7 @@ public class BossBarBuilder extends ScoreBuilder<Score, BossBarBuilder> {
         return this;
     }
 
-    @Override
-    public Score build(Object... args) {
-
-        Plugin plugin = (Plugin) args[0];
+    public Score build(Plugin plugin) {
 
         if (id == null || delayToUpdate == 0) throw new IllegalArgumentException("You must specify the id and the delay to update the score");
 
