@@ -4,6 +4,6 @@ public enum TagType {
 
     MODIFIER,
     EVENT,
-    ACTION;
+    SENDER;
 
 }

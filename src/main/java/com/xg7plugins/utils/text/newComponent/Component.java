@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.Getter;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +22,10 @@ public class Component implements Cloneable {
     private String content;
     private List<TextModifier> modifiers;
     private Pair<ClickEvent, HoverEvent> events;
+    private TextComponent textComponent;
 
     public Component(String content) {
-        this(content, new ArrayList<>(), new Pair<>(null, null));
+        this(content, new ArrayList<>(), new Pair<>(null, null), null);
     }
 
     public void setClickEvent(ClickEvent event) {
@@ -64,5 +64,16 @@ public class Component implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
+    }
+
+    @Override
+    public String toString() {
+        if (textComponent != null) return textComponent.toString();
+        return "Component{" +
+                "content='" + content + '\'' +
+                ", modifiers=" + modifiers +
+                ", events=" + events +
+                ", textComponent=" + textComponent +
+                '}';
     }
 }

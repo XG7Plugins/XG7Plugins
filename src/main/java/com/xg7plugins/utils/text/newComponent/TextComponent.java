@@ -7,6 +7,7 @@ import com.xg7plugins.utils.text.newComponent.sender.TextSender;
 import lombok.Data;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,9 +31,11 @@ public class TextComponent {
     public TextComponent() {}
 
     public void addComponent(Component component) {
+        component.setTextComponent(this);
         components.add(component);
     }
     public void addFirstComponent(Component component) {
+        component.setTextComponent(this);
         components.add(0, component);
     }
 
@@ -93,4 +96,22 @@ public class TextComponent {
 
     }
 
+    public void send(CommandSender sender) {
+        this.sender.send(sender, this);
+    }
+
+    @Override
+    public String toString() {
+
+        List<String> components = this.components.stream().map(c -> {
+            Component newC = c.clone();
+            newC.setTextComponent(null);
+            return newC.toString();
+        }).collect(Collectors.toList());
+
+        return "TextComponent{" +
+                "components=" + components +
+                ", sender=" + sender +
+                '}';
+    }
 }
