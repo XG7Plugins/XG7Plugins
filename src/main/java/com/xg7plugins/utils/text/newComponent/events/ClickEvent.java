@@ -2,8 +2,10 @@ package com.xg7plugins.utils.text.newComponent.events;
 
 import com.xg7plugins.utils.text.newComponent.events.action.ClickAction;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 
 @AllArgsConstructor
+@ToString
 public class ClickEvent implements ChatEvent {
 
     private final String content;

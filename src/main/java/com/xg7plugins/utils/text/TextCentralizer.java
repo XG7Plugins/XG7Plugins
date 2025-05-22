@@ -31,32 +31,14 @@ public class TextCentralizer {
         return 4;
     }
 
-    public static String getSpacesCentralized(int pixels, String text) {
+    public static String getSpacesCentralized(int pixels, String rawTextWithColors) {
 
         int textWidth = 0;
         boolean cCode = false;
         boolean isBold = false;
-        boolean isRgb = false;
-        int rgbCount = 0;
         int cCodeCount = 0;
-        int rgbToAdd = 0;
 
-        for (char c : text.toCharArray()) {
-
-            if (isRgb) {
-                if (rgbCount == 6) {
-                    isRgb = false;
-                    continue;
-                }
-                if ("0123456789aAbBcCdDeEfF".contains(String.valueOf(c))) {
-                    rgbToAdd = getCharSize(c, isBold);
-                    rgbCount++;
-                    continue;
-                }
-                rgbCount = 0;
-                textWidth += rgbToAdd;
-                continue;
-            }
+        for (char c : rawTextWithColors.toCharArray()) {
 
             if (c == '&' || c == '§') {
                 cCode = true;
@@ -72,11 +54,6 @@ public class TextCentralizer {
             }
 
             if (cCode) {
-                if (c == '#') {
-                    cCode = false;
-                    isRgb = true;
-                    continue;
-                }
                 while (cCodeCount != 0) {
                     cCodeCount--;
                     textWidth += getCharSize('&', isBold);
@@ -89,7 +66,7 @@ public class TextCentralizer {
         textWidth /= 2;
 
         if (textWidth > pixels) {
-            return text;
+            return rawTextWithColors;
         }
 
         StringBuilder builder = new StringBuilder();
@@ -100,16 +77,15 @@ public class TextCentralizer {
             compensated += 4;
         }
 
-        String result = builder.toString();
-        return result;
+        return builder.toString();
     }
 
 
-    public static String getCentralizedText(PixelsSize size, String text) {
+    public static String getCentralizedText(PixelsSize size, String rawTextWithColors) {
 
-        String spaces = getSpacesCentralized(size.getPixels(), text);
+        String spaces = getSpacesCentralized(size.getPixels(), rawTextWithColors);
 
-        return spaces + text;
+        return spaces + rawTextWithColors;
     }
 
 
