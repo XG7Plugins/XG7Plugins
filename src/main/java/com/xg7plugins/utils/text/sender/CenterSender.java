@@ -4,7 +4,6 @@ import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.text.TextCentralizer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 
 @AllArgsConstructor
@@ -18,10 +17,5 @@ public class CenterSender implements TextSender {
         String spaces = TextCentralizer.getSpacesCentralized(pixels,text.getPlainText());
         text.setText(spaces + text.getText());
         defaultSend(sender, text);
-    }
-
-    @Override
-    public String serialize() {
-        return "center";
     }
 }

@@ -41,9 +41,4 @@ public class ActionBarSender implements TextSender {
 
         return;
     }
-
-    @Override
-    public String serialize() {
-        return "action";
-    }
 }

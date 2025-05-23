@@ -13,6 +13,6 @@ public class ActionTag implements SenderTag {
 
     @Override
     public TextSender resolve(List<String> args) {
-        new ActionBarSender();
+        return new ActionBarSender();
     }
 }

@@ -6,6 +6,7 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.help.chat.HelpChatPage;
 import com.xg7plugins.utils.text.Text;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -35,19 +36,15 @@ public class AboutPage implements HelpChatPage {
 
         components.add(Text.format(" "));
 
-        ComponentBuilder back = ComponentBuilder.builder(
-                Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.back").join()
-                .replace("command", "/xg7plugins help").getText()
-        );
-
-        back.clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins help"));
 
         components.add(Text.format(
-                Component.text()
+                Component.text(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.back").join()
+                        .replace("command", "/xg7plugins help").getText())
+                        .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help"))
         ));
         components.add(Text.format(" "));
 
-        components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").getComponent());
+        components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"));
         return components;
 
     }

@@ -8,19 +8,19 @@ import com.xg7plugins.utils.Pair;
 
 import com.xg7plugins.utils.text.sender.TextSender;
 import com.xg7plugins.utils.text.sender.deserializer.TextSenderDeserializer;
-import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import lombok.Getter;
 import lombok.Setter;
 import me.clip.placeholderapi.PlaceholderAPI;
-import me.clip.placeholderapi.libs.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
@@ -31,7 +31,10 @@ public class Text {
 
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
 
+    private static final GsonComponentSerializer componentSerializer = GsonComponentSerializer.gson();
+    private static final LegacyComponentSerializer legacyComponentSerializer = LegacyComponentSerializer.legacyAmpersand();
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
+
     @Getter
     private static final BukkitAudiences audience = BukkitAudiences.create(XG7Plugins.getInstance());
 
@@ -41,13 +44,16 @@ public class Text {
 
     public Text(String text) {
 
+        System.out.println("Receiving text: " + text);
+
         Pair<TextSender, String> extracted = TextSenderDeserializer.extractSender(text);
 
         this.textSender = extracted.getFirst();
         this.text = ChatColor.translateAlternateColorCodes('&', extracted.getSecond());
     }
     public Text(Component component) {
-        this(miniMessage.serialize(component));
+        this(componentSerializer.serialize(component));
+        System.out.println("Receiving: component: " + component);
     }
 
     public Text textFor(Player player) {
@@ -82,11 +88,11 @@ public class Text {
     }
     public final Text centralize(TextCentralizer.PixelsSize size) {
         this.text = "[CENTER:" + size.name() + "]";
-        return this;
+        return Text.format(text);
     }
     public final Text centralize(int size) {
         this.text = "[CENTER:" + size + "]";
-        return this;
+        return Text.format(text);
     }
 
     public void send(CommandSender sender) {
@@ -102,8 +108,17 @@ public class Text {
     }
 
     public Component getComponent() {
-        return miniMessage.deserialize(this.text);
+        try {
+            return miniMessage.deserialize(this.text);
+        } catch (Exception ignored) {
+            try {
+                return componentSerializer.deserialize(this.text);
+            } catch (Exception e) {
+                return legacyComponentSerializer.deserialize(this.text);
+            }
+        }
     }
+
 
     public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText, boolean textForSender) {
 
@@ -175,6 +190,7 @@ public class Text {
         return new Text(text);
     }
     public static Text format(Component component) {
+
         return new Text(component);
     }
 

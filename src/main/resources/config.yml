@@ -54,7 +54,7 @@ enable-lang-form: true
 repeating-tasks-threads: 8
 
 #Delay to send a message or
-#make an action wilhe is in cooldown
+#make an action while is in cooldown
 player-cooldown-task-delay: 1s
 
 #Cache expires of menus

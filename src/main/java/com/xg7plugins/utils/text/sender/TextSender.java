@@ -2,9 +2,6 @@ package com.xg7plugins.utils.text.sender;
 
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.text.Text;
-import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
-import me.clip.placeholderapi.libs.kyori.adventure.text.ComponentLike;
-import net.kyori.adventure.text.Component;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -17,21 +14,19 @@ public interface TextSender {
             sender.sendMessage(text.getPlainText());
             return;
         }
-        Text.getAudience().sender(sender).sendMessage((ComponentLike) text.getComponent());
+
+        System.out.println("Enviando componente: " + text.getComponent());
+
+        Text.getAudience().sender(sender).sendMessage(text.getComponent());
     }
 
-    String serialize();
+
 
     static TextSender defaultSender() {
         return new TextSender() {
             @Override
             public void send(CommandSender sender, Text text) {
                 defaultSend(sender, text);
-            }
-
-            @Override
-            public String serialize() {
-                return "default";
             }
         };
     }
