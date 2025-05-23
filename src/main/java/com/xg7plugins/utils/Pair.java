@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @Data
@@ -24,5 +26,9 @@ public class Pair<F,S> {
 
     public static List<com.mojang.datafixers.util.Pair<?,?>> toMojangPairList(List<Pair<?,?>> list) {
         return list.stream().map(Pair::toMojangPair).collect(Collectors.toList());
+    }
+
+    public void each(BiConsumer<F, S> consumer) {
+        consumer.accept(first, second);
     }
 }

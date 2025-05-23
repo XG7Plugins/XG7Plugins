@@ -2,12 +2,14 @@ package com.xg7plugins.help.xg7pluginshelp.chathelp;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.help.chat.HelpChatPage;
+import com.xg7plugins.utils.text.ComponentBuilder;
 import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.text.component.Component;
-import com.xg7plugins.utils.text.component.event.ClickEvent;
-import com.xg7plugins.utils.text.component.event.HoverEvent;
-import com.xg7plugins.utils.text.component.event.action.ClickAction;
-import com.xg7plugins.utils.text.component.event.action.HoverAction;
+import com.xg7plugins.utils.text.component.TextComponent;
+import com.xg7plugins.utils.text.component.events.ClickEvent;
+import com.xg7plugins.utils.text.component.events.HoverEvent;
+import com.xg7plugins.utils.text.component.events.action.ClickAction;
+import com.xg7plugins.utils.text.component.events.action.HoverAction;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -17,35 +19,35 @@ import java.util.List;
 public class Index implements HelpChatPage {
 
     @Override
-    public List<Component> getComponents(CommandSender sender) {
+    public List<TextComponent> getComponents(CommandSender sender) {
 
-        List<Component> components = new ArrayList<>();
+        List<TextComponent> components = new ArrayList<>();
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").getComponent());
 
         components.add(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.title").join()
                 .getComponent());
 
-        components.add(Component.EMPTY);
+        components.add(TextComponent.empty());
 
-        Component content = Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.content").join().getComponent();
-        content.setClickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins help about"));
-        content.setHoverEvent(HoverEvent.of(HoverAction.SHOW_TEXT, "Click to see about the plugins"));
-        components.add(content);
+        ComponentBuilder content = ComponentBuilder.builder(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.content").join().getText());
+        content.clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins help about"));
+        content.hoverEvent(HoverEvent.of(HoverAction.SHOW_TEXT, "Click to see about the plugins"));
+        components.add(content.buildTextComponent());
 
-        components.add(Component.EMPTY);
+        components.add(TextComponent.empty());
 
-        Component lang = Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.lang").join().getComponent();
-        lang.setClickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins lang"));
-        components.add(lang);
+        ComponentBuilder lang = ComponentBuilder.builder(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.lang").join().getText());
+        lang.clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins lang"));
+        components.add(lang.buildTextComponent());
 
-        Component tasks = Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.tasks").join().getComponent();
-        tasks.setClickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins tasks"));
-        components.add(tasks);
+        ComponentBuilder tasks = ComponentBuilder.builder(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.tasks").join().getText());
+        tasks.clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins tasks"));
+        components.add(tasks.buildTextComponent());
 
-        Component commands = Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands").join().getComponent();
-        commands.setClickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins help command-page1"));
-        components.add(commands);
+        ComponentBuilder commands = ComponentBuilder.builder(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands").join().getText());
+        commands.clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND, "/xg7plugins help command-page1"));
+        components.add(commands.buildTextComponent());
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").getComponent());
         return components;

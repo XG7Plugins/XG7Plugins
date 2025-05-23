@@ -1,24 +1,14 @@
 package com.xg7plugins.utils.text;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
-import com.github.retrooper.packetevents.protocol.chat.message.ChatMessageLegacy;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
-import com.xg7plugins.modules.xg7scores.scores.ActionBar;
-import com.xg7plugins.server.MinecraftVersion;
-import com.xg7plugins.utils.Condition;
 import com.xg7plugins.utils.Pair;
-import com.xg7plugins.utils.text.component.Component;
-import com.xg7plugins.utils.text.component.serializer.ComponentDeserializer;
+
+import com.xg7plugins.utils.text.component.TextComponent;
+import com.xg7plugins.utils.text.component.deserializer.ComponentDeserializer;
 import lombok.Getter;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,33 +23,11 @@ import java.util.regex.Pattern;
 public class Text {
 
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
-    private static final Pattern CENTER_PATTERN = Pattern.compile("(?i)<center:(INV|CHAT|MOTD|\\d+)> ");
-
-    private boolean centered;
-    private int pixels;
 
     private String text;
 
     public Text(String text) {
         this.text = ChatColor.translateAlternateColorCodes('&', text);
-
-        Matcher centerMatch = CENTER_PATTERN.matcher(this.text);
-
-        if (centerMatch.find()) {
-            this.centered = true;
-            String center = centerMatch.group(1).toUpperCase();
-            this.pixels = 0;
-            try {
-                pixels = TextCentralizer.PixelsSize.valueOf(center).getPixels();
-            } catch (Exception ignored) {
-                try {
-                    pixels = Integer.parseInt(center);
-                } catch (Exception e) {
-                    throw new IllegalArgumentException("Invalid center size: " + center + " expected: INV, CHAT, MOTD or a number");
-                }
-            }
-            this.text = centerMatch.replaceFirst("");
-        }
     }
 
     public Text textFor(Player player) {
@@ -86,113 +54,36 @@ public class Text {
         replacements.forEach(replacement -> this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond()));
         return this;
     }
-
+    public final Text centralize(TextCentralizer.PixelsSize size) {
+        this.text = "[CENTER:" + size.name() + "]";
+        return this;
+    }
+    public final Text centralize(int size) {
+        this.text = "[CENTER:" + size + "]";
+        return this;
+    }
 
     public void send(CommandSender sender) {
-
-        if (this.text.isEmpty()) return;
-
-        Component component = ComponentDeserializer.deserialize(this.text);
-
-        send(component,sender, centered, pixels);
-
-    }
-    public static void send (Component component, CommandSender sender) {
-        send(component, sender, false, 0);
+        TextComponent component = ComponentDeserializer.deserialize(this.text);
+        send(component, sender);
     }
 
-    public static void send(Component component, CommandSender sender, boolean centered, int pixels) {
-        if (component.isEmpty()) return;
-
-        String rawText = component.content();
-
-        String componentText = component.getText();
-
-        boolean isAction = rawText.startsWith("<action> ");
-        boolean isPlayer = sender instanceof Player;
-
-        componentText = componentText.replace("<action> ", "");
-
-        rawText = rawText.replace("<action> ", "");
-
-        component.setText(componentText);
-
-        if (centered) component.setText(TextCentralizer.getSpacesCentralized(pixels, rawText) + componentText);
-
-
-        if (!isPlayer) {
-            if (MinecraftVersion.isOlderOrEqual(8)) {
-                sender.sendMessage(rawText);
-                return;
-            }
-            sender.spigot().sendMessage(component.toBukkitComponent());
-            return;
-        }
-
-        Player player = (Player) sender;
-
-        if (isAction) {
-            if (MinecraftVersion.isOlderThan(8)) return;
-
-            ActionBar.addToBlacklist(player);
-
-            if (MinecraftVersion.isNewerThan(8)) {
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(rawText));
-                Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId()), 60L);
-                return;
-            }
-
-            WrapperPlayServerChatMessage packetPlayOutChat = new WrapperPlayServerChatMessage(
-                    new ChatMessageLegacy(net.kyori.adventure.text.Component.text(rawText), ChatTypes.GAME_INFO)
-            );
-
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutChat);
-
-            Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId()), 60L);
-
-            return;
-        }
-
-        if (MinecraftVersion.isOlderThan(8)) {
-            player.sendMessage(rawText);
-            return;
-        }
-
-        player.spigot().sendMessage(component.toBukkitComponent());
+    public static void send(TextComponent component, CommandSender sender) {
+        component.send(sender);
     }
 
     public String getPlainText() {
         try {
-            Component component = ComponentDeserializer.deserialize(this.text);
-
-            String rawText = component.content();
-
-            if (centered) component.setText(TextCentralizer.getSpacesCentralized(pixels, rawText) + component.getText());
-
-            rawText = component.content();
-
-            if (rawText.startsWith("<action> ")) rawText = rawText.replace("<action> ", "");
-
-            return rawText;
+            TextComponent component = ComponentDeserializer.deserialize(this.text);
+            return component.getText();
         } catch (Exception e) {
             e.printStackTrace();
             return this.text;
         }
     }
 
-    public Component getComponent() {
+    public TextComponent getComponent() {
         return ComponentDeserializer.deserialize(this.text);
-    }
-
-    public String getCentralizedText(TextCentralizer.PixelsSize size) {
-
-        Component component = ComponentDeserializer.deserialize(this.text);
-
-        String rawText = component.content();
-
-        if (rawText.startsWith("<action> ")) rawText = rawText.replace("<action> ", "");
-
-        return TextCentralizer.getCentralizedText(size, rawText);
     }
 
     public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText, boolean textForSender) {
