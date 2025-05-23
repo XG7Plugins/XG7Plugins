@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com'
-version = '1.2_013'
+version = '1.2_014'
 
 repositories {
     mavenCentral()
@@ -64,6 +64,11 @@ dependencies {
 
     implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
     implementation 'com.zaxxer:HikariCP:4.0.3'
+
+    implementation "net.kyori:adventure-api:4.21.0"
+    implementation 'net.kyori:adventure-text-minimessage:4.14.0'
+    implementation "net.kyori:adventure-text-serializer-legacy:4.21.0"
+    implementation "net.kyori:adventure-text-serializer-plain:4.21.0"
 
     compileOnly 'org.geysermc.floodgate:api:2.2.3-SNAPSHOT'
 

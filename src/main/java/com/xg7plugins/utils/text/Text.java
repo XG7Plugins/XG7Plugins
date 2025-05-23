@@ -1,19 +1,26 @@
 package com.xg7plugins.utils.text;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
 import com.xg7plugins.utils.Pair;
 
-import com.xg7plugins.utils.text.component.TextComponent;
-import com.xg7plugins.utils.text.component.deserializer.ComponentDeserializer;
+import com.xg7plugins.utils.text.sender.TextSender;
+import com.xg7plugins.utils.text.sender.deserializer.TextSenderDeserializer;
+import io.github.retrooper.packetevents.adventure.serializer.legacy.LegacyComponentSerializer;
 import lombok.Getter;
+import lombok.Setter;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.libs.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
@@ -24,10 +31,23 @@ public class Text {
 
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
 
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
+    @Getter
+    private static final BukkitAudiences audience = BukkitAudiences.create(XG7Plugins.getInstance());
+
+    private TextSender textSender;
+    @Setter
     private String text;
 
     public Text(String text) {
-        this.text = ChatColor.translateAlternateColorCodes('&', text);
+
+        Pair<TextSender, String> extracted = TextSenderDeserializer.extractSender(text);
+
+        this.textSender = extracted.getFirst();
+        this.text = ChatColor.translateAlternateColorCodes('&', extracted.getSecond());
+    }
+    public Text(Component component) {
+        this(miniMessage.serialize(component));
     }
 
     public Text textFor(Player player) {
@@ -39,10 +59,16 @@ public class Text {
         return this;
     }
 
+    public Text setSender(TextSender sender) {
+        this.textSender = sender;
+        return this;
+    }
+
     public Text replace(String placeholder, String replacement) {
         this.text = this.text.replace("%" + placeholder + "%", replacement);
         return this;
     }
+
     @SafeVarargs
     public final Text replaceAll(Pair<String, String>... replacements) {
         if (replacements == null) return this;
@@ -64,26 +90,19 @@ public class Text {
     }
 
     public void send(CommandSender sender) {
-        TextComponent component = ComponentDeserializer.deserialize(this.text);
-        send(component, sender);
+        send(this, sender);
     }
 
-    public static void send(TextComponent component, CommandSender sender) {
-        component.send(sender);
+    public static void send(Text text, CommandSender sender) {
+        text.getTextSender().send(sender, text);
     }
 
     public String getPlainText() {
-        try {
-            TextComponent component = ComponentDeserializer.deserialize(this.text);
-            return component.getText();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return this.text;
-        }
+        return LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build().serialize(getComponent());
     }
 
-    public TextComponent getComponent() {
-        return ComponentDeserializer.deserialize(this.text);
+    public Component getComponent() {
+        return miniMessage.deserialize(this.text);
     }
 
     public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText, boolean textForSender) {
@@ -154,6 +173,9 @@ public class Text {
 
     public static Text format(String text) {
         return new Text(text);
+    }
+    public static Text format(Component component) {
+        return new Text(component);
     }
 
 }

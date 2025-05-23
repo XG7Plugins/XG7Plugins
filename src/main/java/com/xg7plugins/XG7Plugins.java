@@ -45,6 +45,7 @@ import com.xg7plugins.tasks.tasks.TPSCalculator;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
+import com.xg7plugins.utils.text.Text;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -191,6 +192,8 @@ public final class XG7Plugins extends Plugin {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        Text.getAudience().close();
     }
 
     /**

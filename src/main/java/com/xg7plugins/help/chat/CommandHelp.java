@@ -4,13 +4,10 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.utils.text.ComponentBuilder;
 import com.xg7plugins.utils.text.Text;
-import com.xg7plugins.utils.text.component.Component;
-import com.xg7plugins.utils.text.component.TextComponent;
-import com.xg7plugins.utils.text.component.events.ClickEvent;
-import com.xg7plugins.utils.text.component.events.action.ClickAction;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,34 +32,32 @@ public class CommandHelp implements HelpChatPage {
     }
 
     @Override
-    public List<TextComponent> getComponents(CommandSender sender) {
+    public List<Text> getComponents(CommandSender sender) {
 
-        List<TextComponent> components = new ArrayList<>();
+        List<Text> components = new ArrayList<>();
 
-        components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").getComponent());
+        components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"));
         components.add(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands-title").join()
                 .replace("page", (page + 1) + "")
-                .replace("max_page", maxPage + "")
-                .getComponent());
+                .replace("max_page", maxPage + ""));
 
         for (Command command : commands) {
             Item commandIcon = command.getIcon();
 
             ItemStack itemStack = commandIcon.getItemFor(sender, plugin);;
 
-            components.add(
-                    ComponentBuilder.builder(
+            components.add(Text.format(
+                    Component.text(
                             itemStack.getItemMeta().getDisplayName() + "\n" +
                                     itemStack.getItemMeta().getLore().get(0) + "\n" +
                                     itemStack.getItemMeta().getLore().get(1) + "\n" +
                                     itemStack.getItemMeta().getLore().get(2) + "\n" +
                                     itemStack.getItemMeta().getLore().get(3)
-                    ).clickEvent(ClickEvent.of(ClickAction.SUGGEST_COMMAND,command.getCommandConfigurations().syntax()))
-                    .buildTextComponent()
-            );
+                    ).clickEvent(ClickEvent.clickEvent(ClickEvent.Action.SUGGEST_COMMAND,command.getCommandConfigurations().syntax()))
+            ));
         }
 
-        components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-").getComponent());
+        components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"));
 
         return components;
     }

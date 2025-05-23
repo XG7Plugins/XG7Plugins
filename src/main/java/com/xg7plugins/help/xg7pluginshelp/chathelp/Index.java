@@ -2,7 +2,6 @@ package com.xg7plugins.help.xg7pluginshelp.chathelp;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.help.chat.HelpChatPage;
-import com.xg7plugins.utils.text.ComponentBuilder;
 import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.text.component.Component;
 import com.xg7plugins.utils.text.component.TextComponent;
@@ -13,7 +12,6 @@ import com.xg7plugins.utils.text.component.events.action.HoverAction;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Index implements HelpChatPage {
