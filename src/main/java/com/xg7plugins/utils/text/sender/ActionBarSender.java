@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 public class ActionBarSender implements TextSender {
     @Override
     public void send(CommandSender sender, Text text) {
+        if (text == null || text.getText() == null || text.getText().isEmpty()) return;
         if (MinecraftVersion.isOlderThan(8) || !(sender instanceof Player) ) {
             defaultSend(sender, text);
             return;

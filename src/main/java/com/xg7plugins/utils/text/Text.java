@@ -4,6 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
+import com.xg7plugins.utils.ColorTranslator;
 import com.xg7plugins.utils.Pair;
 
 import com.xg7plugins.utils.text.sender.TextSender;
@@ -14,7 +15,6 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -31,8 +31,6 @@ public class Text {
 
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
 
-    private static final GsonComponentSerializer componentSerializer = GsonComponentSerializer.gson();
-    private static final LegacyComponentSerializer legacyComponentSerializer = LegacyComponentSerializer.legacyAmpersand();
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     @Getter
@@ -43,17 +41,13 @@ public class Text {
     private String text;
 
     public Text(String text) {
-
-        System.out.println("Receiving text: " + text);
-
         Pair<TextSender, String> extracted = TextSenderDeserializer.extractSender(text);
 
         this.textSender = extracted.getFirst();
         this.text = ChatColor.translateAlternateColorCodes('&', extracted.getSecond());
     }
     public Text(Component component) {
-        this(componentSerializer.serialize(component));
-        System.out.println("Receiving: component: " + component);
+        this(miniMessage.serialize(component));
     }
 
     public Text textFor(Player player) {
@@ -108,17 +102,8 @@ public class Text {
     }
 
     public Component getComponent() {
-        try {
-            return miniMessage.deserialize(this.text);
-        } catch (Exception ignored) {
-            try {
-                return componentSerializer.deserialize(this.text);
-            } catch (Exception e) {
-                return legacyComponentSerializer.deserialize(this.text);
-            }
-        }
+        return miniMessage.deserialize(ColorTranslator.translateLegacyToMini(this.text));
     }
-
 
     public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText, boolean textForSender) {
 

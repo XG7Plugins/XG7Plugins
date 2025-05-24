@@ -31,14 +31,35 @@ public class TextCentralizer {
         return 4;
     }
 
-    public static String getSpacesCentralized(int pixels, String rawTextWithColors) {
+    public static String getSpacesCentralized(int pixels, String text) {
 
         int textWidth = 0;
+
         boolean cCode = false;
         boolean isBold = false;
+        boolean isRgb = false;
+        int rgbCount = 0;
         int cCodeCount = 0;
+        int rgbToAdd = 0;
 
-        for (char c : rawTextWithColors.toCharArray()) {
+        for (char c : text.toCharArray()) {
+
+            if (isRgb) {
+
+                if (rgbCount == 6) {
+                    isRgb = false;
+                    continue;
+                }
+
+                if ("0123456789aAbBcCdDeEfF".contains(String.valueOf(c))) {
+                    rgbToAdd = getCharSize(c, isBold);
+                    rgbCount++;
+                    continue;
+                }
+                rgbCount = 0;
+                textWidth += rgbToAdd;
+                continue;
+            }
 
             if (c == '&' || c == '§') {
                 cCode = true;
@@ -54,30 +75,34 @@ public class TextCentralizer {
             }
 
             if (cCode) {
+                if (c == '#') {
+                    cCode = false;
+                    isRgb = true;
+                    continue;
+                }
+
                 while (cCodeCount != 0) {
                     cCodeCount--;
                     textWidth += getCharSize('&', isBold);
                 }
             }
-
             textWidth += getCharSize(c, isBold);
         }
 
         textWidth /= 2;
 
-        if (textWidth > pixels) {
-            return rawTextWithColors;
-        }
+        if (textWidth > pixels) return text;
 
         StringBuilder builder = new StringBuilder();
+
         int compensated = 0;
 
         while (compensated < pixels - textWidth) {
             builder.append(ChatColor.COLOR_CHAR + "r ");
             compensated += 4;
         }
-
-        return builder.toString();
+        String result = builder.toString();
+        return result;
     }
 
 

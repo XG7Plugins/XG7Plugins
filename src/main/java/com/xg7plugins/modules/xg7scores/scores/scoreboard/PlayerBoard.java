@@ -110,7 +110,7 @@ class PlayerBoard {
                 entry = "";
             }
             while (lastEntries.contains(entry)) {
-                entry += "§r" + ChatColor.getLastColors(prefix);
+                entry += "&r" + ChatColor.getLastColors(prefix);
             }
             lastEntries.add(entry);
             if (lastLines.get(i).getFirst().equals(translatedText)) continue;

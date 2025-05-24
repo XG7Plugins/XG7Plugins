@@ -18,7 +18,7 @@ public class LangItemTypeAdapter implements ConfigTypeAdapter<Item> {
 
         String name = section.getString("formated-name");
 
-        langItem.name(selected ? "§a" + name : "§7" + name);
+        langItem.name(selected ? "&a" + name : "&7" + name);
         langItem.lore(section.getStringList("lang-menu.item-click"));
 
         langItem.setNBTTag("selected", selected);

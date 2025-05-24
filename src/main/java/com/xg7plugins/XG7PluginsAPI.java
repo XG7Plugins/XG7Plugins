@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
  * dados de jogadores, e outras funcionalidades do ecossistema XG7Plugins sem a necessidade de
  * instanciar objetos ou gerenciar dependências manualmente.
  *
- * @author XG7Plugins
+ * @author DaviXG7
  */
 public class XG7PluginsAPI {
 
@@ -241,7 +241,6 @@ public class XG7PluginsAPI {
     public static boolean isWorldEnabled(Plugin plugin, World world) {
         return isWorldEnabled(plugin, world.getName());
     }
-
     /**
      * Verifica se o mundo em que o jogador está atualmente está habilitado para um plugin.
      *

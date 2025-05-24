@@ -37,7 +37,7 @@ public class Dependency {
 
             File file = new File(pluginsFolder, name + ".jar");
             if (file.exists()) {
-                debug.info("§aDependency '" + name + "' is already installed.");
+                debug.info("&aDependency '" + name + "' is already installed.");
                 return;
             }
 
@@ -61,7 +61,7 @@ public class Dependency {
                 throw new RuntimeException();
             }
 
-            debug.info("§aDependency '" + name + "' downloaded with success.");
+            debug.info("&aDependency '" + name + "' downloaded with success.");
 
         } catch (Exception e) {
             debug.severe("Error on install dependency " + name);

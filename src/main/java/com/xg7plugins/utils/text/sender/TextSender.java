@@ -10,12 +10,13 @@ public interface TextSender {
     void send(CommandSender sender, Text text);
 
     default void defaultSend(CommandSender sender, Text text) {
-        if (MinecraftVersion.isOlderThan(8) || !(sender instanceof Player)) {
+        if (text == null || text.getText() == null || text.getText().isEmpty()) return;
+        if (MinecraftVersion.isOlderThan(8)) {
             sender.sendMessage(text.getPlainText());
             return;
         }
 
-        System.out.println("Enviando componente: " + text.getComponent());
+        
 
         Text.getAudience().sender(sender).sendMessage(text.getComponent());
     }

@@ -11,7 +11,7 @@
 #Visit our website: https://xg7plugins.com
 
 
-prefix: "&b[XG&37P&9lu&1gins]&r"
+prefix: "§b[XG§37P§9lu§1gins]§r"
 
 #Must be the same as in BungeeCord config
 plugin-server-name: "XG7PluginsServer"
