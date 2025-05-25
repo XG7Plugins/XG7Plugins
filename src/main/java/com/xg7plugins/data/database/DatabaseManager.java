@@ -30,6 +30,11 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Manages database connections and operations for plugins.
+ * Handles different types of SQL databases (SQLite, MySQL, MariaDB),
+ * entity caching, and table creation.
+ */
 @Getter
 public class DatabaseManager implements Manager {
 
@@ -39,10 +44,22 @@ public class DatabaseManager implements Manager {
 
     private final ObjectCache<String, Entity> cachedEntities;
 
+    /**
+     * Retrieves a database connection for the specified plugin.
+     *
+     * @param plugin The plugin requesting the connection
+     * @return The database connection
+     * @throws Exception If connection cannot be established
+     */
     public Connection getConnection(Plugin plugin) throws Exception {
         return connectorRegistry.getConnection(plugin);
     }
 
+    /**
+     * Initializes the DatabaseManager with cache settings and database connectors.
+     *
+     * @param plugin The XG7Plugins instance
+     */
     public DatabaseManager(XG7Plugins plugin) {
         Config config = Config.mainConfigOf(plugin);
 
@@ -64,6 +81,12 @@ public class DatabaseManager implements Manager {
     }
 
     @SafeVarargs
+    /**
+     * Establishes a database connection for a plugin and creates necessary tables.
+     *
+     * @param plugin The plugin to connect
+     * @param entityClasses Entity classes to create tables for
+     */
     public final void connectPlugin(Plugin plugin, Class<? extends Entity>... entityClasses) {
 
         if (entityClasses == null) return;
@@ -108,6 +131,11 @@ public class DatabaseManager implements Manager {
 
     }
 
+    /**
+     * Disconnects a plugin from its database connection.
+     *
+     * @param plugin The plugin to disconnect
+     */
     @SneakyThrows
     public void disconnectPlugin(Plugin plugin) {
         plugin.getDebug().loading("Disconnecting database...");
@@ -115,6 +143,12 @@ public class DatabaseManager implements Manager {
         plugin.getDebug().loading("Disconnected database!");
     }
 
+    /**
+     * Shuts down all database connections and processors.
+     * Disconnects all plugins from their database connections.
+     *
+     * @throws Exception If an error occurs during shutdown
+     */
     public void shutdown() throws Exception {
         processor.shutdown();
         XG7PluginsAPI.getAllXG7Plugins().forEach(plugin -> {
@@ -127,19 +161,55 @@ public class DatabaseManager implements Manager {
         });
     }
 
+    /**
+     * Gets a cached entity from the cache using plugin name and ID as key.
+     *
+     * @param plugin The plugin that owns the entity
+     * @param id     The unique identifier of the entity
+     * @param <T>    The entity type
+     * @return CompletableFuture containing the cached entity
+     */
     public <T extends Entity> CompletableFuture<T> getCachedEntity(@NotNull Plugin plugin, String id) {
         return (CompletableFuture<T>) cachedEntities.get(plugin.getName() + ":" + id);
     }
+
+    /**
+     * Checks if an entity exists in the cache.
+     *
+     * @param plugin The plugin that owns the entity
+     * @param id     The unique identifier to check
+     * @return CompletableFuture containing true if entity is cached, false otherwise
+     */
     public CompletableFuture<Boolean> containsCachedEntity(@NotNull Plugin plugin, String id) {
         return cachedEntities.containsKey(plugin.getName() + ":" + id);
     }
+
+    /**
+     * Adds an entity to the cache.
+     *
+     * @param plugin The plugin that owns the entity
+     * @param id     The unique identifier for the entity
+     * @param entity The entity object to cache
+     */
     public void cacheEntity(@NotNull Plugin plugin, String id, Entity entity) {
         cachedEntities.put(plugin.getName() + ":" + id, entity);
     }
+
+    /**
+     * Removes an entity from the cache.
+     *
+     * @param plugin The plugin that owns the entity
+     * @param id     The unique identifier of the entity to remove
+     */
     public void unCacheEntity(@NotNull Plugin plugin, String id) {
         cachedEntities.remove(plugin.getName() + ":" + id);
     }
 
+    /**
+     * Reloads a plugin's database connection by disconnecting and reconnecting.
+     *
+     * @param plugin The plugin whose connection should be reloaded
+     */
     public void reloadConnection(Plugin plugin) {
         plugin.getDebug().loading("Reloading database connection...");
 

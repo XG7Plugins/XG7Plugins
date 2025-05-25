@@ -15,6 +15,11 @@ import lombok.ToString;
 import java.lang.reflect.*;
 import java.util.*;
 
+/**
+ * Represents a database query result that provides methods to iterate over
+ * and convert database results into entity objects.
+ * Contains functionality for handling single and collection-based entity mapping.
+ */
 @AllArgsConstructor
 @Getter
 @ToString
@@ -24,14 +29,30 @@ public class QueryResult {
     private final Plugin plugin;
     private Iterator<Map<String,Object>> resultsMap;
 
+    /**
+     * Returns the next result map from the query results.
+     *
+     * @return Map containing the next row of query results
+     */
     public Map<String,Object> next() {
         return resultsMap.next();
     }
 
+    /**
+     * Checks if there are more results available in the query.
+     *
+     * @return true if more results exist, false otherwise
+     */
     public boolean hasNext() {
         return resultsMap.hasNext();
     }
 
+    /**
+     * Creates a clone of the current results map iterator.
+     * This allows for multiple iterations over the same results.
+     *
+     * @return A new iterator containing copies of all remaining results
+     */
     public Iterator<Map<String,Object>> cloneMap() {
         List<Map<String, Object>> cloneResultsMap = new ArrayList<>();
 
@@ -42,12 +63,41 @@ public class QueryResult {
         return cloneResultsMap.iterator();
     }
 
+    /**
+     * Converts the next result into an entity object of the specified class.
+     *
+     * @param clazz The entity class to convert the result into
+     * @param <T>   The type of entity to create
+     *
+     * @return A new instance of the entity populated with query results, or null if no results exist
+     *
+     * @throws NoSuchMethodException     if the entity class doesn't have a default constructor
+     * @throws InvocationTargetException if the constructor throws an exception
+     * @throws InstantiationException    if the class cannot be instantiated
+     * @throws IllegalAccessException    if the constructor cannot be accessed
+     */
     public <T extends Entity> T get(Class<T> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         if (resultsMap == null || !resultsMap.hasNext()) return null;
 
         return get(clazz, resultsMap.next(), true);
     }
 
+    /**
+     * Internal method to convert a result map into an entity object.
+     * Handles nested objects, collections, and primitive type conversions.
+     *
+     * @param clazz  The entity class to convert the result into
+     * @param result The map containing the database result
+     * @param cache  Whether to cache the created entity
+     * @param <T>    The type of entity to create
+     *
+     * @return A new instance of the entity populated with the result data
+     *
+     * @throws NoSuchMethodException     if the entity class doesn't have a default constructor
+     * @throws InvocationTargetException if the constructor throws an exception
+     * @throws InstantiationException    if the class cannot be instantiated
+     * @throws IllegalAccessException    if the constructor cannot be accessed
+     */
     private <T extends Entity> T get(Class<T> clazz, Map<String, Object> result, boolean cache)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
 

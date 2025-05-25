@@ -18,10 +18,22 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Manages the registration and handling of Bukkit events for plugins.
+ * This class provides functionality to register, unregister, and reload event listeners
+ * while supporting world-specific event handling and conditional event enabling.
+ */
 public class EventManager implements Manager {
 
     private final HashMap<String, org.bukkit.event.Listener> listeners = new HashMap<>();
 
+    /**
+     * Registers multiple event listeners for a specific plugin.
+     * Handles packet listeners, enabled/disabled events, and world-specific event filtering.
+     *
+     * @param plugin The plugin registering the listeners
+     * @param events Array of listeners to register
+     */
     public void registerListeners(Plugin plugin, Listener... events) {
 
         if (events == null) return;
@@ -92,16 +104,36 @@ public class EventManager implements Manager {
         }
 
     }
+
+    /**
+     * Registers a list of event listeners for a specific plugin.
+     * Converts the list to array and delegates to the main registration method.
+     *
+     * @param plugin    The plugin registering the listeners
+     * @param listeners List of listeners to register
+     */
     public void registerListeners(Plugin plugin, List<Listener> listeners) {
         if (listeners == null) return;
         registerListeners(plugin, listeners.toArray(new Listener[0]));
     }
 
+    /**
+     * Unregisters all event listeners associated with a specific plugin.
+     * Cleans up the listeners map after unregistration.
+     *
+     * @param plugin The plugin whose listeners should be unregistered
+     */
     public void unregisterListeners(Plugin plugin) {
         HandlerList.unregisterAll(listeners.get(plugin.getName()));
         listeners.remove(plugin.getName());
     }
 
+    /**
+     * Reloads all event listeners for a specific plugin.
+     * Unregisters existing listeners and registers them again.
+     *
+     * @param plugin The plugin whose events should be reloaded
+     */
     public void reloadEvents(Plugin plugin) {
         unregisterListeners(plugin);
         registerListeners(plugin, plugin.loadEvents());

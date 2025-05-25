@@ -17,12 +17,31 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * Manages caching operations using either Redis for distributed caching or Caffeine for local caching.
+ * This class handles cache registration, object storage, retrieval, and cache invalidation.
+ * It supports both local memory caching and distributed Redis caching based on configuration.
+ */
 public class CacheManager implements Manager {
 
+    /**
+     * Redis connection pool for distributed caching
+     */
     private JedisPool pool;
+
+    /**
+     * JSON serializer/deserializer for object conversion
+     */
     private final Gson gson = new Gson();
 
+    /**
+     * Flag indicating whether cached items should expire
+     */
     private boolean cacheExpires = true;
+
+    /**
+     * Local cache storage using Caffeine cache implementation
+     */
 
     private final HashMap<String, Cache<@NotNull Object, Object>> caches;
 
@@ -68,6 +87,11 @@ public class CacheManager implements Manager {
 
     }
 
+    /**
+     * Registers a new cache instance either locally or in Redis
+     *
+     * @param cache The cache configuration object to register
+     */
     public void registerCache(ObjectCache<?,?> cache) {
         if (pool == null || cache.isUseLocalCache()) {
 
@@ -82,12 +106,23 @@ public class CacheManager implements Manager {
         }
     }
 
+    /**
+     * Closes the Redis connection pool and performs cleanup
+     */
     public void shutdown() {
         if (pool != null) {
             pool.close();
         }
     }
 
+    /**
+     * Stores an object in the cache asynchronously
+     *
+     * @param cache The cache configuration to use
+     * @param key   The key to store the value under
+     * @param value The value to cache
+     * @return A CompletableFuture that completes when the operation is done
+     */
     public CompletableFuture<Void> cacheObject(ObjectCache<?,?> cache, Object key, Object value) {
         if (pool != null && !cache.isUseLocalCache()) {
             return CompletableFuture.runAsync(() -> {
@@ -102,6 +137,14 @@ public class CacheManager implements Manager {
         return CompletableFuture.completedFuture(null);
     }
 
+    /**
+     * Retrieves a cached object asynchronously
+     *
+     * @param cache The cache configuration to use
+     * @param key   The key to look up
+     * @param <T>   The type of value to return
+     * @return A CompletableFuture containing the cached value, or null if not found
+     */
     public <T> CompletableFuture<T> getCachedObject(ObjectCache<?,T> cache, Object key) {
         if (pool != null && !cache.isUseLocalCache()) {
             return CompletableFuture.supplyAsync(() -> {
@@ -118,6 +161,13 @@ public class CacheManager implements Manager {
         return CompletableFuture.completedFuture((T) caches.get(cache.getPlugin().getName() + ":" + cache.getName()).getIfPresent(key));
     }
 
+    /**
+     * Removes an object from the cache asynchronously
+     *
+     * @param cache The cache configuration to use
+     * @param key   The key to remove
+     * @return A CompletableFuture that completes when the operation is done
+     */
     public CompletableFuture<Void> removeCachedObject(ObjectCache<?,?> cache, Object key) {
         if (pool != null && !cache.isUseLocalCache()) {
             return CompletableFuture.runAsync(() -> {
@@ -132,6 +182,12 @@ public class CacheManager implements Manager {
         return CompletableFuture.completedFuture(null);
     }
 
+    /**
+     * Clears all entries from a specific cache asynchronously
+     *
+     * @param cache The cache configuration to clear
+     * @return A CompletableFuture that completes when the operation is done
+     */
     public CompletableFuture<Void> clearCache(ObjectCache<?,?> cache) {
         if (pool != null && !cache.isUseLocalCache()) {
             return CompletableFuture.runAsync(() -> {
@@ -145,6 +201,13 @@ public class CacheManager implements Manager {
         return CompletableFuture.completedFuture(null);
     }
 
+    /**
+     * Checks if a key exists in the cache asynchronously
+     *
+     * @param cache The cache configuration to check
+     * @param key   The key to look for
+     * @return A CompletableFuture containing true if the key exists, false otherwise
+     */
     public CompletableFuture<Boolean> containsKey(ObjectCache<?,?> cache, Object key) {
         if (pool != null && !cache.isUseLocalCache()) {
             return CompletableFuture.supplyAsync(() -> {
@@ -160,6 +223,14 @@ public class CacheManager implements Manager {
         return CompletableFuture.completedFuture(caches.get(cache.getPlugin().getName() + ":" + cache.getName()).getIfPresent(key) != null);
     }
 
+    /**
+     * Retrieves all entries from a cache as a Map asynchronously
+     *
+     * @param cache The cache configuration to get entries from
+     * @param <K>   The key type
+     * @param <V>   The value type
+     * @return A CompletableFuture containing a Map of all cache entries
+     */
     public <K,V> CompletableFuture<Map<K, V>> getMap(ObjectCache<K,V> cache) {
         if (pool != null && !cache.isUseLocalCache()) {
             return CompletableFuture.supplyAsync(() -> {

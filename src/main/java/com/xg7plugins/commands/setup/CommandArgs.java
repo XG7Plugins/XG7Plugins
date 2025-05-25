@@ -10,16 +10,38 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
+/**
+ * Utility class for handling and parsing command arguments.
+ * Provides type-safe access to command arguments with automatic conversion.
+ */
 @Getter
 @AllArgsConstructor
 public class CommandArgs {
 
     private final String[] args;
 
+    /**
+     * Gets the length of the arguments array.
+     *
+     * @return The number of arguments
+     */
     public int len() {
         return args.length;
     }
 
+    /**
+     * Retrieves and converts an argument at the specified index to the requested type.
+     * Supports conversion to various types including:
+     * - Bukkit types (OfflinePlayer, World)
+     * - Plugin instances
+     * - Primitive types and their wrappers
+     *
+     * @param index The position of the argument to retrieve
+     * @param type  The class type to convert the argument to
+     * @param <T>   The generic type parameter
+     * @return The converted argument value, or null if conversion is not supported
+     * @throws IllegalArgumentException if the index is out of bounds
+     */
     @SneakyThrows
     public <T> T get(int index, Class<T> type) {
 
@@ -44,6 +66,11 @@ public class CommandArgs {
         return null;
     }
 
+    /**
+     * Converts all arguments to a single space-separated string.
+     *
+     * @return A string containing all arguments joined with spaces
+     */
     @Override
     public String toString() {
         return String.join(" ", args);

@@ -12,6 +12,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+/**
+ * Represents a plugin dependency that can be downloaded and installed.
+ * This class handles the management of external plugin dependencies,
+ * including downloading and installation in the plugins' folder.
+ */
 @Data
 @Getter
 @RequiredArgsConstructor
@@ -21,10 +26,24 @@ public class Dependency {
     private final String downloadLink;
 
 
+    /**
+     * Creates a new Dependency instance.
+     *
+     * @param name         The name of the dependency
+     * @param downloadLink The URL from where the dependency can be downloaded
+     * @return A new Dependency instance
+     */
     public static Dependency of(String name, String downloadLink) {
         return new Dependency(name,downloadLink);
     }
 
+    /**
+     * Downloads and installs the dependency into the plugins' folder.
+     * If the dependency is already installed, it will skip the download.
+     * Downloads the jar file using HTTP GET request and saves it to the plugins directory.
+     *
+     * @throws RuntimeException if there's an error during download or installation
+     */
     public void downloadDependency() {
         Debug debug = Debug.of(XG7Plugins.getInstance());
         try {

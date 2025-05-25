@@ -16,8 +16,19 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Utility class for creating database tables based on Entity classes.
+ * Handles SQL type mapping and table creation with support for primary keys,
+ * foreign keys, and nested entities.
+ */
 public class TableCreator {
 
+    /**
+     * Maps Java class types to their corresponding SQL data types.
+     *
+     * @param clazz The Java class to map to SQL type
+     * @return The corresponding SQL data type as a string, or null if no mapping exists
+     */
     public static String getSQLType(Class<?> clazz) {
         if (clazz == String.class) return "VARCHAR(255)";
         else if (clazz == int.class || clazz == Integer.class) return "INT(11)";
@@ -34,6 +45,15 @@ public class TableCreator {
         return null;
     }
 
+    /**
+     * Asynchronously creates a database table for the specified Entity class.
+     * Handles nested entities, primary keys, and foreign key relationships.
+     * Creates tables for child entities recursively.
+     *
+     * @param plugin The plugin instance requesting the table creation
+     * @param clazz  The Entity class to create a table for
+     * @return A CompletableFuture that completes when the table is created
+     */
     public CompletableFuture<Void> createTableOf(Plugin plugin, Class<? extends Entity> clazz) {
 
         DatabaseManager databaseManager = XG7PluginsAPI.database();

@@ -4,7 +4,6 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
-import com.xg7plugins.utils.ColorTranslator;
 import com.xg7plugins.utils.Pair;
 
 import com.xg7plugins.utils.text.sender.TextSender;
@@ -26,6 +25,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The Text class handles text processing and manipulation for messages in the plugin.
+ * It provides functionality for:
+ * - Text formatting and color translation
+ * - Placeholder replacement
+ * - Language system integration
+ * - Different types of text sending (action bar, chat, etc)
+ */
 @Getter
 public class Text {
 
@@ -40,6 +47,12 @@ public class Text {
     @Setter
     private String text;
 
+    /**
+     * Creates a new Text instance from a string.
+     * Extracts the text sender and translates color codes.
+     *
+     * @param text The raw text to process
+     */
     public Text(String text) {
         Pair<TextSender, String> extracted = TextSenderDeserializer.extractSender(text);
 
@@ -50,6 +63,14 @@ public class Text {
         this(miniMessage.serialize(component));
     }
 
+    /**
+     * Processes the text specifically for a player, including:
+     * - Condition processing
+     * - PlaceholderAPI placeholders if available
+     *
+     * @param player The player to process text for
+     * @return This Text instance for chaining
+     */
     public Text textFor(Player player) {
 
         this.text = Condition.processCondition(this.text, player);
@@ -59,11 +80,24 @@ public class Text {
         return this;
     }
 
+    /**
+     * Sets the text sender for this text instance
+     *
+     * @param sender The TextSender to use
+     * @return This Text instance for chaining
+     */
     public Text setSender(TextSender sender) {
         this.textSender = sender;
         return this;
     }
 
+    /**
+     * Replaces a single placeholder in the text
+     *
+     * @param placeholder The placeholder to replace (without % symbols)
+     * @param replacement The replacement text
+     * @return This Text instance for chaining
+     */
     public Text replace(String placeholder, String replacement) {
         this.text = this.text.replace("%" + placeholder + "%", replacement);
         return this;
@@ -93,6 +127,12 @@ public class Text {
         send(this, sender);
     }
 
+    /**
+     * Sends the text to a command sender using the text's TextSender
+     *
+     * @param text   The text to send
+     * @param sender The recipient of the message
+     */
     public static void send(Text text, CommandSender sender) {
         text.getTextSender().send(sender, text);
     }
@@ -105,6 +145,15 @@ public class Text {
         return miniMessage.deserialize(ColorTranslator.translateLegacyToMini(this.text));
     }
 
+    /**
+     * Detects and processes language placeholders in the text
+     *
+     * @param sender        The command sender
+     * @param plugin        The plugin instance
+     * @param rawText       The text to process
+     * @param textForSender Whether to process the text specifically for the sender
+     * @return CompletableFuture containing the processed Text
+     */
     public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText, boolean textForSender) {
 
         return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
@@ -171,6 +220,12 @@ public class Text {
         return detectLangs(sender, plugin, rawText).thenAccept(text -> text.replaceAll(replacements).send(sender));
     }
 
+    /**
+     * Creates a new Text instance with formatted text
+     *
+     * @param text The text to format
+     * @return A new Text instance
+     */
     public static Text format(String text) {
         return new Text(text);
     }

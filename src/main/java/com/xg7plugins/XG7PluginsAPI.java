@@ -30,288 +30,289 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
- * Classe utilitária de API que fornece acesso centralizado a todos os componentes e funcionalidades
- * do framework XG7Plugins.
- *
- * Esta classe contém métodos estáticos que permitem acessar gerenciadores, informações do servidor,
- * dados de jogadores, e outras funcionalidades do ecossistema XG7Plugins sem a necessidade de
- * instanciar objetos ou gerenciar dependências manualmente.
+ * API utility class that provides centralized access to all components and functionalities
+ * of the XG7Plugins framework.
+ * <p>
+ * This class contains static methods that allow accessing managers, server information,
+ * player data, and other functionalities of the XG7Plugins ecosystem without the need to
+ * instantiate objects or manually manage dependencies.
  *
  * @author DaviXG7
  */
 public class XG7PluginsAPI {
 
     /**
-     * Obtém a instância de um plugin XG7 específico pelo seu tipo de classe.
+     * Gets an instance of a specific XG7 plugin by its class type.
      *
-     * @param <T> O tipo do plugin a ser retornado
-     * @param pluginClass A classe do plugin desejado
-     * @return A instância do plugin requisitado, ou null se não for encontrado
+     * @param <T>         The type of plugin to return
+     * @param pluginClass The class of the desired plugin
+     * @return The requested plugin instance, or null if not found
      */
     public static <T extends Plugin> T getXG7Plugin(Class<T> pluginClass) {
         return (T) XG7Plugins.getInstance().getPlugins().values().stream().filter(plugin -> pluginClass == plugin.getClass()).findFirst().orElse(null);
     }
 
     /**
-     * Obtém a instância de um plugin XG7 pelo seu nome.
+     * Gets an instance of an XG7 plugin by its name.
      *
-     * @param <T> O tipo do plugin a ser retornado
-     * @param name O nome do plugin
-     * @return A instância do plugin requisitado, ou null se não for encontrado
+     * @param <T>  The type of plugin to return
+     * @param name The name of the plugin
+     * @return The requested plugin instance, or null if not found
      */
     public static <T extends Plugin> T getXG7Plugins(String name) {
         return (T) XG7Plugins.getInstance().getPlugins().get(name);
     }
 
     /**
-     * Obtém um conjunto contendo todas as instâncias de plugins XG7 registrados.
+     * Gets a set containing all registered XG7 plugin instances.
      *
-     * @return Um conjunto de todas as instâncias de plugins XG7
+     * @return A set of all XG7 plugin instances
      */
     public static Set<Plugin> getAllXG7Plugins() {
         return new HashSet<>(XG7Plugins.getInstance().getPlugins().values());
     }
 
     /**
-     * Obtém um conjunto contendo os nomes de todos os plugins XG7 registrados.
+     * Gets a set containing the names of all registered XG7 plugins.
      *
-     * @return Um conjunto com os nomes de todos os plugins XG7
+     * @return A set with all XG7 plugin names
      */
     public static Set<String> getAllXG7PluginsName() {
         return XG7Plugins.getInstance().getPlugins().values().stream().map(Plugin::getName).collect(Collectors.toSet());
     }
 
     /**
-     * Obtém o gerenciador de tarefas que controla as tarefas agendadas.
+     * Gets the task manager that controls scheduled tasks.
      *
-     * @return A instância global do TaskManager
+     * @return The global TaskManager instance
      */
     public static TaskManager taskManager() {
         return ManagerRegistry.get(XG7Plugins.getInstance(), TaskManager.class);
     }
 
     /**
-     * Obtém o gerenciador de banco de dados que lida com conexões e operações de persistência.
+     * Gets the database manager that handles connections and persistence operations.
      *
-     * @return A instância global do DatabaseManager
+     * @return The global DatabaseManager instance
      */
     public static DatabaseManager database() {
         return ManagerRegistry.get(XG7Plugins.getInstance(), DatabaseManager.class);
     }
 
     /**
-     * Obtém o gerenciador de cache que manipula dados em memória.
+     * Gets the cache manager that handles in-memory data.
      *
-     * @return A instância global do CacheManager
+     * @return The global CacheManager instance
      */
     public static CacheManager cacheManager() {
         return ManagerRegistry.get(XG7Plugins.getInstance(), CacheManager.class);
     }
 
     /**
-     * Obtém o gerenciador de eventos Bukkit do sistema.
+     * Gets the system's Bukkit event manager.
      *
-     * @return A instância global do EventManager
+     * @return The global EventManager instance
      */
     public static EventManager eventManager() {
         return ManagerRegistry.get(XG7Plugins.getInstance(), EventManager.class);
     }
 
     /**
-     * Obtém o gerenciador de eventos de pacotes de rede.
+     * Gets the network packet events manager.
      *
-     * @return A instância global do PacketEventManager
+     * @return The global PacketEventManager instance
      */
     public static PacketEventManager packetEventManager() {
         return ManagerRegistry.get(XG7Plugins.getInstance(), PacketEventManager.class);
     }
 
     /**
-     * Obtém o gerenciador de cooldowns para controle de tempo entre ações.
+     * Gets the cooldown manager for controlling time between actions.
      *
-     * @return A instância global do CooldownManager
+     * @return The global CooldownManager instance
      */
     public static CooldownManager cooldowns() {
         return ManagerRegistry.get(XG7Plugins.getInstance(), CooldownManager.class);
     }
 
     /**
-     * Obtém o gerenciador de idiomas do sistema.
+     * Gets the system's language manager.
      *
-     * @return A instância global do LangManager
+     * @return The global LangManager instance
      */
     public static LangManager langManager() {
         return ManagerRegistry.get(XG7Plugins.getInstance(), LangManager.class);
     }
 
     /**
-     * Obtém o gerenciador de módulos do sistema.
+     * Gets the system's module manager.
      *
-     * @return A instância global do ModuleManager
+     * @return The global ModuleManager instance
      */
     public static ModuleManager moduleManager() {
         return ManagerRegistry.get(XG7Plugins.getInstance(), ModuleManager.class);
     }
 
     /**
-     * Obtém o gerenciador de configurações para um plugin específico.
+     * Gets the configuration manager for a specific plugin.
      *
-     * @param plugin O plugin para o qual obter o gerenciador de configurações
-     * @return O ConfigManager associado ao plugin especificado
+     * @param plugin The plugin to get the configuration manager for
+     * @return The ConfigManager associated with the specified plugin
      */
     public static ConfigManager configManager(Plugin plugin) {
         return ManagerRegistry.get(plugin, ConfigManager.class);
     }
 
     /**
-     * Obtém o gerenciador de comandos para um plugin específico.
+     * Gets the command manager for a specific plugin.
      *
-     * @param plugin O plugin para o qual obter o gerenciador de comandos
-     * @return O CommandManager associado ao plugin especificado
+     * @param plugin The plugin to get the command manager for
+     * @return The CommandManager associated with the specified plugin
      */
     public static CommandManager commandManager(Plugin plugin) {
         return ManagerRegistry.get(plugin, CommandManager.class);
     }
 
     /**
-     * Obtém o gerenciador de JSON do sistema.
+     * Gets the system's JSON manager.
      *
-     * @return A instância global do JsonManager
+     * @return The global JsonManager instance
      */
     public static JsonManager jsonManager() {
         return ManagerRegistry.get(XG7Plugins.getInstance(), JsonManager.class);
     }
 
     /**
-     * Obtém o gerenciador de dependências que controla plugins externos.
+     * Gets the dependency manager that controls external plugins.
      *
-     * @return A instância global do DependencyManager
+     * @return The global DependencyManager instance
      */
     public static DependencyManager dependencyManager() {
         return ManagerRegistry.get(XG7Plugins.getInstance(), DependencyManager.class);
     }
 
     /**
-     * Obtém o processador de banco de dados para operações de baixo nível com o banco.
+     * Gets the database processor for low-level database operations.
      *
-     * @return A instância do DatabaseProcessor
+     * @return The DatabaseProcessor instance
      */
     public static DatabaseProcessor dbProcessor() {
         return database().getProcessor();
     }
 
     /**
-     * Verifica se uma dependência específica está carregada e habilitada.
+     * Checks if a specific dependency is loaded and enabled.
      *
-     * @param name O nome da dependência a verificar
-     * @return true se a dependência estiver habilitada, false caso contrário
+     * @param name The name of the dependency to check
+     * @return true if the dependency is enabled, false otherwise
      */
     public static boolean isDependencyEnabled(String name) {
         return dependencyManager().isLoaded(name);
     }
 
     /**
-     * Verifica se o suporte a formulários Geyser está habilitado.
-     * Exige que o plugin Floodgate esteja carregado e a opção habilitada na configuração.
+     * Checks if Geyser forms support is enabled.
+     * Requires the Floodgate plugin to be loaded and the option enabled in config.
      *
-     * @return true se o suporte a formulários Geyser estiver habilitado, false caso contrário
+     * @return true if Geyser forms support is enabled, false otherwise
      */
     public static boolean isGeyserFormsEnabled() {
-        return isDependencyEnabled("floodgate") && Config.mainConfigOf(XG7Plugins.getInstance()).get("enable-geyser-forms",Boolean.class).orElse(false);
+        return isDependencyEnabled("floodgate") && Config.mainConfigOf(XG7Plugins.getInstance()).get("enable-geyser-forms", Boolean.class).orElse(false);
     }
 
     /**
-     * Verifica se um mundo específico está habilitado para um plugin.
+     * Checks if a specific world is enabled for a plugin.
      *
-     * @param plugin O plugin a verificar
-     * @param world O nome do mundo a verificar
-     * @return true se o mundo estiver habilitado para o plugin, false caso contrário
+     * @param plugin The plugin to check
+     * @param world  The name of the world to check
+     * @return true if the world is enabled for the plugin, false otherwise
      */
     public static boolean isWorldEnabled(Plugin plugin, String world) {
         return plugin.getEnvironmentConfig().getEnabledWorlds().contains(world);
     }
 
     /**
-     * Verifica se um mundo específico está habilitado para um plugin.
+     * Checks if a specific world is enabled for a plugin.
      *
-     * @param plugin O plugin a verificar
-     * @param world O objeto World a verificar
-     * @return true se o mundo estiver habilitado para o plugin, false caso contrário
+     * @param plugin The plugin to check
+     * @param world  The World object to check
+     * @return true if the world is enabled for the plugin, false otherwise
      */
     public static boolean isWorldEnabled(Plugin plugin, World world) {
         return isWorldEnabled(plugin, world.getName());
     }
+
     /**
-     * Verifica se o mundo em que o jogador está atualmente está habilitado para um plugin.
+     * Checks if the world the player is currently in is enabled for a plugin.
      *
-     * @param plugin O plugin a verificar
-     * @param player O jogador cujo mundo será verificado
-     * @return true se o mundo do jogador estiver habilitado para o plugin, false caso contrário
+     * @param plugin The plugin to check
+     * @param player The player whose world will be checked
+     * @return true if the player's world is enabled for the plugin, false otherwise
      */
     public static boolean isInWorldEnabled(Plugin plugin, Player player) {
         return isWorldEnabled(plugin, player.getWorld());
     }
 
     /**
-     * Solicita os dados de um jogador pelo seu UUID de forma assíncrona.
+     * Requests player data by UUID asynchronously.
      *
-     * @param uuid O UUID do jogador
-     * @return Um CompletableFuture que conterá os dados do jogador quando estiver disponível
+     * @param uuid The player's UUID
+     * @return A CompletableFuture that will contain the player data when available
      */
     public static CompletableFuture<PlayerData> requestPlayerData(UUID uuid) {
         return XG7Plugins.getInstance().getPlayerDataDAO().get(uuid);
     }
 
     /**
-     * Solicita os dados de um jogador a partir da instância do jogador de forma assíncrona.
+     * Requests player data from the player instance asynchronously.
      *
-     * @param player O jogador para o qual obter os dados
-     * @return Um CompletableFuture que conterá os dados do jogador quando estiver disponível
+     * @param player The player to get data for
+     * @return A CompletableFuture that will contain the player data when available
      */
     public static CompletableFuture<PlayerData> requestPlayerData(Player player) {
         return requestPlayerData(player.getUniqueId());
     }
 
     /**
-     * Obtém um conjunto com os nomes de todos os jogadores online.
+     * Gets a set with the names of all online players.
      *
-     * @return Um conjunto contendo os nomes de todos os jogadores online
+     * @return A set containing the names of all online players
      */
     public static Set<String> getAllPlayerNames() {
         return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toSet());
     }
 
     /**
-     * Obtém um conjunto com os UUIDs de todos os jogadores online.
+     * Gets a set with the UUIDs of all online players.
      *
-     * @return Um conjunto contendo os UUIDs de todos os jogadores online
+     * @return A set containing the UUIDs of all online players
      */
     public static Set<UUID> getAllPlayerUUIDs() {
         return Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toSet());
     }
 
     /**
-     * Obtém um conjunto com as instâncias de todos os jogadores online.
+     * Gets a set with instances of all online players.
      *
-     * @return Um conjunto contendo as instâncias de todos os jogadores online
+     * @return A set containing instances of all online players
      */
     public static Set<Player> getAllPlayers() {
         return new HashSet<>(Bukkit.getOnlinePlayers());
     }
 
     /**
-     * Obtém o tipo de software do servidor (Bukkit, Spigot, Paper, etc).
+     * Gets the server software type (Bukkit, Spigot, Paper, etc).
      *
-     * @return O enum ServerInfo.Software representando o tipo de servidor
+     * @return The ServerInfo.Software enum representing the server type
      */
     public static ServerInfo.Software getServerSoftware() {
         return XG7Plugins.getInstance().getServerInfo().getSoftware();
     }
 
     /**
-     * Obtém as informações completas do servidor.
+     * Gets complete server information.
      *
-     * @return A instância de ServerInfo contendo informações sobre o servidor
+     * @return The ServerInfo instance containing information about the server
      */
     public static ServerInfo getServerInfo() {
         return XG7Plugins.getInstance().getServerInfo();

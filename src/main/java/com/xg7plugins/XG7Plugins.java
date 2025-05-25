@@ -85,9 +85,6 @@ public final class XG7Plugins extends Plugin {
 
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
-    /*
-        Carrega o plugin
-     */
     @Override
     public void onLoad() {
         PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
@@ -98,10 +95,6 @@ public final class XG7Plugins extends Plugin {
         super.onLoad();
     }
 
-    /*
-        Habilita o plugin
-
-     */
     @Override
     public void onEnable() {
         super.onEnable();
@@ -160,9 +153,6 @@ public final class XG7Plugins extends Plugin {
 
     }
 
-    /*
-        Desabilita o plugin
-     */
     @Override
     public void onDisable() {
         super.onDisable();
@@ -196,12 +186,6 @@ public final class XG7Plugins extends Plugin {
         Text.getAudience().close();
     }
 
-    /**
-        Recarrega o plugin
-
-        @param cause causa do reload
-
-     */
     @Override
     public void onReload(ReloadCause cause) {
         super.onReload(cause);
@@ -227,7 +211,6 @@ public final class XG7Plugins extends Plugin {
         return Collections.singletonList(Dependency.of("PlaceholderAPI", "https://ci.extendedclip.com/job/PlaceholderAPI/197/artifact/build/libs/PlaceholderAPI-2.11.6.jar"));
     }
 
-    // Carregar ajuda
     @Override
     public void loadHelp() {
 

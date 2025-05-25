@@ -1,11 +1,11 @@
-package com.xg7plugins.utils;
+package com.xg7plugins.utils.text;
 
 import java.util.*;
 import java.util.regex.*;
 
 /**
- * Tradutor completo de códigos de cor Legacy (&) para MiniMessage
- * Suporta códigos básicos, hexadecimais e combinações complexas
+ * Complete translator for Legacy color codes (&) to MiniMessage
+ * Supports basic codes, hexadecimal and complex combinations
  */
 public class ColorTranslator {
 
@@ -13,7 +13,6 @@ public class ColorTranslator {
 
     static {
 
-        // Cores básicas
         LEGACY_COLORS.put('0', "<black>");
         LEGACY_COLORS.put('1', "<dark_blue>");
         LEGACY_COLORS.put('2', "<dark_green>");
@@ -43,9 +42,6 @@ public class ColorTranslator {
     private static final List<String> FORMATTING_TAGS = Arrays.asList("<bold>", "<italic>", "<underlined>",
             "<strikethrough>", "<obfuscated>");
 
-    /**
-     * Converte texto com códigos legacy para MiniMessage
-     */
     public static String translateLegacyToMini(String text) {
         if (text == null || text.isEmpty()) {
             return text;
@@ -101,9 +97,6 @@ public class ColorTranslator {
         return result.toString();
     }
 
-    /**
-     * Converte MiniMessage de volta para Legacy (útil para compatibilidade)
-     */
     public static String translateMiniToLegacy(String text) {
         if (text == null || text.isEmpty()) {
             return text;

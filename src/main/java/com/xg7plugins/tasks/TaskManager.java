@@ -11,6 +11,11 @@ import org.bukkit.Bukkit;
 import java.util.*;
 import java.util.concurrent.*;
 
+/**
+ * Manages and executes both synchronous and asynchronous tasks for plugins.
+ * Provides functionality for scheduling, running, canceling and managing tasks
+ * with support for different executor services.
+ */
 @Getter
 public class TaskManager implements Manager {
 
@@ -19,6 +24,11 @@ public class TaskManager implements Manager {
     private final ScheduledExecutorService repeatingAsyncTasksExecutor;
     private final Map<String, ExecutorService> asyncExecutors = new HashMap<>();
 
+    /**
+     * Initializes the TaskManager with necessary thread pools and executors.
+     *
+     * @param plugin The main plugin instance
+     */
     public TaskManager(XG7Plugins plugin) {
         Config config = Config.mainConfigOf(plugin);
         repeatingAsyncTasksExecutor = Executors.newScheduledThreadPool(config.get("repeating-tasks-threads", Integer.class).orElse(1));
@@ -30,6 +40,12 @@ public class TaskManager implements Manager {
         registerExecutor("cache", Executors.newSingleThreadExecutor());
     }
 
+    /**
+     * Registers a new executor service with a specified name.
+     *
+     * @param name     The name to identify the executor
+     * @param executor The ExecutorService instance to register
+     */
     public void registerExecutor(String name, ExecutorService executor) {
         asyncExecutors.put(name, executor);
     }
@@ -38,6 +54,11 @@ public class TaskManager implements Manager {
         asyncExecutors.remove(name);
     }
 
+    /**
+     * Registers multiple tasks at once using varargs.
+     *
+     * @param tasks Array of tasks to register
+     */
     public void registerTasks(Task... tasks) {
         registerTasks(Arrays.asList(tasks));
     }
@@ -64,6 +85,11 @@ public class TaskManager implements Manager {
     }
 
 
+    /**
+     * Executes a task based on its configuration (async/sync, repeating/one-time).
+     *
+     * @param task The task to execute
+     */
     public void runTask(Task task) {
         if (task == null) return;
 
@@ -133,6 +159,11 @@ public class TaskManager implements Manager {
         cancelTask(task);
     }
 
+    /**
+     * Cancels a running task and updates its state.
+     *
+     * @param task The task to cancel
+     */
     public void cancelTask(Task task) {
         if (task.getState().equals(TaskState.RUNNING)) {
             if (task.isAsync()) {
@@ -146,6 +177,11 @@ public class TaskManager implements Manager {
         task.setState(TaskState.IDLE);
     }
 
+    /**
+     * Completely removes a task from the manager after canceling it.
+     *
+     * @param task The task to delete
+     */
     public void deleteTask(Task task) {
         cancelTask(task);
         tasks.remove(task.getPlugin().getName() + ":" + task.getName());
@@ -162,6 +198,11 @@ public class TaskManager implements Manager {
 
         deleteTask(task);
     }
+
+    /**
+     * Shuts down all executor services and clears task collections.
+     * Should be called when the plugin is being disabled.
+     */
     public void shutdown() {
         repeatingAsyncTasksExecutor.shutdown();
         asyncExecutors.values().forEach(ExecutorService::shutdown);
@@ -176,10 +217,22 @@ public class TaskManager implements Manager {
         return asyncExecutors.get(name);
     }
 
+    /**
+     * Retrieves a task by its identifier.
+     *
+     * @param id The task identifier
+     * @return The task if found, null otherwise
+     */
     public Task getTask(String id) {
         return tasks.get(id);
     }
 
+    /**
+     * Checks if a task with the given ID exists.
+     *
+     * @param id The task identifier to check
+     * @return true if the task exists, false otherwise
+     */
     public boolean containsTask(String id) {
         return tasks.containsKey(id);
     }

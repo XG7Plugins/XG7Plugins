@@ -2,6 +2,10 @@ package com.xg7plugins.utils;
 
 import java.util.function.Function;
 
+/**
+ * An enum that provides parsing functionality for converting strings into various data types.
+ * Each enum constant represents a specific type conversion operation.
+ */
 public enum Parser {
     INTEGER(Integer::parseInt),
     STRING(s -> s),
@@ -19,6 +23,13 @@ public enum Parser {
         this.converter = converter;
     }
 
+    /**
+     * Converts a string value to the target type using the associated converter function.
+     *
+     * @param <T>   The target type to convert to
+     * @param value The string value to convert
+     * @return The converted value of type T
+     */
     public <T> T convert(String value) {
         return (T) converter.apply(value);
     }

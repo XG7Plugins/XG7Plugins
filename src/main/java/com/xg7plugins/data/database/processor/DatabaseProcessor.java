@@ -24,6 +24,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Processes database operations asynchronously using queues and thread pools.
+ * <p>
+ * This class manages the execution of database queries and transactions,
+ * handling them in separate queues and processing them asynchronously.
+ * It provides methods to queue operations and checks their execution status.
+ * </p>
+ */
 public class DatabaseProcessor {
 
     private final DatabaseManager databaseManager;
@@ -35,6 +43,15 @@ public class DatabaseProcessor {
     private final Queue<Transaction> transactionQueue = new LinkedList<>();
     private final Queue<Query> queryQueue = new LinkedList<>();
 
+    /**
+     * Creates a new database processor with the specified manager.
+     * <p>
+     * Initializes the executor service based on configuration settings
+     * and starts the periodic processing of queries and transactions.
+     * </p>
+     *
+     * @param databaseManager The database manager to use for connections
+     */
     public DatabaseProcessor(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
 
@@ -44,15 +61,33 @@ public class DatabaseProcessor {
         process(config.getTime("sql.sql-command-processing-interval").orElse(20L));
     }
 
-
+    /**
+     * Adds a transaction to the processing queue.
+     *
+     * @param transaction The transaction to queue for processing
+     */
     public void queueTransaction(Transaction transaction) {
         transactionQueue.add(transaction);
     }
 
+    /**
+     * Adds a query to the processing queue.
+     *
+     * @param query The query to queue for processing
+     */
     public void queueQuery(Query query) {
         queryQueue.add(query);
     }
 
+    /**
+     * Schedules periodic processing of transactions and queries.
+     * <p>
+     * Sets up recurring tasks to process the transaction and query queues
+     * at the specified interval.
+     * </p>
+     *
+     * @param delay The time interval between processing runs in milliseconds
+     */
     public void process(long delay) {
         executorService.scheduleWithFixedDelay(() -> {
             try {
@@ -70,6 +105,15 @@ public class DatabaseProcessor {
         }, 0, delay, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Processes the next transaction in the queue if available.
+     * <p>
+     * Executes all SQL commands in the transaction as a single atomic unit,
+     * committing if successful and rolling back if an error occurs.
+     * </p>
+     *
+     * @throws Exception If an error occurs during transaction processing
+     */
     private void processTransaction() throws Exception {
         if (transactionQueue.isEmpty()) return;
 
@@ -82,7 +126,6 @@ public class DatabaseProcessor {
         String currentQuery = "";
 
         try {
-
             for (Pair<String, List<Object>> query : transaction.getQueries()) {
                 currentQuery = query.getFirst();
 
@@ -96,14 +139,12 @@ public class DatabaseProcessor {
                 }
 
                 ps.executeUpdate();
-
                 ps.close();
             }
 
             connection.commit();
 
             if (transaction.getSuccess() != null) transaction.getSuccess().run();
-
             transaction.completeTask();
 
         } catch (SQLException e) {
@@ -121,10 +162,19 @@ public class DatabaseProcessor {
             }
 
             transaction.completeTask();
-
             throw new RuntimeException(e);
         }
     }
+    
+    /**
+     * Processes the next query in the queue if available.
+     * <p>
+     * Executes the SQL query, collects the results, and provides them to the
+     * callback registered with the query.
+     * </p>
+     *
+     * @throws Exception If an error occurs during query processing
+     */
     private void processQuery() throws Exception {
         if (databaseManager == null) {
             System.err.println("databaseManager is null!");
@@ -167,10 +217,9 @@ public class DatabaseProcessor {
                 }
 
                 Debug.of(XG7Plugins.getInstance()).info("Query executed successfully: " + query.getQuery());
-
                 Debug.of(XG7Plugins.getInstance()).info("Results: " + results);
-
                 Debug.of(XG7Plugins.getInstance()).info("Making QueryResult");
+                
                 QueryResult result = new QueryResult(query.getPlugin(), results.iterator());
                 if (query.getResult() != null) query.getResult().accept(result);
 
@@ -183,9 +232,17 @@ public class DatabaseProcessor {
             query.completeTask(new QueryResult(query.getPlugin(), null));
             throw new RuntimeException(e);
         }
-
     }
 
+    /**
+     * Gracefully shuts down the processor, completing remaining operations.
+     * <p>
+     * Attempts to process all queued operations before shutting down the
+     * executor service.
+     * </p>
+     *
+     * @throws Exception If an error occurs during shutdown
+     */
     public void shutdown() throws Exception {
         executorService.shutdown();
 
@@ -197,9 +254,20 @@ public class DatabaseProcessor {
         }
 
         executorService.shutdownNow();
-
     }
 
+    /**
+     * Checks if an entity with the given ID exists in the database.
+     * <p>
+     * First checks the entity cache, then performs a database lookup if necessary.
+     * </p>
+     *
+     * @param plugin The plugin requesting the check
+     * @param table The entity class to check
+     * @param idCol The name of the ID column
+     * @param id The ID value to look for
+     * @return A CompletableFuture that resolves to true if the entity exists
+     */
     public CompletableFuture<Boolean> exists(Plugin plugin, Class<? extends Entity> table, String idCol, Object id) {
         return CompletableFuture.supplyAsync(() -> {
             if (databaseManager.containsCachedEntity(plugin, id.toString()).join()) return true;
@@ -226,5 +294,4 @@ public class DatabaseProcessor {
             }
         }, executorService);
     }
-
 }

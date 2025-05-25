@@ -1,6 +1,5 @@
 package com.xg7plugins.server;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -8,6 +7,10 @@ import org.bukkit.Bukkit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Utility class to detect and compare Minecraft server versions.
+ * Provides methods to check version compatibility and server package information.
+ */
 public class MinecraftVersion {
     @Getter
     private static final int version;
@@ -15,34 +18,65 @@ public class MinecraftVersion {
     private static final String packageName;
 
     static {
+        // Extract version number from server version string (e.g. "1.16" -> 16)
         Pattern pattern = Pattern.compile("1\\.([0-9]?[0-9])");
         Matcher matcher = pattern.matcher(Bukkit.getServer().getVersion());
         version = matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
 
+        // Extract NMS package version name from server package
         String version = org.bukkit.Bukkit.getServer().getClass().getPackage().getName();
         // Does't work on 1.17+ on paper
         packageName = version.substring(version.lastIndexOf('.') + 1);
     }
 
+    /**
+     * Checks if server version is older than target version
+     */
     public static boolean isOlderThan(int targetVersion) {
         return version < targetVersion;
     }
+
+    /**
+     * Checks if server version is newer than target version
+     */
     public static boolean isNewerThan(int targetVersion) {
         return version > targetVersion;
     }
+
+    /**
+     * Checks if server version is older than or equal to target version
+     */
     public static boolean isOlderOrEqual(int targetVersion) {
         return version <= targetVersion;
     }
+
+    /**
+     * Checks if server version is newer than or equal to target version
+     */
     public static boolean isNewerOrEqual(int targetVersion) {
         return version >= targetVersion;
     }
+
+    /**
+     * Checks if server version exactly matches target version
+     */
     public static boolean is(int targetVersion) {
         return targetVersion == version;
     }
+
+    /**
+     * Checks if server version is between min and max versions (inclusive)
+     */
     public static boolean isBetween(int minVersion, int maxVersion) {
         return minVersion <= version && version <= maxVersion;
     }
 
+    /**
+     * Gets the NMS package version name
+     *
+     * @return NMS package version string
+     * @throws UnsupportedOperationException if running Paper 1.17+
+     */
     public static String getPackageName() {
         if (isNewerThan(16) && XG7PluginsAPI.getServerSoftware().isPaper()) throw new UnsupportedOperationException("This method is not supported on versions newer than 1.16 on paper");
         return packageName;

@@ -30,7 +30,6 @@ public class MainCommand implements Command {
 
     private final Plugin plugin;
 
-
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() > 1){
             plugin.getHelpMessenger().sendChat(sender, args.get(1, String.class));

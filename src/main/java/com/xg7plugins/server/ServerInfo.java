@@ -13,6 +13,11 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Represents server information and handles server-to-server communication.
+ * Contains details about the server name, address, port and software type.
+ * Provides functionality for player connection management and attribute storage.
+ */
 @Data
 public class ServerInfo {
 
@@ -23,6 +28,14 @@ public class ServerInfo {
     private transient Software software;
     private transient final HashMap<String, Object> atributes = new HashMap<>();
 
+    /**
+     * Creates a new ServerInfo instance with plugin configuration.
+     * Initializes server details including name, address and port.
+     *
+     * @param plugin The XG7Plugins instance
+     * @throws ExecutionException   If there is an error accessing configuration
+     * @throws InterruptedException If the initialization process is interrupted
+     */
     public ServerInfo(XG7Plugins plugin) throws ExecutionException, InterruptedException {
         this();
         this.name = Config.mainConfigOf(plugin).get("plugin-server-name", String.class).orElseThrow(() -> new RuntimeException("Server name not found"));
@@ -38,9 +51,23 @@ public class ServerInfo {
         if (bungeecord) XG7Plugins.getInstance().getServer().getMessenger().registerOutgoingPluginChannel(XG7Plugins.getInstance(), "BungeeCord");
     }
 
+    /**
+     * Connects a player to this server using BungeeCord messaging.
+     *
+     * @param player The player to connect
+     * @throws IOException If there is an error sending the plugin message
+     */
     public void connectPlayer(Player player) throws IOException {
         connectTo(name, player);
     }
+
+    /**
+     * Connects a player to the specified server using BungeeCord messaging.
+     *
+     * @param serverName The name of the target server
+     * @param player     The player to connect
+     * @throws IOException If there is an error sending the plugin message
+     */
     public void connectTo(String serverName, Player player) throws IOException {
         if (!bungeecord) return;
 
@@ -64,16 +91,42 @@ public class ServerInfo {
         return port == serverInfo.port && name.equals(serverInfo.name) && address.equals(serverInfo.address);
     }
 
+    /**
+     * Sets a custom attribute for this server.
+     *
+     * @param key   The attribute key
+     * @param value The attribute value
+     */
     public void setAttribute(String key, Object value) {
         atributes.put(key, value);
     }
-    public <T> Optional<T> getAtribute(String key, Class<T> type) {
+
+    /**
+     * Gets a custom attribute value with type checking.
+     *
+     * @param key  The attribute key
+     * @param type The expected attribute type
+     * @param <T>  The generic type parameter
+     * @return Optional containing the attribute value if present and of correct type
+     */
+    public <T> Optional<T> getAttribute(String key, Class<T> type) {
         return Optional.ofNullable(type.cast(atributes.get(key)));
     }
+
+    /**
+     * Checks if an attribute exists.
+     *
+     * @param key The attribute key to check
+     * @return true if the attribute exists, false otherwise
+     */
     public boolean hasAttribute(String key) {
         return atributes.containsKey(key);
     }
 
+    /**
+     * Represents different Minecraft server software types.
+     * Currently supports SPIGOT and PAPER_SPIGOT variants.
+     */
     public enum Software {
         SPIGOT,
         PAPER_SPIGOT;

@@ -40,6 +40,15 @@ public class HTTPRequest {
         return conn.getInputStream();
     }
 
+    /**
+     * Creates and configures an HTTP connection with specified parameters.
+     * Sets default headers including User-Agent, Accept, Language, and Cache settings.
+     * Configures timeout from plugin config and applies custom headers if provided.
+     * Handles request body if present and logs debug information about the request.
+     *
+     * @return Configured HttpURLConnection ready for execution
+     * @throws IOException if connection setup or request execution fails
+     */
     private HttpURLConnection request() throws IOException {
 
         Debug debug = Debug.of(XG7Plugins.getInstance());

@@ -11,14 +11,32 @@ import org.bukkit.plugin.Plugin;
 import java.io.File;
 import java.util.*;
 
+/**
+ * Manages plugin dependencies by handling their loading, checking, and downloading.
+ * This class is responsible for ensuring all required dependencies are available
+ * and properly loaded before plugin initialization.
+ */
 public class DependencyManager implements Manager {
 
     private final HashMap<String, Dependency> loadedDependencies = new HashMap<>();
 
+    /**
+     * Checks if a dependency is already loaded.
+     *
+     * @param name The name of the dependency to check
+     * @return true if the dependency is loaded, false otherwise
+     */
     public boolean isLoaded(String name) {
         return loadedDependencies.containsKey(name) || Bukkit.getPluginManager().isPluginEnabled(name);
     }
 
+    /**
+     * Checks and loads a dependency if it's not already loaded.
+     * Downloads the dependency if it's not found locally.
+     *
+     * @param dependency The dependency to check and load
+     * @return true if the dependency was loaded successfully, false otherwise
+     */
     private boolean checkDependency(Dependency dependency) {
 
         Debug debug = Debug.of(XG7Plugins.getInstance());
@@ -55,6 +73,18 @@ public class DependencyManager implements Manager {
         }
     }
 
+    /**
+     * Loads a plugin from a file and enables it.
+     *
+     * @param dependency The dependency to load
+     * @param debug      Debug instance for logging
+     * @param file       The plugin file to load
+     *
+     * @return true if the plugin was loaded successfully, false otherwise
+     *
+     * @throws InvalidPluginException      if the plugin is invalid
+     * @throws InvalidDescriptionException if the plugin description is invalid
+     */
     private boolean loadPl(Dependency dependency, Debug debug, File file) throws InvalidPluginException, InvalidDescriptionException {
         Plugin loaded = Bukkit.getPluginManager().loadPlugin(file);
 
@@ -68,6 +98,11 @@ public class DependencyManager implements Manager {
         return false;
     }
 
+    /**
+     * Loads all dependencies for a given plugin.
+     *
+     * @param plugin The plugin whose dependencies need to be loaded
+     */
     public void loadDependencies(com.xg7plugins.boot.Plugin plugin) {
 
         List<Dependency> dependencies = plugin.loadDependencies();
@@ -77,6 +112,14 @@ public class DependencyManager implements Manager {
 
         dependencies.forEach(this::checkDependency);
     }
+
+    /**
+     * Loads all required dependencies for a given plugin.
+     * Stops if any required dependency fails to load.
+     *
+     * @param plugin The plugin whose required dependencies need to be loaded
+     * @return true if all required dependencies were loaded successfully, false otherwise
+     */
     public boolean loadRequiredDependencies(com.xg7plugins.boot.Plugin plugin) {
         List<Dependency> dependencies = plugin.loadRequiredDependencies();
 

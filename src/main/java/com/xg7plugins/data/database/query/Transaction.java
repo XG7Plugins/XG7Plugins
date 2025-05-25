@@ -14,6 +14,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a database transaction that can handle multiple database operations (INSERT, UPDATE, DELETE)
+ * in a single atomic unit. This class provides methods to build and execute database queries,
+ * manage transaction states, and handle success/error callbacks.
+ */
 public class Transaction {
 
     @Getter
@@ -38,6 +43,10 @@ public class Transaction {
     private final List<Pair<String, List<Object>>> queries = new ArrayList<>();
     private String condition;
 
+    /**
+     * Creates a new Transaction instance.
+     * @param plugin The plugin instance associated with this transaction
+     */
     public Transaction(Plugin plugin) {
         this.plugin = plugin;
     }
@@ -46,6 +55,21 @@ public class Transaction {
         return new Transaction(plugin);
     }
 
+    /**
+     * Creates a transaction for a specified entity with the given operation type.
+     * Handles nested entities and their relationships automatically.
+     * 
+     * @param plugin The plugin instance
+     * @param entity The entity to create the transaction for
+     * @param type The type of operation (INSERT, UPDATE, DELETE)
+     *
+     * @return A configured Transaction instance
+     *
+     * @throws IllegalAccessException if unable to access entity fields
+     * @throws InvocationTargetException if method invocation fails
+     * @throws NoSuchMethodException if required method not found
+     * @throws InstantiationException if unable to create instance
+     */
     public static Transaction createTransaction(Plugin plugin, Entity entity, Type type)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
 
@@ -197,16 +221,39 @@ public class Transaction {
 
 
 
+    /**
+     * Creates an UPDATE transaction for the specified entity.
+     * @param plugin The plugin instance
+     * @param entity The entity to update
+     * @return Configured Transaction instance for UPDATE operation
+     */
     public static Transaction update(Plugin plugin, Entity entity) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         return createTransaction(plugin, entity, Type.UPDATE);
     }
+    
+    /**
+     * Creates an INSERT transaction for the specified entity.
+     * @param plugin The plugin instance
+     * @param entity The entity to insert
+     * @return Configured Transaction instance for INSERT operation
+     */
     public static Transaction insert(Plugin plugin, Entity entity) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         return createTransaction(plugin, entity, Type.INSERT);
     }
+    
+    /**
+     * Creates a DELETE transaction for the specified entity.
+     * @param plugin The plugin instance
+     * @param entity The entity to delete
+     * @return Configured Transaction instance for DELETE operation
+     */
     public static Transaction delete(Plugin plugin, Entity entity) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
         return createTransaction(plugin, entity, Type.DELETE);
     }
 
+    /**
+     * Adds a new command to the transaction and resets internal state
+     */
     public Transaction newCommand() {
         this.queries.add(new Pair<>(type.buildQuery(table, columns, condition), new ArrayList<>(params)));
         this.params.clear();
@@ -216,62 +263,122 @@ public class Transaction {
         return this;
     }
 
+    /**
+     * Adds multiple commands to the transaction
+     *
+     * @param commands Commands to add as Pair<String, List<Object>>
+     */
     public Transaction addCommands(Pair<String, List<Object>>... commands) {
         this.queries.addAll(Arrays.asList(commands));
         return this;
     }
 
+    /**
+     * Sets the table name for this transaction
+     *
+     * @param tableName Name of the database table
+     */
     public Transaction onTable(String tableName) {
         this.table = tableName;
         return this;
     }
+
+    /**
+     * Sets the operation type for this transaction
+     *
+     * @param type The Type enum value (INSERT, UPDATE, DELETE)
+     */
     public Transaction setType(Type type) {
         this.type = type;
         return this;
     }
+
+    /**
+     * Adds columns to include in the transaction
+     *
+     * @param columns Column names to add
+     */
     public Transaction addColumns(String... columns) {
         this.columns.addAll(Arrays.asList(columns));
         return this;
     }
 
+    /**
+     * Sets the WHERE condition for this transaction
+     *
+     * @param condition SQL WHERE clause condition
+     */
     public Transaction where(String condition) {
         this.condition = condition;
         return this;
     }
 
+    /**
+     * Adds parameters for the prepared statement
+     *
+     * @param params Query parameters
+     */
     public Transaction params(Object... params) {
         Collections.addAll(this.params, params);
         return this;
     }
 
+    /**
+     * Sets success callback
+     *
+     * @param success Runnable to execute on success
+     */
     public Transaction onSuccess(Runnable success) {
         this.success = success;
         return this;
     }
 
+    /**
+     * Sets error callback
+     *
+     * @param error Consumer to handle exceptions
+     */
     public Transaction onError(Consumer<Exception> error) {
         this.error = error;
         return this;
     }
 
+    /**
+     * Sets the transaction type to UPDATE
+     */
     public Transaction update() {
         this.type = Type.UPDATE;
         return this;
     }
+
+    /**
+     * Sets the transaction type to INSERT
+     */
     public Transaction insert() {
         this.type = Type.INSERT;
         return this;
     }
+
+    /**
+     * Sets the transaction type to DELETE
+     */
     public Transaction delete() {
         this.type = Type.DELETE;
         return this;
     }
 
+    /**
+     * Queues this transaction for execution
+     */
     public Transaction queue() {
         XG7PluginsAPI.database().getProcessor().queueTransaction(this);
         return this;
     }
 
+    /**
+     * Enum representing different types of database operations.
+     * Provides methods to build appropriate SQL queries based on the operation type.
+     */
     public enum Type {
         INSERT,
         UPDATE,
@@ -328,6 +435,12 @@ public class Transaction {
     }
 
 
+    /**
+     * Waits for the transaction to complete.
+     * Queues the transaction and blocks until it is finished.
+     *
+     * @throws RuntimeException if interrupted while waiting
+     */
     public void waitForResult() {
         try {
             queue();
@@ -339,6 +452,10 @@ public class Transaction {
         }
     }
 
+    /**
+     * Marks this transaction as complete.
+     * Releases any threads waiting on waitForResult().
+     */
     public void completeTask() {
         latch.countDown();
     }

@@ -14,6 +14,11 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Manages JSON data operations including saving, loading, and caching.
+ * Provides functionality for serializing/deserializing objects to/from JSON format
+ * with support for type adapters and caching mechanism.
+ */
 public class JsonManager implements Manager {
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -30,14 +35,34 @@ public class JsonManager implements Manager {
                 Object.class);
     }
 
+    /**
+     * Registers a type adapter for custom serialization/deserialization of specific types.
+     *
+     * @param type    The class type for which to register the adapter
+     * @param adapter The adapter instance to handle the type conversion
+     */
     public void registerAdapter(Class<?> type, Object adapter) {
         gson = new GsonBuilder().registerTypeAdapter(type, adapter).setPrettyPrinting().create();
     }
 
+    /**
+     * Clears all cached JSON data.
+     *
+     * @return A CompletableFuture that completes when the cache is cleared
+     */
     public CompletableFuture<Void> invalidateCache() {
         return cache.clear();
     }
 
+    /**
+     * Asynchronously saves an object as JSON to a file.
+     *
+     * @param plugin The plugin instance
+     * @param path   The file path where to save the JSON
+     * @param object The object to serialize and save
+     * @param <T>    The type of object being saved
+     * @return A CompletableFuture that completes when the save operation is finished
+     */
     public <T> CompletableFuture<Void> saveJson(Plugin plugin, String path, T object) {
         return CompletableFuture.runAsync(() -> {
             plugin.getDebug().info("Saving " + path + "...");
@@ -67,6 +92,15 @@ public class JsonManager implements Manager {
 
     }
 
+    /**
+     * Asynchronously loads and deserializes a JSON file into an object.
+     *
+     * @param plugin The plugin instance
+     * @param path The path to the JSON file
+     * @param clazz The class type to deserialize into
+     * @param <T> The type of object being loaded
+     * @return A CompletableFuture containing the deserialized object
+     */
     @SuppressWarnings("unchecked")
     public <T> CompletableFuture<T> load(Plugin plugin, String path, Class<T> clazz) {
         return (CompletableFuture<T>) CompletableFuture.supplyAsync(() -> {
@@ -85,6 +119,17 @@ public class JsonManager implements Manager {
             return t;
         }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("files"));
     }
+
+    /**
+     * Asynchronously loads and deserializes a JSON file into an object using TypeToken.
+     * Useful for complex generic types.
+     *
+     * @param plugin The plugin instance
+     * @param path The path to the JSON file
+     * @param type The TypeToken representing the type to deserialize into
+     * @param <T> The type of object being loaded
+     * @return A CompletableFuture containing the deserialized object
+     */
     @SuppressWarnings("unchecked")
     public <T> CompletableFuture<T> load(Plugin plugin, String path, TypeToken<T> type) {
         return (CompletableFuture<T>) CompletableFuture.supplyAsync(() -> {

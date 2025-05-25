@@ -22,6 +22,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Manages command registration, execution, and tab completion for the plugin.
+ * Handles the main plugin command and its subcommands, including permission checks,
+ * command configurations, and async execution capabilities.
+ */
 @AllArgsConstructor
 public class CommandManager implements CommandExecutor, TabCompleter, Manager {
 
@@ -29,6 +34,13 @@ public class CommandManager implements CommandExecutor, TabCompleter, Manager {
     @Getter
     private final HashMap<String, Command> commands = new HashMap<>();
 
+    /**
+     * Registers plugin commands and their aliases in the server's command map.
+     * Handles configuration-based command enabling/disabling and sets up command
+     * executors, tab completer, and aliases for both main and sub commands.
+     *
+     * @param commands List of commands to register
+     */
     public void registerCommands(List<Command> commands) {
 
         CommandMap commandMap = ReflectionObject.of(Bukkit.getServer()).getField("commandMap");
@@ -134,6 +146,16 @@ public class CommandManager implements CommandExecutor, TabCompleter, Manager {
         return true;
     }
 
+    /**
+     * Recursively processes subcommands of a given command.
+     * Traverses through command hierarchy to find and execute the appropriate subcommand.
+     *
+     * @param command Parent command
+     * @param sender  Command sender
+     * @param args    Command arguments
+     * @param index   Current argument index
+     * @return true if a subcommand was processed, false otherwise
+     */
     public boolean processSubCommands(Command command, CommandSender sender, String[] args, int index) {
         if (command == null) return false;
         if (args.length == index) return false;
@@ -159,7 +181,15 @@ public class CommandManager implements CommandExecutor, TabCompleter, Manager {
 
         return true;
     }
-    
+
+    /**
+     * Processes a command execution with permission checks and sender validations.
+     * Handles async execution if configured and manages command error handling.
+     *
+     * @param command Command to process
+     * @param sender  Command sender
+     * @param strings Command arguments
+     */
     private void processCommand(Command command, CommandSender sender, String[] strings) {
         if (processSubCommands(command, sender, strings, 0)) return;
         
@@ -201,7 +231,6 @@ public class CommandManager implements CommandExecutor, TabCompleter, Manager {
             e.printStackTrace();
         }
     }
-
 
     @Nullable
     @Override

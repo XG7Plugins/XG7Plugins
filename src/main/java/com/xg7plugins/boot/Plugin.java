@@ -23,12 +23,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 /**
- * Classe base abstrata para plugins XG7 que estende JavaPlugin do Bukkit.
- * Fornece um framework estruturado para desenvolvimento de plugins com suporte a
- * configurações, comandos, eventos, banco de dados e gerenciamento de dependências.
+ * Abstract base class for XG7 plugins that extends Bukkit's JavaPlugin.
+ * Provides a structured framework for plugin development with support for
+ * configurations, commands, events, database, and dependency management.
  *
- * Esta classe gerencia o ciclo de vida do plugin incluindo carregamento, habilitação,
- * recarregamento e desabilitação.
+ * This class manages the plugin lifecycle including loading, enabling,
+ * reloading, and disabling.
  *
  * @author DaviXG7
  */
@@ -85,23 +85,23 @@ public abstract class Plugin extends JavaPlugin {
     }
 
     /**
-     * Manipula o recarregamento do plugin com base na causa específica fornecida.
-     * Este método recarrega apenas os componentes necessários com base no tipo de causa,
-     * permitindo recargas parciais mais eficientes.
+     * Handles plugin reloading based on the specific cause provided.
+     * This method reloads only the necessary components based on the cause type,
+     * allowing for more efficient partial reloads.
      * <p>
 
-     * Comportamento:
+     * Behavior:
      * <p>
-     * - ReloadCause.CONFIG: Recarrega todas as configurações e reinicializa o debugger <p>
-     * - ReloadCause.EVENTS: Recarrega todos os manipuladores de eventos e listeners de pacotes <p>
-     * - ReloadCause.DATABASE: Reestabelece as conexões com o banco de dados <p>
-     * - ReloadCause.LANGS: Limpa o cache de linguagens e recarrega os arquivos de idioma <p>
-     * - ReloadCause.TASKS: Cancela todas as tarefas em execução e as reinicia <p>
-     * - ReloadCause.Personalizado: Você pode criar uma causa para manipular outro tipo de recarregamento <p>
+     * - ReloadCause.CONFIG: Reloads all configurations and reinitializes the debugger <p>
+     * - ReloadCause.EVENTS: Reloads all event handlers and packet listeners <p>
+     * - ReloadCause.DATABASE: Reestablishes database connections <p>
+     * - ReloadCause.LANGS: Clears language cache and reloads language files <p>
+     * - ReloadCause.TASKS: Cancels all running tasks and restarts them <p>
+     * - ReloadCause.Custom: You can create a cause to handle another type of reload <p>
      * <p>
 
-     * @param cause A causa do recarregamento que determina quais componentes serão recarregados
-     *              Causas padrões incluem: CONFIG, EVENTS, DATABASE, LANGS, TASKS
+     * @param cause The reload cause that determines which components will be reloaded
+     *              Default causes include: CONFIG, EVENTS, DATABASE, LANGS, TASKS
      * <p>
      */
     public void onReload(ReloadCause cause) {
@@ -142,69 +142,69 @@ public abstract class Plugin extends JavaPlugin {
     }
 
     /**
-     * Carrega as entidades de banco de dados do plugin.
+     * Loads the plugin's database entities.
      *
-     * @return Um array de classes que estendem Entity, usado para mapeamento de objetos no banco de dados
+     * @return An array of classes extending Entity, used for database object mapping
      */
     public Class<? extends Entity<?,?>>[] loadEntities() {
         return null;
     }
 
     /**
-     * Carrega os comandos do plugin que serão registrados automaticamente.
+     * Loads the plugin's commands that will be automatically registered.
      *
-     * @return Uma lista de comandos a serem registrados pelo sistema de comandos
+     * @return A list of commands to be registered by the command system
      */
     public List<Command> loadCommands() {
         return null;
     }
 
     /**
-     * Carrega os listeners de eventos do Bukkit para este plugin.
+     * Loads the Bukkit event listeners for this plugin.
      *
-     * @return Uma lista de listeners a serem registrados pelo gerenciador de eventos
+     * @return A list of listeners to be registered by the event manager
      */
     public List<Listener> loadEvents() {
         return null;
     }
 
     /**
-     * Carrega os listeners de pacotes de rede para este plugin.
+     * Loads the network packet listeners for this plugin.
      *
-     * @return Uma lista de packet listeners a serem registrados
+     * @return A list of packet listeners to be registered
      */
     public List<PacketListener> loadPacketEvents() {
         return null;
     }
 
     /**
-     * Carrega as tarefas repetitivas (schedulers) para o plugin.
+     * Loads the repeating tasks (schedulers) for the plugin.
      *
-     * @return Uma lista de tarefas a serem executadas periodicamente
+     * @return A list of tasks to be executed periodically
      */
     public List<Task> loadRepeatingTasks() {
         return null;
     }
 
     /**
-     * Configura o sistema de ajuda do plugin.
-     * Este método deve ser implementado para registrar mensagens de ajuda.
+     * Sets up the plugin's help system.
+     * This method must be implemented to register help messages.
      */
     public abstract void loadHelp();
 
     /**
-     * Carrega as dependências opcionais do plugin.
+     * Loads the plugin's optional dependencies.
      *
-     * @return Uma lista de dependências que o plugin pode utilizar
+     * @return A list of dependencies that the plugin can utilize
      */
     public List<Dependency> loadDependencies() {
         return null;
     }
 
     /**
-     * Carrega as dependências obrigatórias do plugin.
+     * Loads the plugin's required dependencies.
      *
-     * @return Uma lista de dependências que são necessárias para o funcionamento do plugin
+     * @return A list of dependencies that are necessary for the plugin to function
      */
     public List<Dependency> loadRequiredDependencies() {
         return null;

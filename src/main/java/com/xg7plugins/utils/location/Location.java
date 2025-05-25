@@ -7,28 +7,77 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+/**
+ * Represents a location in a Minecraft world with coordinates and rotation.
+ * This class provides methods for manipulating and working with 3D positions.
+ */
 @AllArgsConstructor
 @Getter
 public class Location implements Cloneable {
 
+    /**
+     * The name of the world this location is in
+     */
     private String world;
+    /**
+     * X coordinate
+     */
     private double x;
+    /**
+     * Y coordinate
+     */
     private double y;
+    /**
+     * Z coordinate
+     */
     private double z;
+    /**
+     * Yaw rotation (left/right)
+     */
     private float yaw;
+    /**
+     * Pitch rotation (up/down)
+     */
     private float pitch;
 
+    /**
+     * Creates a location with default rotation values (0,0)
+     *
+     * @param world World name
+     * @param x     X coordinate
+     * @param y     Y coordinate
+     * @param z     Z coordinate
+     */
     public Location(String world, double x, double y, double z) {
         this(world, x, y, z, 0, 0);
     }
 
+    /**
+     * Gets the Bukkit World object for this location
+     *
+     * @return The Bukkit World
+     */
     public World getWorld() {
         return Bukkit.getWorld(world);
     }
+
+    /**
+     * Gets the name of the world
+     *
+     * @return World name
+     */
     public String getWorldName() {
         return world;
     }
 
+    /**
+     * Adds the given coordinates to this location
+     *
+     * @param x X coordinate to add
+     * @param y Y coordinate to add
+     * @param z Z coordinate to add
+     * @return This location object
+     */
     public Location add(double x, double y, double z) {
         this.x += x;
         this.y += y;
@@ -86,6 +135,11 @@ public class Location implements Cloneable {
         return this;
     }
 
+    /**
+     * Gets the direction vector based on pitch/yaw
+     *
+     * @return A normalized vector pointing in the direction of this location's rotation
+     */
     public Vector getDirection() {
         Vector vector = new Vector();
         double rotX = this.getYaw();
@@ -97,16 +151,39 @@ public class Location implements Cloneable {
         return vector;
     }
 
+    /**
+     * Checks if another location is within a cubic radius
+     *
+     * @param location Location to check
+     * @param distance Maximum distance on any axis
+     * @return true if the location is within the distance
+     */
     public boolean isNearby(Location location, double distance) {
         return Math.abs(location.getX() - x) <= distance && Math.abs(location.getY() - y) <= distance && Math.abs(location.getZ() - z) <= distance;
     }
 
+    /**
+     * Creates a new location instance
+     *
+     * @param world World name
+     * @param x     X coordinate
+     * @param y     Y coordinate
+     * @param z     Z coordinate
+     * @return New Location object
+     */
     public static Location of(String world, double x, double y, double z) {
         return new Location(world, x, y, z);
     }
     public static Location of(String world, double x, double y, double z, float yaw, float pitch) {
         return new Location(world, x, y, z, yaw, pitch);
     }
+
+    /**
+     * Converts a Bukkit location to this location type
+     *
+     * @param location Bukkit location to convert
+     * @return New Location object
+     */
     public static Location fromBukkit(org.bukkit.Location location) {
         return new Location(location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }

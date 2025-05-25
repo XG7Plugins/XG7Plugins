@@ -11,10 +11,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Manages packet event listeners for plugins, handling registration, unregistration,
+ * and reloading of packet event handlers. This manager integrates with PacketEvents API
+ * to process network packets and related events.
+ */
 public class PacketEventManager implements Manager {
 
     private final HashMap<String, List<PacketListenerCommon>> packetListeners = new HashMap<>();
 
+    /**
+     * Registers multiple packet listeners for a specific plugin.
+     * Each listener must have a PacketEventHandler annotation to be valid.
+     *
+     * @param plugin    The plugin registering the listeners
+     * @param listeners Array of PacketListener instances to register
+     * @throws IllegalArgumentException if a listener lacks the PacketEventHandler annotation
+     */
     public void registerListeners(Plugin plugin, PacketListener... listeners) {
 
         if (listeners == null) return;
@@ -100,17 +113,36 @@ public class PacketEventManager implements Manager {
 
     }
 
+    /**
+     * Registers a list of packet listeners for a specific plugin.
+     * Converts the list to an array and delegates to the array-based registration method.
+     *
+     * @param plugin    The plugin registering the listeners
+     * @param listeners List of PacketListener instances to register
+     */
     public void registerListeners(Plugin plugin, List<PacketListener> listeners) {
         if (listeners == null) return;
         registerListeners(plugin, listeners.toArray(new PacketListener[0]));
     }
 
+    /**
+     * Unregisters all packet listeners associated with a specific plugin.
+     * Clears the listener collection for the plugin after unregistering.
+     *
+     * @param plugin The plugin whose listeners should be unregistered
+     */
     public void unregisterListeners(Plugin plugin) {
         for (PacketListenerCommon listener : packetListeners.get(plugin.getName())) PacketEvents.getAPI().getEventManager().unregisterListener(listener);
 
         packetListeners.get(plugin.getName()).clear();
     }
 
+    /**
+     * Reloads all packet listeners for a specific plugin.
+     * Unregisters existing listeners and registers new ones from the plugin.
+     *
+     * @param plugin The plugin whose listeners should be reloaded
+     */
     public void reloadListeners(Plugin plugin) {
         unregisterListeners(plugin);
         registerListeners(plugin, plugin.loadPacketEvents());

@@ -15,6 +15,10 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
+/**
+ * Represents a SQL query builder with support for complex queries including joins, conditions, and nested entities.
+ * This class provides a fluent interface for building and executing SQL queries.
+ */
 public class Query {
 
     private final String initialTable;
@@ -48,10 +52,27 @@ public class Query {
         this.joinTables = new ArrayList<>();
     }
 
+    /**
+     * Creates a new Query instance for selecting from a specified table.
+     *
+     * @param plugin The plugin instance making the query
+     * @param table  The name of the table to select from
+     * @return A new Query instance
+     */
     public synchronized static Query selectFrom(Plugin plugin, String table) {
         return new Query(plugin, table);
     }
 
+    /**
+     * Creates a new Query instance for selecting an entity by its ID.
+     * Automatically configures the query with all columns and handles nested entity relationships.
+     *
+     * @param plugin      The plugin instance making the query
+     * @param entityClass The entity class to query
+     * @param id          The ID value to search for
+     * @return A new Query instance configured for the entity lookup
+     * @throws IllegalStateException if no primary key is found in the entity class
+     */
     public synchronized static Query selectFrom(Plugin plugin, Class<? extends Entity> entityClass, Object id) {
 
         Objects.requireNonNull(id, "ID cannot be null");
@@ -90,6 +111,14 @@ public class Query {
 
     }
 
+    /**
+     * Recursively processes nested entity collections and adds necessary joins to the query.
+     * Handles foreign key relationships and builds the appropriate JOIN clauses.
+     *
+     * @param query     The query to modify
+     * @param listClass The class containing nested collections
+     * @param localId   The ID column of the parent entity
+     */
     private static void selectNestedLists(Query query, Class<?> listClass, String localId) {
         for (Field nestedField : listClass.getDeclaredFields()) {
             nestedField.setAccessible(true);
@@ -134,64 +163,144 @@ public class Query {
         }
     }
 
+    /**
+     * Configures the query to select all columns using SELECT *.
+     *
+     * @return This query instance for method chaining
+     */
     public Query allColumns() {
         this.selectAll = true;
         return this;
     }
 
+    /**
+     * Specifies which columns to select in the query.
+     *
+     * @param columns Array of pairs containing table names and their corresponding column lists
+     * @return This query instance for method chaining
+     */
     public Query columns(Pair<String, List<String>>... columns) {
         this.columns.addAll(Arrays.asList(columns));
         return this;
     }
 
+    /**
+     * Adds an INNER JOIN clause to the query.
+     *
+     * @param table The name of the table to join
+     * @return This query instance for method chaining
+     */
     public Query innerJoin(String table) {
         this.joinTables.add(new Pair<>(JoinType.INNER_JOIN, table));
         return this;
     }
+
+    /**
+     * Adds a LEFT JOIN clause to the query.
+     *
+     * @param table The name of the table to join
+     * @return This query instance for method chaining
+     */
     public Query leftJoin(String table) {
         this.joinTables.add(new Pair<>(JoinType.LEFT_JOIN, table));
         return this;
     }
+
+    /**
+     * Adds a RIGHT JOIN clause to the query.
+     *
+     * @param table The name of the table to join
+     * @return This query instance for method chaining
+     */
     public Query rightJoin(String table) {
         this.joinTables.add(new Pair<>(JoinType.RIGHT_JOIN, table));
         return this;
     }
+
+    /**
+     * Adds a FULL JOIN clause to the query.
+     *
+     * @param table The name of the table to join
+     * @return This query instance for method chaining
+     */
     public Query fullJoin(String table) {
         this.joinTables.add(new Pair<>(JoinType.FULL_JOIN, table));
         return this;
     }
 
 
+    /**
+     * Adds additional SQL commands to the end of the query.
+     *
+     * @param additionalCommands The SQL commands to append
+     * @return This query instance for method chaining
+     */
     public Query additionalCommands(String additionalCommands) {
         this.additionalCommands = additionalCommands;
         return this;
     }
 
+    /**
+     * Adds an ON clause for the most recently added join.
+     *
+     * @param condition The join condition
+     * @return This query instance for method chaining
+     */
     public Query on(String condition) {
         this.conditions.put(this.joinTables.get(this.joinTables.size() - 1).getSecond(), condition);
         return this;
     }
 
+    /**
+     * Sets the WHERE clause of the query.
+     *
+     * @param condition The WHERE condition
+     * @return This query instance for method chaining
+     */
     public Query where(String condition) {
         this.where = condition;
         return this;
     }
 
+    /**
+     * Adds parameters to be used in the prepared statement.
+     *
+     * @param params The parameter values
+     * @return This query instance for method chaining
+     */
     public Query params(Object... params) {
         this.params.addAll(Arrays.asList(params));
         return this;
     }
 
+    /**
+     * Sets the error handler for the query execution.
+     *
+     * @param error The error handler callback
+     * @return This query instance for method chaining
+     */
     public Query onError(Consumer<Exception> error) {
         this.error = error;
         return this;
     }
 
+    /**
+     * Sets the result handler for the query execution.
+     *
+     * @param result The result handler callback
+     * @return This query instance for method chaining
+     */
     public Query onResult(Consumer<QueryResult> result) {
         this.result = result;
         return this;
     }
 
+    /**
+     * Builds the final SQL query string and queues it for execution.
+     * Combines all configured parts of the query including joins, conditions, and parameters.
+     *
+     * @return This query instance for method chaining
+     */
     public Query queue() {
         StringBuilder query = new StringBuilder("SELECT ");
 
@@ -236,7 +345,13 @@ public class Query {
     }
 
 
-
+    /**
+     * Executes the query and waits for the result.
+     * Blocks the current thread until the query execution is complete.
+     *
+     * @return The query execution result
+     * @throws RuntimeException if the thread is interrupted while waiting
+     */
     public QueryResult waitForResult() {
         try {
             queue();
@@ -248,11 +363,20 @@ public class Query {
         }
     }
 
+    /**
+     * Completes the query execution and notifies waiting threads.
+     *
+     * @param result The query execution result
+     */
     public void completeTask(QueryResult result) {
         this.finishedResult = result;
         latch.countDown();
     }
 
+    /**
+     * Enum representing different SQL join types.
+     * Used to specify how tables should be joined in SQL queries.
+     */
     @Getter
     @AllArgsConstructor
     enum JoinType {

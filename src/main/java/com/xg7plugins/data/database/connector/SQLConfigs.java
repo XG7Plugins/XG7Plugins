@@ -5,6 +5,10 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import lombok.Data;
 
+/**
+ * Configuration holder for SQL database connections.
+ * Stores basic connection parameters and pool settings extracted from plugin configurations.
+ */
 @Data
 public class SQLConfigs {
 
@@ -13,21 +17,21 @@ public class SQLConfigs {
     private final String database;
     private final String username;
     private final String password;
-
     private final String connectionString;
-
     private long cacheExpires;
     private long connectionTimeout;
     private long idleTimeout;
-
     private int maxPoolSize;
     private int minIdle;
-
     private long keepAliveTime;
-
     private short queryThreads;
     private long processInterval;
 
+    /**
+     * Creates a basic configuration from plugin config.
+     *
+     * @param pluginConfig The plugin configuration
+     */
     public SQLConfigs(Config pluginConfig) {
         host = pluginConfig.get("sql.host", String.class).orElse(null);
         port = pluginConfig.get("sql.port", Integer.class).orElse(0);
@@ -38,6 +42,12 @@ public class SQLConfigs {
         connectionString = pluginConfig.get("sql.url", String.class).orElse(null);
     }
 
+    /**
+     * Creates a complete configuration using both plugin and main configs.
+     *
+     * @param pluginConfig The plugin-specific configuration
+     * @param mainConfig The main system configuration with defaults
+     */
     public SQLConfigs(Config pluginConfig, Config mainConfig) {
         this(pluginConfig);
         this.cacheExpires = mainConfig.getTime("sql.cache-expires").orElse(0L);
@@ -47,10 +57,10 @@ public class SQLConfigs {
         this.idleTimeout = mainConfig.getTime("sql.idle-timeout").orElse(0L);
 
         this.maxPoolSize = mainConfig.get("sql.max-pool-size", Integer.class)
-                .orElse(10); // Valor padrão sugerido
+                .orElse(10); // Default suggested value
 
         this.minIdle = mainConfig.get("sql.min-idle-connections", Integer.class)
-                .orElse(5); // Valor padrão sugerido
+                .orElse(5); // Default suggested value
 
         this.keepAliveTime = mainConfig.getTime("sql.keep-alive-time").orElse(0L);
 
@@ -60,21 +70,43 @@ public class SQLConfigs {
         this.processInterval = mainConfig.getTime("sql.sql-command-processing-interval").orElse(0L);
     }
 
+    /**
+     * Factory method to create a config from plugin configuration.
+     *
+     * @param pluginConfig The plugin configuration
+     * @return A new SQLConfigs instance
+     */
     public static SQLConfigs of(Config pluginConfig) {
         return new SQLConfigs(pluginConfig);
     }
+    
+    /**
+     * Factory method to create a config from plugin and main configurations.
+     *
+     * @param pluginConfig The plugin configuration
+     * @param mainConfig The main system configuration
+     * @return A new SQLConfigs instance with complete settings
+     */
     public static SQLConfigs of(Config pluginConfig, Config mainConfig) {
         return new SQLConfigs(pluginConfig,mainConfig);
     }
 
+    /**
+     * Checks if the necessary database credentials are configured.
+     *
+     * @return true if credentials are properly configured, false otherwise
+     */
     public boolean checkCredentials() {
         return !(host == null || port == 0 || database == null ||
                 host.isEmpty() || database.isEmpty());
     }
+    
+    /**
+     * Checks if a custom connection URL is configured.
+     *
+     * @return true if a connection string is available, false otherwise
+     */
     public boolean hasURL() {
         return connectionString != null && !connectionString.isEmpty();
     }
-
-
-
 }

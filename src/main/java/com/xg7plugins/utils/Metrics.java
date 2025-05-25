@@ -36,6 +36,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+//Bukkit class
 public class Metrics {
     private final Plugin plugin;
     private final Metrics.MetricsBase metricsBase;
