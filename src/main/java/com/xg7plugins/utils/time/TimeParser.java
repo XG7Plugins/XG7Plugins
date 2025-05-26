@@ -1,4 +1,4 @@
-package com.xg7plugins.utils;
+package com.xg7plugins.utils.time;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  * Utility class for time-related operations and conversions.
  * Provides methods to parse time strings and convert between different time units.
  */
-public class Time {
+public class TimeParser {
 
     /**
      * Pattern to match time strings in the format: number + unit

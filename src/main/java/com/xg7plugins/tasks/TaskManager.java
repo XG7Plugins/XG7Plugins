@@ -4,7 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.managers.Manager;
-import com.xg7plugins.utils.Time;
+import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 
@@ -120,7 +120,7 @@ public class TaskManager implements Manager {
                                 task.getPlugin(),
                                 taskRunnable,
                                 0,
-                                Time.convertMillisToTicks(task.getDelay())
+                                TimeParser.convertMillisToTicks(task.getDelay())
                         ).getTaskId()
                 );
             } else task.setFuture(repeatingAsyncTasksExecutor.scheduleWithFixedDelay(taskRunnable, 0, task.getDelay(), TimeUnit.MILLISECONDS));

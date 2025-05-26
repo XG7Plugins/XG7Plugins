@@ -3,7 +3,10 @@ package com.xg7plugins.utils.location;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -195,6 +198,22 @@ public class Location implements Cloneable {
     }
     public com.github.retrooper.packetevents.protocol.world.Location getProtocolLocation() {
         return new com.github.retrooper.packetevents.protocol.world.Location(x,y,z,yaw,pitch);
+    }
+
+    public void teleport(Entity entity) {
+        entity.teleport(getBukkitLocation());
+    }
+
+    public Entity spawnEntity(EntityType type) {
+        World world = getWorld();
+        if (world == null) return null;
+        return world.spawnEntity(getBukkitLocation(), type);
+    }
+
+    public void playSound(Sound sound, float volume, float pitch) {
+        World world = getWorld();
+        if (world == null) return;
+        world.playSound(getBukkitLocation(), sound, volume, pitch);
     }
 
     @Override

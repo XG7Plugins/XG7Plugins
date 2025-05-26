@@ -2,7 +2,7 @@ package com.xg7plugins.data.config;
 
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.utils.Time;
+import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -236,8 +236,8 @@ public class Config {
         }
         long milliseconds;
         try {
-            milliseconds = Time.convertToMilliseconds(time);
-        } catch (Time.TimeParseException e) {
+            milliseconds = TimeParser.convertToMilliseconds(time);
+        } catch (TimeParser.TimeParseException e) {
             throw new RuntimeException(e);
         }
         return Optional.ofNullable(milliseconds == 0 ? null : milliseconds);
