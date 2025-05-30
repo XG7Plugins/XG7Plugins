@@ -1,33 +1,35 @@
 package com.xg7plugins.data.database.processor;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.database.entity.*;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.database.entity.Column;
+import com.xg7plugins.utils.time.Time;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Utility class for creating database tables based on Entity classes.
- * Handles SQL type mapping and table creation with support for primary keys,
- * foreign keys, and nested entities.
+ * Utility class responsible for analyzing Entity classes and creating corresponding database tables.
+ * Provides functionality for:
+ * - Mapping Java types to SQL data types
+ * - Creating tables with primary and foreign key constraints
+ * - Handling nested entities and collections
+ * - Supporting table name customization through annotations
  */
 public class TableCreator {
 
     /**
      * Maps Java class types to their corresponding SQL data types.
+     * Supports primitive types, their wrappers, and common Java classes.
      *
      * @param clazz The Java class to map to SQL type
-     * @return The corresponding SQL data type as a string, or null if no mapping exists
+     * @return The corresponding SQL data type as a string, or null if the type cannot be mapped
      */
     public static String getSQLType(Class<?> clazz) {
         if (clazz == String.class) return "VARCHAR(255)";
@@ -38,23 +40,28 @@ public class TableCreator {
         else if (clazz == boolean.class || clazz == Boolean.class) return "BOOLEAN";
         else if (clazz == char.class || clazz == Character.class) return "CHAR";
         else if (clazz == byte[].class) return "BLOB";
-        else if (clazz == Timestamp.class) return "TIMESTAMP";
-        else if (clazz == Date.class) return "DATE";
-        else if (clazz == Time.class) return "TIME";
+        else if (clazz == Time.class) return "BIGINT";
         else if (clazz == UUID.class) return "VARCHAR(36)";
         return null;
     }
 
+
     /**
      * Asynchronously creates a database table for the specified Entity class.
-     * Handles nested entities, primary keys, and foreign key relationships.
-     * Creates tables for child entities recursively.
+     * Handles nested entities, collections, and creates the necessary foreign key relationships.
      *
-     * @param plugin The plugin instance requesting the table creation
+     * @param plugin The plugin requesting the table creation
      * @param clazz  The Entity class to create a table for
      * @return A CompletableFuture that completes when the table is created
+     * @throws IllegalEntityException if the entity class doesn't have a no-args constructor
      */
     public CompletableFuture<Void> createTableOf(Plugin plugin, Class<? extends Entity> clazz) {
+
+        try {
+            clazz.getDeclaredConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalEntityException(clazz);
+        }
 
         DatabaseManager databaseManager = XG7PluginsAPI.database();
 

@@ -1,5 +1,6 @@
-package com.xg7plugins.commands;
+package com.xg7plugins.commands.executors;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginSetup;
@@ -10,8 +11,6 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.geysermc.floodgate.api.FloodgateApi;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,17 +45,26 @@ public class MainCommand implements Command {
     @Override
     public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
 
+        boolean antiTab = Config.mainConfigOf(XG7Plugins.getInstance()).get("anti-tab", Boolean.class).orElse(false);
+
         List<String> suggestions = new ArrayList<>();
         if (args.len() == 1) {
-            suggestions.add("help");
-            suggestions.addAll(XG7PluginsAPI.commandManager(plugin).getCommands().entrySet().stream().filter(cmd -> !cmd.getKey().isEmpty()).map(cmd -> {
-                PluginSetup configurations = cmd.getValue().getPlugin().getConfigurations();
-                return cmd.getKey().replace(configurations.mainCommandName(), "");
-            }).collect(Collectors.toList()));
+            suggestions.addAll(XG7PluginsAPI.commandManager(plugin)
+                    .getCommands().entrySet().stream()
+                    .filter(cmd -> !cmd.getKey().isEmpty())
+                    .filter(cmd -> sender.hasPermission(cmd.getValue().getCommandConfigurations().permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass") && antiTab)
+                    .map(cmd -> {
+                            PluginSetup configurations = cmd.getValue().getPlugin().getConfigurations();
+                            return cmd.getKey().replace(configurations.mainCommandName(), "");
+                        }
+                    ).collect(Collectors.toList()));
+            if (sender.hasPermission("xg7plugins.command.help") || sender.hasPermission("xg7plugins.command.anti-tab-bypass") && antiTab) {
+                suggestions.add("help");
+            }
             return suggestions;
         }
 
-        if (args.len() == 2 && args.get(0, String.class).equalsIgnoreCase("help")) {
+        if (args.len() == 2 && args.get(0, String.class).equalsIgnoreCase("help") && (sender.hasPermission("xg7plugins.command.help") || sender.hasPermission("xg7plugins.command.anti-tab-bypass") && antiTab)) {
             suggestions.addAll(plugin.getHelpMessenger().getChat().getPages().keySet());
             return suggestions;
         }

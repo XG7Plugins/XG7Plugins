@@ -1,5 +1,6 @@
 package com.xg7plugins.data.playerdata;
 
+import com.xg7plugins.data.dao.DAO;
 import com.xg7plugins.data.database.entity.Column;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.entity.Pkey;
@@ -27,7 +28,6 @@ public class PlayerData implements Entity<UUID, PlayerData> {
         this.langId = langId;
         this.firstJoin = System.currentTimeMillis();
     }
-
 
     @Override
     public boolean equals(PlayerData other) {

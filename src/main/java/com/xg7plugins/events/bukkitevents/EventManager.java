@@ -38,7 +38,7 @@ public class EventManager implements Manager {
 
         if (events == null) return;
 
-        listeners.put(plugin.getName(), new org.bukkit.event.Listener() {});
+        listeners.putIfAbsent(plugin.getName(), new org.bukkit.event.Listener() {});
 
         for (Listener event : events) {
             if (event == null) continue;

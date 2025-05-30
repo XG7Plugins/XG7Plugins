@@ -5,6 +5,8 @@ import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.dao.DAO;
+import com.xg7plugins.data.dao.DAOManager;
 import com.xg7plugins.data.database.connector.Connector;
 import com.xg7plugins.data.database.connector.ConnectorRegistry;
 import com.xg7plugins.data.database.connector.SQLConfigs;
@@ -28,6 +30,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -39,6 +42,7 @@ import java.util.concurrent.CompletableFuture;
 public class DatabaseManager implements Manager {
 
     private final DatabaseProcessor processor = new DatabaseProcessor(this);
+    private final DAOManager daoManager = new DAOManager();
     private final TableCreator tableCreator = new TableCreator();
     private final ConnectorRegistry connectorRegistry;
 
@@ -61,6 +65,7 @@ public class DatabaseManager implements Manager {
      * @param plugin The XG7Plugins instance
      */
     public DatabaseManager(XG7Plugins plugin) {
+        plugin.getManagerRegistry().registerManager(daoManager);
         Config config = Config.mainConfigOf(plugin);
 
         cachedEntities = new ObjectCache<>(
@@ -80,13 +85,13 @@ public class DatabaseManager implements Manager {
 
     }
 
-    @SafeVarargs
     /**
      * Establishes a database connection for a plugin and creates necessary tables.
      *
      * @param plugin The plugin to connect
      * @param entityClasses Entity classes to create tables for
      */
+    @SafeVarargs
     public final void connectPlugin(Plugin plugin, Class<? extends Entity>... entityClasses) {
 
         if (entityClasses == null) return;
@@ -129,6 +134,11 @@ public class DatabaseManager implements Manager {
 
         plugin.getDebug().loading("Successfully checked tables!");
 
+    }
+
+    public final void registerDAOs(List<DAO<?, ?>> daos) {
+        if (daos == null) return;
+        daos.forEach(daoManager::registerDAO);
     }
 
     /**

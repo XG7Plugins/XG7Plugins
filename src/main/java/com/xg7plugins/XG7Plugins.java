@@ -11,6 +11,7 @@ import com.xg7plugins.commands.core_commands.reload.ReloadCommand;
 import com.xg7plugins.commands.core_commands.task_command.TaskCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.JsonManager;
+import com.xg7plugins.data.dao.DAO;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
@@ -60,16 +61,16 @@ import java.util.concurrent.ExecutionException;
 
 @Getter(AccessLevel.PUBLIC)
 @PluginSetup(
-        prefix = "&bXG&37P&9lu&1gins&r",
+        prefix = "§bXG§37P§9lu§1gins§r",
         onEnableDraw = {
-                "&b __   _______ &3______ &9_____  _             &1_           ",
-                "&b \\ \\ / / ____|&3____ &9 |  __ \\| |           &1(_)          ",
-                "&b  \\ V / |  __  &3  / &9/| |__) | |_   _  __ _ &1_ _ __  ___ ",
-                "&b   > <| | |_ |  &3/ / &9|  ___/| | | | |/ _` | &1| '_ \\/ __|",
-                "&b  / . \\ |__| | &3/ / &9 | |    | | |_| | (_| | &1| | | \\__ \\",
-                "&b /_/ \\_\\_____|&3/_/  &9 |_|    |_|\\__,_|\\__,&1 |_|_| |_|___/",
-                "&9                                     __/ |            ",
-                "&9                                    |___/             "
+                "§b __   _______ §3______ §9_____  _             §1_           ",
+                "§b \\ \\ / / ____|§3____ §9 |  __ \\| |           §1(_)          ",
+                "§b  \\ V / |  __  §3  / §9/| |__) | |_   _  __ _ §1_ _ __  ___ ",
+                "§b   > <| | |_ |  §3/ / §9|  ___/| | | | |/ _` | §1| '_ \\/ __|",
+                "§b  / . \\ |__| | §3/ / §9 | |    | | |_| | (_| | §1| | | \\__ \\",
+                "§b /_/ \\_\\_____|§3/_/  §9 |_|    |_|\\__,_|\\__,§1 |_|_| |_|___/",
+                "§9                                     __/ |            ",
+                "§9                                    |___/             "
         },
         mainCommandName = "xg7plugins",
         mainCommandAliases = {"7plugins", "7pl", "7pls", "xg7pl"},
@@ -80,8 +81,6 @@ public final class XG7Plugins extends Plugin {
     private ServerInfo serverInfo;
 
     private TPSCalculator tpsCalculator;
-
-    private PlayerDataDAO playerDataDAO;
 
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
@@ -121,8 +120,6 @@ public final class XG7Plugins extends Plugin {
         managerRegistry.registerManager(new PacketEventManager());
         managerRegistry.registerManager(new CooldownManager(this));
         managerRegistry.registerManager(new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores()));
-
-        this.playerDataDAO = new PlayerDataDAO();
 
         debug.loading("Loading server info...");
         try {
@@ -195,6 +192,10 @@ public final class XG7Plugins extends Plugin {
         return new Class[]{PlayerData.class};
     }
     @Override
+    public List<DAO<?,?>> loadDAOs() {
+        return Collections.singletonList(new PlayerDataDAO());
+    }
+    @Override
     public List<Command> loadCommands() {
         return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new TestCommand());
     }
@@ -241,6 +242,9 @@ public final class XG7Plugins extends Plugin {
 
         plugin.getDebug().loading("Connecting plugin to database...");
         XG7PluginsAPI.database().connectPlugin(plugin, plugin.loadEntities());
+
+        plugin.getDebug().loading("Loading entities manager...");
+        XG7PluginsAPI.database().registerDAOs(plugin.loadDAOs());
 
         if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
 

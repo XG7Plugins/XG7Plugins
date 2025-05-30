@@ -1,5 +1,8 @@
-package com.xg7plugins.data.database;
+package com.xg7plugins.data.dao;
 
+import com.xg7plugins.boot.Plugin;
+
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -29,6 +32,7 @@ public interface DAO<ID, T> {
      * @return A CompletableFuture containing the retrieved entity
      */
     CompletableFuture<T> get(ID id);
+    CompletableFuture<List<T>> getAll();
 
     /**
      * Updates an existing entity in the database asynchronously.
@@ -37,5 +41,9 @@ public interface DAO<ID, T> {
      * @return A CompletableFuture containing true if the operation was successful, false otherwise
      */
     CompletableFuture<Boolean> update(T entity);
+
+    CompletableFuture<Boolean> delete(T entity);
+
+    Plugin getPlugin();
 
 }

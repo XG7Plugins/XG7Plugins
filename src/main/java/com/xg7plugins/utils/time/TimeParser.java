@@ -16,6 +16,8 @@ public class TimeParser {
      */
     private static final Pattern TIME_PATTERN = Pattern.compile("(\\d+)(MS|[SMHD])", Pattern.CASE_INSENSITIVE);
 
+    private static final Pattern REMAINING_TIME_PATTERN = Pattern.compile("@(.*?): (.*?)@");
+
 
     /**
      * Converts a time string to milliseconds.
@@ -55,6 +57,28 @@ public class TimeParser {
         }
 
         return milliseconds;
+    }
+
+    public static String remainingTimeForValue(String str) {
+        Matcher matcher = REMAINING_TIME_PATTERN.matcher(str);
+        if (!matcher.find()) return str;
+
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            try {
+                TimeFormat format = TimeFormat.valueOf(matcher.group(1).toUpperCase());
+                long milli = Long.parseLong(matcher.group(2));
+
+                matcher.appendReplacement(result, format.format(milli));
+
+            } catch (IllegalArgumentException e) {
+                throw new TimeParseException("Illegal time format or time value. Expected: @TIME_FORMAT:milli@ Found: " + matcher.group());
+            }
+        }
+
+        matcher.appendTail(result);
+        return result.toString();
     }
 
     /**

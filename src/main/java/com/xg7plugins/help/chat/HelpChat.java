@@ -2,7 +2,7 @@ package com.xg7plugins.help.chat;
 
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.MainCommand;
+import com.xg7plugins.commands.executors.MainCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.help.HelpComponent;
 import lombok.Getter;
@@ -20,7 +20,7 @@ public class HelpChat implements HelpComponent {
     public HelpChat(Plugin plugin, HelpChatPage index) {
         this.pages.put("index", index);
 
-        List<Command> commands = XG7PluginsAPI.commandManager(plugin).getCommands().values().stream().filter(cmd -> !(cmd instanceof MainCommand)).collect(Collectors.toList());
+        List<Command> commands = XG7PluginsAPI.commandListOf(plugin).stream().filter(cmd -> !(cmd instanceof MainCommand)).collect(Collectors.toList());
 
         int maxPage = (int) Math.ceil(commands.size() / 7.0);
         for (int i = 0; i < maxPage; i++) {

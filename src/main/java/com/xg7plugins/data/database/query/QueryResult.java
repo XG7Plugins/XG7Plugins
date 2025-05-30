@@ -7,7 +7,9 @@ import com.xg7plugins.data.database.entity.Column;
 import com.xg7plugins.data.database.entity.Table;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.entity.Pkey;
+import com.xg7plugins.data.database.processor.IllegalEntityException;
 import com.xg7plugins.data.database.processor.TableCreator;
+import com.xg7plugins.utils.time.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -75,11 +77,22 @@ public class QueryResult {
      * @throws InvocationTargetException if the constructor throws an exception
      * @throws InstantiationException    if the class cannot be instantiated
      * @throws IllegalAccessException    if the constructor cannot be accessed
+     * @throws IllegalEntityException    if the constructor doesn't exist
      */
-    public <T extends Entity> T get(Class<T> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    public <T extends Entity> T get(Class<T> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, IllegalEntityException {
         if (resultsMap == null || !resultsMap.hasNext()) return null;
 
         return get(clazz, resultsMap.next(), true);
+    }
+
+    public <T extends Entity> List<T> getList(Class<T> clazz) throws Exception {
+        List<T> list = new ArrayList<>();
+        while (resultsMap.hasNext()) {
+            Map<String, Object> result = resultsMap.next();
+            T entity = get(clazz, result, true);
+            if (entity != null) list.add(entity);
+        }
+        return list;
     }
 
     /**
@@ -97,9 +110,16 @@ public class QueryResult {
      * @throws InvocationTargetException if the constructor throws an exception
      * @throws InstantiationException    if the class cannot be instantiated
      * @throws IllegalAccessException    if the constructor cannot be accessed
+     * @throws IllegalEntityException    if the constructor doesn't exist
      */
     private <T extends Entity> T get(Class<T> clazz, Map<String, Object> result, boolean cache)
-            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+            throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, IllegalEntityException {
+
+        try {
+            clazz.getDeclaredConstructor();
+        } catch (NoSuchMethodException e) {
+            throw new IllegalEntityException(clazz);
+        }
 
         if (result == null) return null;
 
@@ -157,6 +177,10 @@ public class QueryResult {
 
             if ((Float.class.isAssignableFrom(field.getType()) || float.class.isAssignableFrom(field.getType())) && value != null) {
                 field.set(instance, ((Number) value).floatValue());
+                continue;
+            }
+            if ((Time.class.isAssignableFrom(field.getType()) || double.class.isAssignableFrom(field.getType())) && value != null) {
+                field.set(instance, new Time((Long) value));
                 continue;
             }
 

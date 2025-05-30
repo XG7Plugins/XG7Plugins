@@ -111,8 +111,31 @@ public class Query {
 
     }
 
+    public synchronized static Query selectAllFrom(Plugin plugin, Class<? extends Entity> entityClass) {
+        String initialTable = entityClass.isAnnotationPresent(Table.class) ?
+                entityClass.getAnnotation(Table.class).name() :
+                entityClass.getSimpleName();
+
+        Query query = new Query(plugin, initialTable);
+        query.allColumns();
+
+        selectNestedLists(query, entityClass, getPrimaryKeyColumn(entityClass));
+
+        return query;
+    }
+
+    private static String getPrimaryKeyColumn(Class<?> clazz) {
+        for (Field field : clazz.getDeclaredFields()) {
+            field.setAccessible(true);
+            if (field.isAnnotationPresent(Pkey.class)) {
+                return field.isAnnotationPresent(Column.class) ? field.getAnnotation(Column.class).name() : field.getName();
+            }
+        }
+        throw new IllegalStateException("Primary key not found for " + clazz.getSimpleName());
+    }
+
     /**
-     * Recursively processes nested entity collections and adds necessary joins to the query.
+     * Recursively processes nested entity collections and adds the necessary joins to the query.
      * Handles foreign key relationships and builds the appropriate JOIN clauses.
      *
      * @param query     The query to modify

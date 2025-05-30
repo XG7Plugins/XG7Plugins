@@ -3,12 +3,15 @@ package com.xg7plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.CommandManager;
+import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
+import com.xg7plugins.data.dao.DAO;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
 import com.xg7plugins.data.playerdata.PlayerData;
+import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.dependencies.DependencyManager;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
@@ -21,11 +24,9 @@ import com.xg7plugins.tasks.TaskManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.checkerframework.checker.units.qual.C;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -174,6 +175,27 @@ public class XG7PluginsAPI {
     }
 
     /**
+     * Gets a list of all registered commands for a specific plugin.
+     *
+     * @param plugin The plugin to get commands for
+     * @return A list containing all registered Command instances
+     */
+    public static List<Command> commandListOf(Plugin plugin) {
+        return commandManager(plugin).getCommandList();
+    }
+
+    /**
+     * Gets a map of all registered commands and their aliases for a specific plugin.
+     * The map keys are command names/aliases, and values are the Command instances.
+     *
+     * @param plugin The plugin to get commands for
+     * @return A map containing command names/aliases mapped to Command instances
+     */
+    public static Map<String, Command> commandMapOf(Plugin plugin) {
+        return commandManager(plugin).getCommands();
+    }
+
+    /**
      * Gets the system's JSON manager.
      *
      * @return The global JsonManager instance
@@ -253,6 +275,18 @@ public class XG7PluginsAPI {
         return isWorldEnabled(plugin, player.getWorld());
     }
 
+    public static <ID,T, U extends DAO<ID,T>> U getDAO(Class<U> clazz) {
+        return database().getDaoManager().getDAO(clazz);
+    }
+
+    public static List<DAO> getDAOs() {
+        return database().getDaoManager().getAllDAOs();
+    }
+
+    public static List<DAO> getDAOsByPlugin(Plugin plugin) {
+        return database().getDaoManager().getAllDAOsByPlugin(plugin);
+    }
+
     /**
      * Requests player data by UUID asynchronously.
      *
@@ -260,7 +294,7 @@ public class XG7PluginsAPI {
      * @return A CompletableFuture that will contain the player data when available
      */
     public static CompletableFuture<PlayerData> requestPlayerData(UUID uuid) {
-        return XG7Plugins.getInstance().getPlayerDataDAO().get(uuid);
+        return getDAO(PlayerDataDAO.class).get(uuid);
     }
 
     /**

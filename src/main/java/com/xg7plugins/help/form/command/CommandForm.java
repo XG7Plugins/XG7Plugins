@@ -1,7 +1,7 @@
 package com.xg7plugins.help.form.command;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.MainCommand;
+import com.xg7plugins.commands.executors.MainCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.help.form.HelpForm;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;

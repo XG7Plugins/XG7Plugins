@@ -2,6 +2,7 @@ package com.xg7plugins.commands.setup;
 
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.boot.PluginSetup;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import org.bukkit.command.CommandSender;
@@ -9,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents a command in the plugin system.
@@ -44,7 +46,17 @@ public interface Command {
      * @param args   The current command arguments
      * @return A list of tab completion suggestions, empty by default
      */
-    default List<String> onTabComplete (CommandSender sender, CommandArgs args) {
+    default List<String> onTabComplete(CommandSender sender, CommandArgs args) {
+        if (args.len() == 1 && getSubCommands() != null && !getSubCommands().isEmpty()) {
+
+            return getSubCommands().stream()
+                        .map(Command::getCommandConfigurations)
+                        .filter(commandConfigurations -> sender.hasPermission(commandConfigurations.permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass"))
+                        .map(CommandSetup::name)
+                        .collect(Collectors.toList()
+                    );
+        }
+
         return Collections.emptyList();
     }
 

@@ -27,7 +27,6 @@ lang-enabled: true
 #Must be the name of the file in lang folder
 main-lang: en
 
-#Igore it for while
 anti-tab: true
 
 #Cache expires of langs
@@ -62,7 +61,6 @@ menu-cache-expires: 10m
 
 help-command-in-gui: true
 help-command-form: true
-
 
 #Define database values
 sql:
@@ -117,6 +115,14 @@ redis-cache:
   max-connections: 100
 
   max-wait-time: 10s
+
+time-placeholders:
+
+  milliseconds: "ms"
+  seconds: "s"
+  minutes: "m"
+  hours: "h"
+  days: "d"
 
 paid-keys:
   - plugin: "XG7lobby"

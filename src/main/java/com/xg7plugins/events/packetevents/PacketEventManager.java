@@ -4,7 +4,6 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.*;
 import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.managers.Manager;
 
 import java.util.ArrayList;
@@ -28,19 +27,22 @@ public class PacketEventManager implements Manager {
      * @param listeners Array of PacketListener instances to register
      * @throws IllegalArgumentException if a listener lacks the PacketEventHandler annotation
      */
-    public void registerListeners(Plugin plugin, PacketListener... listeners) {
+    public void registerListeners(Plugin plugin, com.xg7plugins.events.PacketListener... listeners) {
 
         if (listeners == null) return;
 
         packetListeners.putIfAbsent(plugin.getName(), new ArrayList<>());
 
-        for (PacketListener listener : listeners) {
+        for (com.xg7plugins.events.PacketListener listener : listeners) {
 
             if (listener == null) continue;
 
+            System.out.println("Registering listener: " + listener.getClass().getName() + " for plugin: " + plugin.getName() + "");
+
+
             if (!listener.isEnabled()) continue;
 
-            PacketEventHandler packetEventHandler = listener.getClass().getAnnotation(PacketEventHandler.class);
+            PacketListenerSetup packetEventHandler = listener.getClass().getAnnotation(PacketListenerSetup.class);
 
             if (packetEventHandler == null) throw new IllegalArgumentException("PacketListener must have PacketEventHandler annotation");
 
@@ -75,7 +77,7 @@ public class PacketEventManager implements Manager {
 
                     String packetType = packetEventHandler.packet().name();
 
-                    String packetName = packetType.substring(0, packetType.indexOf("_")).replace("CLIENT_", "");
+                    String packetName = packetType.substring(packetType.indexOf("_") + 1).replace("CLIENT_", "");
 
                     if (packetName.equals(event.getPacketType().getName())) listener.onPacketReceive(event);
 
@@ -94,7 +96,7 @@ public class PacketEventManager implements Manager {
 
                     String packetType = packetEventHandler.packet().name();
 
-                    String packetName = packetType.substring(0, packetType.indexOf("_")).replace("SERVER_", "");
+                    String packetName = packetType.substring(packetType.indexOf("_") + 1).replace("SERVER_", "");
 
                     if (packetName.equals(event.getPacketType().getName())) listener.onPacketSend(event);
                 }
@@ -120,9 +122,9 @@ public class PacketEventManager implements Manager {
      * @param plugin    The plugin registering the listeners
      * @param listeners List of PacketListener instances to register
      */
-    public void registerListeners(Plugin plugin, List<PacketListener> listeners) {
+    public void registerListeners(Plugin plugin, List<com.xg7plugins.events.PacketListener> listeners) {
         if (listeners == null) return;
-        registerListeners(plugin, listeners.toArray(new PacketListener[0]));
+        registerListeners(plugin, listeners.toArray(new com.xg7plugins.events.PacketListener[0]));
     }
 
     /**

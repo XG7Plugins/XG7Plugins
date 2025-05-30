@@ -2,7 +2,7 @@ package com.xg7plugins.help.menu.command;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.MainCommand;
+import com.xg7plugins.commands.executors.MainCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.help.menu.HelpGUI;
 import com.xg7plugins.modules.xg7menus.Slot;

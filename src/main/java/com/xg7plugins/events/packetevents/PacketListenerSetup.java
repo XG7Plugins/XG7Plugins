@@ -22,7 +22,7 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PacketEventHandler {
+public @interface PacketListenerSetup {
     /**
      * Specifies the priority level for this packet event handler.
      * Higher priority handlers are executed before lower priority ones.

@@ -7,6 +7,7 @@ import com.xg7plugins.commands.core_commands.reload.ReloadCause;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
+import com.xg7plugins.data.dao.DAO;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.dependencies.Dependency;
 import com.xg7plugins.events.Listener;
@@ -37,7 +38,7 @@ public abstract class Plugin extends JavaPlugin {
 
     private final PluginSetup configurations;
 
-    private final EnvironmentConfig environmentConfig;
+    protected EnvironmentConfig environmentConfig;
 
     protected ManagerRegistry managerRegistry;
     protected Debug debug;
@@ -58,10 +59,9 @@ public abstract class Plugin extends JavaPlugin {
         environmentConfig.setPrefix(ChatColor.translateAlternateColorCodes('&', configurations.prefix()));
         environmentConfig.setCustomPrefix(environmentConfig.getPrefix());
 
-        managerRegistry.registerManagers(
-                new ConfigManager(this, configurations.configs()),
-                new CommandManager(this)
-        );
+        managerRegistry.registerManagers(new ConfigManager(this, configurations.configs()));
+        managerRegistry.registerManagers(new CommandManager(this));
+
         debug = new Debug(this);
 
         debug.loading("Loading " + environmentConfig.getCustomPrefix() + "...");
@@ -82,6 +82,14 @@ public abstract class Plugin extends JavaPlugin {
         environmentConfig.setEnabledWorlds(config.getList("enabled-worlds", String.class).orElse(Collections.emptyList()));
 
         debug.loading("Custom prefix: " + environmentConfig.getCustomPrefix());
+
+        Bukkit.getScheduler().runTask(this, () -> {
+            if (!config.get("anti-tab", Boolean.class).orElse(false)) return;
+
+            debug.loading("Loading anti-tab feature...");
+
+            XG7PluginsAPI.packetEventManager().registerListeners(this, XG7PluginsAPI.commandManager(this).getAntiTab());
+        });
     }
 
     /**
@@ -147,6 +155,10 @@ public abstract class Plugin extends JavaPlugin {
      * @return An array of classes extending Entity, used for database object mapping
      */
     public Class<? extends Entity<?,?>>[] loadEntities() {
+        return null;
+    }
+
+    public List<DAO<?,?>> loadDAOs() {
         return null;
     }
 

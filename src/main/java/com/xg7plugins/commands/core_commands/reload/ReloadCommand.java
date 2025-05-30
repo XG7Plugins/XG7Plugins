@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @CommandSetup(
         name = "reload",
         description = "Reloads a plugin",
+        permission = "xg7plugins.command.reload",
         syntax = "/xg7plugins reload (plugin) (cause)",
         pluginClass = XG7Plugins.class
 )

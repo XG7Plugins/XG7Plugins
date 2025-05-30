@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com'
-version = '1.2'
+version = '1.2_015'
 
 repositories {
     mavenCentral()
@@ -81,7 +81,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 tasks.shadowJar {
-    archiveFileName.set("${project.name}-${project.version}.jar")
+    archiveFileName.set("XG7Plugins-${project.version}.jar")
 }
 
 tasks.build {
