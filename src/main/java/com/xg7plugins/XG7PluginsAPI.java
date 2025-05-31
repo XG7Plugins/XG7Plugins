@@ -9,6 +9,7 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
 import com.xg7plugins.data.dao.DAO;
 import com.xg7plugins.data.database.DatabaseManager;
+import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
@@ -275,7 +276,7 @@ public class XG7PluginsAPI {
         return isWorldEnabled(plugin, player.getWorld());
     }
 
-    public static <ID,T, U extends DAO<ID,T>> U getDAO(Class<U> clazz) {
+    public static <ID,T extends Entity<?, ?>, U extends DAO<ID,T>> U getDAO(Class<U> clazz) {
         return database().getDaoManager().getDAO(clazz);
     }
 

@@ -37,7 +37,7 @@ public class LangForm extends SimpleForm {
 
         XG7PluginsAPI.langManager().getLangs().asMap().join().entrySet().stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
 
-            PlayerData language = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();
+            PlayerData language = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId()).join();
 
             boolean selected = language != null && language.getLangId().equals(map.getKey().contains(":") ? map.getKey().split(":")[1] : map.getKey());
 
@@ -72,7 +72,7 @@ public class LangForm extends SimpleForm {
     @Override
     public void onFinish(org.geysermc.cumulus.form.SimpleForm form, SimpleFormResponse result, Player player) {
 
-        XG7PluginsAPI.langManager().loadLangsFrom(plugin).thenRun(() -> XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).thenAccept(language -> {
+        XG7PluginsAPI.langManager().loadLangsFrom(plugin).thenRun(() -> XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId()).thenAccept(language -> {
 
             String lang = XG7PluginsAPI.langManager().getLangs().asMap().join().keySet().toArray(new String[0])[result.clickedButtonId()];
             if (language != null && language.getLangId().equals(lang)) {
@@ -94,7 +94,7 @@ public class LangForm extends SimpleForm {
                 return;
             }
 
-            PlayerDataDAO dao = XG7Plugins.getInstance().getPlayerDataDAO();
+            PlayerDataDAO dao = XG7PluginsAPI.getDAO(PlayerDataDAO.class);
 
             PlayerData data = dao.get(player.getUniqueId()).join();
 

@@ -40,7 +40,7 @@ public class LangMenu extends PagedMenu {
 
         manager.loadLangsFrom(XG7Plugins.getInstance()).join();
 
-        PlayerData language = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();
+        PlayerData language = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId()).join();
 
         List<Item> pagedItems = new ArrayList<>();
 
@@ -106,7 +106,7 @@ public class LangMenu extends PagedMenu {
                     return;
                 }
 
-                PlayerDataDAO dao = XG7Plugins.getInstance().getPlayerDataDAO();
+                PlayerDataDAO dao = XG7PluginsAPI.getDAO(PlayerDataDAO.class);
 
                 PlayerData data = dao.get(player.getUniqueId()).join();
 

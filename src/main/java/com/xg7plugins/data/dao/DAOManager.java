@@ -1,6 +1,7 @@
 package com.xg7plugins.data.dao;
 
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.managers.Manager;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class DAOManager implements Manager {
         daoMap.put(dao.getClass(), dao);
     }
 
-    public  <ID,T, U extends DAO<ID,T>> U getDAO(Class<U> daoClass) {
+    public  <ID,T extends Entity<?, ?>, U extends DAO<ID,T>> U getDAO(Class<U> daoClass) {
         return daoClass.cast(daoMap.get(daoClass));
     }
 

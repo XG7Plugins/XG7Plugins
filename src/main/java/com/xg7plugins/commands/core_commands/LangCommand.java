@@ -70,7 +70,7 @@ public class LangCommand implements Command {
             return;
         }
 
-        PlayerDataDAO dao = XG7Plugins.getInstance().getPlayerDataDAO();
+        PlayerDataDAO dao = XG7PluginsAPI.getDAO(PlayerDataDAO.class);
 
         String dbLang = args.get(1, String.class);
 

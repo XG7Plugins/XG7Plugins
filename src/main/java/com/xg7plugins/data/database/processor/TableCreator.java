@@ -31,17 +31,17 @@ public class TableCreator {
      * @param clazz The Java class to map to SQL type
      * @return The corresponding SQL data type as a string, or null if the type cannot be mapped
      */
-    public static String getSQLType(Class<?> clazz) {
-        if (clazz == String.class) return "VARCHAR(255)";
-        else if (clazz == int.class || clazz == Integer.class) return "INT(11)";
-        else if (clazz == long.class || clazz == Long.class) return "BIGINT";
-        else if (clazz == float.class || clazz == Float.class) return "FLOAT";
-        else if (clazz == double.class || clazz == Double.class) return "DOUBLE";
+    public static String getSQLType(Class<?> clazz, int size) {
+        if (clazz == String.class) return "VARCHAR(" + (size < 1 ? 255 : size) + ")";
+        else if (clazz == char.class || clazz == Character.class) return "CHAR(" + (size < 1 ? 1 : size) + ")";
+        else if (clazz == int.class || clazz == Integer.class) return "INT(" + (size < 1 ? 11 : size) + ")";
+        else if (clazz == long.class || clazz == Long.class) return "BIGINT(" + (size < 1 ? 20 : size) + ")";
+        else if (clazz == float.class || clazz == Float.class) return "FLOAT(" + (size < 1 ? 12 : size) + ")";
+        else if (clazz == double.class || clazz == Double.class) return "DOUBLE(" + (size < 1 ? 22 : size) + ")";
         else if (clazz == boolean.class || clazz == Boolean.class) return "BOOLEAN";
-        else if (clazz == char.class || clazz == Character.class) return "CHAR";
         else if (clazz == byte[].class) return "BLOB";
-        else if (clazz == Time.class) return "BIGINT";
-        else if (clazz == UUID.class) return "VARCHAR(36)";
+        else if (clazz == Time.class) return "BIGINT(" + (size < 1 ? 20 : size) + ")";
+        else if (clazz == UUID.class) return "VARCHAR(" + (size < 1 ? 36 : size) + ")";
         return null;
     }
 
@@ -84,6 +84,8 @@ public class TableCreator {
                     }
 
                     String columnName = field.isAnnotationPresent(Column.class) ? field.getAnnotation(Column.class).name() : field.getName();
+                    int size = field.isAnnotationPresent(Column.class) ? field.getAnnotation(Column.class).length() : -1;
+
                     if (Collection.class.isAssignableFrom(field.getType())) {
                         ParameterizedType parameterizedType = (ParameterizedType) field.getGenericType();
                         Class<?> genericType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
@@ -93,13 +95,13 @@ public class TableCreator {
                         continue;
                     }
 
-                    if (getSQLType(field.getType()) == null) {
+                    if (getSQLType(field.getType(),size) == null) {
                         Collections.addAll(fields, field.getType().getDeclaredFields());
                         i++;
                         continue;
                     }
 
-                    query.append(columnName).append(" ").append(getSQLType(field.getType()));
+                    query.append(columnName).append(" ").append(getSQLType(field.getType(),size));
 
                     if (field.isAnnotationPresent(Pkey.class)) query.append(" PRIMARY KEY");
 

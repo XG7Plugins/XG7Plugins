@@ -4,7 +4,9 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.DatabaseManager;
+import com.xg7plugins.data.database.entity.Column;
 import com.xg7plugins.data.database.entity.Entity;
+import com.xg7plugins.data.database.entity.Pkey;
 import com.xg7plugins.data.database.entity.Table;
 import com.xg7plugins.data.database.query.Query;
 import com.xg7plugins.data.database.query.QueryResult;
@@ -14,6 +16,7 @@ import com.xg7plugins.utils.Pair;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -268,7 +271,7 @@ public class DatabaseProcessor {
      * @param id The ID value to look for
      * @return A CompletableFuture that resolves to true if the entity exists
      */
-    public CompletableFuture<Boolean> exists(Plugin plugin, Class<? extends Entity> table, String idCol, Object id) {
+    public CompletableFuture<Boolean> exists(Plugin plugin, Class<? extends Entity> table, Object id) {
         return CompletableFuture.supplyAsync(() -> {
             if (databaseManager.containsCachedEntity(plugin, id.toString()).join()) return true;
 
@@ -280,6 +283,8 @@ public class DatabaseProcessor {
             }
 
             if (connection == null) return false;
+
+            String idCol = getPrimaryKeyColumnName(table);
 
             try {
                 PreparedStatement ps = connection.prepareStatement("SELECT 1 FROM " + (table.isAnnotationPresent(Table.class) ? table.getAnnotation(Table.class).name() : table.getSimpleName()) + " WHERE " + idCol + " = ?");
@@ -293,5 +298,18 @@ public class DatabaseProcessor {
                 throw new RuntimeException(e);
             }
         }, executorService);
+    }
+
+    private String getPrimaryKeyColumnName(Class<?> table) {
+        for (Field field : table.getDeclaredFields()) {
+            if (field.isAnnotationPresent(Pkey.class)) {
+                if (field.isAnnotationPresent(Column.class)) {
+                    return field.getAnnotation(Column.class).name();
+                } else {
+                    return field.getName();
+                }
+            }
+        }
+        return null;
     }
 }
