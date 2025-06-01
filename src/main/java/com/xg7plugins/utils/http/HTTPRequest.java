@@ -67,7 +67,7 @@ public class HTTPRequest {
         conn.setRequestProperty("Cache-Control", "no-cache");
         conn.setRequestProperty("Pragma", "no-cache");
 
-        conn.setConnectTimeout(Config.mainConfigOf(XG7Plugins.getInstance()).getTime("http-request-timeout").orElse(5000L).intValue());
+        conn.setConnectTimeout(Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("http-request-timeout").orElse(5000L).intValue());
 
         if (headers != null) for (Pair<String,String> header : headers) conn.setRequestProperty(header.getFirst(), header.getSecond());
 

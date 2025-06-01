@@ -50,6 +50,7 @@ import com.xg7plugins.utils.text.Text;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
@@ -73,7 +74,7 @@ import java.util.concurrent.ExecutionException;
                 "§9                                    |___/             "
         },
         mainCommandName = "xg7plugins",
-        mainCommandAliases = {"7plugins", "7pl", "7pls", "xg7pl"},
+        mainCommandAliases = {"7pl", "7pls", "xg7pl"},
         reloadCauses = {"json"}
 )
 public final class XG7Plugins extends Plugin {
@@ -243,10 +244,10 @@ public final class XG7Plugins extends Plugin {
         plugin.getDebug().loading("Connecting plugin to database...");
         XG7PluginsAPI.database().connectPlugin(plugin, plugin.loadEntities());
 
+        if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
+
         plugin.getDebug().loading("Loading entities manager...");
         XG7PluginsAPI.database().registerDAOs(plugin.loadDAOs());
-
-        if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
 
         plugin.getDebug().loading("Registering listeners...");
         XG7PluginsAPI.eventManager().registerListeners(plugin, plugin.loadEvents());
@@ -265,6 +266,17 @@ public final class XG7Plugins extends Plugin {
 
         plugin.getDebug().loading("Loading help...");
         plugin.loadHelp();
+
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+
+            PlaceholderExpansion placeholderExpansion = plugin.loadPlaceholderExpansion();
+
+            if (placeholderExpansion == null) return;
+
+            plugin.getDebug().loading("Registering PlaceholderAPI expansion...");
+
+            placeholderExpansion.register();
+        }
     }
 
     public static void register(Plugin plugin) {

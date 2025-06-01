@@ -17,6 +17,7 @@ import com.xg7plugins.managers.ManagerRegistry;
 import com.xg7plugins.tasks.Task;
 import com.xg7plugins.utils.Debug;
 import lombok.*;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.apache.commons.lang.IllegalClassException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -48,7 +49,7 @@ public abstract class Plugin extends JavaPlugin {
 
     public Plugin() {
         configurations = getClass().getAnnotation(PluginSetup.class);
-        if (configurations == null) throw new IllegalClassException("PluginConfigurations annotation not found in " + getClass().getName());
+        if (configurations == null) throw new IllegalClassException("PluginSetup annotation not found in " + getClass().getName());
 
         managerRegistry = new ManagerRegistry(this);
         this.environmentConfig = new EnvironmentConfig();
@@ -61,6 +62,8 @@ public abstract class Plugin extends JavaPlugin {
 
         managerRegistry.registerManagers(new ConfigManager(this, configurations.configs()));
         managerRegistry.registerManagers(new CommandManager(this));
+
+        environmentConfig.setEnabledWorlds(Config.mainConfigOf(this).getList("enabled-worlds",String.class, true).orElse(Collections.emptyList()));
 
         debug = new Debug(this);
 
@@ -219,6 +222,10 @@ public abstract class Plugin extends JavaPlugin {
      * @return A list of dependencies that are necessary for the plugin to function
      */
     public List<Dependency> loadRequiredDependencies() {
+        return null;
+    }
+
+    public PlaceholderExpansion loadPlaceholderExpansion() {
         return null;
     }
 

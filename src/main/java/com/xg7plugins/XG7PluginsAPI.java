@@ -276,6 +276,10 @@ public class XG7PluginsAPI {
         return isWorldEnabled(plugin, player.getWorld());
     }
 
+    public static List<String> getEnabledWorldsOf(Plugin plugin) {
+        return plugin.getEnvironmentConfig().getEnabledWorlds();
+    }
+
     public static <ID,T extends Entity<?, ?>, U extends DAO<ID,T>> U getDAO(Class<U> clazz) {
         return database().getDaoManager().getDAO(clazz);
     }

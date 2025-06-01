@@ -108,7 +108,7 @@ public class LangForm extends SimpleForm {
                 send(player);
             });
 
-            XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", Config.mainConfigOf(plugin).getTime("cooldown-to-toggle-lang").orElse(5000L));
+            XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", Config.mainConfigOf(plugin).getTimeInMilliseconds("cooldown-to-toggle-lang").orElse(5000L));
 
         }));
     }

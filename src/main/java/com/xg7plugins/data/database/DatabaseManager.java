@@ -70,7 +70,7 @@ public class DatabaseManager implements Manager {
 
         cachedEntities = new ObjectCache<>(
                 plugin,
-                config.getTime("sql.cache-expires").orElse(30 * 60 * 1000L),
+                config.getTimeInMilliseconds("sql.cache-expires").orElse(30 * 60 * 1000L),
                 false,
                 "cached-entities",
                 false,

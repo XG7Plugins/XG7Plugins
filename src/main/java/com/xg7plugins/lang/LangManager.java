@@ -6,10 +6,12 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
+import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.managers.Manager;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.reflection.ReflectionObject;
+import com.xg7plugins.utils.time.Time;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +41,7 @@ public class LangManager implements Manager {
         this.mainLang = config.get("main-lang", String.class).orElse("en");
         this.langs = new ObjectCache<>(
                 plugin,
-                config.getTime("lang-cache-expires").orElse(60 * 10 * 1000L),
+                config.getTimeInMilliseconds("lang-cache-expires").orElse(60 * 10 * 1000L),
                 false,
                 "langs",
                 true,
@@ -99,7 +101,7 @@ public class LangManager implements Manager {
         if (!langEnabled || player == null) return getLang(plugin, mainLang);
 
         return CompletableFuture.supplyAsync(() -> {
-            PlayerData playerData = XG7Plugins.getInstance().getPlayerDataDAO().get(player.getUniqueId()).join();
+            PlayerData playerData = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId()).join();
 
             if (playerData == null || playerData.getLangId() == null) return getLang(plugin, mainLang,true).join();
 

@@ -50,14 +50,10 @@ public class MainCommand implements Command {
         List<String> suggestions = new ArrayList<>();
         if (args.len() == 1) {
             suggestions.addAll(XG7PluginsAPI.commandManager(plugin)
-                    .getCommands().entrySet().stream()
-                    .filter(cmd -> !cmd.getKey().isEmpty())
-                    .filter(cmd -> sender.hasPermission(cmd.getValue().getCommandConfigurations().permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass") && antiTab)
-                    .map(cmd -> {
-                            PluginSetup configurations = cmd.getValue().getPlugin().getConfigurations();
-                            return cmd.getKey().replace(configurations.mainCommandName(), "");
-                        }
-                    ).collect(Collectors.toList()));
+                    .getCommandList().stream()
+                    .filter(cmd -> sender.hasPermission(cmd.getCommandConfigurations().permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass") && antiTab)
+                    .map(cmd -> cmd.getCommandConfigurations().name())
+                    .collect(Collectors.toList()));
             if (sender.hasPermission("xg7plugins.command.help") || sender.hasPermission("xg7plugins.command.anti-tab-bypass") && antiTab) {
                 suggestions.add("help");
             }

@@ -6,6 +6,7 @@ import com.xg7plugins.data.database.entity.*;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.database.processor.TableCreator;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.time.Time;
 import lombok.Getter;
 
 import java.lang.reflect.*;
@@ -179,7 +180,7 @@ public class Transaction {
 
                 if (type == Type.DELETE) continue;
 
-                if (TableCreator.getSQLType(field.getType()) == null) {
+                if (TableCreator.getSQLType(field.getType(), 0) == null) {
                     for (Field fieldOfInsideOb : field.getType().getDeclaredFields()) {
                         fieldOfInsideOb.setAccessible(true);
 
@@ -202,6 +203,11 @@ public class Transaction {
                         : field.getName();
 
                 transaction.addColumns(columnName);
+
+                if (Time.class.isAssignableFrom(field.getType())) {
+                    transaction.params(((Time) value).getMilliseconds());
+                    continue;
+                }
                 transaction.params(value);
             }
 

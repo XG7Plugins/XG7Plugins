@@ -11,7 +11,8 @@ public class ShortUUID {
 
     public static String generateUUID(int size) {
         StringBuilder sb = new StringBuilder(size);
-        for (int i = 0; i < size; i++) {
+        sb.append("#");
+        for (int i = 1; i < size; i++) {
             int index = secureRandom.nextInt(BASE62.length());
             sb.append(BASE62.charAt(index));
         }

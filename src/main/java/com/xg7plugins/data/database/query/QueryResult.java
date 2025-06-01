@@ -179,12 +179,12 @@ public class QueryResult {
                 field.set(instance, ((Number) value).floatValue());
                 continue;
             }
-            if ((Time.class.isAssignableFrom(field.getType()) || double.class.isAssignableFrom(field.getType())) && value != null) {
-                field.set(instance, new Time((Long) value));
+            if ((Time.class.isAssignableFrom(field.getType())) && value != null) {
+                field.set(instance, new Time(((Number) value).longValue()));
                 continue;
             }
 
-            if (TableCreator.getSQLType(field.getType()) == null) {
+            if (TableCreator.getSQLType(field.getType(), 0) == null) {
                 Constructor<?> constructorOfO = field.getType().getDeclaredConstructor();
                 constructorOfO.setAccessible(true);
 

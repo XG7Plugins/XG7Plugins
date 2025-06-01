@@ -24,6 +24,27 @@ import java.util.concurrent.CompletableFuture;
  */
 public class TableCreator {
 
+    private static final Map<Class<?>, String> TYPE_MAP = new HashMap<>();
+
+    static {
+        TYPE_MAP.put(String.class, "VARCHAR");
+        TYPE_MAP.put(char.class, "CHAR");
+        TYPE_MAP.put(Character.class, "CHAR");
+        TYPE_MAP.put(int.class, "INT");
+        TYPE_MAP.put(Integer.class, "INT");
+        TYPE_MAP.put(long.class, "BIGINT");
+        TYPE_MAP.put(Long.class, "BIGINT");
+        TYPE_MAP.put(float.class, "FLOAT");
+        TYPE_MAP.put(Float.class, "FLOAT");
+        TYPE_MAP.put(double.class, "DOUBLE");
+        TYPE_MAP.put(Double.class, "DOUBLE");
+        TYPE_MAP.put(boolean.class, "BOOLEAN");
+        TYPE_MAP.put(Boolean.class, "BOOLEAN");
+        TYPE_MAP.put(byte[].class, "BLOB");
+        TYPE_MAP.put(Time.class, "BIGINT");
+        TYPE_MAP.put(UUID.class, "UUID");
+    }
+
     /**
      * Maps Java class types to their corresponding SQL data types.
      * Supports primitive types, their wrappers, and common Java classes.
@@ -32,17 +53,26 @@ public class TableCreator {
      * @return The corresponding SQL data type as a string, or null if the type cannot be mapped
      */
     public static String getSQLType(Class<?> clazz, int size) {
-        if (clazz == String.class) return "VARCHAR(" + (size < 1 ? 255 : size) + ")";
-        else if (clazz == char.class || clazz == Character.class) return "CHAR(" + (size < 1 ? 1 : size) + ")";
-        else if (clazz == int.class || clazz == Integer.class) return "INT(" + (size < 1 ? 11 : size) + ")";
-        else if (clazz == long.class || clazz == Long.class) return "BIGINT(" + (size < 1 ? 20 : size) + ")";
-        else if (clazz == float.class || clazz == Float.class) return "FLOAT(" + (size < 1 ? 12 : size) + ")";
-        else if (clazz == double.class || clazz == Double.class) return "DOUBLE(" + (size < 1 ? 22 : size) + ")";
-        else if (clazz == boolean.class || clazz == Boolean.class) return "BOOLEAN";
-        else if (clazz == byte[].class) return "BLOB";
-        else if (clazz == Time.class) return "BIGINT(" + (size < 1 ? 20 : size) + ")";
-        else if (clazz == UUID.class) return "VARCHAR(" + (size < 1 ? 36 : size) + ")";
-        return null;
+        String type = TYPE_MAP.get(clazz);
+        if (type == null) return null;
+
+        switch (type) {
+            case "VARCHAR":
+                int finalSize = (size < 1) ? (clazz == UUID.class ? 36 : 255) : size;
+                return "VARCHAR(" + finalSize + ")";
+            case "INT":
+                return "INT(" + (size < 1 ? 11 : size) + ")";
+            case "BIGINT":
+                return "BIGINT(" + (size < 1 ? 20 : size) + ")";
+            case "FLOAT":
+                return "FLOAT(" + (size < 1 ? 12 : size) + ")";
+            case "DOUBLE":
+                return "DOUBLE(" + (size < 1 ? 22 : size) + ")";
+            case "UUID":
+                return "VARCHAR(" + (size < 1 ? 36 : size) + ")";
+            default:
+                return type;
+        }
     }
 
 

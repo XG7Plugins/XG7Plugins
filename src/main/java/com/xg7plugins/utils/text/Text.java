@@ -8,6 +8,7 @@ import com.xg7plugins.utils.Pair;
 
 import com.xg7plugins.utils.text.sender.TextSender;
 import com.xg7plugins.utils.text.sender.deserializer.TextSenderDeserializer;
+import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
 import lombok.Setter;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -137,8 +138,12 @@ public class Text {
         text.getTextSender().send(sender, text);
     }
 
+    public String getText() {
+        return TimeParser.remainingTimeForValue(this.text);
+    }
+
     public String getPlainText() {
-        return LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build().serialize(getComponent());
+        return TimeParser.remainingTimeForValue(LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build().serialize(getComponent()));
     }
 
     public Component getComponent() {

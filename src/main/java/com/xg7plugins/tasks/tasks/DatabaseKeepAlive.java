@@ -12,7 +12,7 @@ import com.xg7plugins.tasks.TaskState;
 public class DatabaseKeepAlive extends Task {
 
     public DatabaseKeepAlive() {
-        super(XG7Plugins.getInstance(), "keep-alive-database", true, true, Config.mainConfigOf(XG7Plugins.getInstance()).getTime("sql.keep-alive-time").orElse(10 * 60 * 1000L), TaskState.RUNNING, null);
+        super(XG7Plugins.getInstance(), "keep-alive-database", true, true, Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("sql.keep-alive-time").orElse(10 * 60 * 1000L), TaskState.RUNNING, null);
     }
 
     @Override

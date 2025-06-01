@@ -19,6 +19,13 @@ public enum TimeFormat {
     DAYS((t, n) -> (t / (1000 * 60 * 60 * 24)) + n.get(3)),
 
     SECONDS_MILLISECONDS((t, n) -> (t / 1000) + n.get(0) + " " + (t % 1000) + n.get(1)),
+    MINUTES_SECONDS((t, n) -> (t / (1000 * 60)) + n.get(0) + " " + ((t % (1000 * 60)) / 1000) + n.get(1)),
+    MINUTES_SECONDS_MILLISECONDS((t, n) -> {
+        long minutes = t / (1000 * 60);
+        long seconds = (t % (1000 * 60)) / 1000;
+        long millis = t % 1000;
+        return minutes + n.get(0) + " " + seconds + n.get(1) + " " + millis + n.get(2);
+    }),
     HOURS_MINUTES((t, n) -> (t / (60 * 60 * 1000)) + n.get(0) + " " + ((t % (60 * 60 * 1000)) / (60 * 1000)) + n.get(1)),
     HOURS_MINUTES_SECONDS((t, n) -> {
         long hours = t / (60 * 60 * 1000);

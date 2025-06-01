@@ -7,6 +7,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.managers.Manager;
+import com.xg7plugins.utils.time.Time;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -69,7 +70,7 @@ public class CacheManager implements Manager {
             int maxIdle = config.get("redis-cache.max-idle-connections", Integer.class).orElse(50);
             int maxPoolSize = config.get("redis-cache.max-connections", Integer.class).orElse(100);
 
-            long timeout = config.getTime("redis-cache.max-wait-time").orElse(1000L);
+            long timeout = config.getTimeInMilliseconds("redis-cache.max-wait-time").orElse(1000L);
 
             pool.setMinIdle(minIdle);
             pool.setMaxIdle(maxIdle);

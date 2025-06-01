@@ -6,6 +6,7 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.managers.Manager;
 import com.xg7plugins.tasks.tasks.CooldownManagerTask;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.time.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +31,7 @@ public class CooldownManager implements Manager {
     private final List<Pair<UUID, String>> toRemove = new ArrayList<>();
 
     public CooldownManager(XG7Plugins plugin) {
-        this.task = new CooldownManagerTask(this, Config.mainConfigOf(plugin).getTime("player-cooldown-task-delay").orElse(1000L));
+        this.task = new CooldownManagerTask(this, Config.mainConfigOf(plugin).getTime("player-cooldown-task-delay").orElse(Time.of(1)).getMilliseconds());
     }
 
     /**
@@ -52,7 +53,7 @@ public class CooldownManager implements Manager {
      * @param cooldownId The unique identifier for this cooldown
      * @param time       The duration of the cooldown in seconds
      */
-    public void addCooldown(Player player, String cooldownId, double time) {
+    public void addCooldown(Player player, String cooldownId, long time) {
         XG7PluginsAPI.taskManager().runTask(task);
         cooldowns.putIfAbsent(player.getUniqueId(), new HashMap<>());
         cooldowns.get(player.getUniqueId()).put(cooldownId, new CooldownTask(cooldownId, time, null, null));
@@ -76,7 +77,7 @@ public class CooldownManager implements Manager {
      * @param player     The player to check
      * @return The remaining time in seconds
      */
-    public double getReamingTime(String cooldownId, Player player) {
+    public long getReamingTime(String cooldownId, Player player) {
         return cooldowns.get(player.getUniqueId()).get(cooldownId).getTime();
     }
 
@@ -109,7 +110,7 @@ public class CooldownManager implements Manager {
     @Getter
     public static class CooldownTask {
         private String id;
-        private double time;
+        private long time;
         private final Consumer<Player> tick;
         private final BiConsumer<Player, Boolean> onFinish;
     }

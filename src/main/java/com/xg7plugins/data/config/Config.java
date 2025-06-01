@@ -2,6 +2,7 @@ package com.xg7plugins.data.config;
 
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.utils.time.Time;
 import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -228,7 +229,7 @@ public class Config {
      * @param ignoreNonexistent Whether to ignore missing values
      * @return Optional containing the time in milliseconds if valid
      */
-    public Optional<Long> getTime(String path, boolean ignoreNonexistent) {
+    public Optional<Time> getTime(String path, boolean ignoreNonexistent) {
         String time = config.getString(path);
         if (time == null) {
             if (!ignoreNonexistent) plugin.getDebug().warn(path + " not found in " + name + ".yml");
@@ -240,11 +241,15 @@ public class Config {
         } catch (TimeParser.TimeParseException e) {
             throw new RuntimeException(e);
         }
-        return Optional.ofNullable(milliseconds == 0 ? null : milliseconds);
+        return Optional.ofNullable(milliseconds == 0 ? null : Time.of(milliseconds));
     }
     
-    public Optional<Long> getTime(String path) {
+    public Optional<Time> getTime(String path) {
         return getTime(path,false);
+    }
+
+    public Optional<Long> getTimeInMilliseconds(String path) {
+        return getTime(path, false).map(Time::getMilliseconds);
     }
 
     /**

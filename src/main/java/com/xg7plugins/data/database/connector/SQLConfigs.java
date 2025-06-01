@@ -50,11 +50,11 @@ public class SQLConfigs {
      */
     public SQLConfigs(Config pluginConfig, Config mainConfig) {
         this(pluginConfig);
-        this.cacheExpires = mainConfig.getTime("sql.cache-expires").orElse(0L);
+        this.cacheExpires = mainConfig.getTimeInMilliseconds("sql.cache-expires").orElse(0L);
 
-        this.connectionTimeout = mainConfig.getTime("sql.connection-timeout").orElse(0L);
+        this.connectionTimeout = mainConfig.getTimeInMilliseconds("sql.connection-timeout").orElse(0L);
 
-        this.idleTimeout = mainConfig.getTime("sql.idle-timeout").orElse(0L);
+        this.idleTimeout = mainConfig.getTimeInMilliseconds("sql.idle-timeout").orElse(0L);
 
         this.maxPoolSize = mainConfig.get("sql.max-pool-size", Integer.class)
                 .orElse(10); // Default suggested value
@@ -62,12 +62,12 @@ public class SQLConfigs {
         this.minIdle = mainConfig.get("sql.min-idle-connections", Integer.class)
                 .orElse(5); // Default suggested value
 
-        this.keepAliveTime = mainConfig.getTime("sql.keep-alive-time").orElse(0L);
+        this.keepAliveTime = mainConfig.getTimeInMilliseconds("sql.keep-alive-time").orElse(0L);
 
         this.queryThreads = mainConfig.get("sql.query-processor-threads", Short.class)
                 .orElse((short) 4);
 
-        this.processInterval = mainConfig.getTime("sql.sql-command-processing-interval").orElse(0L);
+        this.processInterval = mainConfig.getTimeInMilliseconds("sql.sql-command-processing-interval").orElse(0L);
     }
 
     /**

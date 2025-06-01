@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit;
 public class DatabaseProcessor {
 
     private final DatabaseManager databaseManager;
-    private final long timeout = Config.mainConfigOf(XG7Plugins.getInstance()).getTime("sql.connection-timeout").orElse(5000L);
+    private final long timeout = Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("sql.connection-timeout").orElse(5000L);
 
     @Getter
     private final ScheduledExecutorService executorService;
@@ -61,7 +61,7 @@ public class DatabaseProcessor {
         Config config = Config.mainConfigOf(XG7Plugins.getInstance());
 
         this.executorService = Executors.newScheduledThreadPool(config.get("sql.query-processor-threads", Integer.class).orElse(3));
-        process(config.getTime("sql.sql-command-processing-interval").orElse(20L));
+        process(config.getTimeInMilliseconds("sql.sql-command-processing-interval").orElse(20L));
     }
 
     /**

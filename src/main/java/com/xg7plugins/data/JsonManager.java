@@ -27,7 +27,7 @@ public class JsonManager implements Manager {
     public JsonManager(XG7Plugins plugin) {
         cache = new ObjectCache<>(
                 plugin,
-                Config.mainConfigOf(plugin).getTime("json-cache-expires").orElse(60 * 10 * 1000L),
+                Config.mainConfigOf(plugin).getTimeInMilliseconds("json-cache-expires").orElse(60 * 10 * 1000L),
                 false,
                 "json-cache",
                 false,

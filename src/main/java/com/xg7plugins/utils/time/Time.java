@@ -12,12 +12,11 @@ import java.util.Date;
 public class Time {
 
     private long milliseconds;
-
-    public static Time of(long milliseconds) {
-        return new Time(milliseconds);
-    }
     public static Time of(Long milliseconds) {
         if (milliseconds == null) return null;
+        return new Time(milliseconds);
+    }
+    public static Time of(long milliseconds) {
         return new Time(milliseconds);
     }
     public static Time of(int seconds) {
@@ -62,6 +61,13 @@ public class Time {
         return this;
     }
 
+    public Date toDate() {
+        return new Date(milliseconds);
+    }
+    public Timestamp toTimeStamp() {
+        return new Timestamp(milliseconds);
+    }
+
     private Time() {}
 
     public static Time getRemainingTime(long time) {
@@ -71,7 +77,7 @@ public class Time {
         return getRemainingTime(time.getMilliseconds());
     }
 
-    public String formatRemainingTime(TimeFormat format) {
+    public String formatReamingTime(TimeFormat format) {
         return format.format(milliseconds);
     }
     public String formatDate(String format) {

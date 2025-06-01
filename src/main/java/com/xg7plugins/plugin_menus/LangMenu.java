@@ -122,7 +122,7 @@ public class LangMenu extends PagedMenu {
                     refresh(holder);
                 });
 
-                XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", Config.mainConfigOf(XG7Plugins.getInstance()).getTime("cooldown-to-toggle-lang").orElse(5000L));
+                XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("cooldown-to-toggle-lang").orElse(5000L));
 
         }
     }
