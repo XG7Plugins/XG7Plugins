@@ -21,5 +21,6 @@ public class ActionEvent extends MenuEvent {
         this.rawSlot = rawSlot;
         this.clickedSlot = clickedSlot;
         this.clickedItem = clickedItem;
+        setCancelled(true);
     }
 }

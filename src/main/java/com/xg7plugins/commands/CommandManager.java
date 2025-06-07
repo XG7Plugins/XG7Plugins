@@ -101,7 +101,8 @@ public class CommandManager implements Manager {
 
             List<String> allAliases = new ArrayList<>(configAliases);
 
-            for (String mainAlias : plConfig.mainCommandAliases()) allAliases.add(mainAlias + commandSetup.name());
+            for (String mainAlias : plConfig.mainCommandAliases())
+                allAliases.add(mainAlias + commandSetup.name());
 
             pluginCommand.setAliases(allAliases);
             pluginCommand.setExecutor(executor);
@@ -111,7 +112,12 @@ public class CommandManager implements Manager {
 
             this.commands.putIfAbsent(fullCommandName, command);
 
-            for (String alias : allAliases) this.commands.putIfAbsent(alias, command);
+            commandMap.register(fullCommandName, pluginCommand);
+
+            for (String alias : allAliases) {
+                if (this.commands.containsKey(alias)) continue;
+                this.commands.put(alias, command);
+            }
 
             this.commandList.add(command);
 
@@ -119,6 +125,7 @@ public class CommandManager implements Manager {
         });
 
         plugin.getDebug().loading("Successfully loaded " + commands.size() + " Commands!");
+        plugin.getDebug().loading("Commands: " + this.getCommands().toString());
     }
 
     public Command getCommand(String name) {

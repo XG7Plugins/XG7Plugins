@@ -23,5 +23,6 @@ public class DragEvent extends MenuEvent {
         this.draggedItems = draggedItems;
         this.draggedSlots = draggedSlots;
         this.draggedRawSlots = draggedRawSlots;
+        setCancelled(true);
     }
 }
