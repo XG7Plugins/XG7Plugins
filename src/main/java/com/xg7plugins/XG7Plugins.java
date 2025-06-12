@@ -145,7 +145,7 @@ public final class XG7Plugins extends Plugin {
         register(this);
         plugins.forEach((name, plugin) -> loadPlugin(plugin));
 
-        XG7PluginsAPI.configManager(this).registerAdapter(Item.class, new LangItemTypeAdapter());
+        XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
 
         debug.loading("XG7Plugins enabled.");
 

@@ -76,7 +76,7 @@ public class CommandManager implements Manager {
             if (!commandSetup.isEnabled().configName().isEmpty()) {
                 Config config = Config.of(commandSetup.isEnabled().configName(), plugin);
                 boolean invert = commandSetup.isEnabled().invert();
-                if (config != null && config.get(commandSetup.isEnabled().path(), Boolean.class).orElse(false) == invert) {
+                if (config != null && config.get(commandSetup.isEnabled().path(), Boolean.class).orElse(false) != invert) {
                     plugin.getDebug().info("Command " + commandSetup.name() + " is disabled by configuration");
                     return;
                 }
@@ -125,7 +125,6 @@ public class CommandManager implements Manager {
         });
 
         plugin.getDebug().loading("Successfully loaded " + commands.size() + " Commands!");
-        plugin.getDebug().loading("Commands: " + this.getCommands().toString());
     }
 
     public Command getCommand(String name) {

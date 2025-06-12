@@ -6,6 +6,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.modules.xg7menus.Slot;
+import com.xg7plugins.modules.xg7menus.editor.InventoryEditor;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
@@ -81,16 +82,23 @@ public class TaskMenu extends PagedMenu {
 
         Config lang = XG7PluginsAPI.langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getLangConfiguration();
 
-        return Arrays.asList(
-                Item.from(XMaterial.ARROW).name("lang:[go-back-item]").slot(45),
-                Item.from(XMaterial.ARROW).name("lang:[go-next-item]").slot(53),
-                Item.from(XMaterial.ENDER_PEARL).name("lang:[refresh-item]").slot(0),
+        InventoryEditor editor = new InventoryEditor(getMenuConfigs());
+
+        editor.setItem(Slot.fromSlot(45), Item.from(XMaterial.ARROW).name("lang:[go-back-item]"));
+        editor.setItem(Slot.fromSlot(48), Item.from(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR)).name("lang:[close-item]"));
+        editor.setItem(Slot.fromSlot(53), Item.from(XMaterial.ARROW).name("lang:[go-next-item]"));
+        editor.setItem(Slot.fromSlot(0), Item.from(XMaterial.ENDER_PEARL).name("lang:[refresh-item]"));
+        editor.setItem(
+                Slot.fromSlot(50),
                 Item.from(Material.PAPER).name(" ").lore(lang.getList("tasks-menu.notes", String.class).orElse(Collections.emptyList()))
                         .setBuildPlaceholders(
                                 Pair.of("tasks", String.valueOf(XG7PluginsAPI.taskManager().getTasks().size())),
                                 Pair.of("ram", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + " / " + Runtime.getRuntime().totalMemory() / 1024 / 1024),
                                 Pair.of("tps", String.format("%.2f", XG7Plugins.getInstance().getTpsCalculator().getTPS()))
-                        ).slot(49));
+                        )
+        );
+
+        return editor.getItems();
     }
 
     @Override
@@ -104,6 +112,9 @@ public class TaskMenu extends PagedMenu {
         switch (event.getClickedSlot().get()) {
             case 0:
                 refresh(holder);
+                break;
+            case 48:
+                player.closeInventory();
                 break;
             case 45:
                 holder.previousPage();

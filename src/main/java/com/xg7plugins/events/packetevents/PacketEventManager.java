@@ -37,9 +37,6 @@ public class PacketEventManager implements Manager {
 
             if (listener == null) continue;
 
-            System.out.println("Registering listener: " + listener.getClass().getName() + " for plugin: " + plugin.getName() + "");
-
-
             if (!listener.isEnabled()) continue;
 
             PacketListenerSetup packetEventHandler = listener.getClass().getAnnotation(PacketListenerSetup.class);
@@ -134,6 +131,7 @@ public class PacketEventManager implements Manager {
      * @param plugin The plugin whose listeners should be unregistered
      */
     public void unregisterListeners(Plugin plugin) {
+        if (!packetListeners.containsKey(plugin.getName())) return;
         for (PacketListenerCommon listener : packetListeners.get(plugin.getName())) PacketEvents.getAPI().getEventManager().unregisterListener(listener);
 
         packetListeners.get(plugin.getName()).clear();

@@ -1,5 +1,7 @@
 package com.xg7plugins.modules.xg7menus.menus.holders;
 
+import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
@@ -22,16 +24,20 @@ public class MenuHolder extends BasicMenuHolder implements InventoryHolder {
         super(menu, player);
         MenuConfigurations menuConfigurations = menu.getMenuConfigs();
 
-       this.inventory = menuConfigurations.getInventoryType() == null ?
-               Bukkit.createInventory(this, menuConfigurations.getRows() * 9, Text.detectLangs(player, menuConfigurations.getPlugin(), menuConfigurations.getTitle()).join().replaceAll(menuConfigurations.getPlaceholders()).getText())
-               :
-               Bukkit.createInventory(this, menuConfigurations.getInventoryType(), Text.detectLangs(player, menuConfigurations.getPlugin(), menuConfigurations.getTitle()).join().replaceAll(menuConfigurations.getPlaceholders()).getText());
+        this.inventory = menuConfigurations.getInventoryType() == null ?
+                Bukkit.createInventory(this, menuConfigurations.getRows() * 9, Text.detectLangs(player, menuConfigurations.getPlugin(), menuConfigurations.getTitle()).join().replaceAll(menuConfigurations.getPlaceholders()).getText())
+                :
+                Bukkit.createInventory(this, menuConfigurations.getInventoryType(), Text.detectLangs(player, menuConfigurations.getPlugin(), menuConfigurations.getTitle()).join().replaceAll(menuConfigurations.getPlaceholders()).getText());
 
-       this.inventoryUpdater = new InventoryUpdater(this);
+        this.inventoryUpdater = new InventoryUpdater(this);
 
-       player.openInventory(inventory);
+        player.closeInventory();
 
-       BasicMenu.refresh(this);
+        Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> {
+            player.openInventory(inventory);
+
+            BasicMenu.refresh(this);
+        }, 1L);
 
     }
 

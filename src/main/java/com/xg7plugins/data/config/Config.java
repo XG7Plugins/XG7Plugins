@@ -76,6 +76,15 @@ public class Config {
         this.config = config;
     }
 
+    public Config(Plugin plugin, YamlConfiguration config, String name, boolean createFile) throws IOException {
+        this.plugin = plugin;
+        this.name = name;
+        this.config = config;
+        this.configFile = new File(plugin.getDataFolder(), name + ".yml");
+
+        if (!configFile.exists() && createFile) configFile.createNewFile();
+    }
+
     /**
      * Creates a new Config instance with an existing YamlConfiguration.
      *
@@ -85,12 +94,7 @@ public class Config {
      * @throws IOException if unable to create the config file
      */
     public Config(Plugin plugin, YamlConfiguration config, String name) throws IOException {
-        this.plugin = plugin;
-        this.name = name;
-        this.config = config;
-        this.configFile = new File(plugin.getDataFolder(), name + ".yml");
-
-        if (!configFile.exists()) configFile.createNewFile();
+        this(plugin,config,name,true);
     }  /**
      * Factory method to get or create a Config instance.
      * Returns existing config if available, otherwise creates new one.
@@ -164,7 +168,7 @@ public class Config {
             return Optional.empty();
         }
 
-        return Optional.ofNullable(adapter.fromConfig(get(path, ConfigurationSection.class).orElse(null), optionalTypeArgs));
+        return Optional.ofNullable(adapter.fromConfig(this, path, optionalTypeArgs));
     }
 
     /**

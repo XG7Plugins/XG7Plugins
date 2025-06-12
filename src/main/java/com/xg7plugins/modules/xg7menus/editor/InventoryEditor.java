@@ -22,7 +22,7 @@ public class InventoryEditor implements InventoryShaper {
         if (item == null) {
             items.remove(slot);
         } else {
-            items.put(slot, item);
+            items.put(slot, item.slot(slot));
         }
     }
 
@@ -187,6 +187,6 @@ public class InventoryEditor implements InventoryShaper {
 
     @Override
     public List<Item> getItems() {
-        return Collections.emptyList();
+        return new ArrayList<>(items.values());
     }
 }

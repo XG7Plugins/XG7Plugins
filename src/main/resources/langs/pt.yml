@@ -44,7 +44,7 @@ lang-menu:
 
   toggle-success: "Você mudou o idioma para português!"
 
-  cooldown-to-toggle: "Você precisa esperar %seconds% segundos para mudar o idioma novamente"
+  cooldown-to-toggle: "Você precisa esperar @SECONDS:%time%@ segundos para mudar o idioma novamente"
 
 tasks-menu:
   title: "Tarefas"

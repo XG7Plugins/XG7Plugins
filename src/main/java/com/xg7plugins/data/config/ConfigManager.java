@@ -71,8 +71,8 @@ public class ConfigManager implements Manager {
      * @param adapter The adapter instance to handle the type conversion
      * @param <T>     The type parameter for the class and adapter
      */
-    public <T> void registerAdapter(Class<T> tClass, ConfigTypeAdapter<T> adapter) {
-        adapters.put(tClass, adapter);
+    public <T> void registerAdapter(ConfigTypeAdapter<T> adapter) {
+        adapters.put(adapter.getTargetType(), adapter);
     }
 
 

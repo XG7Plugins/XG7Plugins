@@ -18,6 +18,8 @@ public interface ConfigTypeAdapter<T> {
      * @param optionalArgs Additional arguments that may be needed during the conversion process
      * @return An instance of type T populated with the configuration data
      */
-    T fromConfig(ConfigurationSection section, Object... optionalArgs);
+    T fromConfig(Config config, String path, Object... optionalArgs);
+
+    Class<T> getTargetType();
 
 }

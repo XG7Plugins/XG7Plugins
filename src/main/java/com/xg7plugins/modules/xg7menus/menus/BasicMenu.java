@@ -45,10 +45,13 @@ public interface BasicMenu {
     }
     static CompletableFuture<Void> refresh(BasicMenuHolder holder) {
 
+        System.out.println(holder);
+
         return CompletableFuture.runAsync(() -> {
             holder.getInventory().clear();
 
             for (Item item : holder.getMenu().getItems(holder.getPlayer())) {
+                System.out.println(holder.getMenu().getItems(holder.getPlayer()));
                 holder.getInventoryUpdater().addItem(item);
             }
             if (holder.getMenu().getDefaultClickableItems() == null) return;

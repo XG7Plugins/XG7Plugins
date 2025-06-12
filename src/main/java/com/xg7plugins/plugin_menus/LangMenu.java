@@ -8,6 +8,7 @@ import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.modules.xg7menus.Slot;
+import com.xg7plugins.modules.xg7menus.editor.InventoryEditor;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
@@ -55,11 +56,13 @@ public class LangMenu extends PagedMenu {
 
     @Override
     public List<Item> getItems(Player player) {
-        return Arrays.asList(
-                Item.from(XMaterial.ARROW).name("lang:[go-back-item]").slot(45),
-                Item.from(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR)).name("lang:[close-item]").slot(49),
-                Item.from(XMaterial.ARROW).name("lang:[go-next-item]").slot(53)
-        );
+        InventoryEditor editor = new InventoryEditor(getMenuConfigs());
+
+        editor.setItem(Slot.fromSlot(45), Item.from(XMaterial.ARROW).name("lang:[go-back-item]"));
+        editor.setItem(Slot.fromSlot(49), Item.from(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR)).name("lang:[close-item]"));
+        editor.setItem(Slot.fromSlot(53), Item.from(XMaterial.ARROW).name("lang:[go-next-item]"));
+
+        return (List<Item>) editor.getItems();
     }
 
     @Override

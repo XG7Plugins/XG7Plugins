@@ -55,9 +55,9 @@ public class EventManager implements Manager {
 
                     boolean invert = eventHandler.isEnabled().invert();
                     if (config != null) {
-                        if (config.get(eventHandler.isEnabled().path(), Boolean.class).orElse(false) == invert) continue;
-                    }
-                    else if (invert) continue;
+                        if (config.get(eventHandler.isEnabled().path(), Boolean.class).orElse(false) != invert)
+                            continue;
+                    } else if (!invert) continue;
                 }
 
                 plugin.getServer().getPluginManager().registerEvent(
