@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 @AllArgsConstructor
-public class InventoryUpdater implements InventoryShaper {
+public class InventoryUpdater implements InventoryEditor {
 
     private final BasicMenuHolder holder;
 

@@ -6,7 +6,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.editor.InventoryEditor;
+import com.xg7plugins.modules.xg7menus.editor.InventoryShaper;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
@@ -82,7 +82,7 @@ public class TaskMenu extends PagedMenu {
 
         Config lang = XG7PluginsAPI.langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getLangConfiguration();
 
-        InventoryEditor editor = new InventoryEditor(getMenuConfigs());
+        InventoryShaper editor = new InventoryShaper(getMenuConfigs());
 
         editor.setItem(Slot.fromSlot(45), Item.from(XMaterial.ARROW).name("lang:[go-back-item]"));
         editor.setItem(Slot.fromSlot(48), Item.from(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR)).name("lang:[close-item]"));
