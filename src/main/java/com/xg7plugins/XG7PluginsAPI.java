@@ -299,7 +299,7 @@ public class XG7PluginsAPI {
      * @return A CompletableFuture that will contain the player data when available
      */
     public static CompletableFuture<PlayerData> requestPlayerData(UUID uuid) {
-        return getDAO(PlayerDataDAO.class).get(uuid);
+        return getDAO(PlayerDataDAO.class).getAsync(uuid);
     }
 
     /**
@@ -310,6 +310,14 @@ public class XG7PluginsAPI {
      */
     public static CompletableFuture<PlayerData> requestPlayerData(Player player) {
         return requestPlayerData(player.getUniqueId());
+    }
+
+    public static PlayerData getPlayerData(UUID uuid) {
+        return getDAO(PlayerDataDAO.class).get(uuid);
+    }
+
+    public static PlayerData getPlayerData(Player player) {
+        return getDAO(PlayerDataDAO.class).get(player.getUniqueId());
     }
 
     /**

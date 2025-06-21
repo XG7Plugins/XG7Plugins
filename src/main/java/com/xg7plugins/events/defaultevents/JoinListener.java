@@ -22,12 +22,13 @@ public class JoinListener implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onAsyncJoin(AsyncPlayerPreLoginEvent event) {
 
-
         try {
             XG7PluginsAPI.getDAO(PlayerDataDAO.class).add(new PlayerData(event.getUniqueId(), null));
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (Exception e) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL,  e.getMessage());
             throw new RuntimeException(e);
         }
+
 
     }
 

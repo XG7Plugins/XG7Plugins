@@ -101,7 +101,7 @@ public class LangManager implements Manager {
         if (!langEnabled || player == null) return getLang(plugin, mainLang);
 
         return CompletableFuture.supplyAsync(() -> {
-            PlayerData playerData = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId()).join();
+            PlayerData playerData = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId());
 
             if (playerData == null || playerData.getLangId() == null) return getLang(plugin, mainLang,true).join();
 

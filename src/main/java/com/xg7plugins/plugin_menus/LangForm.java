@@ -37,7 +37,7 @@ public class LangForm extends SimpleForm {
 
         XG7PluginsAPI.langManager().getLangs().asMap().join().entrySet().stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
 
-            PlayerData language = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId()).join();
+            PlayerData language = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId());
 
             boolean selected = language != null && language.getLangId().equals(map.getKey().contains(":") ? map.getKey().split(":")[1] : map.getKey());
 
@@ -72,10 +72,14 @@ public class LangForm extends SimpleForm {
     @Override
     public void onFinish(org.geysermc.cumulus.form.SimpleForm form, SimpleFormResponse result, Player player) {
 
-        XG7PluginsAPI.langManager().loadLangsFrom(plugin).thenRun(() -> XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId()).thenAccept(language -> {
+        XG7PluginsAPI.langManager().loadLangsFrom(plugin).thenRun(() -> {
+
+            PlayerData data = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId());
+
+            if (data == null) return;
 
             String lang = XG7PluginsAPI.langManager().getLangs().asMap().join().keySet().toArray(new String[0])[result.clickedButtonId()];
-            if (language != null && language.getLangId().equals(lang)) {
+            if (data.getLangId().equals(lang)) {
                 Text.fromLang(player, plugin, "lang-menu.already-selected").thenAccept(text -> text.send(player));
                 return;
             }
@@ -96,21 +100,20 @@ public class LangForm extends SimpleForm {
 
             PlayerDataDAO dao = XG7PluginsAPI.getDAO(PlayerDataDAO.class);
 
-            PlayerData data = dao.get(player.getUniqueId()).join();
-
             String dbLang = lang.split(":")[1];
 
             data.setLangId(dbLang);
 
-            dao.update(data).thenAccept(r -> {
-                XG7PluginsAPI.langManager().loadLangsFrom(XG7Plugins.getInstance()).join();
-                Text.fromLang(player, plugin, "lang-menu.toggle-success").thenAccept(text -> text.send(player));
-                send(player);
-            });
+            dao.update(data);
+            XG7PluginsAPI.langManager().loadLangsFrom(XG7Plugins.getInstance()).join();
+            Text.sendTextFromLang(player, plugin, "lang-menu.toggle-success");
+            send(player);
+
 
             XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", Config.mainConfigOf(plugin).getTimeInMilliseconds("cooldown-to-toggle-lang").orElse(5000L));
 
-        }));
+
+        });
     }
 
     @Override

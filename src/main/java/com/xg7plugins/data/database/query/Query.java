@@ -31,7 +31,6 @@ public class Query {
     private final HashMap<String, String> conditions = new HashMap<>();
     private String additionalCommands;
 
-    private final CountDownLatch latch = new CountDownLatch(1);
     private QueryResult finishedResult;
 
     @Getter
@@ -308,23 +307,12 @@ public class Query {
     }
 
     /**
-     * Sets the result handler for the query execution.
-     *
-     * @param result The result handler callback
-     * @return This query instance for method chaining
-     */
-    public Query onResult(Consumer<QueryResult> result) {
-        this.result = result;
-        return this;
-    }
-
-    /**
      * Builds the final SQL query string and queues it for execution.
      * Combines all configured parts of the query including joins, conditions, and parameters.
      *
      * @return This query instance for method chaining
      */
-    public Query queue() {
+    public QueryResult process() throws Exception {
         StringBuilder query = new StringBuilder("SELECT ");
 
         if (this.selectAll) {
@@ -362,39 +350,9 @@ public class Query {
 
         this.query = query.toString();
 
-        XG7PluginsAPI.dbProcessor().queueQuery(this);
-
-        return this;
+        return XG7PluginsAPI.dbProcessor().processQuery(this);
     }
 
-
-    /**
-     * Executes the query and waits for the result.
-     * Blocks the current thread until the query execution is complete.
-     *
-     * @return The query execution result
-     * @throws RuntimeException if the thread is interrupted while waiting
-     */
-    public QueryResult waitForResult() {
-        try {
-            queue();
-            latch.await();
-            return finishedResult;
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Completes the query execution and notifies waiting threads.
-     *
-     * @param result The query execution result
-     */
-    public void completeTask(QueryResult result) {
-        this.finishedResult = result;
-        latch.countDown();
-    }
 
     /**
      * Enum representing different SQL join types.

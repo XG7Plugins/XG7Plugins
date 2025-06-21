@@ -130,7 +130,7 @@ public class DatabaseManager implements Manager {
 
         plugin.getDebug().loading("Checking tables...");
 
-        Arrays.stream(entityClasses).forEach(aClass -> tableCreator.createTableOf(plugin, aClass).join());
+        Arrays.stream(entityClasses).forEach(aClass -> tableCreator.createTableOf(plugin, aClass));
 
         plugin.getDebug().loading("Successfully checked tables!");
 
@@ -160,7 +160,6 @@ public class DatabaseManager implements Manager {
      * @throws Exception If an error occurs during shutdown
      */
     public void shutdown() throws Exception {
-        processor.shutdown();
         XG7PluginsAPI.getAllXG7Plugins().forEach(plugin -> {
             try {
                 disconnectPlugin(plugin);

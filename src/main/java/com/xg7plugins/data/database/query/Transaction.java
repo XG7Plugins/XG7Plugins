@@ -28,8 +28,6 @@ public class Transaction {
     @Getter
     private Runnable success;
 
-    private final CountDownLatch latch = new CountDownLatch(1);
-
     @Getter
     private Consumer<Exception> error;
 
@@ -72,7 +70,7 @@ public class Transaction {
      * @throws InstantiationException if unable to create instance
      */
     public static Transaction createTransaction(Plugin plugin, Entity entity, Type type)
-            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
+            throws Exception {
 
         Transaction transaction = new Transaction(plugin);
 
@@ -144,11 +142,16 @@ public class Transaction {
                             .allColumns()
                             .where(idTable + " = ?")
                             .params(idValue)
-                            .waitForResult();
+                            .process();
 
                     List<Entity> databaseList = new ArrayList<>();
                     while (result.hasNext()) {
-                        databaseList.add(result.get(entityType));
+                        try {
+                            databaseList.add(result.get(entityType));
+                        } catch (NoSuchMethodException | InvocationTargetException |
+                                 InstantiationException | IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
 
                     for (Entity object : objectList) {
@@ -233,7 +236,7 @@ public class Transaction {
      * @param entity The entity to update
      * @return Configured Transaction instance for UPDATE operation
      */
-    public static Transaction update(Plugin plugin, Entity entity) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
+    public static Transaction update(Plugin plugin, Entity entity) throws Exception {
         return createTransaction(plugin, entity, Type.UPDATE);
     }
     
@@ -243,7 +246,7 @@ public class Transaction {
      * @param entity The entity to insert
      * @return Configured Transaction instance for INSERT operation
      */
-    public static Transaction insert(Plugin plugin, Entity entity) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
+    public static Transaction insert(Plugin plugin, Entity entity) throws Exception{
         return createTransaction(plugin, entity, Type.INSERT);
     }
     
@@ -253,7 +256,7 @@ public class Transaction {
      * @param entity The entity to delete
      * @return Configured Transaction instance for DELETE operation
      */
-    public static Transaction delete(Plugin plugin, Entity entity) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, InstantiationException {
+    public static Transaction delete(Plugin plugin, Entity entity) throws Exception {
         return createTransaction(plugin, entity, Type.DELETE);
     }
 
@@ -376,8 +379,8 @@ public class Transaction {
     /**
      * Queues this transaction for execution
      */
-    public Transaction queue() {
-        XG7PluginsAPI.database().getProcessor().queueTransaction(this);
+    public Transaction process() throws Exception {
+        XG7PluginsAPI.database().getProcessor().processTransaction(this);
         return this;
     }
 
@@ -438,31 +441,5 @@ public class Transaction {
                     return "null";
             }
         }
-    }
-
-
-    /**
-     * Waits for the transaction to complete.
-     * Queues the transaction and blocks until it is finished.
-     *
-     * @throws RuntimeException if interrupted while waiting
-     */
-    public void waitForResult() {
-        try {
-            queue();
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Marks this transaction as complete.
-     * Releases any threads waiting on waitForResult().
-     */
-    public void completeTask() {
-        latch.countDown();
     }
 }

@@ -48,7 +48,7 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
         }
 
         if (identifier.startsWith("player_")) {
-            PlayerData playerData = XG7PluginsAPI.requestPlayerData(player.getUniqueId()).join();
+            PlayerData playerData = XG7PluginsAPI.getPlayerData(player.getUniqueId());
 
             if (playerData == null) return null;
 

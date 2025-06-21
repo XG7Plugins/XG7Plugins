@@ -146,7 +146,9 @@ public class SkullItem extends Item {
 
         if (!(player instanceof Player)) return prepared;
 
-        if (renderSkullPlayer) setOwner(((Player) player).getDisplayName());
+        if (renderSkullPlayer) {
+            return SkullItem.from(prepared).setOwner(((Player) player).getDisplayName()).getItemStack();
+        }
 
         return prepared;
 

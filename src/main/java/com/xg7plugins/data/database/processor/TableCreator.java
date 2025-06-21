@@ -165,7 +165,7 @@ public class TableCreator {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
-        }, databaseManager.getProcessor().getExecutorService());
+        }, XG7PluginsAPI.taskManager().getExecutor("database"));
     }
 
 }

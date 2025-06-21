@@ -24,8 +24,6 @@ public class SQLConfigs {
     private int maxPoolSize;
     private int minIdle;
     private long keepAliveTime;
-    private short queryThreads;
-    private long processInterval;
 
     /**
      * Creates a basic configuration from plugin config.
@@ -63,11 +61,6 @@ public class SQLConfigs {
                 .orElse(5); // Default suggested value
 
         this.keepAliveTime = mainConfig.getTimeInMilliseconds("sql.keep-alive-time").orElse(0L);
-
-        this.queryThreads = mainConfig.get("sql.query-processor-threads", Short.class)
-                .orElse((short) 4);
-
-        this.processInterval = mainConfig.getTimeInMilliseconds("sql.sql-command-processing-interval").orElse(0L);
     }
 
     /**

@@ -279,8 +279,6 @@ public class Item {
     }
 
     public ItemStack getItemFor(CommandSender player, Plugin plugin) {
-
-
             if (this.itemStack.getType().equals(Material.AIR)) return this.itemStack;
 
             ItemStack prepared = this.itemStack.clone();

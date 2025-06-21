@@ -47,6 +47,9 @@ public enum MenuAction {
     public boolean isLeftClick() {
         return this == LEFT || this == SHIFT_LEFT || this == DOUBLE_CLICK || this == CREATIVE || this == LEFT_CLICK_AIR || this == LEFT_CLICK_BLOCK;
     }
+    public boolean isBlockInteract() {
+        return this == RIGHT_CLICK_BLOCK || this == LEFT_CLICK_BLOCK;
+    }
 
     public boolean isShiftClick() {
         return this == SHIFT_LEFT || this == SHIFT_RIGHT || this == CONTROL_DROP;

@@ -75,8 +75,11 @@ public class CommandManager implements Manager {
 
             if (!commandSetup.isEnabled().configName().isEmpty()) {
                 Config config = Config.of(commandSetup.isEnabled().configName(), plugin);
+
                 boolean invert = commandSetup.isEnabled().invert();
-                if (config != null && config.get(commandSetup.isEnabled().path(), Boolean.class).orElse(false) != invert) {
+                boolean enabled = config != null && config.get(commandSetup.isEnabled().path(), Boolean.class).orElse(false);
+
+                if (invert == enabled) {
                     plugin.getDebug().info("Command " + commandSetup.name() + " is disabled by configuration");
                     return;
                 }

@@ -92,9 +92,6 @@ sql:
 
   keep-alive-time: 600s
 
-  query-processor-threads: 4
-  sql-command-processing-interval: 10ms
-
 #Define redis cache configuration
 redis-cache:
 

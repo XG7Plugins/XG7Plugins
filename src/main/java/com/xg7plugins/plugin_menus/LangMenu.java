@@ -39,7 +39,7 @@ public class LangMenu extends PagedMenu {
 
         manager.loadLangsFrom(XG7Plugins.getInstance()).join();
 
-        PlayerData language = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId()).join();
+        PlayerData language = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId());
 
         List<Item> pagedItems = new ArrayList<>();
 
@@ -109,22 +109,22 @@ public class LangMenu extends PagedMenu {
 
                 PlayerDataDAO dao = XG7PluginsAPI.getDAO(PlayerDataDAO.class);
 
-                PlayerData data = dao.get(player.getUniqueId()).join();
+                dao.getAsync(player.getUniqueId()).thenAccept((data) -> {
+                    String dbLang = langName.split(":")[1];
 
-                String dbLang = langName.split(":")[1];
+                    data.setLangId(dbLang);
 
-                data.setLangId(dbLang);
-
-                dao.update(data).thenAccept(r -> {
+                    dao.update(data);
                     XG7PluginsAPI.langManager().loadLangsFrom(getMenuConfigs().getPlugin()).join();
                     Text.sendTextFromLang(player, getMenuConfigs().getPlugin(), "lang-menu.toggle-success");
                     player.closeInventory();
                     open(player);
                     refresh(holder);
+
+
+                    XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("cooldown-to-toggle-lang").orElse(5000L));
+
                 });
-
-                XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("cooldown-to-toggle-lang").orElse(5000L));
-
         }
     }
 }

@@ -13,6 +13,7 @@ import com.xg7plugins.data.database.query.QueryResult;
 import com.xg7plugins.data.database.query.Transaction;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Pair;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -35,78 +36,11 @@ import java.util.concurrent.TimeUnit;
  * It provides methods to queue operations and checks their execution status.
  * </p>
  */
+@AllArgsConstructor
 public class DatabaseProcessor {
 
     private final DatabaseManager databaseManager;
     private final long timeout = Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("sql.connection-timeout").orElse(5000L);
-
-    @Getter
-    private final ScheduledExecutorService executorService;
-
-    private final Queue<Transaction> transactionQueue = new LinkedList<>();
-    private final Queue<Query> queryQueue = new LinkedList<>();
-
-    /**
-     * Creates a new database processor with the specified manager.
-     * <p>
-     * Initializes the executor service based on configuration settings
-     * and starts the periodic processing of queries and transactions.
-     * </p>
-     *
-     * @param databaseManager The database manager to use for connections
-     */
-    public DatabaseProcessor(DatabaseManager databaseManager) {
-        this.databaseManager = databaseManager;
-
-        Config config = Config.mainConfigOf(XG7Plugins.getInstance());
-
-        this.executorService = Executors.newScheduledThreadPool(config.get("sql.query-processor-threads", Integer.class).orElse(3));
-        process(config.getTimeInMilliseconds("sql.sql-command-processing-interval").orElse(20L));
-    }
-
-    /**
-     * Adds a transaction to the processing queue.
-     *
-     * @param transaction The transaction to queue for processing
-     */
-    public void queueTransaction(Transaction transaction) {
-        transactionQueue.add(transaction);
-    }
-
-    /**
-     * Adds a query to the processing queue.
-     *
-     * @param query The query to queue for processing
-     */
-    public void queueQuery(Query query) {
-        queryQueue.add(query);
-    }
-
-    /**
-     * Schedules periodic processing of transactions and queries.
-     * <p>
-     * Sets up recurring tasks to process the transaction and query queues
-     * at the specified interval.
-     * </p>
-     *
-     * @param delay The time interval between processing runs in milliseconds
-     */
-    public void process(long delay) {
-        executorService.scheduleWithFixedDelay(() -> {
-            try {
-                processTransaction();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }, 0, delay, TimeUnit.MILLISECONDS);
-        executorService.scheduleWithFixedDelay(() -> {
-            try {
-                processQuery();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }, 0, delay, TimeUnit.MILLISECONDS);
-    }
 
     /**
      * Processes the next transaction in the queue if available.
@@ -117,10 +51,7 @@ public class DatabaseProcessor {
      *
      * @throws Exception If an error occurs during transaction processing
      */
-    private void processTransaction() throws Exception {
-        if (transactionQueue.isEmpty()) return;
-
-        Transaction transaction = transactionQueue.poll();
+    public void processTransaction(Transaction transaction) throws Exception {
 
         Connection connection = databaseManager.getConnection(transaction.getPlugin());
         if (connection == null) return;
@@ -148,7 +79,6 @@ public class DatabaseProcessor {
             connection.commit();
 
             if (transaction.getSuccess() != null) transaction.getSuccess().run();
-            transaction.completeTask();
 
         } catch (SQLException e) {
             Debug.of(XG7Plugins.getInstance()).severe("Error in processing query: " + currentQuery);
@@ -163,8 +93,6 @@ public class DatabaseProcessor {
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
-
-            transaction.completeTask();
             throw new RuntimeException(e);
         }
     }
@@ -178,16 +106,12 @@ public class DatabaseProcessor {
      *
      * @throws Exception If an error occurs during query processing
      */
-    private void processQuery() throws Exception {
+    public QueryResult processQuery(Query query) throws Exception {
         if (databaseManager == null) {
             System.err.println("databaseManager is null!");
-            return;
+            query.getError().accept(new NullPointerException("Database manager is null"));
+            throw new NullPointerException("Database manager is null!");
         }
-
-        if (queryQueue.isEmpty()) return;
-
-        Query query = queryQueue.poll();
-
         Debug.of(XG7Plugins.getInstance()).info("Processing query: " + query.getQuery());
 
         Connection connection = databaseManager.getConnection(query.getPlugin());
@@ -196,7 +120,8 @@ public class DatabaseProcessor {
 
         if (connection == null) {
             System.err.println("Failed to get a database connection for plugin: " + query.getPlugin());
-            return;
+            query.getError().accept(new RuntimeException("Failed to get a database connection for plugin:" + query.getPlugin()));
+            throw new RuntimeException("Failed to get a database connection for plugin: " + query.getPlugin());
         }
 
         try (PreparedStatement ps = connection.prepareStatement(query.getQuery())) {
@@ -222,41 +147,15 @@ public class DatabaseProcessor {
                 Debug.of(XG7Plugins.getInstance()).info("Query executed successfully: " + query.getQuery());
                 Debug.of(XG7Plugins.getInstance()).info("Results: " + results);
                 Debug.of(XG7Plugins.getInstance()).info("Making QueryResult");
-                
-                QueryResult result = new QueryResult(query.getPlugin(), results.iterator());
-                if (query.getResult() != null) query.getResult().accept(result);
 
-                Debug.of(XG7Plugins.getInstance()).info("Completing task");
-                query.completeTask(result);
+                return new QueryResult(query.getPlugin(), results.iterator());
             }
 
         } catch (SQLException e) {
             System.err.println("Error while processing query: " + query.getQuery() + " | " + e.getMessage());
-            query.completeTask(new QueryResult(query.getPlugin(), null));
+            query.getError().accept(new RuntimeException("Error while processing query: " + query.getQuery()));
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Gracefully shuts down the processor, completing remaining operations.
-     * <p>
-     * Attempts to process all queued operations before shutting down the
-     * executor service.
-     * </p>
-     *
-     * @throws Exception If an error occurs during shutdown
-     */
-    public void shutdown() throws Exception {
-        executorService.shutdown();
-
-        while (!queryQueue.isEmpty()) {
-            processQuery();
-        }
-        while (!transactionQueue.isEmpty()) {
-            processTransaction();
-        }
-
-        executorService.shutdownNow();
     }
 
     /**
@@ -267,37 +166,34 @@ public class DatabaseProcessor {
      *
      * @param plugin The plugin requesting the check
      * @param table The entity class to check
-     * @param idCol The name of the ID column
      * @param id The ID value to look for
      * @return A CompletableFuture that resolves to true if the entity exists
      */
-    public CompletableFuture<Boolean> exists(Plugin plugin, Class<? extends Entity> table, Object id) {
-        return CompletableFuture.supplyAsync(() -> {
-            if (databaseManager.containsCachedEntity(plugin, id.toString()).join()) return true;
+    public boolean exists(Plugin plugin, Class<? extends Entity> table, Object id) {
+        if (databaseManager.containsCachedEntity(plugin, id.toString()).join()) return true;
 
-            Connection connection;
-            try {
-                connection = databaseManager.getConnection(plugin);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        Connection connection;
+        try {
+            connection = databaseManager.getConnection(plugin);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-            if (connection == null) return false;
+        if (connection == null) return false;
 
-            String idCol = getPrimaryKeyColumnName(table);
+        String idCol = getPrimaryKeyColumnName(table);
 
-            try {
-                PreparedStatement ps = connection.prepareStatement("SELECT 1 FROM " + (table.isAnnotationPresent(Table.class) ? table.getAnnotation(Table.class).name() : table.getSimpleName()) + " WHERE " + idCol + " = ?");
-                if (UUID.class.isAssignableFrom(id.getClass())) ps.setString(1, id.toString());
-                else ps.setObject(1, id);
-                ResultSet rs = ps.executeQuery();
-                boolean exists = rs.next();
-                ps.close();
-                return exists;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }, executorService);
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT 1 FROM " + (table.isAnnotationPresent(Table.class) ? table.getAnnotation(Table.class).name() : table.getSimpleName()) + " WHERE " + idCol + " = ?");
+            if (UUID.class.isAssignableFrom(id.getClass())) ps.setString(1, id.toString());
+            else ps.setObject(1, id);
+            ResultSet rs = ps.executeQuery();
+            boolean exists = rs.next();
+            ps.close();
+            return exists;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String getPrimaryKeyColumnName(Class<?> table) {

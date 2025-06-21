@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
         syntax = "/xg7plugins lang (player, lang)",
         permission = "xg7plugins.command.lang",
         pluginClass = XG7Plugins.class,
+        isAsync = true,
         isEnabled = @ConfigBoolean(
                 configName = "config",
                 path = "lang-enabled"
@@ -39,7 +40,8 @@ public class LangCommand implements Command {
                 CommandMessages.NOT_A_PLAYER.send(sender);
                 return;
             }
-            if (XG7PluginsAPI.isGeyserFormsEnabled() && XG7GeyserForms.getInstance().sendForm((Player) sender, "lang-form")) return;
+            if (XG7PluginsAPI.isGeyserFormsEnabled() && XG7GeyserForms.getInstance().sendForm((Player) sender, "lang-form"))
+                return;
 
             XG7Menus.getInstance().getMenu(XG7Plugins.getInstance(), "lang-menu").open((Player) sender);
             return;
@@ -66,7 +68,7 @@ public class LangCommand implements Command {
         XG7PluginsAPI.langManager().loadLangsFrom(XG7Plugins.getInstance()).join();
 
         if (!XG7PluginsAPI.langManager().hasLang(lang)) {
-            Text.sendTextFromLang(sender, XG7Plugins.getInstance(),"lang-not-found");
+            Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "lang-not-found");
             return;
         }
 
@@ -74,20 +76,20 @@ public class LangCommand implements Command {
 
         String dbLang = args.get(1, String.class);
 
-        dao.update(new PlayerData(target.getUniqueId(), dbLang)).thenAccept(r -> {
-            XG7PluginsAPI.langManager().loadLangsFrom(XG7Plugins.getInstance()).join();
-            Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "lang-menu.toggle-success");
-            if (!target.isOnline()) return;
+        dao.update(new PlayerData(target.getUniqueId(), dbLang));
 
-            Player targetOnline = target.getPlayer();
-            Text.sendTextFromLang(targetOnline, XG7Plugins.getInstance(), "lang-menu.toggle-success");
+        XG7PluginsAPI.langManager().loadLangsFrom(XG7Plugins.getInstance()).join();
+        Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "lang-menu.toggle-success");
+        if (!target.isOnline()) return;
 
-            if (targetOnline.getOpenInventory().getTopInventory().getHolder() instanceof MenuHolder) {
-                MenuHolder holder = (MenuHolder) targetOnline.getOpenInventory().getTopInventory().getHolder();
-                targetOnline.closeInventory();
-                holder.getMenu().open(targetOnline);
-            }
-        });
+        Player targetOnline = target.getPlayer();
+        Text.sendTextFromLang(targetOnline, XG7Plugins.getInstance(), "lang-menu.toggle-success");
+
+        if (targetOnline.getOpenInventory().getTopInventory().getHolder() instanceof MenuHolder) {
+            MenuHolder holder = (MenuHolder) targetOnline.getOpenInventory().getTopInventory().getHolder();
+            targetOnline.closeInventory();
+            holder.getMenu().open(targetOnline);
+        }
 
     }
 

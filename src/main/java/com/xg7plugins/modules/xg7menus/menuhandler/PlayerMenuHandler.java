@@ -149,21 +149,23 @@ public class PlayerMenuHandler implements Listener {
 
         ActionEvent actionEvent = new ActionEvent(holder, action, slotHeld.get(), slotHeld,null);
 
-        holder.getMenu().onPlaceBlocks(actionEvent);
-
         String message;
 
         switch (action) {
             case PLAYER_DROP:
+                holder.getMenu().onDrop(actionEvent);
                 message = holder.getMenu().getMenuConfigs().getOnDropMessage(holder.getPlayer());
                 break;
             case PLAYER_PICKUP:
+                holder.getMenu().onPickup(actionEvent);
                 message = holder.getMenu().getMenuConfigs().getOnPickupMessage(holder.getPlayer());
                 break;
             case PLAYER_BREAK_BLOCK:
+                holder.getMenu().onBreakBlocks(actionEvent);
                 message = holder.getMenu().getMenuConfigs().getOnBreakMessage(holder.getPlayer());
                 break;
             case PLAYER_PLACE_BLOCK:
+                holder.getMenu().onPlaceBlocks(actionEvent);
                 message = holder.getMenu().getMenuConfigs().getOnPlaceMessage(holder.getPlayer());
                 break;
             default:
