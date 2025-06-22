@@ -33,10 +33,11 @@ public class TaskManager implements Manager {
         Config config = Config.mainConfigOf(plugin);
         repeatingAsyncTasksExecutor = Executors.newScheduledThreadPool(config.get("repeating-tasks-threads", Integer.class).orElse(1));
 
-        registerExecutor("commands", Executors.newCachedThreadPool());
+        registerExecutor("commands", Executors.newSingleThreadExecutor());
         registerExecutor("database", Executors.newCachedThreadPool());
         registerExecutor("files", Executors.newCachedThreadPool());
-        registerExecutor("menus", Executors.newCachedThreadPool());
+        registerExecutor("langs", Executors.newCachedThreadPool());
+        registerExecutor("menus", Executors.newSingleThreadExecutor());
         registerExecutor("cache", Executors.newSingleThreadExecutor());
     }
 

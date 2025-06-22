@@ -37,7 +37,7 @@ public class ActionBar extends Score {
             if (player == null) continue;
             if (containsPlayer(id)) continue;
 
-            String message = Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).join().getPlainText();
+            String message = Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).join().getText();
 
             if (MinecraftVersion.isNewerThan(8)) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));

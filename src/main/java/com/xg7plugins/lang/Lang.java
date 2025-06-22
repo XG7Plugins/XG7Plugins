@@ -23,10 +23,8 @@ public class Lang {
     }
 
     public static CompletableFuture<Lang> of(Plugin plugin, Player player) {
-        return CompletableFuture.supplyAsync(() -> {
-            LangManager langManager = XG7PluginsAPI.langManager();
-            return langManager.getLangByPlayer(plugin, player).join();
-        });
+        LangManager langManager = XG7PluginsAPI.langManager();
+        return langManager.getLangByPlayer(plugin, player);
     }
 
     public String get(String path) {

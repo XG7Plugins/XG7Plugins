@@ -22,7 +22,11 @@ public class InventoryShaper implements InventoryEditor {
         if (item == null) {
             items.remove(slot);
         } else {
-            items.put(slot, item.slot(slot));
+            try {
+                items.put(slot, item.clone().slot(slot));
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

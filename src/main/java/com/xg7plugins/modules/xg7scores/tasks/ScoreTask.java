@@ -12,7 +12,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ScoreTask extends Task {
 
-    private XG7Scores scores;
+    private final XG7Scores scores;
+    private final AtomicLong counter = new AtomicLong();
 
     public ScoreTask(XG7Scores scores) {
         super(
@@ -30,8 +31,6 @@ public class ScoreTask extends Task {
 
     @Override
     public void run() {
-        AtomicLong counter = new AtomicLong();
-
         scores.getScores().values().forEach(score -> {
             scores.getPlayers().forEach(uuid -> {
                 try {

@@ -99,7 +99,7 @@ class PlayerBoard {
         if (sidebarObjective == null) return;
         List<String> lastEntries = new ArrayList<>();
         for (int i = 0; i < lines.size(); i++) {
-            String translatedText = Text.detectLangs(player, scoreBoard.getPlugin(),lines.get(i)).join().getPlainText();
+            String translatedText = Text.detectLangs(player, scoreBoard.getPlugin(),lines.get(i)).join().getText();
 
             String prefix = translatedText.substring(0, Math.min(translatedText.length(), 16));
             String entry = translatedText.length() > 16 ? translatedText.substring(16, Math.min(translatedText.length(), 56)) : "";
@@ -110,7 +110,7 @@ class PlayerBoard {
                 entry = "";
             }
             while (lastEntries.contains(entry)) {
-                entry += "&r" + ChatColor.getLastColors(prefix);
+                entry += "§r" + ChatColor.getLastColors(prefix);
             }
             lastEntries.add(entry);
             if (lastLines.get(i).getFirst().equals(translatedText)) continue;

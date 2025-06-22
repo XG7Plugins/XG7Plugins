@@ -93,4 +93,12 @@ public class XG7Scores implements Module {
     public void addPlayer(Player player) {
         players.add(player.getUniqueId());
     }
+
+    public static void loadScores(Score... scores) {
+        XG7Scores.getInstance().registerScores(scores);
+    }
+
+    public static void unloadScore(String id) {
+        XG7Scores.getInstance().unregisterScore(id);
+    }
 }

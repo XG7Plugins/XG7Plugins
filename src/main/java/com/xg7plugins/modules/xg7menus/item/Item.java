@@ -23,7 +23,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +34,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
-public class Item {
+public class Item implements Cloneable {
 
     protected ItemStack itemStack;
     protected int slot;
@@ -311,4 +310,8 @@ public class Item {
     }
 
 
+    @Override
+    public Item clone() throws CloneNotSupportedException {
+        return (Item) super.clone();
+    }
 }

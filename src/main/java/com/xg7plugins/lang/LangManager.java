@@ -90,7 +90,7 @@ public class LangManager implements Manager {
 
             return new Lang(plugin, langs.get(plugin.getName() + ":" + finalLang).join(), finalLang, selected);
 
-        });
+        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("langs"));
     }
 
     public CompletableFuture<Lang> getLang(Plugin plugin, String lang) {
@@ -106,7 +106,7 @@ public class LangManager implements Manager {
             if (playerData == null || playerData.getLangId() == null) return getLang(plugin, mainLang,true).join();
 
             return getLang(plugin, playerData.getLangId(), true).join();
-        });
+        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("langs"));
     }
 
     public CompletableFuture<String> getNewLangFor(@NotNull Player player) {
@@ -125,7 +125,7 @@ public class LangManager implements Manager {
             String locale = MinecraftVersion.isNewerOrEqual(12) ? player.getLocale() : ReflectionObject.of(player).getMethod("getHandle").invokeToRObject().getField("locale");
 
             return langs.stream().filter(lang -> lang.get("locale", String.class).orElse("en_US").equals(locale)).findFirst().map(config -> config.getName().replace("langs/", "")).orElse(mainLang);
-        });
+        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("langs"));
 
     }
 

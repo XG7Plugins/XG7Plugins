@@ -1,5 +1,6 @@
 package com.xg7plugins.data.config;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.time.Time;
@@ -146,6 +147,7 @@ public class Config {
         if (type == Float.class || type == float.class) return Optional.of(type.cast((float) config.getDouble(path)));
         if (type == Short.class || type == short.class) return Optional.of(type.cast((short) config.getInt(path)));
         if (type == ConfigurationSection.class) return Optional.ofNullable(type.cast(config.getConfigurationSection(path)));
+        if (type == XMaterial.class) return (Optional<T>) XMaterial.matchXMaterial(config.getString(path));
         if (type.isEnum()) {
             @SuppressWarnings("unchecked")
             Class<? extends Enum<?>> enumClass = (Class<? extends Enum<?>>) type;

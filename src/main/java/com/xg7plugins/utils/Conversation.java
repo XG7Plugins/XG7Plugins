@@ -89,7 +89,7 @@ public class Conversation {
             @NotNull
             @Override
             public String getPromptText(@NotNull ConversationContext conversationContext) {
-                return Text.detectLangs((CommandSender) conversationContext.getForWhom(),plugin, prompt).join().textFor((Player) conversationContext.getForWhom()).getPlainText();
+                return Text.detectLangs((CommandSender) conversationContext.getForWhom(),plugin, prompt).join().textFor((Player) conversationContext.getForWhom()).getText();
             }
 
             @Override
