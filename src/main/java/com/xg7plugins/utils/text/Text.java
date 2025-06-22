@@ -147,7 +147,7 @@ public class Text {
     }
 
     public Component getComponent() {
-        return miniMessage.deserialize(ColorTranslator.translateLegacyToMini(this.text));
+        return miniMessage.deserialize(ColorTranslator.translateLegacyToMini(getText()));
     }
 
     /**

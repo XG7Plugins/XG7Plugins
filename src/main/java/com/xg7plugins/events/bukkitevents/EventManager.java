@@ -69,22 +69,22 @@ public class EventManager implements Manager {
                             if (eventHandler.isOnlyInWorld()) {
                                 if (event2 instanceof PlayerEvent) {
                                     PlayerEvent playerEvent = (PlayerEvent) event2;
-                                    if (!XG7PluginsAPI.isInWorldEnabled(plugin, playerEvent.getPlayer()))
+                                    if (!XG7PluginsAPI.isInAnEnabledWorld(plugin, playerEvent.getPlayer()))
                                         return;
                                 }
                                 if (event2 instanceof EntityEvent) {
                                     EntityEvent entityEvent = (EntityEvent) event2;
-                                    if (!XG7PluginsAPI.isWorldEnabled(plugin, entityEvent.getEntity().getWorld()))
+                                    if (!XG7PluginsAPI.isEnabledWorld(plugin, entityEvent.getEntity().getWorld()))
                                         return;
                                 }
                                 if (event2 instanceof WorldEvent) {
                                     WorldEvent worldEvent = (WorldEvent) event2;
-                                    if (!XG7PluginsAPI.isWorldEnabled(plugin, worldEvent.getWorld()))
+                                    if (!XG7PluginsAPI.isEnabledWorld(plugin, worldEvent.getWorld()))
                                         return;
                                 }
                                 if (event2 instanceof BlockEvent) {
                                     BlockEvent blockEvent = (BlockEvent) event2;
-                                    if (!XG7PluginsAPI.isWorldEnabled(plugin, blockEvent.getBlock().getWorld()))
+                                    if (!XG7PluginsAPI.isEnabledWorld(plugin, blockEvent.getBlock().getWorld()))
                                         return;
                                 }
                             }

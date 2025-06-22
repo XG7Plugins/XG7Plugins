@@ -16,7 +16,7 @@ public class TimeParser {
      */
     private static final Pattern TIME_PATTERN = Pattern.compile("(\\d+)(MS|[SMHD])", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern REMAINING_TIME_PATTERN = Pattern.compile("@(.*?): (.*?)@");
+    private static final Pattern REMAINING_TIME_PATTERN = Pattern.compile("@(\\w+):\\s*(\\d+)@");
 
 
     /**
@@ -61,16 +61,17 @@ public class TimeParser {
 
     public static String remainingTimeForValue(String str) {
         Matcher matcher = REMAINING_TIME_PATTERN.matcher(str);
-        if (!matcher.find()) return str;
 
         StringBuffer result = new StringBuffer();
 
         while (matcher.find()) {
             try {
-                TimeFormat format = TimeFormat.valueOf(matcher.group(1).toUpperCase());
-                long milli = Long.parseLong(matcher.group(2));
+                String formatName = matcher.group(1).toUpperCase();
+                long millis = Long.parseLong(matcher.group(2));
 
-                matcher.appendReplacement(result, format.format(milli));
+                TimeFormat format = TimeFormat.valueOf(formatName);
+
+                matcher.appendReplacement(result, Matcher.quoteReplacement(format.format(millis)));
 
             } catch (IllegalArgumentException e) {
                 throw new TimeParseException("Illegal time format or time value. Expected: @TIME_FORMAT:milli@ Found: " + matcher.group());

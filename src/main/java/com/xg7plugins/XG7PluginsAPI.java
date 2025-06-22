@@ -25,7 +25,6 @@ import com.xg7plugins.tasks.TaskManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -250,7 +249,7 @@ public class XG7PluginsAPI {
      * @param world  The name of the world to check
      * @return true if the world is enabled for the plugin, false otherwise
      */
-    public static boolean isWorldEnabled(Plugin plugin, String world) {
+    public static boolean isEnabledWorld(Plugin plugin, String world) {
         return plugin.getEnvironmentConfig().getEnabledWorlds().contains(world);
     }
 
@@ -261,8 +260,8 @@ public class XG7PluginsAPI {
      * @param world  The World object to check
      * @return true if the world is enabled for the plugin, false otherwise
      */
-    public static boolean isWorldEnabled(Plugin plugin, World world) {
-        return isWorldEnabled(plugin, world.getName());
+    public static boolean isEnabledWorld(Plugin plugin, World world) {
+        return isEnabledWorld(plugin, world.getName());
     }
 
     /**
@@ -272,8 +271,8 @@ public class XG7PluginsAPI {
      * @param player The player whose world will be checked
      * @return true if the player's world is enabled for the plugin, false otherwise
      */
-    public static boolean isInWorldEnabled(Plugin plugin, Player player) {
-        return isWorldEnabled(plugin, player.getWorld());
+    public static boolean isInAnEnabledWorld(Plugin plugin, Player player) {
+        return isEnabledWorld(plugin, player.getWorld());
     }
 
     public static List<String> getEnabledWorldsOf(Plugin plugin) {

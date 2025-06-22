@@ -122,7 +122,7 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
             return;
         }
         if (sender instanceof Player) {
-            if (commandConfig.isInEnabledWorldOnly() && !XG7PluginsAPI.isInWorldEnabled(manager.getPlugin(), ((Player) sender))) {
+            if (commandConfig.isInEnabledWorldOnly() && !XG7PluginsAPI.isInAnEnabledWorld(manager.getPlugin(), ((Player) sender))) {
                 CommandMessages.DISABLED_WORLD.send(sender);
                 return;
             }
