@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,6 +88,25 @@ public enum Condition {
         return null;
     }
 
+    public static List<Pair<Condition, String>> extractConditions(String text) {
+        List<Pair<Condition, String>> conditions = new ArrayList<>();
+        Matcher matcher = conditionPattern.matcher(text);
+
+        while (matcher.find()) {
+            String type = matcher.group(1);
+            String value = matcher.group(2);
+
+            for (Condition condition : values()) {
+                if (condition.name().equalsIgnoreCase(type)) {
+                    conditions.add(new Pair<>(condition, value));
+                    break;
+                }
+            }
+        }
+
+        return conditions;
+    }
+
     /**
      * Processes a line of text containing a condition and returns the appropriate result.
      * If the condition is met, returns the text without the condition tags.
@@ -96,11 +117,13 @@ public enum Condition {
      * @param player The player to check the condition against
      * @return The processed text result
      */
-    public static String processCondition(String line, Player player) {
-        Pair<Condition, String> extracted = extractCondition(line);
-        if (extracted == null) return line;
+    public static String processConditions(String line, Player player) {
+        List<Pair<Condition, String>> extractedConditions = extractConditions(line);
+        if (extractedConditions.isEmpty()) return line;
 
-        if (!extracted.getFirst().apply(new ConditionPack(player, extracted.getSecond()))) return "";
+        for (Pair<Condition, String> condition : extractedConditions) {
+            if (!condition.getFirst().apply(new ConditionPack(player, condition.getSecond()))) return "";
+        }
 
         return conditionPattern.matcher(line).replaceAll("");
     }
@@ -112,8 +135,7 @@ public enum Condition {
     @Getter
     @Setter
     @AllArgsConstructor
-    static
-    public class ConditionPack {
+    static public class ConditionPack {
         private Player player;
         private String conditionValue;
     }
