@@ -76,7 +76,7 @@ public class Text {
 
         this.text = Condition.processConditions(this.text, player);
 
-        if (XG7PluginsAPI.isDependencyEnabled("PlaceholderAPI")) this.text = PlaceholderAPI.setPlaceholders(player, this.text);
+        if (XG7PluginsAPI.isDependencyEnabled("PlaceholderAPI")) this.text = ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, this.text));
 
         return this;
     }
@@ -99,9 +99,13 @@ public class Text {
      * @param replacement The replacement text
      * @return This Text instance for chaining
      */
-    public Text replace(String placeholder, String replacement) {
-        this.text = this.text.replace("%" + placeholder + "%", replacement);
+    public Text replace(String placeholder, String replacement, boolean translateColors) {
+        this.text = this.text.replace("%" + placeholder + "%", translateColors ? ChatColor.translateAlternateColorCodes('&', replacement) : replacement);
         return this;
+    }
+
+    public Text replace(String placeholder, String replacement) {
+        return replace(placeholder, replacement, true);
     }
 
     @SafeVarargs

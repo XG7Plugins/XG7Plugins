@@ -1,4 +1,4 @@
-package com.xg7plugins.data.dao;
+package com.xg7plugins.data.database.dao;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;

@@ -1,7 +1,5 @@
 package com.xg7plugins.data.database.entity;
 
-import com.xg7plugins.data.dao.DAO;
-
 /**
  * Represents a generic database entity with a unique identifier.
  * This interface provides basic functionality required for database entities,

@@ -1,8 +1,6 @@
 package com.xg7plugins.utils;
 
-import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.UUID;
 
 public class ShortUUID {
 

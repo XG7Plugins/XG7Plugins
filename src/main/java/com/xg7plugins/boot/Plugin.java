@@ -7,7 +7,7 @@ import com.xg7plugins.commands.core_commands.reload.ReloadCause;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
-import com.xg7plugins.data.dao.DAO;
+import com.xg7plugins.data.database.dao.DAO;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.dependencies.Dependency;
 import com.xg7plugins.events.Listener;

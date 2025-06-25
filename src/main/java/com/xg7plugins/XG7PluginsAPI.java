@@ -7,7 +7,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
-import com.xg7plugins.data.dao.DAO;
+import com.xg7plugins.data.database.dao.DAO;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
