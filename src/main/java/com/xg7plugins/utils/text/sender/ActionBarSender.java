@@ -42,4 +42,9 @@ public class ActionBarSender implements TextSender {
 
         return;
     }
+
+    @Override
+    public void apply(CommandSender sender, Text text) {
+
+    }
 }

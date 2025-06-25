@@ -64,8 +64,9 @@ public class EventManager implements Manager {
                         listeners.get(plugin.getName()),
                         eventHandler.priority(),
                         (listener, event2) -> {
+
                             if (eventHandler.ignoreCancelled() && ((event2 instanceof Cancellable) && ((Cancellable)event2).isCancelled())) return;
-                            if (event2.getClass() != method.getParameterTypes()[0]) return;
+                            if (!method.getParameterTypes()[0].isAssignableFrom(event2.getClass())) return;
                             if (eventHandler.isOnlyInWorld()) {
                                 if (event2 instanceof PlayerEvent) {
                                     PlayerEvent playerEvent = (PlayerEvent) event2;

@@ -143,7 +143,7 @@ public class Text {
     }
 
     public String getPlainText() {
-        return TimeParser.remainingTimeForValue(LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build().serialize(getComponent()));
+        return LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build().serialize(getComponent());
     }
 
     public Component getComponent() {

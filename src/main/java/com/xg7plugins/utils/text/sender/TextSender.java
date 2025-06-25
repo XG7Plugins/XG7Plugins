@@ -19,6 +19,8 @@ public interface TextSender {
      */
     void send(CommandSender sender, Text text);
 
+    void apply(CommandSender sender, Text text);
+
     /**
      * Default implementation for sending text messages
      *
@@ -46,6 +48,11 @@ public interface TextSender {
             @Override
             public void send(CommandSender sender, Text text) {
                 defaultSend(sender, text);
+            }
+
+            @Override
+            public void apply(CommandSender sender, Text text) {
+
             }
         };
     }

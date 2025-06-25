@@ -14,8 +14,13 @@ public class CenterSender implements TextSender {
 
     @Override
     public void send(CommandSender sender, Text text) {
+        apply(sender, text);
+        defaultSend(sender, text);
+    }
+
+    @Override
+    public void apply(CommandSender sender, Text text) {
         String spaces = TextCentralizer.getSpacesCentralized(pixels,text.getPlainText());
         text.setText(spaces + text.getText());
-        defaultSend(sender, text);
     }
 }
