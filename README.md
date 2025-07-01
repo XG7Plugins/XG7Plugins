@@ -1,4 +1,4 @@
-# XG7Plugins
+test# XG7Plugins
 
 XG7Plugins is a core for other XG7Plugins
 
