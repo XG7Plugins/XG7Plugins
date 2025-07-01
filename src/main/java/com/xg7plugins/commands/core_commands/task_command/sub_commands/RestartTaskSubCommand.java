@@ -9,9 +9,10 @@ import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.tasks.Task;
+import com.xg7plugins.tasks.tasks.Task;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;
+import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 
@@ -41,19 +42,19 @@ public class RestartTaskSubCommand implements Command {
 
         String id = args.get(0, String.class);
 
-        if (!manager.getTasks().containsKey(id)) {
+        if (!manager.containsTimerTask(id)) {
             Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.not-found");
             return;
         }
 
-        Task task = manager.getTasks().get(id);
+        TimerTask task = manager.getTimerTask(id);
 
-        if (task.getState() == TaskState.RUNNING) {
+        if (task.getTaskState() == TaskState.RUNNING) {
             Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.already-running");
             return;
         }
 
-        manager.runTask(task);
+        manager.runTimerTask(task);
 
         XG7Plugins.getInstance().getDebug().warn("Task " + id + " was restarted by " + sender.getName());
 

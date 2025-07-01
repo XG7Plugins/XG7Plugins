@@ -36,11 +36,11 @@ public class DeleteTaskSubCommand implements Command {
 
         String id = args.get(0, String.class);
 
-        if (!manager.getTasks().containsKey(id)) {
+        if (!manager.containsTimerTask(id)) {
             Text.fromLang(sender,XG7Plugins.getInstance(),"task-command.not-found").thenAccept(text -> text.send(sender));
             return;
         }
-        manager.deleteTask(id);
+        manager.deleteRepeatingTask(id);
 
         XG7Plugins.getInstance().getDebug().warn("Task " + id + " was deleted by " + sender.getName());
         XG7Plugins.getInstance().getDebug().warn("To back up the task, you need to restart the plugin of the task!");

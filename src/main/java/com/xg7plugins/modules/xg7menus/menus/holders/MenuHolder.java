@@ -6,6 +6,7 @@ import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
+import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -33,11 +34,11 @@ public class MenuHolder extends BasicMenuHolder implements InventoryHolder {
 
         player.closeInventory();
 
-        Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> {
+        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> {
             player.openInventory(inventory);
 
             BasicMenu.refresh(this);
-        }, 1L);
+        }), 1L);
 
     }
 

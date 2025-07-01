@@ -34,19 +34,19 @@ public class StopTaskSubCommand implements Command {
         TaskManager manager = XG7PluginsAPI.taskManager();
         String id = args.get(0, String.class);
 
-        if (!manager.containsTask(id)) {
+        if (!manager.containsTimerTask(id)) {
             Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.not-found");
             return;
         }
 
-        TaskState state = manager.getTask(id).getState();
+        TaskState state = manager.getTimerTask(id).getTaskState();
 
         if (state == TaskState.IDLE) {
             Text.sendTextFromLang(sender,XG7Plugins.getInstance(), "task-command.already-stopped");
             return;
         }
 
-        manager.cancelTask(id);
+        manager.cancelRepeatingTask(id);
 
         XG7Plugins.getInstance().getDebug().warn("Task " + id + " was stopped by " + sender.getName());
         XG7Plugins.getInstance().getDebug().warn("It can cause errors in the plugin of the task!");

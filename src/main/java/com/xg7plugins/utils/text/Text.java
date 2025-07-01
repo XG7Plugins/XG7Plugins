@@ -128,8 +128,22 @@ public class Text {
         return Text.format(text);
     }
 
-    public void send(CommandSender sender) {
-        send(this, sender);
+    public final Text appendStart(String s) {
+        this.text = s + this.text;
+        return this;
+    }
+    public final Text append(String s) {
+        this.text = this.text + s;
+        return this;
+    }
+
+    public final Text appendStart(Text text) {
+        this.text = text.getText() + this.text;
+        return this;
+    }
+    public final Text append(Text text) {
+        this.text = this.text + text.getText();
+        return this;
     }
 
     /**
@@ -140,6 +154,10 @@ public class Text {
      */
     public static void send(Text text, CommandSender sender) {
         text.getTextSender().send(sender, text);
+    }
+
+    public void send(CommandSender sender) {
+        send(this, sender);
     }
 
     public String getText() {

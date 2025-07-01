@@ -20,7 +20,7 @@ import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.managers.ManagerRegistry;
 import com.xg7plugins.modules.ModuleManager;
 import com.xg7plugins.server.ServerInfo;
-import com.xg7plugins.tasks.CooldownManager;
+import com.xg7plugins.cooldowns.CooldownManager;
 import com.xg7plugins.tasks.TaskManager;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

@@ -3,6 +3,9 @@ package com.xg7plugins.commands.setup;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.utils.Parser;
+import com.xg7plugins.utils.time.Time;
+import com.xg7plugins.utils.time.TimeFormat;
+import com.xg7plugins.utils.time.TimeParser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -49,9 +52,10 @@ public class CommandArgs {
             throw new IllegalArgumentException("Index " + index + " is out of bounds!");
         }
 
-        if (OfflinePlayer.class.isAssignableFrom(type)) return (T) Bukkit.getOfflinePlayer(args[index]);
-        if (World.class.isAssignableFrom(type)) return (T) Bukkit.getWorld(args[index]);
-        if (Plugin.class.isAssignableFrom(type)) return (T) XG7Plugins.getInstance().getPlugins().get(args[index]);
+        if (OfflinePlayer.class.isAssignableFrom(type)) return type.cast(Bukkit.getOfflinePlayer(args[index]));
+        if (World.class.isAssignableFrom(type)) return type.cast(Bukkit.getWorld(args[index]));
+        if (Plugin.class.isAssignableFrom(type)) return type.cast(XG7Plugins.getInstance().getPlugins().get(args[index]));
+        if (Time.class.isAssignableFrom(type)) return type.cast(Time.of(TimeParser.convertToMilliseconds(args[index])));
 
         if (type == Integer.class || type == int.class) return Parser.INTEGER.convert(args[index]);
         if (type == String.class) return Parser.STRING.convert(args[index]);

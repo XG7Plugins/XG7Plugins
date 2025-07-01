@@ -88,7 +88,7 @@ public class JsonManager implements Manager {
             cache.put(plugin + ":" + path, object);
 
             plugin.getDebug().info("Saved!");
-        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("files"));
+        }, XG7PluginsAPI.taskManager().getExecutor("files"));
 
     }
 
@@ -117,7 +117,7 @@ public class JsonManager implements Manager {
             }
             cache.put(plugin.getName() + ":" + path, t);
             return t;
-        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("files"));
+        }, XG7PluginsAPI.taskManager().getExecutor("files"));
     }
 
     /**
@@ -146,7 +146,7 @@ public class JsonManager implements Manager {
             }
             cache.put(plugin.getName() + ":" + path, t);
             return t;
-        }, XG7PluginsAPI.taskManager().getAsyncExecutors().get("files"));
+        }, XG7PluginsAPI.taskManager().getExecutor("files"));
     }
 
 

@@ -1,5 +1,6 @@
 package com.xg7plugins.modules.xg7menus.menus.menus.gui.menus;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
@@ -8,6 +9,9 @@ import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
+import com.xg7plugins.tasks.tasks.AsyncTask;
+import lombok.SneakyThrows;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -41,13 +45,14 @@ public abstract class PagedMenu extends Menu {
 
     public abstract List<Item> pagedItems(Player player);
 
-    public CompletableFuture<Integer> goPage(int page, PagedMenuHolder menuHolder) {
-        return CompletableFuture.supplyAsync(() -> {
+    @SneakyThrows
+    public void goPage(int page, PagedMenuHolder menuHolder) {
 
+        XG7PluginsAPI.taskManager().scheduleAsync(AsyncTask.of(XG7Plugins.getInstance(), () -> {
             List<Item> pagedItems = pagedItems(menuHolder.getPlayer());
 
-            if (page < 0) return 0;
-            if (page * Slot.areaOf(pos1, pos2) >= pagedItems.size()) return 0;
+            if (page < 0) return;
+            if (page * Slot.areaOf(pos1, pos2) >= pagedItems.size()) return;
             List<Item> itemsToAdd = pagedItems.subList(page * (Slot.areaOf(pos1, pos2)), pagedItems.size());
 
             int index = 0;
@@ -58,17 +63,15 @@ public abstract class PagedMenu extends Menu {
                 for (int y = pos1.getColumn(); y <= pos2.getColumn(); y++) {
 
                     if (index >= itemsToAdd.size()) {
-                        if (inventory.hasItem(Slot.of(x, y))) inventory.setItem(Slot.of(x,y), Item.air());
+                        if (inventory.hasItem(Slot.of(x, y))) inventory.setItem(Slot.of(x, y), Item.air());
                         continue;
                     }
-                    inventory.setItem(Slot.of(x,y), itemsToAdd.get(index));
+                    inventory.setItem(Slot.of(x, y), itemsToAdd.get(index));
 
                     index++;
                 }
             }
-
-            return page;
-        }, XG7PluginsAPI.taskManager().getExecutor("menus"));
+        }), 100L);
     }
 
 

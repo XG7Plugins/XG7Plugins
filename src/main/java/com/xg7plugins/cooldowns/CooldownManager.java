@@ -1,10 +1,11 @@
-package com.xg7plugins.tasks;
+package com.xg7plugins.cooldowns;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.managers.Manager;
-import com.xg7plugins.tasks.tasks.CooldownManagerTask;
+import com.xg7plugins.tasks.tasks.Task;
+import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.time.Time;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,6 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 public class CooldownManager implements Manager {
 
     private final ConcurrentHashMap<UUID, Map<String, CooldownTask>> cooldowns = new ConcurrentHashMap<>();
-    private final Task task;
+    private final CooldownManagerTask task;
     private final List<Pair<UUID, String>> toRemove = new ArrayList<>();
 
     public CooldownManager(XG7Plugins plugin) {
@@ -41,7 +41,7 @@ public class CooldownManager implements Manager {
      * @param task   The cooldown task to add
      */
     public void addCooldown(Player player, CooldownTask task) {
-        XG7PluginsAPI.taskManager().runTask(this.task);
+        XG7PluginsAPI.taskManager().runTimerTask(this.task);
         cooldowns.putIfAbsent(player.getUniqueId(), new HashMap<>());
         cooldowns.get(player.getUniqueId()).put(task.getId(), task);
     }
@@ -54,7 +54,7 @@ public class CooldownManager implements Manager {
      * @param time       The duration of the cooldown in seconds
      */
     public void addCooldown(Player player, String cooldownId, long time) {
-        XG7PluginsAPI.taskManager().runTask(task);
+        XG7PluginsAPI.taskManager().runTimerTask(task);
         cooldowns.putIfAbsent(player.getUniqueId(), new HashMap<>());
         cooldowns.get(player.getUniqueId()).put(cooldownId, new CooldownTask(cooldownId, time, null, null));
     }
@@ -98,7 +98,7 @@ public class CooldownManager implements Manager {
      * Cancels the cooldown manager task
      */
     public void cancelTask() {
-        XG7PluginsAPI.taskManager().cancelTask(task);
+        XG7PluginsAPI.taskManager().cancelRepeatingTask(task);
     }
 
 

@@ -1,17 +1,17 @@
-package com.xg7plugins.tasks.tasks;
+package com.xg7plugins.cooldowns;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.tasks.CooldownManager;
-import com.xg7plugins.tasks.Task;
+import com.xg7plugins.tasks.tasks.AsyncTask;
+import com.xg7plugins.tasks.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
+import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class CooldownManagerTask extends Task {
+public class CooldownManagerTask extends TimerTask {
 
     private final CooldownManager manager;
     private final long timeFactor;
@@ -20,8 +20,7 @@ public class CooldownManagerTask extends Task {
         super(
                 XG7Plugins.getInstance(),
                 "cooldown-manager",
-                true,
-                true,
+                0,
                 timeFactor,
                 TaskState.IDLE,
                 null
@@ -31,9 +30,9 @@ public class CooldownManagerTask extends Task {
         this.manager = manager;
     }
 
+
     @Override
     public void run() {
-
         manager.getCooldowns().forEach((id, tasks) -> {
             Player player = Bukkit.getPlayer(id);
 
@@ -60,7 +59,5 @@ public class CooldownManagerTask extends Task {
         }
 
         manager.getToRemove().clear();
-
     }
-
 }

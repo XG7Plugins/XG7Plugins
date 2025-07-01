@@ -75,11 +75,9 @@ public class ColorTranslator {
                         i++;
                         continue;
                     }
-                    if (!FORMATTING_TAGS.contains(miniTag) && !miniTag.equals("<reset>")) {
+                    if (!FORMATTING_TAGS.contains(miniTag)) {
                         closeAllFormats(result, openFormats);
                         result.append(miniTag);
-                        i++;
-                        continue;
                     }
                     if (FORMATTING_TAGS.contains(miniTag)) {
                         result.append(miniTag);

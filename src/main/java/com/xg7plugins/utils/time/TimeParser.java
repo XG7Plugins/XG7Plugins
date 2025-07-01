@@ -79,6 +79,7 @@ public class TimeParser {
         }
 
         matcher.appendTail(result);
+
         return result.toString();
     }
 

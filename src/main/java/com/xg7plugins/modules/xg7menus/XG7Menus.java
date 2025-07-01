@@ -9,8 +9,8 @@ import com.xg7plugins.modules.xg7menus.menuhandler.PlayerMenuHandler;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
-import com.xg7plugins.modules.xg7menus.task.MenuTask;
-import com.xg7plugins.tasks.Task;
+import com.xg7plugins.modules.xg7menus.task.MenuTimerTask;
+import com.xg7plugins.tasks.tasks.TimerTask;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -100,8 +100,8 @@ public class XG7Menus implements Module {
     }
 
     @Override
-    public List<Task> loadTasks() {
-        return Collections.singletonList(new MenuTask(this));
+    public List<TimerTask> loadTasks() {
+        return Collections.singletonList(new MenuTimerTask(this));
     }
 
 

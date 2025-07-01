@@ -61,6 +61,25 @@ public class Time {
         return this;
     }
 
+    public boolean isBefore(Time time) {
+        return milliseconds < time.milliseconds;
+    }
+    public boolean isAfter(Time time) {
+        return milliseconds > time.milliseconds;
+    }
+    public boolean isEqual(Time time) {
+        return milliseconds == time.milliseconds;
+    }
+    public boolean isEqualOrBefore(Time time) {
+        return milliseconds <= time.milliseconds;
+    }
+    public boolean isEqualOrAfter(Time time) {
+        return milliseconds >= time.milliseconds;
+    }
+    public boolean isZero() {
+        return milliseconds == 0;
+    }
+
     public Date toDate() {
         return new Date(milliseconds);
     }

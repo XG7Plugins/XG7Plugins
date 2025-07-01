@@ -1,23 +1,23 @@
 package com.xg7plugins.modules.xg7menus.task;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
-import com.xg7plugins.tasks.Task;
+import com.xg7plugins.tasks.tasks.AsyncTask;
 import com.xg7plugins.tasks.TaskState;
+import com.xg7plugins.tasks.tasks.TimerTask;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public class MenuTask extends Task {
+public class MenuTimerTask extends TimerTask {
 
-    private XG7Menus menus;
+    private final XG7Menus menus;
+    private final AtomicLong counter = new AtomicLong();
 
-    public MenuTask(XG7Menus menus) {
+    public MenuTimerTask(XG7Menus menus) {
         super(
                 XG7Plugins.getInstance(),
                 "menu-task",
-                true,
-                true,
+                0,
                 1,
                 TaskState.IDLE,
                 null
@@ -26,11 +26,8 @@ public class MenuTask extends Task {
         this.menus = menus;
     }
 
-
     @Override
     public void run() {
-        AtomicLong counter = new AtomicLong();
-
         menus.getRegisteredMenus().values().forEach(menu -> {
             if (menu.getMenuConfigs().repeatingUpdateMills() < 0) return;
             if (counter.get() % menu.getMenuConfigs().repeatingUpdateMills() != 0) return;

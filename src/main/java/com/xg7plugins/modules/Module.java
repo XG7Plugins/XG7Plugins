@@ -1,8 +1,8 @@
 package com.xg7plugins.modules;
 
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.events.Listener;
-import com.xg7plugins.tasks.Task;
+import com.xg7plugins.tasks.tasks.Task;
+import com.xg7plugins.tasks.tasks.TimerTask;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +44,7 @@ public interface Module {
      *
      * @return A list of tasks to be executed
      */
-    default List<Task> loadTasks() {
+    default List<TimerTask> loadTasks() {
         return Collections.emptyList();
     }
 

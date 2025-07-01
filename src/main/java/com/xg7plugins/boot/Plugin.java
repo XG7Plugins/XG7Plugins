@@ -14,7 +14,8 @@ import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.help.HelpMessenger;
 import com.xg7plugins.managers.ManagerRegistry;
-import com.xg7plugins.tasks.Task;
+import com.xg7plugins.tasks.tasks.Task;
+import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
 import lombok.*;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -135,7 +136,7 @@ public abstract class Plugin extends JavaPlugin {
             XG7PluginsAPI.langManager().loadLangsFrom(this);
         }
         if (cause.equals(ReloadCause.TASKS)) {
-            XG7PluginsAPI.taskManager().cancelTasks(this);
+            XG7PluginsAPI.taskManager().cancelAllRegisteredTasks(this);
             XG7PluginsAPI.taskManager().reloadTasks(this);
         }
 
@@ -197,7 +198,7 @@ public abstract class Plugin extends JavaPlugin {
      *
      * @return A list of tasks to be executed periodically
      */
-    public List<Task> loadRepeatingTasks() {
+    public List<TimerTask> loadRepeatingTasks() {
         return null;
     }
 

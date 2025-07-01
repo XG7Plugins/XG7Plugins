@@ -65,6 +65,13 @@ public class Slot {
         return row == slot.row && column == slot.column;
     }
 
+    public boolean equals(int row, int col) {
+        return this.row == row && this.column == col;
+    }
+    public boolean equals(int slot) {
+        return this.get() == slot;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(row, column);

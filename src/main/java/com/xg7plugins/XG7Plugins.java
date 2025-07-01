@@ -10,6 +10,7 @@ import com.xg7plugins.commands.core_commands.reload.ReloadCause;
 import com.xg7plugins.commands.core_commands.reload.ReloadCommand;
 import com.xg7plugins.commands.core_commands.task_command.TaskCommand;
 import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.cooldowns.CooldownManager;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.database.dao.DAO;
 import com.xg7plugins.data.database.entity.Entity;
@@ -40,8 +41,10 @@ import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.server.ServerInfo;
 import com.xg7plugins.tasks.*;
-import com.xg7plugins.tasks.tasks.DatabaseKeepAlive;
-import com.xg7plugins.tasks.tasks.TPSCalculator;
+import com.xg7plugins.tasks.plugin_tasks.DatabaseKeepAlive;
+import com.xg7plugins.tasks.plugin_tasks.TPSCalculator;
+import com.xg7plugins.tasks.tasks.Task;
+import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.utils.text.Text;
@@ -79,8 +82,6 @@ public final class XG7Plugins extends Plugin {
 
     private ServerInfo serverInfo;
 
-    private TPSCalculator tpsCalculator;
-
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
     @Override
@@ -102,10 +103,6 @@ public final class XG7Plugins extends Plugin {
         debug.loading("Loading metrics...");
 
         Metrics.getMetrics(this, 24626);
-
-        debug.loading("Starting tps calculator...");
-        this.tpsCalculator = new TPSCalculator();
-        tpsCalculator.start();
 
         debug.loading("Loading managers...");
 
@@ -153,8 +150,7 @@ public final class XG7Plugins extends Plugin {
     public void onDisable() {
         super.onDisable();
         Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer("§cServer is restarting..."));
-        debug.loading("Stopping tpsCalculator...");
-        tpsCalculator.cancel();
+
         this.plugins.forEach((name, plugin) -> unregister(plugin));
 
         debug.loading("Stopping tasks...");
@@ -203,8 +199,8 @@ public final class XG7Plugins extends Plugin {
         return Collections.singletonList(new JoinListener());
     }
     @Override
-    public List<Task> loadRepeatingTasks() {
-        return Arrays.asList(XG7PluginsAPI.cooldowns().getTask(), new DatabaseKeepAlive());
+    public List<TimerTask> loadRepeatingTasks() {
+        return Arrays.asList(XG7PluginsAPI.cooldowns().getTask(), new DatabaseKeepAlive(), new TPSCalculator());
     }
     @Override
     public List<Dependency> loadDependencies() {
@@ -257,7 +253,7 @@ public final class XG7Plugins extends Plugin {
         XG7PluginsAPI.packetEventManager().registerListeners(plugin, plugin.loadPacketEvents());
 
         plugin.getDebug().loading("Registering tasks...");
-        XG7PluginsAPI.taskManager().registerTasks(plugin.loadRepeatingTasks());
+        XG7PluginsAPI.taskManager().registerTimerTasks(plugin.loadRepeatingTasks());
 
         plugin.getDebug().loading("Loading langs...");
         XG7PluginsAPI.langManager().loadLangsFrom(plugin);

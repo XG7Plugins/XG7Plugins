@@ -56,7 +56,7 @@ public class TaskCommand implements Command {
             Command subCommand = getSubCommands().stream().filter(cmd -> cmd.getCommandConfigurations().name().equalsIgnoreCase(args.get(0, String.class))).findFirst().orElse(null);
             if (subCommand == null) return suggestions;
             if (!sender.hasPermission(subCommand.getCommandConfigurations().permission()) || !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) return suggestions;
-            suggestions.addAll(XG7PluginsAPI.taskManager().getTasks().keySet());
+            suggestions.addAll(XG7PluginsAPI.taskManager().getTimerTaskMap().keySet());
         }
         return suggestions;
     }

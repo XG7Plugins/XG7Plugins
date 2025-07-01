@@ -22,17 +22,14 @@ public class PagedMenuHolder extends MenuHolder {
     }
 
     public void goPage(int page) {
-        getMenu().goPage(page, this).thenAccept((p) -> this.page = p);
+        getMenu().goPage(page, this);
+        this.page = page;
     }
     public void nextPage() {
         goPage(page + 1);
     }
     public void previousPage() {
         goPage(page - 1);
-    }
-
-    public static void refresh(PagedMenuHolder menuHolder) {
-        BasicMenu.refresh(menuHolder).thenRun(() -> menuHolder.goPage(0));
     }
 
 }

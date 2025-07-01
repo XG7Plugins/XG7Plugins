@@ -42,9 +42,9 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
 
         switch (identifier) {
             case "tasks_running":
-                return XG7PluginsAPI.taskManager().getTasks().values().stream().filter(task -> task.getState() == TaskState.RUNNING).count() + "";
+                return XG7PluginsAPI.taskManager().getTimerTaskMap().values().stream().filter(task -> task.getTaskState() == TaskState.RUNNING).count() + "";
             case "tasks_idle":
-                return XG7PluginsAPI.taskManager().getTasks().values().stream().filter(task -> task.getState() == TaskState.IDLE).count() + "";
+                return XG7PluginsAPI.taskManager().getTimerTaskMap().values().stream().filter(task -> task.getTaskState() == TaskState.IDLE).count() + "";
         }
 
         if (identifier.startsWith("player_")) {

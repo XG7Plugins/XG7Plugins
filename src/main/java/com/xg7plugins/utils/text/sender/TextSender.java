@@ -34,7 +34,7 @@ public interface TextSender {
             sender.sendMessage(text.getPlainText());
             return;
         }
-        
+
         Text.getAudience().sender(sender).sendMessage(text.getComponent());
     }
 

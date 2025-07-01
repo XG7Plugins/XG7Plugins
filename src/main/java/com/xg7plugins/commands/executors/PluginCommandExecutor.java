@@ -7,6 +7,7 @@ import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.CommandSetup;
+import com.xg7plugins.tasks.tasks.AsyncTask;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -134,7 +135,7 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
 
             final Command finalCommand = command;
 
-            XG7PluginsAPI.taskManager().runAsyncTask(manager.getPlugin(),"commands", () -> finalCommand.onCommand(sender,commandArgs));
+            XG7PluginsAPI.taskManager().runAsync(AsyncTask.of(manager.getPlugin(), "commands", () -> finalCommand.onCommand(sender,commandArgs)));
 
             return;
         }

@@ -49,8 +49,8 @@ http-request-timeout: 10s
 enable-geyser-forms: true
 enable-lang-form: true
 
-#Threads for executing repeating tasks
-repeating-tasks-threads: 8
+#Threads for executing scheduled/timer tasks
+scheduled-tasks-threads: 8
 
 #Delay to send a message or
 #make an action while is in cooldown
@@ -90,7 +90,7 @@ sql:
   max-pool-size: 10
   min-idle-connections: 5
 
-  keep-alive-time: 600s
+  keep-alive-delay: 600s
 
 #Define redis cache configuration
 redis-cache:

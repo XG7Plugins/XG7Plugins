@@ -4,16 +4,13 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.modules.Module;
-import com.xg7plugins.modules.xg7scores.tasks.ScoreTask;
-import com.xg7plugins.tasks.Task;
-import com.xg7plugins.tasks.TaskState;
+import com.xg7plugins.modules.xg7scores.tasks.ScoreTimerTask;
+import com.xg7plugins.tasks.tasks.TimerTask;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Getter
@@ -38,13 +35,13 @@ public class XG7Scores implements Module {
     public void onDisable() {
         XG7Plugins.getInstance().getDebug().loading("Disabling XG7Scores");
         scores.values().forEach(Score::removeAllPlayers);
-        XG7PluginsAPI.taskManager().cancelTask("score-task");
+        XG7PluginsAPI.taskManager().cancelRepeatingTask(XG7Plugins.getInstance(), "score-task");
         XG7Plugins.getInstance().getDebug().loading("XG7Scores disabled");
     }
 
     @Override
-    public List<Task> loadTasks() {
-        return Collections.singletonList(new ScoreTask(this));
+    public List<TimerTask> loadTasks() {
+        return Collections.singletonList(new ScoreTimerTask(this));
     }
 
     @Override
@@ -83,11 +80,6 @@ public class XG7Scores implements Module {
     public void removePlayer(Player player) {
         players.remove(player.getUniqueId());
         scores.values().forEach(score -> score.removePlayer(player));
-    }
-
-    public void disable() {
-        scores.values().forEach(Score::removeAllPlayers);
-        XG7PluginsAPI.taskManager().cancelTask("score-task");
     }
 
     public void addPlayer(Player player) {

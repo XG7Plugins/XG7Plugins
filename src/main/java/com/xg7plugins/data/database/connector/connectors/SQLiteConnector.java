@@ -33,7 +33,7 @@ public class SQLiteConnector implements Connector {
 
         connections.put(plugin.getName(), sqliteConnection);
 
-        XG7PluginsAPI.taskManager().runTask(XG7Plugins.getInstance(), "keep-alive-database");
+        XG7PluginsAPI.taskManager().runTimerTask(XG7PluginsAPI.taskManager().getRegisteredTimerTask(XG7Plugins.getInstance(), "keep-alive-database"));
     }
 
     @Override

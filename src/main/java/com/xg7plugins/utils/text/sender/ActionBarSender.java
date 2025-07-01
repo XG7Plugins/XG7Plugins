@@ -5,8 +5,10 @@ import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
 import com.github.retrooper.packetevents.protocol.chat.message.ChatMessageLegacy;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.modules.xg7scores.scores.ActionBar;
 import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.text.Text;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
@@ -28,7 +30,7 @@ public class ActionBarSender implements TextSender {
 
         if (MinecraftVersion.isNewerThan(8)) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, net.md_5.bungee.api.chat.TextComponent.fromLegacyText(text.getPlainText()));
-            Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId()), 60L);
+            XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 60L);
             return;
         }
 
@@ -38,9 +40,7 @@ public class ActionBarSender implements TextSender {
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutChat);
 
-        Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId()), 60L);
-
-        return;
+        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 60L);
     }
 
     @Override

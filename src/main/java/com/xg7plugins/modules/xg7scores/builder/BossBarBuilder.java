@@ -1,10 +1,9 @@
 package com.xg7plugins.modules.xg7scores.builder;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.modules.xg7scores.scores.bossbar.BossBar;
-import com.xg7plugins.modules.xg7scores.scores.bossbar.LegacyBossBar;
+import com.xg7plugins.modules.xg7scores.scores.bossbar.legacy.LegacyBossBar;
 import com.xg7plugins.modules.xg7scores.scores.bossbar.PublicBossBar;
 import com.xg7plugins.server.MinecraftVersion;
 import org.bukkit.boss.BarColor;

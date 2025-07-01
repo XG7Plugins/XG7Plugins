@@ -52,7 +52,7 @@ public class ModuleManager implements Manager {
      * Loads and registers all tasks from the registered modules.
      */
     public void loadTasks() {
-        extensions.values().forEach(extension -> XG7PluginsAPI.taskManager().registerTasks(extension.loadTasks()));
+        extensions.values().forEach(extension -> XG7PluginsAPI.taskManager().registerTimerTasks(extension.loadTasks()));
     }
 
     /**

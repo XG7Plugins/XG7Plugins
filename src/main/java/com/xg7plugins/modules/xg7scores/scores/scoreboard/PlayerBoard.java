@@ -3,6 +3,7 @@ package com.xg7plugins.modules.xg7scores.scores.scoreboard;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.Bukkit;
@@ -38,16 +39,16 @@ class PlayerBoard {
         this.lastLines = new HashMap<>();
         this.lines = lines;
         this.scoreBoard = board;
-        Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), () -> {
+        XG7PluginsAPI.taskManager().runSync(BukkitTask.of(XG7Plugins.getInstance(), () -> {
             this.bukkitScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
             player.setScoreboard(bukkitScoreboard);
-        });
+        }));
 
     }
 
     public void createSidebar() {
         if (sidebarObjective != null) return;
-        XG7PluginsAPI.taskManager().runSyncTask(XG7Plugins.getInstance(), () -> {
+        XG7PluginsAPI.taskManager().runSync(BukkitTask.of(XG7Plugins.getInstance(), () -> {
             this.sidebarObjective = bukkitScoreboard.registerNewObjective("sb-" + scoreBoard.getId(), "dummy");
             sidebarObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
             sidebarObjective.setDisplayName(title.get(0));
@@ -65,11 +66,11 @@ class PlayerBoard {
             }
 
             updateSidebar();
-        });
+        }));
     }
 
     public void createBelowname() {
-        XG7PluginsAPI.taskManager().runSyncTask(XG7Plugins.getInstance(), () -> {
+        XG7PluginsAPI.taskManager().runSync(BukkitTask.of(XG7Plugins.getInstance(), () -> {
             this.belowNameObjective = bukkitScoreboard.registerNewObjective("bn-" + scoreBoard.getId(), "health");
 
             belowNameObjective.setDisplayName(Text.detectLangs(player, scoreBoard.getPlugin(), healthDisplaySuffix).join().getText());
@@ -77,7 +78,7 @@ class PlayerBoard {
             belowNameObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
             updateBelowName();
-        });
+        }));
     }
 
     public void updateBelowName() {
