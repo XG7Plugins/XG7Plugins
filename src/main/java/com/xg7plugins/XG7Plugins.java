@@ -108,6 +108,13 @@ public final class XG7Plugins extends Plugin {
 
         Metrics.getMetrics(this, 24626);
 
+        debug.loading("Loading plugin configurations...");
+        try {
+            XG7PluginsAPI.configManager(this).registerSections();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
         debug.loading("Loading managers...");
 
         managerRegistry.registerManager(new DependencyManager());
@@ -145,6 +152,7 @@ public final class XG7Plugins extends Plugin {
         plugins.forEach((name, plugin) -> loadPlugin(plugin));
 
         XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
+        XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
 
         debug.loading("XG7Plugins enabled.");
 
@@ -239,12 +247,17 @@ public final class XG7Plugins extends Plugin {
             return;
         }
 
-        plugin.getDebug().loading("Loading plugin configurations...");
-        try {
-            XG7PluginsAPI.configManager(plugin).registerSections();
+        if (plugin != this) {
+            plugin.getDebug().loading("Loading plugin configurations...");
+
             XG7PluginsAPI.configManager(plugin).registerAdapter(new SoundTypeAdapter());
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
+
+            try {
+                XG7PluginsAPI.configManager(plugin).registerSections();
+            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
+                     IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         plugin.getDebug().loading("Connecting plugin to database...");
