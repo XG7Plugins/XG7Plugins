@@ -8,10 +8,10 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.managers.Manager;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -27,7 +27,7 @@ public class JsonManager implements Manager {
     public JsonManager(XG7Plugins plugin) {
         cache = new ObjectCache<>(
                 plugin,
-                Config.mainConfigOf(plugin).getTimeInMilliseconds("json-cache-expires").orElse(60 * 10 * 1000L),
+                Config.of(plugin, MainConfigSection.class).getJsonCacheExpires().getMilliseconds(),
                 false,
                 "json-cache",
                 false,

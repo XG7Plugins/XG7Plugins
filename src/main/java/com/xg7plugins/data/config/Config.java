@@ -3,6 +3,7 @@ package com.xg7plugins.data.config;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.data.config.section.ConfigSection;
 import com.xg7plugins.utils.time.Time;
 import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
@@ -109,6 +110,11 @@ public class Config {
             return XG7PluginsAPI.configManager(plugin).getConfigs().get(name);
         }
         return new Config(plugin, name);
+    }
+
+    public static <T extends ConfigSection> T of(Plugin plugin, Class<T> clazz) {
+        ConfigManager configManager = XG7PluginsAPI.configManager(plugin);
+        return configManager.getConfigSection(clazz);
     }
 
     /**

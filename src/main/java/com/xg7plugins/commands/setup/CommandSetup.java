@@ -1,7 +1,7 @@
 package com.xg7plugins.commands.setup;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.ConfigBoolean;
+import com.xg7plugins.data.config.section.ConfigBoolean;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

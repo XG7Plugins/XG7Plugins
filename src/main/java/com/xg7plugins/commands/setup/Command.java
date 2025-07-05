@@ -2,7 +2,6 @@ package com.xg7plugins.commands.setup;
 
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.boot.PluginSetup;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import org.bukkit.command.CommandSender;
@@ -36,7 +35,7 @@ public interface Command {
      * @param args   The command arguments
      */
     default void onCommand(CommandSender sender, CommandArgs args) {
-        CommandMessages.SYNTAX_ERROR.send(sender, getCommandConfigurations().syntax());
+        CommandMessages.SYNTAX_ERROR.send(sender, getCommandSetup().syntax());
     }
 
     /**
@@ -50,7 +49,7 @@ public interface Command {
         if (args.len() == 1 && getSubCommands() != null && !getSubCommands().isEmpty()) {
 
             return getSubCommands().stream()
-                        .map(Command::getCommandConfigurations)
+                        .map(Command::getCommandSetup)
                         .filter(commandConfigurations -> sender.hasPermission(commandConfigurations.permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass"))
                         .map(CommandSetup::name)
                         .collect(Collectors.toList()
@@ -72,7 +71,7 @@ public interface Command {
      *
      * @return The command configuration settings
      */
-    default CommandSetup getCommandConfigurations() {
+    default CommandSetup getCommandSetup() {
         return getClass().getAnnotation(CommandSetup.class);
     }
 
@@ -82,6 +81,6 @@ public interface Command {
      * @return The plugin instance
      */
     default Plugin getPlugin() {
-        return XG7PluginsAPI.getXG7Plugin(getCommandConfigurations().pluginClass());
+        return XG7PluginsAPI.getXG7Plugin(getCommandSetup().pluginClass());
     }
 }

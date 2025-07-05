@@ -87,7 +87,7 @@ public class Item implements Cloneable {
 
     public static Item commandIcon(XMaterial material, Command command) {
         Item item = new Item(material.parseItem());
-        CommandSetup commandConfig = command.getCommandConfigurations();
+        CommandSetup commandConfig = command.getCommandSetup();
         item.name("&b/&f" + commandConfig.name());
         item.lore(
                 "lang:[commands-display.command-item.usage]",

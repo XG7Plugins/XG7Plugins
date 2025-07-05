@@ -7,6 +7,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
+import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.data.database.dao.DAO;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.data.database.entity.Entity;
@@ -239,7 +240,7 @@ public class XG7PluginsAPI {
      * @return true if Geyser forms support is enabled, false otherwise
      */
     public static boolean isGeyserFormsEnabled() {
-        return isDependencyEnabled("floodgate") && Config.mainConfigOf(XG7Plugins.getInstance()).get("enable-geyser-forms", Boolean.class).orElse(false);
+        return isDependencyEnabled("floodgate") && Config.of(XG7Plugins.getInstance(), MainConfigSection.class).isGeyserFormsEnabled();
     }
 
     /**

@@ -4,11 +4,8 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
-import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.bukkit.Bukkit;
-
-import java.util.HashMap;
 
 /**
  * Debug utility class for handling different levels of logging messages

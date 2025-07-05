@@ -13,7 +13,6 @@ import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
 import com.xg7plugins.tasks.plugin_tasks.TPSCalculator;
-import com.xg7plugins.tasks.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Pair;

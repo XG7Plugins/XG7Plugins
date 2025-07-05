@@ -7,7 +7,7 @@ import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
-import com.xg7plugins.data.config.ConfigBoolean;
+import com.xg7plugins.data.config.section.ConfigBoolean;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
@@ -53,7 +53,7 @@ public class LangCommand implements Command {
         }
 
         if (args.len() != 2) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandSetup().syntax());
             return;
         }
 

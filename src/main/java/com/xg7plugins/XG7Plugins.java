@@ -4,6 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginSetup;
 import com.xg7plugins.cache.CacheManager;
+import com.xg7plugins.cache.RedisCacheSection;
 import com.xg7plugins.commands.core_commands.LangCommand;
 import com.xg7plugins.commands.core_commands.TestCommand;
 import com.xg7plugins.commands.core_commands.reload.ReloadCause;
@@ -12,6 +13,8 @@ import com.xg7plugins.commands.core_commands.task_command.TaskCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.cooldowns.CooldownManager;
 import com.xg7plugins.data.JsonManager;
+import com.xg7plugins.data.config.core.MainConfigSection;
+import com.xg7plugins.data.config.default_type_adapters.SoundTypeAdapter;
 import com.xg7plugins.data.database.dao.DAO;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.playerdata.PlayerData;
@@ -30,7 +33,7 @@ import com.xg7plugins.plugin_menus.LangForm;
 import com.xg7plugins.plugin_menus.LangMenu;
 import com.xg7plugins.plugin_menus.TaskMenu;
 import com.xg7plugins.modules.ModuleManager;
-import com.xg7plugins.lang.LangItemTypeAdapter;
+import com.xg7plugins.data.config.default_type_adapters.LangItemTypeAdapter;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.events.Listener;
@@ -43,7 +46,6 @@ import com.xg7plugins.server.ServerInfo;
 import com.xg7plugins.tasks.*;
 import com.xg7plugins.tasks.plugin_tasks.DatabaseKeepAlive;
 import com.xg7plugins.tasks.plugin_tasks.TPSCalculator;
-import com.xg7plugins.tasks.tasks.Task;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Metrics;
@@ -55,6 +57,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -76,6 +79,7 @@ import java.util.concurrent.ExecutionException;
         },
         mainCommandName = "xg7plugins",
         mainCommandAliases = {"7pl", "7pls", "xg7pl"},
+        configSections = {MainConfigSection.class, RedisCacheSection.class},
         reloadCauses = {"json"}
 )
 public final class XG7Plugins extends Plugin {
@@ -233,6 +237,14 @@ public final class XG7Plugins extends Plugin {
             debug.severe("Error on loading dependencies for " + plugin.getName() + ", disabling plugin...");
             Bukkit.getPluginManager().disablePlugin(plugin);
             return;
+        }
+
+        plugin.getDebug().loading("Loading plugin configurations...");
+        try {
+            XG7PluginsAPI.configManager(plugin).registerSections();
+            XG7PluginsAPI.configManager(plugin).registerAdapter(new SoundTypeAdapter());
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
 
         plugin.getDebug().loading("Connecting plugin to database...");

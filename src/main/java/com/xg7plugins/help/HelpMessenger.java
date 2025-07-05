@@ -4,6 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.help.chat.HelpChat;
 import com.xg7plugins.help.chat.HelpChatPage;
 import com.xg7plugins.help.form.HelpForm;
@@ -33,17 +34,14 @@ public class HelpMessenger {
 
         Player player = (Player) sender;
 
-        Config config = Config.mainConfigOf(XG7Plugins.getInstance());
+        MainConfigSection config = Config.of(XG7Plugins.getInstance(), MainConfigSection.class);
 
-        if (XG7PluginsAPI.isGeyserFormsEnabled()) {
-            boolean commandFormEnabled = config.get("help-command-form", Boolean.class).orElse(false);
-            if (commandFormEnabled && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
+        if (XG7PluginsAPI.isGeyserFormsEnabled() && config.isHelpCommandForm() && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
                 sendForm(player);
                 return;
-            }
         }
 
-        if (config.get("help-command-in-gui", Boolean.class).orElse(false)) {
+        if (config.isHelpCommandInGui()) {
             sendGUI(player);
             return;
         }

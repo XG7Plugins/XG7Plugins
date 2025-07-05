@@ -4,8 +4,6 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.managers.Manager;
-import com.xg7plugins.tasks.tasks.Task;
-import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.time.Time;
 import lombok.AllArgsConstructor;

@@ -2,6 +2,7 @@ package com.xg7plugins.utils.http;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
@@ -67,7 +68,7 @@ public class HTTPRequest {
         conn.setRequestProperty("Cache-Control", "no-cache");
         conn.setRequestProperty("Pragma", "no-cache");
 
-        conn.setConnectTimeout(Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("http-request-timeout").orElse(5000L).intValue());
+        conn.setConnectTimeout(new Long(Config.of(XG7Plugins.getInstance(), MainConfigSection.class).getHttpRequestTimeout().getMilliseconds()).intValue());
 
         if (headers != null) for (Pair<String,String> header : headers) conn.setRequestProperty(header.getFirst(), header.getSecond());
 

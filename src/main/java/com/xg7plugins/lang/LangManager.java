@@ -5,13 +5,12 @@ import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataDAO;
 import com.xg7plugins.managers.Manager;
-import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.reflection.ReflectionObject;
-import com.xg7plugins.utils.time.Time;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -34,14 +33,15 @@ public class LangManager implements Manager {
     public LangManager(XG7Plugins plugin, String[] defaultLangs) {
         this.plugin = plugin;
         this.defLangs = defaultLangs;
-        this.langEnabled = Config.mainConfigOf(plugin).get("lang-enabled", Boolean.class).orElse(true);
 
-        Config config = Config.mainConfigOf(plugin);
+        MainConfigSection config = Config.of(plugin, MainConfigSection.class);
 
-        this.mainLang = config.get("main-lang", String.class).orElse("en");
+        this.langEnabled = config.isLangEnabled();
+
+        this.mainLang = config.getMainLang();
         this.langs = new ObjectCache<>(
                 plugin,
-                config.getTimeInMilliseconds("lang-cache-expires").orElse(60 * 10 * 1000L),
+                config.getLangCacheExpires().getMilliseconds(),
                 false,
                 "langs",
                 true,

@@ -28,11 +28,11 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command cmd, @NotNull String s, @NotNull String[] strings) {
 
-        PluginSetup plConfig = manager.getPlugin().getConfigurations();
+        PluginSetup plConfig = manager.getPlugin().getPluginSetup();
 
         Command command = manager.getCommand(cmd.getName());
 
-        CommandSetup commandConfig = command.getCommandConfigurations();
+        CommandSetup commandConfig = command.getCommandSetup();
 
         if (command instanceof MainCommand) {
             if (!sender.hasPermission(commandConfig.permission())) {
@@ -82,7 +82,7 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
         Command subCommandChosen = null;
 
         for (Command subCommand : subCommands) {
-            if (subCommand.getCommandConfigurations().name().equalsIgnoreCase(args[index])) {
+            if (subCommand.getCommandSetup().name().equalsIgnoreCase(args[index])) {
                 subCommandChosen = subCommand;
                 break;
             }
@@ -108,7 +108,7 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
     private void processCommand(Command command, CommandSender sender, String[] strings) {
         if (processSubCommands(command, sender, strings, 0)) return;
 
-        CommandSetup commandConfig = command.getCommandConfigurations();
+        CommandSetup commandConfig = command.getCommandSetup();
 
         if (!sender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
             CommandMessages.NO_PERMISSION.send(sender);
@@ -151,11 +151,11 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command cmd, @NotNull String s, @NotNull String[] strings) {
 
-        PluginSetup plConfig = manager.getPlugin().getConfigurations();
+        PluginSetup plConfig = manager.getPlugin().getPluginSetup();
 
         Command command = manager.getCommand(cmd.getName());
 
-        CommandSetup commandConfig = command.getCommandConfigurations();
+        CommandSetup commandConfig = command.getCommandSetup();
 
         if (command instanceof MainCommand) {
             if (strings.length == 0) return Collections.emptyList();

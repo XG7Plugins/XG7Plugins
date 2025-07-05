@@ -41,7 +41,7 @@ public class TaskCommand implements Command {
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (!(sender instanceof  Player)) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandSetup().syntax());
             return;
         }
 
@@ -53,9 +53,9 @@ public class TaskCommand implements Command {
         List<String> suggestions = new ArrayList<>();
 
         if (args.len() == 2) {
-            Command subCommand = getSubCommands().stream().filter(cmd -> cmd.getCommandConfigurations().name().equalsIgnoreCase(args.get(0, String.class))).findFirst().orElse(null);
+            Command subCommand = getSubCommands().stream().filter(cmd -> cmd.getCommandSetup().name().equalsIgnoreCase(args.get(0, String.class))).findFirst().orElse(null);
             if (subCommand == null) return suggestions;
-            if (!sender.hasPermission(subCommand.getCommandConfigurations().permission()) || !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) return suggestions;
+            if (!sender.hasPermission(subCommand.getCommandSetup().permission()) || !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) return suggestions;
             suggestions.addAll(XG7PluginsAPI.taskManager().getTimerTaskMap().keySet());
         }
         return suggestions;

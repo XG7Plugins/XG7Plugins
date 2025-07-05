@@ -6,8 +6,6 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.ConnectionType;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.data.database.connector.connectors.SQLiteConnector;
-import com.xg7plugins.tasks.tasks.AsyncTask;
-import com.xg7plugins.tasks.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.tasks.tasks.TimerTask;
 
@@ -18,7 +16,7 @@ public class DatabaseKeepAlive extends TimerTask {
                 XG7Plugins.getInstance(),
                 "keep-alive-database",
                 0,
-                Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("keep-alive-delay").orElse(10 * 60 * 1000L),
+                Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("sql.keep-alive-delay").orElse(10 * 60 * 1000L),
                 TaskState.RUNNING,
                 null
         );

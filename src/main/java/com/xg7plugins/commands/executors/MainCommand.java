@@ -3,11 +3,11 @@ package com.xg7plugins.commands.executors;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.boot.PluginSetup;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
@@ -45,14 +45,14 @@ public class MainCommand implements Command {
     @Override
     public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
 
-        boolean antiTab = Config.mainConfigOf(XG7Plugins.getInstance()).get("anti-tab", Boolean.class).orElse(false);
+        boolean antiTab = Config.of(XG7Plugins.getInstance(), MainConfigSection.class).isAntiTab();
 
         List<String> suggestions = new ArrayList<>();
         if (args.len() == 1) {
             suggestions.addAll(XG7PluginsAPI.commandManager(plugin)
                     .getCommandList().stream()
-                    .filter(cmd -> sender.hasPermission(cmd.getCommandConfigurations().permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass") && antiTab)
-                    .map(cmd -> cmd.getCommandConfigurations().name())
+                    .filter(cmd -> sender.hasPermission(cmd.getCommandSetup().permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass") && antiTab)
+                    .map(cmd -> cmd.getCommandSetup().name())
                     .collect(Collectors.toList()));
             if (sender.hasPermission("xg7plugins.command.help") || sender.hasPermission("xg7plugins.command.anti-tab-bypass") && antiTab) {
                 suggestions.add("help");

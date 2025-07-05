@@ -21,7 +21,7 @@ public class CommandFormDescription extends ModalForm {
     public CommandFormDescription(CommandForm origin, Command command, Item commandIcon, HelpForm guiOrigin) {
         super(
                 "command-desc" + UUID.randomUUID(),
-                "Contents of command: " + command.getCommandConfigurations().name(),
+                "Contents of command: " + command.getCommandSetup().name(),
                 XG7Plugins.getInstance(),
 
                 commandIcon.getItemStack().getItemMeta().getLore().get(0) + "\n" +
@@ -50,7 +50,7 @@ public class CommandFormDescription extends ModalForm {
                 return;
             }
 
-            CommandForm commandMenu = new CommandForm(plugin, command.getSubCommands(), "Subcommands of: " + command.getCommandConfigurations().name(), origin, guiOrigin);
+            CommandForm commandMenu = new CommandForm(plugin, command.getSubCommands(), "Subcommands of: " + command.getCommandSetup().name(), origin, guiOrigin);
             commandMenu.send(player);
         } origin.send(player);
 

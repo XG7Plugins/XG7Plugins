@@ -7,7 +7,6 @@ import com.xg7plugins.commands.executors.PluginCommandExecutor;
 import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.managers.Manager;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
@@ -71,7 +70,7 @@ public class CommandManager implements Manager {
                 return;
             }
 
-            CommandSetup commandSetup = command.getCommandConfigurations();
+            CommandSetup commandSetup = command.getCommandSetup();
 
             if (!commandSetup.isEnabled().configName().isEmpty()) {
                 Config config = Config.of(commandSetup.isEnabled().configName(), plugin);

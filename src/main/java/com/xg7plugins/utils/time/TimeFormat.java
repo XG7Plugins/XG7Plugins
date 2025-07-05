@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @AllArgsConstructor
 public enum TimeFormat {

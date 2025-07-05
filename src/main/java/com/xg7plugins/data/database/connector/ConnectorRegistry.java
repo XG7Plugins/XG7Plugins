@@ -5,7 +5,6 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.database.ConnectionType;
 
 import java.sql.Connection;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

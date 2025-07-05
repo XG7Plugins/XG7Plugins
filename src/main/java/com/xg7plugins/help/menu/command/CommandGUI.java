@@ -31,7 +31,7 @@ public class CommandGUI extends PagedMenu {
         );
         this.commands = commands.stream().collect(
                 Collectors.toMap(
-                        command -> command.getCommandConfigurations().name(),
+                        command -> command.getCommandSetup().name(),
                         command -> command
                 )
         );
@@ -100,7 +100,7 @@ public class CommandGUI extends PagedMenu {
 
                 if (command.getSubCommands().isEmpty()) return;
 
-                CommandGUI commandMenu = new CommandGUI(guiOrigin.getPlugin(), command.getSubCommands(), "lang:[help-menu.command-help.subcommands-title]", this, guiOrigin, command.getCommandConfigurations().name());
+                CommandGUI commandMenu = new CommandGUI(guiOrigin.getPlugin(), command.getSubCommands(), "lang:[help-menu.command-help.subcommands-title]", this, guiOrigin, command.getCommandSetup().name());
 
                 commandMenu.open(holder.getPlayer());
                 break;

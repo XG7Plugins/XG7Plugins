@@ -1,6 +1,6 @@
 package com.xg7plugins.events.bukkitevents;
 
-import com.xg7plugins.data.config.ConfigBoolean;
+import com.xg7plugins.data.config.section.ConfigBoolean;
 import org.bukkit.event.EventPriority;
 
 import java.lang.annotation.ElementType;

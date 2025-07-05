@@ -1,9 +1,12 @@
 package com.xg7plugins.data.config;
 
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.data.config.section.ConfigSection;
 import com.xg7plugins.managers.Manager;
 import lombok.Getter;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -16,8 +19,11 @@ import java.util.logging.Level;
 @Getter
 public class ConfigManager implements Manager {
 
+    private final HashMap<Class<? extends ConfigSection>, ConfigSection> sections = new HashMap<>();
     private final HashMap<String, Config> configs = new HashMap<>();
     private final HashMap<Class<?>, ConfigTypeAdapter<?>> adapters = new HashMap<>();
+
+    private final Plugin plugin;
 
     /**
      * Initializes the ConfigManager with default and custom configurations.
@@ -29,12 +35,15 @@ public class ConfigManager implements Manager {
 
         plugin.getLogger().log(Level.CONFIG, "Loading configs of " + plugin.getName());
 
+        this.plugin = plugin;
+
         putConfig("config", new Config(plugin,"config"));
         putConfig("commands", new Config(plugin,"commands"));
 
         if (configs == null) return;
 
         Arrays.stream(configs).forEach(config -> putConfig(config, new Config(plugin, config)));
+
     }
 
     /**
@@ -42,6 +51,13 @@ public class ConfigManager implements Manager {
      */
     public void reloadConfigs() {
         configs.values().forEach(Config::reload);
+        for (ConfigSection configSection : sections.values()) {
+            try {
+                configSection.setFieldValues();
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**
@@ -75,5 +91,22 @@ public class ConfigManager implements Manager {
         adapters.put(adapter.getTargetType(), adapter);
     }
 
+    public void registerSections() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        Class<? extends ConfigSection>[] configSections = plugin.getPluginSetup().configSections();
+        for (Class<? extends ConfigSection> configSection : configSections) {
+            Constructor<? extends ConfigSection> constructor = configSection.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            ConfigSection instance = constructor.newInstance();
+            registerConfigSection(instance);
+        }
+    }
+
+    public void registerConfigSection(ConfigSection section) {
+        sections.put(section.getClass(), section);
+    }
+
+    public <T extends ConfigSection> T getConfigSection(Class<T> clazz) {
+        return (T) sections.get(clazz);
+    }
 
 }

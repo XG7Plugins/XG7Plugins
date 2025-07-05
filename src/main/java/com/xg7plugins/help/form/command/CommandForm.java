@@ -30,7 +30,7 @@ public class CommandForm extends SimpleForm {
 
         this.commands = commands.stream().collect(
                 Collectors.toMap(
-                        command -> command.getCommandConfigurations().name(),
+                        command -> command.getCommandSetup().name(),
                         command -> command
                 )
         );
@@ -49,7 +49,7 @@ public class CommandForm extends SimpleForm {
     public List<ButtonComponent> buttons(Player player) {
 
         List<ButtonComponent> buttons = commands.values().stream().filter(cmd -> !(cmd instanceof MainCommand)).map(
-                command -> ButtonComponent.of(command.getCommandConfigurations().name())
+                command -> ButtonComponent.of(command.getCommandSetup().name())
         ).collect(Collectors.toList());
 
         buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"commands-form.back").join().getText()));

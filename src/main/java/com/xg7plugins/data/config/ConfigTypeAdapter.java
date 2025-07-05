@@ -1,7 +1,5 @@
 package com.xg7plugins.data.config;
 
-import org.bukkit.configuration.ConfigurationSection;
-
 /**
  * An adapter interface for converting Bukkit configuration sections into typed objects.
  * Provides a standardized way to deserialize configuration data into specific object types,

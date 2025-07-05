@@ -1,4 +1,4 @@
-package com.xg7plugins.lang;
+package com.xg7plugins.data.config.default_type_adapters;
 
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigTypeAdapter;

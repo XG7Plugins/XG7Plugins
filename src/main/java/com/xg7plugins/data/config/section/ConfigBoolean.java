@@ -1,4 +1,4 @@
-package com.xg7plugins.data.config;
+package com.xg7plugins.data.config.section;
 
 /**
  * Annotation to configure boolean properties.

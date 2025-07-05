@@ -35,7 +35,7 @@ public class AntiTab implements PacketListener {
 
             if (!commandManager.getCommands().containsKey(label)) return true;
 
-            String permission = commandManager.getCommands().get(label).getCommandConfigurations().permission();
+            String permission = commandManager.getCommands().get(label).getCommandSetup().permission();
             return permission == null
                     || permission.isEmpty()
                     || player.hasPermission(permission)

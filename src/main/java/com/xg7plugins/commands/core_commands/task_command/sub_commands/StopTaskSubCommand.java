@@ -3,7 +3,6 @@ package com.xg7plugins.commands.core_commands.task_command.sub_commands;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.Command;
@@ -28,7 +27,7 @@ public class StopTaskSubCommand implements Command {
     @Override
     public void onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandConfigurations().syntax());
+            CommandMessages.SYNTAX_ERROR.send(sender, getCommandSetup().syntax());
             return;
         }
         TaskManager manager = XG7PluginsAPI.taskManager();

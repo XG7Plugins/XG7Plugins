@@ -46,8 +46,8 @@ http-request-timeout: 10s
 
 #This plugins can use Floodgate
 #forms, make it enabled if you have
-enable-geyser-forms: true
-enable-lang-form: true
+geyser-forms-enabled: true
+lang-form-enabled: true
 
 #Threads for executing scheduled/timer tasks
 scheduled-tasks-threads: 8

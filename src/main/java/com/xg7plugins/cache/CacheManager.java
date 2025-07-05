@@ -7,7 +7,6 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.managers.Manager;
-import com.xg7plugins.utils.time.Time;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -48,37 +47,24 @@ public class CacheManager implements Manager {
 
     public CacheManager(XG7Plugins plugin) {
 
-        Config config = Config.mainConfigOf(plugin);
+        RedisCacheSection config = Config.of(plugin, RedisCacheSection.class);
 
         this.caches = new HashMap<>();
 
-        if (!config.get("redis-cache.enabled", Boolean.class).orElse(false)) return;
+        if (!config.isEnabled()) return;
 
-        this.cacheExpires = config.get("redis-cache.cache-expires", Boolean.class).orElse(true);
+        this.cacheExpires = config.isCacheExpires();
 
-        String host = config.get("redis-cache.host", String.class).orElse(null);
-        int port = config.get("redis-cache.port", Integer.class).orElse(0);
-
-        boolean authEnabled = config.get("redis-cache.user-auth-enabled", Boolean.class).orElse(false);
-
-        String user = config.get("redis-cache.username", String.class).orElse(null);
-        String password = config.get("redis-cache.password", String.class).orElse(null);
         try {
-            pool = authEnabled ? new JedisPool(host, port, user, password) : new JedisPool(host, port);
+            pool = config.isUserAuthEnabled() ? new JedisPool(config.getHost(), config.getPort(), config.getUsername(), config.getPassword()) : new JedisPool(config.getHost(), config.getPort());
 
-            int minIdle = config.get("redis-cache.min-idle-connections", Integer.class).orElse(10);
-            int maxIdle = config.get("redis-cache.max-idle-connections", Integer.class).orElse(50);
-            int maxPoolSize = config.get("redis-cache.max-connections", Integer.class).orElse(100);
-
-            long timeout = config.getTimeInMilliseconds("redis-cache.max-wait-time").orElse(1000L);
-
-            pool.setMinIdle(minIdle);
-            pool.setMaxIdle(maxIdle);
-            pool.setMaxTotal(maxPoolSize);
-            pool.setMaxWaitMillis(timeout);
+            pool.setMinIdle(config.getMinIdleConnections());
+            pool.setMaxIdle(config.getMaxIdleConnections());
+            pool.setMaxTotal(config.getMaxConnections());
+            pool.setMaxWaitMillis(config.getMaxWaitTime().getMilliseconds());
 
             Jedis jedis = pool.getResource();
-            if (authEnabled) jedis.auth(password);
+            if (config.isUserAuthEnabled()) jedis.auth(config.getPassword());
             jedis.close();
         } catch (Exception e) {
             plugin.getDebug().severe("Failed to connect to Redis: " + e.getMessage());

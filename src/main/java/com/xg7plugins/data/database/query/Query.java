@@ -31,8 +31,6 @@ public class Query {
     private final HashMap<String, String> conditions = new HashMap<>();
     private String additionalCommands;
 
-    private QueryResult finishedResult;
-
     @Getter
     private Consumer<Exception> error;
 

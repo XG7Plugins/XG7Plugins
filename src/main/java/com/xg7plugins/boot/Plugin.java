@@ -14,7 +14,6 @@ import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.help.HelpMessenger;
 import com.xg7plugins.managers.ManagerRegistry;
-import com.xg7plugins.tasks.tasks.Task;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
 import lombok.*;
@@ -38,7 +37,7 @@ import java.util.*;
 @Getter
 public abstract class Plugin extends JavaPlugin {
 
-    private final PluginSetup configurations;
+    private final PluginSetup pluginSetup;
 
     protected EnvironmentConfig environmentConfig;
 
@@ -49,8 +48,8 @@ public abstract class Plugin extends JavaPlugin {
 
 
     public Plugin() {
-        configurations = getClass().getAnnotation(PluginSetup.class);
-        if (configurations == null) throw new IllegalClassException("PluginSetup annotation not found in " + getClass().getName());
+        pluginSetup = getClass().getAnnotation(PluginSetup.class);
+        if (pluginSetup == null) throw new IllegalClassException("PluginSetup annotation not found in " + getClass().getName());
 
         managerRegistry = new ManagerRegistry(this);
         this.environmentConfig = new EnvironmentConfig();
@@ -58,10 +57,10 @@ public abstract class Plugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        environmentConfig.setPrefix(ChatColor.translateAlternateColorCodes('&', configurations.prefix()));
+        environmentConfig.setPrefix(ChatColor.translateAlternateColorCodes('&', pluginSetup.prefix()));
         environmentConfig.setCustomPrefix(environmentConfig.getPrefix());
 
-        managerRegistry.registerManagers(new ConfigManager(this, configurations.configs()));
+        managerRegistry.registerManagers(new ConfigManager(this, pluginSetup.configs()));
         managerRegistry.registerManagers(new CommandManager(this));
 
         environmentConfig.setEnabledWorlds(Config.mainConfigOf(this).getList("enabled-worlds",String.class, true).orElse(Collections.emptyList()));
@@ -70,14 +69,14 @@ public abstract class Plugin extends JavaPlugin {
 
         debug.loading("Loading " + environmentConfig.getCustomPrefix() + "...");
 
-        for (String cause : configurations.reloadCauses()) ReloadCause.registerCause(this, new ReloadCause(cause));
+        for (String cause : pluginSetup.reloadCauses()) ReloadCause.registerCause(this, new ReloadCause(cause));
 
         XG7Plugins.register(this);
     }
 
     @Override
     public void onEnable() {
-        if (configurations.onEnableDraw().length != 0) Arrays.stream(configurations.onEnableDraw()).forEach(Bukkit.getConsoleSender()::sendMessage);
+        if (pluginSetup.onEnableDraw().length != 0) Arrays.stream(pluginSetup.onEnableDraw()).forEach(Bukkit.getConsoleSender()::sendMessage);
 
         Config config = Config.mainConfigOf(this);
 
