@@ -1,14 +1,14 @@
 package com.xg7plugins.cooldowns;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.tasks.tasks.AsyncTask;
-import com.xg7plugins.tasks.tasks.Task;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class CooldownManagerTask extends TimerTask {
@@ -33,31 +33,62 @@ public class CooldownManagerTask extends TimerTask {
 
     @Override
     public void run() {
+
+        List<Pair<UUID, CooldownManager.CooldownTask>> toRemove = new ArrayList<>();
+
         manager.getCooldowns().forEach((id, tasks) -> {
             Player player = Bukkit.getPlayer(id);
+            System.out.println("Processing cooldowns for player UUID: " + id);
 
             tasks.values().forEach(task -> {
-                task.setTime(task.getTime() - timeFactor);
+                long oldTime = task.getTime();
+                task.setTime(oldTime - timeFactor);
+                System.out.println("Task " + task.getId() + " time updated from " + oldTime + " to " + task.getTime());
+
                 if (player == null) {
-                    manager.removePlayer(task.getId(), id);
+                    System.out.println("Player is null, removing task " + task.getId() + " for UUID " + id);
+                    manager.removeCooldown(task.getId(), id);
                     return;
                 }
 
-                if (task.getTick() != null) task.getTick().accept(player);
+                if (task.getTick() != null) {
+                    System.out.println("Executing tick for task " + task.getId());
+                    try {
+                        task.getTick().accept(player);
+                    } catch (Exception e) {
+                        if (task.getOnFinish() != null) task.getOnFinish().accept(player, true);
+                        toRemove.add(Pair.of(id, task));
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                }
                 if (task.getTime() <= 0) {
-                    if (task.getOnFinish() != null) task.getOnFinish().accept(player, false);
-                    manager.getToRemove().add(new Pair<>(id, task.getId()));
+                    try {
+                        System.out.println("Task " + task.getId() + " completed, executing finish callback");
+                        if (task.getOnFinish() != null) task.getOnFinish().accept(player, false);
+                        toRemove.add(Pair.of(id, task));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 }
             });
         });
 
-        for (Pair<UUID, String> pair : manager.getToRemove()) {
-            if (manager.getCooldowns().get(pair.getFirst()) == null) continue;
-            manager.getCooldowns().get(pair.getFirst()).remove(pair.getSecond());
+        for (Pair<UUID, CooldownManager.CooldownTask> pair : toRemove) {
+            System.out.println("Processing removal for UUID: " + pair.getFirst() + ", task: " + pair.getSecond());
+            if (manager.getCooldowns().get(pair.getFirst()) == null) {
+                System.out.println("No cooldowns found for UUID: " + pair.getFirst());
+                continue;
+            }
+            manager.removeCooldown(pair.getSecond().getId(), pair.getFirst());
+            System.out.println("Removed task " + pair.getSecond());
 
-            if (manager.getCooldowns().get(pair.getFirst()).isEmpty()) manager.getCooldowns().remove(pair.getFirst());
+            if (manager.getCooldowns().get(pair.getFirst()).isEmpty()) {
+                System.out.println("Removing empty cooldown map for UUID: " + pair.getFirst());
+                manager.getCooldowns().remove(pair.getFirst());
+            }
         }
 
-        manager.getToRemove().clear();
     }
 }

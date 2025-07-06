@@ -4,7 +4,6 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.managers.Manager;
-import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.time.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +25,6 @@ public class CooldownManager implements Manager {
 
     private final ConcurrentHashMap<UUID, Map<String, CooldownTask>> cooldowns = new ConcurrentHashMap<>();
     private final CooldownManagerTask task;
-    private final List<Pair<UUID, String>> toRemove = new ArrayList<>();
 
     public CooldownManager(XG7Plugins plugin) {
         this.task = new CooldownManagerTask(this, Config.mainConfigOf(plugin).getTime("player-cooldown-task-delay").orElse(Time.of(1)).getMilliseconds());
@@ -52,9 +50,7 @@ public class CooldownManager implements Manager {
      * @param time       The duration of the cooldown in seconds
      */
     public void addCooldown(Player player, String cooldownId, long time) {
-        XG7PluginsAPI.taskManager().runTimerTask(task);
-        cooldowns.putIfAbsent(player.getUniqueId(), new HashMap<>());
-        cooldowns.get(player.getUniqueId()).put(cooldownId, new CooldownTask(cooldownId, time, null, null));
+        addCooldown(player, new CooldownTask(cooldownId, time, null, null));
     }
 
     /**
@@ -85,7 +81,7 @@ public class CooldownManager implements Manager {
      * @param cooldownId The cooldown identifier to remove
      * @param playerID   The UUID of the player
      */
-    public void removePlayer(String cooldownId, UUID playerID) {
+    public void removeCooldown(String cooldownId, UUID playerID) {
         CooldownTask task = cooldowns.get(playerID).get(cooldownId);
 
         if (task.getOnFinish() != null) task.getOnFinish().accept(Bukkit.getPlayer(playerID), true);
