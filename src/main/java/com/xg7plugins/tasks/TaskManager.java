@@ -167,6 +167,7 @@ public class TaskManager implements Manager {
             try {
                 asyncTask.run();
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new RuntimeException(e);
             }
         }, delay, period, TimeUnit.MILLISECONDS));
