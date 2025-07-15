@@ -17,7 +17,7 @@ public abstract class ModalForm extends Form<org.geysermc.cumulus.form.ModalForm
     protected final String button1;
     protected final String button2;
 
-    public ModalForm(String id, String title, Plugin plugin, String content, String button1, String button2) {
+    public ModalForm(Plugin plugin, String id, String title, String content, String button1, String button2) {
         super(id, title, plugin);
         this.content = content;
         this.button1 = button1;
@@ -34,9 +34,9 @@ public abstract class ModalForm extends Form<org.geysermc.cumulus.form.ModalForm
             builder.button1(Text.detectLangs(player, plugin,button1).join().getText());
             builder.button2(Text.detectLangs(player, plugin,button2).join().getText());
 
-            builder.invalidResultHandler((form, response) -> XG7PluginsAPI.taskManager().runAsync(AsyncTask.of(XG7Plugins.getInstance(),"menus", () -> onError(form, response, player))));
-            builder.validResultHandler((form, response) -> XG7PluginsAPI.taskManager().runAsync(AsyncTask.of(XG7Plugins.getInstance(),"menus", () -> onFinish(form, response, player))));
-            builder.closedResultHandler((form) -> XG7PluginsAPI.taskManager().runAsync(AsyncTask.of(XG7Plugins.getInstance(),"menus", () -> onClose(form, player))));
+            builder.invalidResultHandler((form, response) -> AsyncTask.of(XG7Plugins.getInstance(),"menus", () -> onError(form, response, player)));
+            builder.validResultHandler((form, response) -> onFinish(form, response, player));
+            builder.closedResultHandler((form) -> onClose(form, player));
 
             FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
 

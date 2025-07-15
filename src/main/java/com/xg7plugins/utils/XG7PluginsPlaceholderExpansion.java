@@ -6,6 +6,7 @@ import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.tasks.TaskState;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
+import org.geysermc.floodgate.api.FloodgateApi;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
@@ -45,6 +46,10 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
                 return XG7PluginsAPI.taskManager().getTimerTaskMap().values().stream().filter(task -> task.getTaskState() == TaskState.RUNNING).count() + "";
             case "tasks_idle":
                 return XG7PluginsAPI.taskManager().getTimerTaskMap().values().stream().filter(task -> task.getTaskState() == TaskState.IDLE).count() + "";
+            case "is_bedrock":
+                return (XG7PluginsAPI.dependencyManager().isLoaded("floodgate") && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) + "";
+            case "geyser_forms_enabled":
+                return XG7PluginsAPI.isGeyserFormsEnabled() + "";
         }
 
         if (identifier.startsWith("player_")) {

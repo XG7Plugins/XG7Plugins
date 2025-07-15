@@ -34,9 +34,9 @@ public abstract class SimpleForm extends Form<org.geysermc.cumulus.form.SimpleFo
 
             buttons(player).forEach(builder::button);
 
-            builder.invalidResultHandler((form, response) -> XG7PluginsAPI.taskManager().runAsync(AsyncTask.of(XG7Plugins.getInstance(),"menus", () -> onError(form, response, player))));
-            builder.validResultHandler((form, response) -> XG7PluginsAPI.taskManager().runAsync(AsyncTask.of(XG7Plugins.getInstance(),"menus", () -> onFinish(form, response, player))));
-            builder.closedResultHandler((form) -> XG7PluginsAPI.taskManager().runAsync(AsyncTask.of(XG7Plugins.getInstance(),"menus", () -> onClose(form, player))));
+            builder.invalidResultHandler((form, response) -> onError(form, response, player));
+            builder.validResultHandler((form, response) -> onFinish(form, response, player));
+            builder.closedResultHandler((form) -> onClose(form, player));
 
             FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
 

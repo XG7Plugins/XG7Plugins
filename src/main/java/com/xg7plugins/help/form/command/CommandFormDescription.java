@@ -21,9 +21,9 @@ public class CommandFormDescription extends ModalForm {
 
     public CommandFormDescription(CommandForm origin, Command command, ItemStack commandIcon, HelpForm guiOrigin) {
         super(
+                XG7Plugins.getInstance(),
                 "command-desc" + UUID.randomUUID(),
                 "Contents of command: " + command.getCommandSetup().name(),
-                XG7Plugins.getInstance(),
 
                 commandIcon.getItemMeta().getLore().get(0) + "\n" +
                         commandIcon.getItemMeta().getLore().get(1) + "\n" +
