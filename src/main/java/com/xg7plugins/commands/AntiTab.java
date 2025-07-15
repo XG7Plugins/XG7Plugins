@@ -23,27 +23,30 @@ public class AntiTab implements PacketListener {
     public void onPacketSend(PacketSendEvent event) {
 
         Player player = event.getPlayer();
-
         WrapperPlayServerTabComplete packet = new WrapperPlayServerTabComplete(event);
 
         List<WrapperPlayServerTabComplete.CommandMatch> suggestions = packet.getCommandMatches();
 
         List<WrapperPlayServerTabComplete.CommandMatch> filtered = suggestions.stream().filter(suggestion -> {
             String command = suggestion.getText();
+
             String label = command.startsWith("/") ? command.substring(1) : command;
+
             label = label.contains(" ") ? label.split(" ")[0] : label;
+            label = label.contains(":") ? label.split(":")[0] : label;
 
-            if (!commandManager.getCommands().containsKey(label)) return true;
+            if (!commandManager.getMappedCommands().containsKey(label)) return true;
 
-            String permission = commandManager.getCommands().get(label).getCommandSetup().permission();
-            return permission == null
-                    || permission.isEmpty()
+            String permission = commandManager.getMappedCommands().get(label).getCommandSetup().permission();
+
+            return permission == null || permission.isEmpty()
                     || player.hasPermission(permission)
                     || player.hasPermission("xg7plugins.command.anti-tab-bypass");
 
         }).collect(Collectors.toList());
 
         packet.setCommandMatches(filtered);
+
 
     }
 

@@ -64,10 +64,6 @@ public class TableCreator {
                 return "INT(" + (size < 1 ? 11 : size) + ")";
             case "BIGINT":
                 return "BIGINT(" + (size < 1 ? 20 : size) + ")";
-            case "FLOAT":
-                return "FLOAT(" + (size < 1 ? 12 : size) + ")";
-            case "DOUBLE":
-                return "DOUBLE(" + (size < 1 ? 22 : size) + ")";
             case "UUID":
                 return "VARCHAR(" + (size < 1 ? 36 : size) + ")";
             default:

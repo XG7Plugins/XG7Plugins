@@ -100,11 +100,11 @@ public class DatabaseManager implements Manager {
             return;
         }
 
-        ConnectionType connectionType = pluginConfig.get("sql.type", ConnectionType.class).orElse(ConnectionType.SQLITE);
+        SQLConfigs sqlConfigs = SQLConfigs.of(pluginConfig, xg7PluginsConfig);
 
-        plugin.getDebug().loading("Connection type: " + connectionType);
+        plugin.getDebug().loading("Connection type: " + sqlConfigs.getConnectionType());
 
-        Connector connector = connectorRegistry.getConnector(connectionType);
+        Connector connector = connectorRegistry.getConnector(sqlConfigs.getConnectionType());
 
         if (connector == null) {
             plugin.getDebug().severe("Connection type not found!");
@@ -113,7 +113,7 @@ public class DatabaseManager implements Manager {
         }
 
         try {
-            connector.connect(plugin, SQLConfigs.of(pluginConfig, xg7PluginsConfig));
+            connector.connect(plugin, sqlConfigs);
         } catch (Exception e) {
             plugin.getDebug().severe("Error while connecting to database: " + e.getMessage());
             e.printStackTrace();

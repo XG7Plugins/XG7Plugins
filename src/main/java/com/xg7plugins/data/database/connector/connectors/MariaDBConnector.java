@@ -14,9 +14,7 @@ public class MariaDBConnector extends MySQLConnector {
     public void connect(Plugin plugin, SQLConfigs sqlConfigs) {
         if (!ConnectionType.MARIADB.isDriverLoaded()) return;
 
-        HikariConfig hikariConfig = setupHikariConfig(plugin, sqlConfigs);
-
-        hikariConfig.setJdbcUrl(sqlConfigs.hasURL() ? sqlConfigs.getConnectionString() : "jdbc:mariadb://" + sqlConfigs.getHost() + ":" + sqlConfigs.getPort() + "/" + sqlConfigs.getDatabase());
+        HikariConfig hikariConfig = setupHikariConfig(plugin, ConnectionType.MARIADB, sqlConfigs);
 
         connections.put(plugin.getName(), new HikariDataSource(hikariConfig));
     }

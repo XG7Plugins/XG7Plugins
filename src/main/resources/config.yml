@@ -68,12 +68,12 @@ sql:
   #Types: SQLITE, MYSQL, MARIADB
   type: "sqlite"
 
-  host: ""
-  port: ""
+  host: "localhost"
+  port: 3306
 
-  database: ""
+  database: "xg7plugins"
 
-  username: ""
+  username: "root"
   password: ""
 
   #Connection string

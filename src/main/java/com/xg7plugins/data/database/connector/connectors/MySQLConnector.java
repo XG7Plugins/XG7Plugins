@@ -16,15 +16,11 @@ public class MySQLConnector implements Connector {
 
     @Override
     public void connect(Plugin plugin, SQLConfigs sqlConfigs) {
-
         if (!ConnectionType.MYSQL.isDriverLoaded()) return;
 
-        HikariConfig hikariConfig = setupHikariConfig(plugin, sqlConfigs);
-
-        hikariConfig.setJdbcUrl(sqlConfigs.hasURL() ? sqlConfigs.getConnectionString() : "jdbc:mysql://" + sqlConfigs.getHost() + ":" + sqlConfigs.getPort() + "/" + sqlConfigs.getDatabase());
+        HikariConfig hikariConfig = setupHikariConfig(plugin, ConnectionType.MYSQL, sqlConfigs);
 
         connections.put(plugin.getName(), new HikariDataSource(hikariConfig));
-
     }
 
 
@@ -45,8 +41,12 @@ public class MySQLConnector implements Connector {
         return ConnectionType.MYSQL;
     }
 
-    protected HikariConfig setupHikariConfig(Plugin plugin, SQLConfigs sqlConfigs) {
+    protected HikariConfig setupHikariConfig(Plugin plugin, ConnectionType type, SQLConfigs sqlConfigs) {
         HikariConfig hikariConfig = new HikariConfig();
+
+        hikariConfig.setDriverClassName(type.getDriverClassName());
+
+        hikariConfig.setJdbcUrl(sqlConfigs.hasURL() ? sqlConfigs.getConnectionString() : "jdbc:mysql://" + sqlConfigs.getHost() + ":" + sqlConfigs.getPort() + "/" + sqlConfigs.getDatabase());
 
         if (sqlConfigs.checkCredentials()) {
             hikariConfig.setPassword(sqlConfigs.getPassword());
@@ -63,4 +63,5 @@ public class MySQLConnector implements Connector {
 
         return hikariConfig;
     }
+
 }

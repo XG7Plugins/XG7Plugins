@@ -6,6 +6,7 @@ import com.xg7plugins.help.form.HelpForm;
 import com.xg7plugins.modules.xg7geyserforms.forms.ModalForm;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.geysermc.cumulus.response.ModalFormResponse;
 import org.geysermc.cumulus.response.result.InvalidFormResponseResult;
 import org.geysermc.floodgate.api.FloodgateApi;
@@ -18,16 +19,16 @@ public class CommandFormDescription extends ModalForm {
     private final HelpForm guiOrigin;
     private final Command command;
 
-    public CommandFormDescription(CommandForm origin, Command command, Item commandIcon, HelpForm guiOrigin) {
+    public CommandFormDescription(CommandForm origin, Command command, ItemStack commandIcon, HelpForm guiOrigin) {
         super(
                 "command-desc" + UUID.randomUUID(),
                 "Contents of command: " + command.getCommandSetup().name(),
                 XG7Plugins.getInstance(),
 
-                commandIcon.getItemStack().getItemMeta().getLore().get(0) + "\n" +
-                        commandIcon.getItemStack().getItemMeta().getLore().get(1) + "\n" +
-                        commandIcon.getItemStack().getItemMeta().getLore().get(2) + "\n" +
-                        commandIcon.getItemStack().getItemMeta().getLore().get(3),
+                commandIcon.getItemMeta().getLore().get(0) + "\n" +
+                        commandIcon.getItemMeta().getLore().get(1) + "\n" +
+                        commandIcon.getItemMeta().getLore().get(2) + "\n" +
+                        commandIcon.getItemMeta().getLore().get(3),
 
                 command.getSubCommands().isEmpty() ? "lang:[commands-form.no-subcommands]" : "lang:[commands-form.subcommands-label]",
                 "lang:[commands-form.subcommands-back]"

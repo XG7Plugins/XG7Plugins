@@ -36,8 +36,7 @@ public class ScoreTimerTask extends TimerTask {
 
                     Player p = Bukkit.getPlayer(uuid);
 
-                    if (p == null) return;
-
+                    if (p == null || !p.isOnline()) return;
 
                     if (score.getCondition().apply(p) && !p.isDead() && XG7Plugins.getInstance().isEnabled()) score.addPlayer(p);
                     else if (score.getPlayers().contains(p.getUniqueId())) {

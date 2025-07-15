@@ -44,6 +44,7 @@ public abstract class AsyncTask extends Task {
 
     @Override
     public void cancel() {
+        if (taskFuture == null) return;
         taskFuture.cancel(false);
     }
 }

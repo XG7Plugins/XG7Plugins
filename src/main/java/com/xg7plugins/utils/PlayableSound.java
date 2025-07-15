@@ -19,6 +19,10 @@ public class PlayableSound {
         world.playSound(location, sound, volume, pitch);
     }
 
+    public void play(com.xg7plugins.utils.location.Location location) {
+        play(location.getWorld(), location.getBukkitLocation());
+    }
+
     public void play(Player player) {
         play(player.getWorld(), player.getLocation());
     }

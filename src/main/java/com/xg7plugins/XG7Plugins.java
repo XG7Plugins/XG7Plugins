@@ -154,6 +154,8 @@ public final class XG7Plugins extends Plugin {
         XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
         XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
 
+        Text.init();
+
         debug.loading("XG7Plugins enabled.");
 
     }

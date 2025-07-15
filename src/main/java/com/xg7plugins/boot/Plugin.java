@@ -87,7 +87,7 @@ public abstract class Plugin extends JavaPlugin {
         debug.loading("Custom prefix: " + environmentConfig.getCustomPrefix());
 
         Bukkit.getScheduler().runTask(this, () -> {
-            if (!config.get("anti-tab", Boolean.class).orElse(false)) return;
+            if (!Config.mainConfigOf(XG7Plugins.getInstance()).get("anti-tab", Boolean.class).orElse(false)) return;
 
             debug.loading("Loading anti-tab feature...");
 

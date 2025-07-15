@@ -193,7 +193,7 @@ public class XG7PluginsAPI {
      * @return A map containing command names/aliases mapped to Command instances
      */
     public static Map<String, Command> commandMapOf(Plugin plugin) {
-        return commandManager(plugin).getCommands();
+        return commandManager(plugin).getMappedCommands();
     }
 
     /**

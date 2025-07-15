@@ -1,7 +1,11 @@
 package com.xg7plugins.data.database.connector;
 
+import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.database.ConnectionType;
 import lombok.Data;
+import org.checkerframework.checker.units.qual.C;
 
 /**
  * Configuration holder for SQL database connections.
@@ -10,6 +14,7 @@ import lombok.Data;
 @Data
 public class SQLConfigs {
 
+    private final ConnectionType connectionType;
     private final String host;
     private final int port;
     private final String database;
@@ -36,6 +41,7 @@ public class SQLConfigs {
         password = pluginConfig.get("sql.password", String.class).orElse(null);
 
         connectionString = pluginConfig.get("sql.url", String.class).orElse(null);
+        connectionType = pluginConfig.get("sql.type", ConnectionType.class).orElse(ConnectionType.SQLITE);
     }
 
     /**
@@ -58,7 +64,7 @@ public class SQLConfigs {
         this.minIdle = mainConfig.get("sql.min-idle-connections", Integer.class)
                 .orElse(5); // Default suggested value
 
-        this.keepAliveTime = mainConfig.getTimeInMilliseconds("sql.keep-alive-time").orElse(0L);
+        this.keepAliveTime = mainConfig.getTimeInMilliseconds("sql.keep-alive-delay").orElse(0L);
     }
 
     /**
@@ -82,14 +88,17 @@ public class SQLConfigs {
         return new SQLConfigs(pluginConfig,mainConfig);
     }
 
+    public static SQLConfigs of(Plugin plugin) {
+        return of(Config.mainConfigOf(plugin), Config.mainConfigOf(XG7Plugins.getInstance()));
+    }
+
     /**
      * Checks if the necessary database credentials are configured.
      *
      * @return true if credentials are properly configured, false otherwise
      */
     public boolean checkCredentials() {
-        return !(host == null || port == 0 || database == null ||
-                host.isEmpty() || database.isEmpty());
+        return !(host == null || port == 0 || database == null || host.isEmpty() || database.isEmpty());
     }
     
     /**

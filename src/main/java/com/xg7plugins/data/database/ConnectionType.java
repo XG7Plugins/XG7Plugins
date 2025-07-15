@@ -1,20 +1,24 @@
 package com.xg7plugins.data.database;
 
+
+import lombok.Getter;
+
+@Getter
 public enum ConnectionType {
 
     SQLITE("org.sqlite.JDBC"),
     MYSQL("com.mysql.cj.jdbc.Driver"),
     MARIADB("org.mariadb.jdbc.Driver");
 
-    private final String driver;
+    private final String driverClassName;
 
-    ConnectionType(String driver) {
-        this.driver = driver;
+    ConnectionType(String driverClassName) {
+        this.driverClassName = driverClassName;
     }
 
     public boolean isDriverLoaded() {
         try {
-            Class.forName(driver);
+            Class.forName(driverClassName);
             return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

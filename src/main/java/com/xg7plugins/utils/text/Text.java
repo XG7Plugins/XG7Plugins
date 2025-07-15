@@ -42,11 +42,15 @@ public class Text {
     private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     @Getter
-    private static final BukkitAudiences audience = BukkitAudiences.create(XG7Plugins.getInstance());
+    private static BukkitAudiences audience;
 
     private TextSender textSender;
     @Setter
     private String text;
+
+    public static void init() {
+        audience = BukkitAudiences.create(XG7Plugins.getInstance());
+    }
 
     /**
      * Creates a new Text instance from a string.

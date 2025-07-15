@@ -75,7 +75,7 @@ public class CommandForm extends SimpleForm {
             guiOrigin.getForm("index").send(player);
             return;
         }
-        CommandFormDescription commandDescription = new CommandFormDescription(this, command, command.getIcon(), guiOrigin);
+        CommandFormDescription commandDescription = new CommandFormDescription(this, command, command.getIcon().getItemFor(player, plugin), guiOrigin);
         commandDescription.send(player);
 
     }

@@ -35,6 +35,10 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
         CommandSetup commandConfig = command.getCommandSetup();
 
         if (command instanceof MainCommand) {
+            if (!sender.hasPermission(commandConfig.permission()) && !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
+                CommandMessages.COMMAND_NOT_FOUND.send(sender);
+                return true;
+            }
             if (!sender.hasPermission(commandConfig.permission())) {
                 CommandMessages.NO_PERMISSION.send(sender);
                 return true;
@@ -158,7 +162,7 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
         CommandSetup commandConfig = command.getCommandSetup();
 
         if (command instanceof MainCommand) {
-            if (strings.length == 0) return Collections.emptyList();
+            if (strings.length == 0 || !sender.hasPermission("xg7plugins.command")) return Collections.emptyList();
 
             if (strings.length > 1) {
 

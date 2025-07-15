@@ -26,7 +26,7 @@ import java.util.*;
 public class CommandManager implements Manager {
 
     private final Plugin plugin;
-    private final Map<String, Command> commands = new HashMap<>();
+    private final Map<String, Command> mappedCommands = new HashMap<>();
     private final List<Command> commandList = new ArrayList<>();
     private final PluginCommandExecutor executor;
     private final AntiTab antiTab;
@@ -60,7 +60,10 @@ public class CommandManager implements Manager {
         mainCommand.setAliases(Arrays.asList(plConfig.mainCommandAliases()));
         commandMap.register(plConfig.mainCommandName(), mainCommand);
 
-        this.commands.put(plConfig.mainCommandName(), new MainCommand(plugin));
+        MainCommand mainPluginCommand = new MainCommand(plugin);
+
+        this.mappedCommands.put(plConfig.mainCommandName(), mainPluginCommand);
+        for (String alias : plConfig.mainCommandAliases()) this.mappedCommands.put(alias, mainPluginCommand);
 
         commands.forEach(command -> {
             if (command == null) return;
@@ -101,35 +104,30 @@ public class CommandManager implements Manager {
                     .newInstance(fullCommandName, plugin)
                     .getObject();
 
-            List<String> allAliases = new ArrayList<>(configAliases);
-
-            for (String mainAlias : plConfig.mainCommandAliases())
-                allAliases.add(mainAlias + commandSetup.name());
-
-            pluginCommand.setAliases(allAliases);
+            pluginCommand.setAliases(configAliases);
             pluginCommand.setExecutor(executor);
             pluginCommand.setDescription(commandSetup.description());
             pluginCommand.setUsage(commandSetup.syntax());
             pluginCommand.setTabCompleter(executor);
 
-            this.commands.putIfAbsent(fullCommandName, command);
+            this.mappedCommands.putIfAbsent(fullCommandName, command);
 
-            commandMap.register(fullCommandName, pluginCommand);
+            commandMap.register(plConfig.mainCommandName(), pluginCommand);
 
-            for (String alias : allAliases) {
-                if (this.commands.containsKey(alias)) continue;
-                this.commands.put(alias, command);
+            for (String alias : configAliases) {
+                if (this.mappedCommands.containsKey(alias)) continue;
+                this.mappedCommands.put(alias, command);
             }
 
             this.commandList.add(command);
 
-            plugin.getDebug().info("Registered command: " + fullCommandName + " with aliases: " + allAliases);
+            plugin.getDebug().info("Registered command: " + fullCommandName + " with aliases: " + configAliases);
         });
 
         plugin.getDebug().loading("Successfully loaded " + commands.size() + " Commands!");
     }
 
     public Command getCommand(String name) {
-        return commands.get(name);
+        return mappedCommands.get(name);
     }
 }

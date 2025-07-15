@@ -48,7 +48,7 @@ class PlayerBoard {
 
     public void createSidebar() {
         if (sidebarObjective != null) return;
-        XG7PluginsAPI.taskManager().runSync(BukkitTask.of(XG7Plugins.getInstance(), () -> {
+        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> {
             this.sidebarObjective = bukkitScoreboard.registerNewObjective("sb-" + scoreBoard.getId(), "dummy");
             sidebarObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
             sidebarObjective.setDisplayName(title.get(0));
@@ -66,7 +66,7 @@ class PlayerBoard {
             }
 
             updateSidebar();
-        }));
+        }), 2000L);
     }
 
     public void createBelowname() {
