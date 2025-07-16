@@ -5,9 +5,9 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.utils.text.Text;
+import com.xg7plugins.utils.text.component.ClickEvent;
+import com.xg7plugins.utils.text.component.TextComponentBuilder;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
@@ -44,17 +44,18 @@ public class CommandHelp implements HelpChatPage {
         for (Command command : commands) {
             Item commandIcon = command.getIcon();
 
-            ItemStack itemStack = commandIcon.getItemFor(sender, plugin);;
+            ItemStack itemStack = commandIcon.getItemFor(sender, plugin);
 
-            components.add(Text.format(
-                    Component.text(
+            components.add(TextComponentBuilder.of(
                             itemStack.getItemMeta().getDisplayName() + "\n" +
                                     itemStack.getItemMeta().getLore().get(0) + "\n" +
                                     itemStack.getItemMeta().getLore().get(1) + "\n" +
                                     itemStack.getItemMeta().getLore().get(2) + "\n" +
                                     itemStack.getItemMeta().getLore().get(3)
-                    ).clickEvent(ClickEvent.clickEvent(ClickEvent.Action.SUGGEST_COMMAND,command.getCommandSetup().syntax()))
-            ));
+                    ).clickEvent(
+                            ClickEvent.of(net.md_5.bungee.api.chat.ClickEvent.Action.SUGGEST_COMMAND, command.getCommandSetup().syntax())
+                    ).build()
+            );
         }
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"));

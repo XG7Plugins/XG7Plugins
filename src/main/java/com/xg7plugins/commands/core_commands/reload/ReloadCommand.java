@@ -59,7 +59,7 @@ public class ReloadCommand implements Command {
         plugin.onReload(cause);
 
         Text.sendTextFromLang(sender,XG7Plugins.getInstance(), "reload-message.with-cause",
-                Pair.of("plugin", plugin.getEnvironmentConfig().getCustomPrefix()),
+                Pair.of("plugin", plugin.getEnvironmentConfig().getPrefix()),
                 Pair.of("cause", cause.getName())
         );
 

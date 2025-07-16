@@ -87,7 +87,6 @@ public class LangCommand implements Command {
 
         if (targetOnline.getOpenInventory().getTopInventory().getHolder() instanceof MenuHolder) {
             MenuHolder holder = (MenuHolder) targetOnline.getOpenInventory().getTopInventory().getHolder();
-            targetOnline.closeInventory();
             holder.getMenu().open(targetOnline);
         }
 

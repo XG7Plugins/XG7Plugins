@@ -6,48 +6,48 @@ icon: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQub
 bedrock-icon: "URL, https://cdn.britannica.com/33/4833-050-F6E415FE/Flag-United-States-of-America.jpg"
 
 commands:
-  syntax-error: "You are using the command incorrectly! The right way is %syntax%"
-  player-not-found: "This player hasn't found or never played before!"
-  no-permission: "You don't have permission to use this command!"
-  disabled-world: "You cannot execute this command in a disabled world!"
-  not-a-player: "You cannot execute this command in console!"
-  is-a-player: "You cannot execute this command being a player!"
-  not-online: "This player is not online!"
-  command-not-found: "Command not found!"
+  syntax-error: "&cYou are using the command incorrectly! The right way is &7%syntax%"
+  player-not-found: "&cThis player hasn't found or never played before!"
+  no-permission: "&cYou don't have permission to use this command!"
+  disabled-world: "&cYou cannot execute this command in a disabled world!"
+  not-a-player: "&cYou cannot execute this command in console!"
+  is-a-player: "&cYou cannot execute this command being a player!"
+  not-online: "&cThis player is not online!"
+  command-not-found: "&cCommand not found!"
 
 reload-message:
-  all-plugins: "All plugins reloaded!"
-  without-cause: "%plugin% reloaded!"
-  with-cause: "%cause% reloaded in plugin %plugin%"
+  all-plugins: "%prefix% &aAll plugins reloaded!"
+  without-cause: "%prefix% %plugin% &areloaded!"
+  with-cause: "%prefix% %cause% &areloaded in plugin &r%plugin%"
 
 #Plugin defaults
 
 go-back-item: "Back"
 go-next-item: "Next"
-close-item: "Close"
-refresh-item: "Refresh page"
+close-item: "&cClose"
+refresh-item: "&9Refresh page"
 
-go-back-to-help: "Back to help"
-go-back-to-previous-commands: "Back to the previous commands"
+go-back-to-help: "&6Back to help"
+go-back-to-previous-commands: "&cBack to the previous commands"
 
-lang-not-found: "&cLanguage not found!"
+lang-not-found: "%prefix% &cLanguage not found!"
 
 lang-menu:
-  title: "Languages"
+  title: "&rLanguages"
 
-  content: "Choose a language for the server!"
+  content: "Choose a language!"
 
   item-click:
-    - "Click here to change the language for English"
+    - "Click here to change the language for <rainbow>English</rainbow>"
 
-  already-selected: "You're already using this language!"
+  already-selected: "%prefix% &cYou're already using this language!"
 
-  toggle-success: "You toggle the language to english!"
+  toggle-success: "%prefix% &aYou toggle the language to &benglish!"
 
-  cooldown-to-toggle: "You need to wait @SECONDS:%time%@ seconds to toggle the language again"
+  cooldown-to-toggle: "%prefix% &cYou need to wait &b@SECONDS:%time%@ &cto toggle the language again"
 
 tasks-menu:
-  title: "Tasks"
+  title: "&rTasks"
 
   task-item:
     - "&fTask id: &b%id%"
@@ -55,10 +55,10 @@ tasks-menu:
     - "&fTask state: &9%state%"
     - " "
     - "&fLeft click -> &aCopy id"
-    - "[IF: %task_is_running%] &fRight click -> &cStop Task"
-    - "[IF: %task_is_not_running%] &fRight click -> &aStart task"
+    - "?IF: %task_is_running%?&fRight click -> &cStop Task"
+    - "?IF: %task_is_not_running%?&fRight click -> &aStart task"
 
-  copy-to-clipboard: "Click <click:suggest_command:%id%><hover:show_text:%id%>&bhere&r</hover></click> to copy the task id!"
+  copy-to-clipboard: "%prefix% &7Click <click:suggest_command:%id%><hover:show_text:%id%>&bhere&r</hover></click> &7to copy the task id!"
 
   notes:
     - "&fServer RAM usage: &9%ram%MB"
@@ -66,13 +66,13 @@ tasks-menu:
     - "&fTasks running: &9%tasks%"
 
 task-command:
-  not-found: "Task not found!"
-  deleted: "Task deleted!"
-  stopped: "Task stopped!"
-  restarted: "Task restarted!"
+  not-found: "%prefix% &cTask not found!"
+  deleted: "%prefix% &aTask deleted!"
+  stopped: "%prefix% &aTask stopped!"
+  restarted: "%prefix% &aTask restarted!"
 
-  already-running: "Task already running!"
-  already-stopped: "Task already stopped!"
+  already-running: "%prefix% &cTask already running!"
+  already-stopped: "%prefix% &aTask already stopped!"
 
 commands-display:
 
@@ -89,32 +89,32 @@ commands-form:
   subcommands-label: "Click to see the subcommands!"
   no-subcommands: "There are no subcommands for this command!"
 
-  back: "Back to the help"
-  subcommands-back: "Back to previous commands"
+  back: "&cBack to the help"
+  subcommands-back: "&cBack to previous commands"
 
 help-menu:
 
   index:
 
-    title: "Help of XG7Plugins"
+    title: "&rHelp of <rainbow>XG7Plugins</rainbow>"
 
     see-in-chat: "Click here to see the help in chat"
 
     profile-item:
       name: "Profile: %player_name%"
-      lang-chose: "%xg7plugins_player_lang%"
+      lang-chose: "&5Current language: %b%xg7plugins_player_lang%"
     lang-item:
-      name: "Languages"
-      lore: "Click here to change profile lang"
+      name: "&bLanguages"
+      lore: "&5Click here to change profile lang"
     tasks-item:
-      name: "Tasks"
-      lore: "Click here to see the tasks"
+      name: "&bTasks"
+      lore: "&5Click here to see the tasks"
     about-item:
-      name: "About"
-      lore: "Click here to see the plugin information"
+      name: "&bAbout"
+      lore: "&5Click here to see the plugin information"
     commands-item:
-      name: "Commands"
-      lore: "Click here to see the commands"
+      name: "&bCommands"
+      lore: "&5Click here to see the commands"
 
   about:
     - "About &9XG7Plugins"

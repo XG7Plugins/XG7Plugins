@@ -1,5 +1,8 @@
 package com.xg7plugins.utils.text.sender;
 
+import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
@@ -29,13 +32,18 @@ public interface TextSender {
      */
     default void defaultSend(CommandSender sender, Text text) {
         if (text == null || text.getText() == null || text.getText().isEmpty()) return;
-        // Check if the text is null or empty
+
         if (MinecraftVersion.isOlderThan(8)) {
-            sender.sendMessage(text.getPlainText());
+            sender.sendMessage(text.getText());
             return;
         }
 
-        Text.getAudience().sender(sender).sendMessage(text.getComponent());
+        if (MinecraftVersion.is(8) && !(sender instanceof Player)) {
+            sender.sendMessage(text.getText());
+            return;
+        }
+
+        ((Player) sender).spigot().sendMessage(text.getComponent());
     }
 
     /**
@@ -52,7 +60,6 @@ public interface TextSender {
 
             @Override
             public void apply(CommandSender sender, Text text) {
-
             }
         };
     }

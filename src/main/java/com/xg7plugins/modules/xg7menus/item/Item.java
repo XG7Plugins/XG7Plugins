@@ -18,6 +18,7 @@ import com.xg7plugins.utils.text.Text;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -292,7 +293,7 @@ public class Item implements Cloneable {
 
                 for (String line : meta.getLore()) {
                     String formatted = Text.detectLangs(player, plugin,line, false).join().replaceAll(buildPlaceholders).textFor((Player) player).getText();
-                    if (formatted.isEmpty()) continue;
+                    if (ChatColor.stripColor(formatted).isEmpty()) continue;
                     lore.add(formatted);
                 }
                 meta.setLore(lore);

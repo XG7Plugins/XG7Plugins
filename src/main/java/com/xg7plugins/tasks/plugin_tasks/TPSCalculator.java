@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TPSCalculator extends TimerTask {
 
-
     private long startNanoTime;
 
     private final AtomicInteger ticks = new AtomicInteger();

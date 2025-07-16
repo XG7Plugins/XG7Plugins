@@ -60,12 +60,12 @@ public class TaskMenu extends PagedMenu {
             pagedItems.add(builder);
         });
 
+
         return pagedItems;
     }
 
     @Override
     public List<Item> getItems(Player player) {
-
         Config lang = XG7PluginsAPI.langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getLangConfiguration();
 
         InventoryShaper editor = new InventoryShaper(getMenuConfigs());
@@ -76,15 +76,19 @@ public class TaskMenu extends PagedMenu {
         editor.setItem(Slot.fromSlot(0), Item.from(XMaterial.ENDER_PEARL).name("lang:[refresh-item]"));
         editor.setItem(
                 Slot.fromSlot(50),
-                Item.from(Material.PAPER).name(" ").lore(lang.getList("tasks-menu.notes", String.class).orElse(Collections.emptyList()))
+                Item.from(Material.PAPER)
+                        .name(" ")
+                        .lore(lang.getList("tasks-menu.notes", String.class).orElse(Collections.emptyList()))
                         .setBuildPlaceholders(
                                 Pair.of("tasks", String.valueOf(XG7PluginsAPI.taskManager().getTimerTaskMap().size())),
                                 Pair.of("ram", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + " / " + Runtime.getRuntime().totalMemory() / 1024 / 1024),
-                                Pair.of("tps", String.format("%.2f", ((TPSCalculator)XG7PluginsAPI.taskManager().getTimerTask("tps-calculator")).getTPS()))
+                                Pair.of("tps", String.format("%.2f", ((TPSCalculator) XG7PluginsAPI.taskManager().getTimerTask(XG7Plugins.getInstance(), "tps-calculator")).getTPS()))
                         )
         );
 
         return editor.getItems();
+
+
     }
 
     @Override
@@ -126,6 +130,7 @@ public class TaskMenu extends PagedMenu {
                     if (taskState == TaskState.RUNNING) {
                         XG7PluginsAPI.taskManager().cancelRepeatingTask(taskId);
                         Text.sendTextFromLang(player, XG7Plugins.getInstance(),"task-command.stopped");
+                        refresh(holder);
                         return;
                     }
                     XG7PluginsAPI.taskManager().runTimerTask(XG7PluginsAPI.taskManager().getTimerTask(taskId));

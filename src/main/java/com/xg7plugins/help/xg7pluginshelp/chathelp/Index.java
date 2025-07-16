@@ -3,9 +3,9 @@ package com.xg7plugins.help.xg7pluginshelp.chathelp;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.help.chat.HelpChatPage;
 import com.xg7plugins.utils.text.Text;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.event.HoverEvent;
+import com.xg7plugins.utils.text.component.ClickEvent;
+import com.xg7plugins.utils.text.component.HoverEvent;
+import com.xg7plugins.utils.text.component.TextComponentBuilder;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -25,24 +25,28 @@ public class Index implements HelpChatPage {
 
         components.add(Text.format(" "));
 
-        Component content = Component.text(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.content").join().getText())
-                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help about"))
-                .hoverEvent(HoverEvent.hoverEvent(HoverEvent.Action.SHOW_TEXT, Component.text("Click to see about the plugins")));
-        components.add(Text.format(content));
+        Text content = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.content").join().getText())
+                .clickEvent(ClickEvent.of(net.md_5.bungee.api.chat.ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help about"))
+                .hoverEvent(HoverEvent.of(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, "Click to see about the plugins"))
+                .build();
+        components.add(content);
 
         components.add(Text.format(" "));
 
-        Component lang = Component.text(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.lang").join().getText())
-                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins lang"));
-        components.add(Text.format(lang));
+        Text lang = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.lang").join().getText())
+                .clickEvent(ClickEvent.of(net.md_5.bungee.api.chat.ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins lang"))
+                .build();
+        components.add(lang);
 
-        Component tasks = Component.text(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.tasks").join().getText())
-                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins tasks"));
-        components.add(Text.format(tasks));
+        Text tasks = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.tasks").join().getText())
+                .clickEvent(ClickEvent.of(net.md_5.bungee.api.chat.ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins tasks"))
+                .build();
+        components.add(tasks);
 
-        Component commands = Component.text(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands").join().getText())
-                .clickEvent(ClickEvent.clickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help command-page1"));
-        components.add(Text.format(commands));
+        Text commands = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands").join().getText())
+                .clickEvent(ClickEvent.of(net.md_5.bungee.api.chat.ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help command-page1"))
+                .build();
+        components.add(commands);
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"));
 

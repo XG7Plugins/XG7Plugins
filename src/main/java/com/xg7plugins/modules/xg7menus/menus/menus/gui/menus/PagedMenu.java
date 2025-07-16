@@ -36,10 +36,12 @@ public abstract class PagedMenu extends Menu {
 
     @Override
     public void open(Player player) {
+
         PagedMenuHolder menuHolder = new PagedMenuHolder(this, player);
         refresh(menuHolder);
 
         XG7Menus.registerHolder(menuHolder);
+
 
     }
 
@@ -48,29 +50,35 @@ public abstract class PagedMenu extends Menu {
     @SneakyThrows
     public void goPage(int page, PagedMenuHolder menuHolder) {
 
+
         XG7PluginsAPI.taskManager().scheduleAsync(AsyncTask.of(XG7Plugins.getInstance(), () -> {
-            List<Item> pagedItems = pagedItems(menuHolder.getPlayer());
+            try {
+                List<Item> pagedItems = pagedItems(menuHolder.getPlayer());
 
-            if (page < 0) return;
-            if (page * Slot.areaOf(pos1, pos2) >= pagedItems.size()) return;
-            List<Item> itemsToAdd = pagedItems.subList(page * (Slot.areaOf(pos1, pos2)), pagedItems.size());
+                if (page < 0) return;
+                if (page * Slot.areaOf(pos1, pos2) >= pagedItems.size()) return;
+                List<Item> itemsToAdd = pagedItems.subList(page * (Slot.areaOf(pos1, pos2)), pagedItems.size());
 
-            int index = 0;
+                int index = 0;
 
-            InventoryUpdater inventory = menuHolder.getInventoryUpdater();
+                InventoryUpdater inventory = menuHolder.getInventoryUpdater();
 
-            for (int x = pos1.getRow(); x <= pos2.getRow(); x++) {
-                for (int y = pos1.getColumn(); y <= pos2.getColumn(); y++) {
+                for (int x = pos1.getRow(); x <= pos2.getRow(); x++) {
+                    for (int y = pos1.getColumn(); y <= pos2.getColumn(); y++) {
 
-                    if (index >= itemsToAdd.size()) {
-                        if (inventory.hasItem(Slot.of(x, y))) inventory.setItem(Slot.of(x, y), Item.air());
-                        continue;
+                        if (index >= itemsToAdd.size()) {
+                            if (inventory.hasItem(Slot.of(x, y))) inventory.setItem(Slot.of(x, y), Item.air());
+                            continue;
+                        }
+                        inventory.setItem(Slot.of(x, y), itemsToAdd.get(index));
+
+                        index++;
                     }
-                    inventory.setItem(Slot.of(x, y), itemsToAdd.get(index));
-
-                    index++;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
         }), 100L);
     }
 

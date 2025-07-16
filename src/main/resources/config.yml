@@ -11,7 +11,7 @@
 #Visit our website: https://xg7plugins.com
 
 
-prefix: "§b[XG§37P§9lu§1gins]§r"
+prefix: "§bXG§37P§9lu§1gins §8>>§r"
 
 #Must be the same as in BungeeCord config
 plugin-server-name: "XG7PluginsServer"
@@ -121,9 +121,6 @@ time-placeholders:
   hours: "h"
   days: "d"
 
-paid-keys:
-  - plugin: "XG7lobby"
-    key: "dkdfkansfpoansfopasdnfo"
 
 #DON'T CHANGE THIS
 config-version: 1.1

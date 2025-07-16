@@ -286,6 +286,9 @@ public class TaskManager implements Manager {
     public TimerTask getTimerTask(String id) {
         return timerTaskMap.get(id);
     }
+    public TimerTask getTimerTask(Plugin plugin, String id) {
+        return getTimerTask(plugin.getName() + ":" + id);
+    }
 
     /**
      * Checks if a task with the given ID exists.

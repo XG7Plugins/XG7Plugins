@@ -34,75 +34,53 @@ public class TextCentralizer {
     public static String getSpacesCentralized(int pixels, String text) {
 
         int textWidth = 0;
-
-        boolean cCode = false;
         boolean isBold = false;
-        boolean isRgb = false;
-        int rgbCount = 0;
-        int cCodeCount = 0;
-        int rgbToAdd = 0;
 
-        for (char c : text.toCharArray()) {
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
 
-            if (isRgb) {
+            if (c == '§' || c == '&') {
+                if (i + 1 >= text.length()) continue;
+                char next = text.charAt(i + 1);
 
-                if (rgbCount == 6) {
-                    isRgb = false;
+                if (next == 'x' && i + 13 < text.length()) {
+                    i += 13;
                     continue;
                 }
 
-                if ("0123456789aAbBcCdDeEfF".contains(String.valueOf(c))) {
-                    rgbToAdd = getCharSize(c, isBold);
-                    rgbCount++;
-                    continue;
+                if (next == '#' && i + 7 < text.length()) {
+                    String hex = text.substring(i + 2, i + 8);
+                    if (hex.matches("[0-9a-fA-F]{6}")) {
+                        i += 7;
+                        continue;
+                    }
                 }
-                rgbCount = 0;
-                textWidth += rgbToAdd;
+
+                if (next == 'l' || next == 'L') {
+                    isBold = true;
+                } else if (next == 'r' || next == 'R') {
+                    isBold = false;
+                }
+
+                i++;
                 continue;
             }
 
-            if (c == '&' || c == '§') {
-                cCode = true;
-                cCodeCount++;
-                continue;
-            }
-
-            if (cCode && net.md_5.bungee.api.ChatColor.ALL_CODES.contains(String.valueOf(c))) {
-                cCode = false;
-                cCodeCount = 0;
-                isBold = c == 'l' || c == 'L';
-                continue;
-            }
-
-            if (cCode) {
-                if (c == '#') {
-                    cCode = false;
-                    isRgb = true;
-                    continue;
-                }
-
-                while (cCodeCount != 0) {
-                    cCodeCount--;
-                    textWidth += getCharSize('&', isBold);
-                }
-            }
             textWidth += getCharSize(c, isBold);
         }
 
-        textWidth /= 2;
+        int halfWidth = textWidth / 2;
+        if (halfWidth >= pixels) return "";
 
-        if (textWidth > pixels) return text;
-
-        StringBuilder builder = new StringBuilder();
-
+        StringBuilder padding = new StringBuilder();
         int compensated = 0;
-
-        while (compensated < pixels - textWidth) {
-            builder.append(ChatColor.COLOR_CHAR + "r ");
-            compensated += 4;
+        while (compensated < pixels - halfWidth) {
+            padding.append(" ");
+            compensated += getCharSize(' ', false);
         }
-        String result = builder.toString();
-        return result;
+
+        return padding.toString();
+
     }
 
 

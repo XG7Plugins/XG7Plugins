@@ -6,7 +6,6 @@ import com.xg7plugins.boot.PluginSetup;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.cache.RedisCacheSection;
 import com.xg7plugins.commands.core_commands.LangCommand;
-import com.xg7plugins.commands.core_commands.TestCommand;
 import com.xg7plugins.commands.core_commands.reload.ReloadCause;
 import com.xg7plugins.commands.core_commands.reload.ReloadCommand;
 import com.xg7plugins.commands.core_commands.task_command.TaskCommand;
@@ -50,7 +49,6 @@ import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
-import com.xg7plugins.utils.text.Text;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -155,8 +153,6 @@ public final class XG7Plugins extends Plugin {
         XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
         XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
 
-        Text.init();
-
         if (XG7PluginsAPI.dependencyManager().exists("PlaceholderAPI")) new XG7PluginsPlaceholderExpansion().register();
 
         debug.loading("XG7Plugins enabled.");
@@ -191,14 +187,14 @@ public final class XG7Plugins extends Plugin {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        Text.getAudience().close();
     }
 
     @Override
     public void onReload(ReloadCause cause) {
         super.onReload(cause);
         if (cause.equals("json")) XG7PluginsAPI.jsonManager().invalidateCache();
+        this.loadHelp();
+
     }
     public Class<? extends Entity<?,?>>[] loadEntities() {
         return new Class[]{PlayerData.class};
@@ -209,7 +205,7 @@ public final class XG7Plugins extends Plugin {
     }
     @Override
     public List<Command> loadCommands() {
-        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new TestCommand());
+        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand());
     }
     @Override
     public List<Listener> loadEvents() {

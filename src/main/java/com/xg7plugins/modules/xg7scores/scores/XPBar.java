@@ -25,8 +25,8 @@ public class XPBar extends Score {
                 String level = updateText.get(indexUpdating).split(", ")[0];
                 String progress = updateText.get(indexUpdating).split(", ")[1];
 
-                level = Text.format(level).textFor(player).getText();
-                progress = Text.format(progress).textFor(player).getText();
+                level = Text.format(level).textFor(player).getPlainText();
+                progress = Text.format(progress).textFor(player).getPlainText();
 
 
                 player.setLevel(Integer.parseInt(level));

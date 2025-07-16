@@ -3,19 +3,21 @@ package com.xg7plugins.utils.text;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.data.config.Config;
+import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.lang.Lang;
+import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.Pair;
 
+import com.xg7plugins.utils.text.resolver.TagResolver;
 import com.xg7plugins.utils.text.sender.TextSender;
 import com.xg7plugins.utils.text.sender.deserializer.TextSenderDeserializer;
 import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
 import lombok.Setter;
 import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -39,18 +41,9 @@ public class Text {
 
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
 
-    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
-
-    @Getter
-    private static BukkitAudiences audience;
-
     private TextSender textSender;
     @Setter
     private String text;
-
-    public static void init() {
-        audience = BukkitAudiences.create(XG7Plugins.getInstance());
-    }
 
     /**
      * Creates a new Text instance from a string.
@@ -64,8 +57,9 @@ public class Text {
         this.textSender = extracted.getFirst();
         this.text = ChatColor.translateAlternateColorCodes('&', extracted.getSecond());
     }
-    public Text(Component component) {
-        this(miniMessage.serialize(component));
+
+    public Text(BaseComponent[] components) {
+        this(TagResolver.serialize(components));
     }
 
     /**
@@ -79,6 +73,8 @@ public class Text {
     public Text textFor(Player player) {
 
         if (XG7PluginsAPI.isDependencyEnabled("PlaceholderAPI")) this.text = ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, this.text));
+
+        this.text = Condition.processConditions(this.text, player);
 
         return this;
     }
@@ -162,16 +158,21 @@ public class Text {
         send(this, sender);
     }
 
-    public String getText() {
-        return TimeParser.remainingTimeForValue(this.text);
+    public String getTextRaw() {
+        return this.text;
     }
 
     public String getPlainText() {
-        return LegacyComponentSerializer.legacyAmpersand().toBuilder().hexColors().build().serialize(getComponent());
+        return net.md_5.bungee.api.ChatColor.stripColor(TagResolver.removeTags(this.text));
     }
 
-    public Component getComponent() {
-        return miniMessage.deserialize(ColorTranslator.translateLegacyToMini(getText()));
+    public String getText() {
+        if (MinecraftVersion.isOlderThan(8)) return TagResolver.removeTags(this.text);
+        return new TextComponent(getComponent()).toLegacyText();
+    }
+
+    public BaseComponent[] getComponent() {
+        return TagResolver.deserialize(TimeParser.remainingTimeForValue(getTextRaw()));
     }
 
     /**
@@ -258,9 +259,9 @@ public class Text {
     public static Text format(String text) {
         return new Text(text);
     }
-    public static Text format(Component component) {
 
-        return new Text(component);
+    public static Text format(BaseComponent[] text) {
+        return new Text(text);
     }
 
 }

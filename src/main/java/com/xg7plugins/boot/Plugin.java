@@ -139,8 +139,7 @@ public abstract class Plugin extends JavaPlugin {
             XG7PluginsAPI.taskManager().reloadTasks(this);
         }
 
-    };
-
+    }
 
     @Override
     public void onDisable() {

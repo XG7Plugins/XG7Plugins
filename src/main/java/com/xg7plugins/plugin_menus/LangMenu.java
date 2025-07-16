@@ -60,7 +60,7 @@ public class LangMenu extends PagedMenu {
         editor.setItem(Slot.fromSlot(49), Item.from(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR)).name("lang:[close-item]"));
         editor.setItem(Slot.fromSlot(53), Item.from(XMaterial.ARROW).name("lang:[go-next-item]"));
 
-        return (List<Item>) editor.getItems();
+        return editor.getItems();
     }
 
     @Override
@@ -94,15 +94,9 @@ public class LangMenu extends PagedMenu {
 
                 if (XG7PluginsAPI.cooldowns().containsPlayer("lang-change", player)) {
 
-                    double cooldownToToggle = XG7PluginsAPI.cooldowns().getReamingTime("lang-change", player);
+                    long cooldownToToggle = XG7PluginsAPI.cooldowns().getReamingTime("lang-change", player);
 
-                    Text.sendTextFromLang(
-                            player, getMenuConfigs().getPlugin(), "lang-menu.cooldown-to-toggle",
-                                    Pair.of("milliseconds", String.valueOf((cooldownToToggle))),
-                                    Pair.of("seconds", String.valueOf((int) ((cooldownToToggle) / 1000))),
-                                    Pair.of("minutes", String.valueOf((int) ((cooldownToToggle) / 60000))),
-                                    Pair.of("hours", String.valueOf((int) ((cooldownToToggle) / 3600000)))
-                    );
+                    Text.sendTextFromLang(player, getMenuConfigs().getPlugin(), "lang-menu.cooldown-to-toggle", Pair.of("time", String.valueOf((cooldownToToggle))));
 
                     return;
                 }
@@ -117,8 +111,6 @@ public class LangMenu extends PagedMenu {
                     dao.update(data);
                     XG7PluginsAPI.langManager().loadLangsFrom(getMenuConfigs().getPlugin()).join();
                     Text.sendTextFromLang(player, getMenuConfigs().getPlugin(), "lang-menu.toggle-success");
-                    player.closeInventory();
-                    open(player);
                     refresh(holder);
 
 

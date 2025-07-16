@@ -20,7 +20,9 @@ public class CenterSender implements TextSender {
 
     @Override
     public void apply(CommandSender sender, Text text) {
-        String spaces = TextCentralizer.getSpacesCentralized(pixels,text.getPlainText());
+
+        String spaces = TextCentralizer.getSpacesCentralized(pixels,text.getText());
+
         text.setText(spaces + text.getText());
     }
 }
