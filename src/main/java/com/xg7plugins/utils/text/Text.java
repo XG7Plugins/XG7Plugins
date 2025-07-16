@@ -78,8 +78,6 @@ public class Text {
      */
     public Text textFor(Player player) {
 
-        this.text = Condition.processConditions(this.text, player);
-
         if (XG7PluginsAPI.isDependencyEnabled("PlaceholderAPI")) this.text = ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, this.text));
 
         return this;

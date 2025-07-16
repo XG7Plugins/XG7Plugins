@@ -240,7 +240,7 @@ public class XG7PluginsAPI {
      * @return true if Geyser forms support is enabled, false otherwise
      */
     public static boolean isGeyserFormsEnabled() {
-        return isDependencyEnabled("floodgate") && Config.of(XG7Plugins.getInstance(), MainConfigSection.class).isGeyserFormsEnabled();
+        return dependencyManager().exists("floodgate") && Config.of(XG7Plugins.getInstance(), MainConfigSection.class).isGeyserFormsEnabled();
     }
 
     /**

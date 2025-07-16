@@ -42,11 +42,11 @@ public class XG7GeyserForms implements Module {
         return forms.containsKey(id);
     }
 
-    public boolean sendForm(Player player, String form) {
+    public boolean sendForm(Player player, String formId) {
         if (!FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) return false;
-        if (!forms.containsKey(form)) return false;
+        if (!forms.containsKey(formId)) return false;
 
-        forms.get(form).send(player);
+        forms.get(formId).send(player);
 
         return true;
     }

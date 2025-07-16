@@ -66,7 +66,7 @@ public enum Condition {
         return condition.apply(pack);
     }
 
-    private static final Pattern conditionPattern = Pattern.compile("\\?(.*?): (.*?)\\? ");
+    private static final Pattern conditionPattern = Pattern.compile("\\?(.*?): (.*?)\\?");
 
     /**
      * Extracts the condition and its value from a text string.
@@ -78,7 +78,7 @@ public enum Condition {
     public static Pair<Condition, String> extractCondition(String condition) {
         Matcher matcher = conditionPattern.matcher(condition);
         if (matcher.find()) {
-            String type = matcher.group(1);
+            String type = matcher.group(1).toUpperCase();
             for (Condition value : values()) {
                 if (value.name().equalsIgnoreCase(type)) {
                     return new Pair<>(value, matcher.group(2));
@@ -93,7 +93,7 @@ public enum Condition {
         Matcher matcher = conditionPattern.matcher(text);
 
         while (matcher.find()) {
-            String type = matcher.group(1);
+            String type = matcher.group(1).toUpperCase();
             String value = matcher.group(2);
 
             for (Condition condition : values()) {

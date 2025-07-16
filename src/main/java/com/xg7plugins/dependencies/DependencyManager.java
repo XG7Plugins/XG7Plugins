@@ -30,6 +30,10 @@ public class DependencyManager implements Manager {
         return loadedDependencies.containsKey(name) || Bukkit.getPluginManager().isPluginEnabled(name);
     }
 
+    public boolean exists(String name) {
+        return isLoaded(name) || Bukkit.getPluginManager().getPlugin(name) != null;
+    }
+
     /**
      * Checks and loads a dependency if it's not already loaded.
      * Downloads the dependency if it's not found locally.

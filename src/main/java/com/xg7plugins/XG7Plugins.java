@@ -49,6 +49,7 @@ import com.xg7plugins.tasks.plugin_tasks.TPSCalculator;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Metrics;
+import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
 import com.xg7plugins.utils.text.Text;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
@@ -155,6 +156,8 @@ public final class XG7Plugins extends Plugin {
         XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
 
         Text.init();
+
+        if (XG7PluginsAPI.dependencyManager().exists("PlaceholderAPI")) new XG7PluginsPlaceholderExpansion().register();
 
         debug.loading("XG7Plugins enabled.");
 

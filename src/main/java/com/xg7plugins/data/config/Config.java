@@ -57,21 +57,25 @@ public class Config {
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
-        YamlConfiguration resourceConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource(name + ".yml"), StandardCharsets.UTF_8));
-        if (!resourceConfig.getString("config-version").equals(config.getString("config-version"))) {
+        if (plugin.getResource(name + ".yml") != null) {
 
-            File backupFile = new File(plugin.getDataFolder(), name + "-old.yml");
-            configFile.renameTo(backupFile);
+            YamlConfiguration resourceConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource(name + ".yml"), StandardCharsets.UTF_8));
+            if (!resourceConfig.getString("config-version").equals(config.getString("config-version"))) {
 
-            plugin.saveResource(name + ".yml", true);
+                File backupFile = new File(plugin.getDataFolder(), name + "-old.yml");
+                configFile.renameTo(backupFile);
 
-            this.configFile = new File(plugin.getDataFolder(), name + ".yml");
+                plugin.saveResource(name + ".yml", true);
 
-            this.config = YamlConfiguration.loadConfiguration(configFile);
+                this.configFile = new File(plugin.getDataFolder(), name + ".yml");
 
-            plugin.getLogger().info("Loaded!");
+                this.config = YamlConfiguration.loadConfiguration(configFile);
 
-            return;
+                plugin.getLogger().info("Loaded!");
+
+                return;
+            }
+
         }
 
         this.configFile = configFile;
