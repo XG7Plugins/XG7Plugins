@@ -1,7 +1,6 @@
-package com.xg7plugins.modules.xg7menus.menus.holders;
+package com.xg7plugins.modules.xg7menus.menus.menuholders;
 
-import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.PagedMenu;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;

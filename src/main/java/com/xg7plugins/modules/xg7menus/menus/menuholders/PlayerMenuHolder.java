@@ -1,8 +1,8 @@
-package com.xg7plugins.modules.xg7menus.menus.holders;
+package com.xg7plugins.modules.xg7menus.menus.menuholders;
 
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
-import com.xg7plugins.modules.xg7menus.menus.menus.player.PlayerMenu;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.player.PlayerMenu;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

@@ -8,7 +8,7 @@ import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;
-import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.PlayerMenuHolder;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;

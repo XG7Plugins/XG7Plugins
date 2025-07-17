@@ -1,11 +1,11 @@
-package com.xg7plugins.modules.xg7menus.menus.holders;
+package com.xg7plugins.modules.xg7menus.menus.menuholders;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
 import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;

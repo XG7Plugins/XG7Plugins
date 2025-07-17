@@ -1,4 +1,4 @@
-package com.xg7plugins.modules.xg7menus.menus.menus.player;
+package com.xg7plugins.modules.xg7menus.menus.interfaces.player;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenuConfigs;

@@ -9,8 +9,8 @@ import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.BookItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.item.SkullItem;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 

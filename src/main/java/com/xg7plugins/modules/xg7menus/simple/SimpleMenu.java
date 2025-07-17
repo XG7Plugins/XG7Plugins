@@ -6,9 +6,9 @@ import com.xg7plugins.modules.xg7menus.events.MenuEvent;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
-import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

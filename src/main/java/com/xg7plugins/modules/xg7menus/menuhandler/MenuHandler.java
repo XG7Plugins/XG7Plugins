@@ -9,7 +9,7 @@ import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;
-import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.MenuHolder;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;

@@ -5,7 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.help.HelpComponent;
 import com.xg7plugins.help.menu.command.CommandGUI;
 import com.xg7plugins.modules.xg7menus.menus.MenuNavigation;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

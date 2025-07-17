@@ -53,7 +53,7 @@ public class CommandHelp implements HelpChatPage {
                                     itemStack.getItemMeta().getLore().get(2) + "\n" +
                                     itemStack.getItemMeta().getLore().get(3)
                     ).clickEvent(
-                            ClickEvent.of(net.md_5.bungee.api.chat.ClickEvent.Action.SUGGEST_COMMAND, command.getCommandSetup().syntax())
+                            ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, command.getCommandSetup().syntax())
                     ).build()
             );
         }

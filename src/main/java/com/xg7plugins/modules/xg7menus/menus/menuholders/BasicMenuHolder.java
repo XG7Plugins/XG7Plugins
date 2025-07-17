@@ -1,4 +1,4 @@
-package com.xg7plugins.modules.xg7menus.menus.holders;
+package com.xg7plugins.modules.xg7menus.menus.menuholders;
 
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;

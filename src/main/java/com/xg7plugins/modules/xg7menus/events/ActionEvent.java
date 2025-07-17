@@ -3,7 +3,7 @@ package com.xg7plugins.modules.xg7menus.events;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;
-import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
 import lombok.Getter;
 
 @Getter

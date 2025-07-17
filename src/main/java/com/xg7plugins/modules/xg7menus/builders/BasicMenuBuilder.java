@@ -8,7 +8,7 @@ import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenuConfigs;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
-import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
 
 import java.util.ArrayList;
 import java.util.Arrays;

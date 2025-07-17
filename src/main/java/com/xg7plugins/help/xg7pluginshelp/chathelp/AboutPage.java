@@ -41,7 +41,7 @@ public class AboutPage implements HelpChatPage {
                 TextComponentBuilder.of(
                         Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.back").join()
                                 .replace("command", "/xg7plugins help").getText()
-                ).clickEvent(ClickEvent.of(net.md_5.bungee.api.chat.ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help"))
+                ).clickEvent(ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help"))
                         .build()
         );
         components.add(Text.format(" "));

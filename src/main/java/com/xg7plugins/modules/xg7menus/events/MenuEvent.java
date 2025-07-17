@@ -1,7 +1,6 @@
 package com.xg7plugins.modules.xg7menus.events;
 
-import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.holders.MenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.event.Cancellable;

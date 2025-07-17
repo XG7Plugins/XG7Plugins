@@ -1,4 +1,4 @@
-package com.xg7plugins.modules.xg7menus.menus.menus.gui;
+package com.xg7plugins.modules.xg7menus.menus.interfaces.gui;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;

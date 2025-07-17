@@ -1,8 +1,8 @@
 package com.xg7plugins.modules.xg7menus.builders;
 
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.menus.menus.player.PlayerMenuConfigurations;
-import com.xg7plugins.modules.xg7menus.menus.menus.player.PlayerMenu;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.player.PlayerMenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.player.PlayerMenu;
 import com.xg7plugins.modules.xg7menus.simple.SimplePlayerMenu;
 
 import java.util.function.Consumer;

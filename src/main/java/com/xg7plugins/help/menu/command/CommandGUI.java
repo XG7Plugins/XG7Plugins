@@ -8,8 +8,8 @@ import com.xg7plugins.help.menu.HelpGUI;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.PagedMenu;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.PagedMenu;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;

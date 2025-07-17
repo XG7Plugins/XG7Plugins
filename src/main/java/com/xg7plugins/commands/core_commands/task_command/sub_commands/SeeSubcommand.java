@@ -13,7 +13,7 @@ import com.xg7plugins.modules.xg7menus.builders.MenuBuilder;
 import com.xg7plugins.modules.xg7menus.item.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import com.xg7plugins.tasks.tasks.AsyncTask;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;

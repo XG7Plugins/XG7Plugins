@@ -1,11 +1,10 @@
-package com.xg7plugins.modules.xg7menus.menus.menus.player;
+package com.xg7plugins.modules.xg7menus.menus.interfaces.player;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;
 import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 
 import java.util.EnumSet;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.xg7plugins.modules.xg7menus.menus.menus.gui.menus;
+package com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
@@ -7,15 +7,13 @@ import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
-import com.xg7plugins.modules.xg7menus.menus.holders.PagedMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import com.xg7plugins.tasks.tasks.AsyncTask;
 import lombok.SneakyThrows;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public abstract class PagedMenu extends Menu {
 

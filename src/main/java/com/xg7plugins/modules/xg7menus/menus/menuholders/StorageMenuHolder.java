@@ -1,8 +1,8 @@
-package com.xg7plugins.modules.xg7menus.menus.holders;
+package com.xg7plugins.modules.xg7menus.menus.menuholders;
 
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.StorageMenu;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.StorageMenu;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

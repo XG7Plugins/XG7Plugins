@@ -1,7 +1,7 @@
 package com.xg7plugins.modules.xg7menus.builders;
 
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.menus.Menu;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
 import com.xg7plugins.modules.xg7menus.simple.SimpleMenu;
 
 public class MenuBuilder extends BasicMenuBuilder<MenuBuilder, Menu> {

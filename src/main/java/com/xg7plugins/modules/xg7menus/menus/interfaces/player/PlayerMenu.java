@@ -1,10 +1,10 @@
-package com.xg7plugins.modules.xg7menus.menus.menus.player;
+package com.xg7plugins.modules.xg7menus.menus.interfaces.player;
 
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
-import com.xg7plugins.modules.xg7menus.menus.holders.BasicMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.holders.PlayerMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.PlayerMenuHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;

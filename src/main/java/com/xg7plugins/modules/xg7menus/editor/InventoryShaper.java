@@ -2,7 +2,7 @@ package com.xg7plugins.modules.xg7menus.editor;
 
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.menus.menus.gui.MenuConfigurations;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
