@@ -7,7 +7,7 @@ import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.data.playerdata.PlayerData;
-import com.xg7plugins.data.playerdata.PlayerDataDAO;
+import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.managers.Manager;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.reflection.ReflectionObject;
@@ -109,7 +109,7 @@ public class LangManager implements Manager {
         }
 
         return CompletableFuture.supplyAsync(() -> {
-            PlayerData playerData = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId());
+            PlayerData playerData = XG7PluginsAPI.getRepository(PlayerDataRepository.class).get(player.getUniqueId());
             return getLangByPlayerData(plugin, playerData).join();
         }, XG7PluginsAPI.taskManager().getExecutor("langs"));
     }

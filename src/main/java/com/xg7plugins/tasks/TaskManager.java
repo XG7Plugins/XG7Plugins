@@ -69,6 +69,12 @@ public class TaskManager implements Manager {
     public void registerTimerTasks(TimerTask... tasks) {
         registerTimerTasks(Arrays.asList(tasks));
     }
+
+    /**
+     * Registers a list of timer tasks for execution.
+     *
+     * @param tasks The list of timer tasks to register
+     */
     public void registerTimerTasks(List<TimerTask> tasks) {
         if (tasks == null) return;
         tasks.forEach(timerTask -> {
@@ -84,11 +90,11 @@ public class TaskManager implements Manager {
 
         });
     }
-
-    public TimerTask getRegisteredTimerTask(Plugin plugin, String id) {
-        return timerTaskMap.get(plugin.getName() + ":" + id);
-    }
-
+    /**
+     * Runs a task synchronously on the main server thread.
+     *
+     * @param bukkitTask The Bukkit task to run
+     */
     @SneakyThrows
     public void runSync(BukkitTask bukkitTask) {
         if (bukkitTask == null) return;
@@ -97,6 +103,12 @@ public class TaskManager implements Manager {
 
         bukkitTask.setBukkitTaskId(taskID);
     }
+
+    /**
+     * Runs a task asynchronously using the executor service.
+     *
+     * @param asyncTask The async task to run
+     */
     public void runAsync(AsyncTask asyncTask) {
         if (asyncTask == null) return;
 
@@ -110,6 +122,12 @@ public class TaskManager implements Manager {
             }
         });
     }
+
+    /**
+     * Runs a Bukkit task asynchronously.
+     *
+     * @param bukkitTask The Bukkit task to run asynchronously
+     */
     @SneakyThrows
     public void runAsyncBukkitTask(BukkitTask bukkitTask) {
         if (bukkitTask == null) return;
@@ -119,6 +137,12 @@ public class TaskManager implements Manager {
         bukkitTask.setBukkitTaskId(taskID);
     }
 
+    /**
+     * Schedules a task to run synchronously after a delay.
+     *
+     * @param bukkitTask The Bukkit task to schedule
+     * @param delay      The delay in milliseconds
+     */
     @SneakyThrows
     public void scheduleSync(BukkitTask bukkitTask, long delay) {
         if (bukkitTask == null) return;
@@ -127,6 +151,13 @@ public class TaskManager implements Manager {
 
         bukkitTask.setBukkitTaskId(taskID);
     }
+
+    /**
+     * Schedules an async task to run after a delay.
+     *
+     * @param asyncTask The async task to schedule
+     * @param delay     The delay in milliseconds
+     */
     public void scheduleAsync(AsyncTask asyncTask, long delay) {
         if (asyncTask == null) return;
 
@@ -141,6 +172,12 @@ public class TaskManager implements Manager {
         }, delay, TimeUnit.MILLISECONDS));
     }
 
+    /**
+     * Schedules a Bukkit task to run asynchronously after a delay.
+     *
+     * @param bukkitTask The Bukkit task to schedule
+     * @param delay      The delay in milliseconds
+     */
     @SneakyThrows
     public void scheduleAsyncBukkitTask(BukkitTask bukkitTask, long delay) {
         if (bukkitTask == null) return;
@@ -150,6 +187,13 @@ public class TaskManager implements Manager {
         bukkitTask.setBukkitTaskId(taskID);
     }
 
+    /**
+     * Schedules a task to run repeatedly on the main thread.
+     *
+     * @param bukkitTask The Bukkit task to schedule
+     * @param delay      Initial delay in milliseconds
+     * @param period     Period between executions in milliseconds
+     */
     @SneakyThrows
     public void scheduleSyncRepeating(BukkitTask bukkitTask, long delay, long period) {
         if (bukkitTask == null) return;
@@ -158,6 +202,14 @@ public class TaskManager implements Manager {
 
         bukkitTask.setBukkitTaskId(taskID);
     }
+
+    /**
+     * Schedules an async task to run repeatedly.
+     *
+     * @param asyncTask The async task to schedule
+     * @param delay     Initial delay in milliseconds
+     * @param period    Period between executions in milliseconds
+     */
     public void scheduleAsyncRepeating(AsyncTask asyncTask, long delay, long period) {
         if (asyncTask == null) return;
 
@@ -172,6 +224,14 @@ public class TaskManager implements Manager {
             }
         }, delay, period, TimeUnit.MILLISECONDS));
     }
+
+    /**
+     * Schedules a Bukkit task to run repeatedly in async.
+     *
+     * @param bukkitTask The Bukkit task to schedule
+     * @param delay      Initial delay in milliseconds
+     * @param period     Period between executions in milliseconds
+     */
     @SneakyThrows
     public void scheduleAsyncRepeatingBukkitTask(BukkitTask bukkitTask, long delay, long period) {
         if (bukkitTask == null) return;
@@ -181,6 +241,12 @@ public class TaskManager implements Manager {
         bukkitTask.setBukkitTaskId(taskID);
     }
 
+    /**
+     * Cancels a repeating task for a plugin.
+     *
+     * @param plugin The plugin that owns the task
+     * @param id     The task identifier
+     */
     public void cancelRepeatingTask(Plugin plugin, String id) {
         TimerTask timerTask = timerTaskMap.get(plugin + ":" + id);
 
@@ -189,6 +255,11 @@ public class TaskManager implements Manager {
         cancelRepeatingTask(timerTask);
     }
 
+    /**
+     * Cancels a repeating task by its ID.
+     *
+     * @param id The task identifier
+     */
     public void cancelRepeatingTask(@NotNull String id) {
         TimerTask timerTask = timerTaskMap.get(id);
 
@@ -197,12 +268,22 @@ public class TaskManager implements Manager {
         cancelRepeatingTask(timerTask);
     }
 
+    /**
+     * Cancels a specific timer task.
+     *
+     * @param timerTask The timer task to cancel
+     */
     public void cancelRepeatingTask(@NotNull TimerTask timerTask) {
         timerTask.getTask().cancel();
 
         timerTask.setTaskState(TaskState.IDLE);
     }
 
+    /**
+     * Cancels all registered tasks for a plugin.
+     *
+     * @param plugin The plugin whose tasks should be cancelled
+     */
     public void cancelAllRegisteredTasks(Plugin plugin) {
         timerTaskMap.keySet().stream()
                 .filter(s -> s.startsWith(plugin.getName() + ":"))
@@ -210,12 +291,23 @@ public class TaskManager implements Manager {
                 .forEach(this::cancelRepeatingTask);
     }
 
+    /**
+     * Deletes a repeating timer task.
+     *
+     * @param timerTask The timer task to delete
+     */
     public void deleteRepeatingTask(TimerTask timerTask) {
         cancelRepeatingTask(timerTask);
 
         timerTaskMap.remove(timerTask.getTask().getPlugin().getName() + ":" + timerTask.getId());
     }
 
+    /**
+     * Deletes a repeating task for a plugin.
+     *
+     * @param plugin The plugin that owns the task
+     * @param id     The task identifier
+     */
     public void deleteRepeatingTask(Plugin plugin, String id) {
         TimerTask timerTask = timerTaskMap.get(plugin.getName() + ":" + id);
 
@@ -225,6 +317,11 @@ public class TaskManager implements Manager {
 
     }
 
+    /**
+     * Deletes a repeating task by its ID.
+     *
+     * @param id The task identifier
+     */
     public void deleteRepeatingTask(String id) {
         TimerTask timerTask = timerTaskMap.get(id);
 
@@ -234,6 +331,11 @@ public class TaskManager implements Manager {
 
     }
 
+    /**
+     * Deletes all repeating tasks for a plugin.
+     *
+     * @param plugin The plugin whose tasks should be deleted
+     */
     public void deleteAllRepeatingTasks(Plugin plugin) {
         timerTaskMap.keySet().stream()
                 .filter(s -> s.startsWith(plugin.getName() + ":"))
@@ -241,6 +343,11 @@ public class TaskManager implements Manager {
                 .forEach(this::deleteRepeatingTask);
     }
 
+    /**
+     * Runs a timer task with the specified configuration.
+     *
+     * @param timerTask The timer task to run
+     */
     public void runTimerTask(TimerTask timerTask) {
         if (timerTask == null) return;
 
@@ -251,12 +358,31 @@ public class TaskManager implements Manager {
 
         if (timerTask.getTask() instanceof BukkitTask) {
             BukkitTask bukkitTask = (BukkitTask) timerTask.getTask();
-            if (bukkitTask.isAsync()) scheduleAsyncRepeatingBukkitTask(bukkitTask, timerTask.getDelay(), timerTask.getPeriod());
+            if (bukkitTask.isAsync())
+                scheduleAsyncRepeatingBukkitTask(bukkitTask, timerTask.getDelay(), timerTask.getPeriod());
             else scheduleSyncRepeating(bukkitTask, timerTask.getDelay(), timerTask.getPeriod());
-        }
-        else scheduleAsyncRepeating((AsyncTask) timerTask.getTask(), timerTask.getDelay(), timerTask.getPeriod());
+        } else scheduleAsyncRepeating((AsyncTask) timerTask.getTask(), timerTask.getDelay(), timerTask.getPeriod());
 
         timerTask.setTaskState(TaskState.RUNNING);
+    }
+
+    /**
+     * Reloads all tasks for a plugin.
+     *
+     * @param plugin The plugin whose tasks should be reloaded
+     */
+    public void reloadTasks(Plugin plugin) {
+        timerTaskMap.values().stream().filter(timerTask -> timerTask.getTask().getPlugin().getName().equals(plugin.getName())).forEach(this::runTimerTask);
+    }
+
+    /**
+     * Gets an executor service by name.
+     *
+     * @param name The name of the executor
+     * @return The executor service if found
+     */
+    public ExecutorService getExecutor(String name) {
+        return asyncExecutors.get(name);
     }
 
     /**
@@ -268,13 +394,6 @@ public class TaskManager implements Manager {
         asyncExecutors.values().forEach(ExecutorService::shutdown);
         this.timerTaskMap.clear();
         this.asyncExecutors.clear();
-    }
-
-    public void reloadTasks(Plugin plugin) {
-        timerTaskMap.values().stream().filter(timerTask -> timerTask.getTask().getPlugin().getName().equals(plugin.getName())).forEach(this::runTimerTask);
-    }
-    public ExecutorService getExecutor(String name) {
-        return asyncExecutors.get(name);
     }
 
     /**

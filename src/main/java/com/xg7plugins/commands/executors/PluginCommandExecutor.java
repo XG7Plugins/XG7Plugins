@@ -20,6 +20,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The executor for all XG7Plugins' commands.
+ * <p>
+ * This class handles the execution and tab-completion of all registered plugin commands,
+ * including dynamic subcommand resolution for the main command entry point.
+ * It also applies permission checks and custom error messaging when needed.
+ */
 @AllArgsConstructor
 public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
 
@@ -67,7 +74,7 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
 
     /**
      * Recursively processes subcommands of a given command.
-     * Traverses through command hierarchy to find and execute the appropriate subcommand.
+     * Traverses through the command hierarchy to find and execute the appropriate subcommand.
      *
      * @param command Parent command
      * @param sender  Command sender

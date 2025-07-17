@@ -83,14 +83,22 @@ public class ConfigManager implements Manager {
     /**
      * Registers a type adapter for converting configuration values.
      *
-     * @param tClass  The class type to register the adapter for
      * @param adapter The adapter instance to handle the type conversion
-     * @param <T>     The type parameter for the class and adapter
+     * @param <T>     The type parameter for the adapter
      */
     public <T> void registerAdapter(ConfigTypeAdapter<T> adapter) {
         adapters.put(adapter.getTargetType(), adapter);
     }
 
+    /**
+     * Registers all configuration sections defined in the plugin setup.
+     * Creates instances of config sections using reflection and registers them.
+     *
+     * @throws NoSuchMethodException     If the constructor is not found
+     * @throws InvocationTargetException If the constructor invocation fails
+     * @throws InstantiationException    If instantiation fails
+     * @throws IllegalAccessException    If access is denied
+     */
     public void registerSections() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         Class<? extends ConfigSection>[] configSections = plugin.getPluginSetup().configSections();
         for (Class<? extends ConfigSection> configSection : configSections) {
@@ -101,10 +109,23 @@ public class ConfigManager implements Manager {
         }
     }
 
+    /**
+     * Registers a configuration section instance.
+     * Stores the section instance mapped to its class type.
+     *
+     * @param section The configuration section to register
+     */
     public void registerConfigSection(ConfigSection section) {
         sections.put(section.getClass(), section);
     }
 
+    /**
+     * Gets a configuration section by its class type.
+     * Returns the registered instance of the specified config section class.
+     *
+     * @param clazz The class of the config section to retrieve
+     * @return The config section instance
+     */
     public <T extends ConfigSection> T getConfigSection(Class<T> clazz) {
         return (T) sections.get(clazz);
     }

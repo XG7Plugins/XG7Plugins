@@ -22,9 +22,9 @@ public @interface ConfigBoolean {
     String path();
 
     /**
-     * Whether the boolean value should be inverted when read/written.
+     * Whether the boolean value should be inverted when read.
      *
-     * @return true to invert the value, false to use as-is
+     * @return Returns true to invert the value, false to keep the original value
      */
     boolean invert() default false;
 

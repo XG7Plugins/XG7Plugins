@@ -14,11 +14,13 @@ import java.lang.annotation.RetentionPolicy;
  * Example usage:
  * </p>
  * <pre>
+ * <code>
  * public class User implements Entity<Long, User> {
  *    {@literal @}Pkey
  *     private Long id;
  *     // other fields
  * }
+ * </code>
  * </pre>
  *
  * @see Entity

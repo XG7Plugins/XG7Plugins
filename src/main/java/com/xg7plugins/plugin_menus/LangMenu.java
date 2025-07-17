@@ -4,7 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
-import com.xg7plugins.data.playerdata.PlayerDataDAO;
+import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.modules.xg7menus.Slot;
@@ -39,7 +39,7 @@ public class LangMenu extends PagedMenu {
 
         manager.loadLangsFrom(XG7Plugins.getInstance()).join();
 
-        PlayerData language = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId());
+        PlayerData language = XG7PluginsAPI.getRepository(PlayerDataRepository.class).get(player.getUniqueId());
 
         List<Item> pagedItems = new ArrayList<>();
 
@@ -101,7 +101,7 @@ public class LangMenu extends PagedMenu {
                     return;
                 }
 
-                PlayerDataDAO dao = XG7PluginsAPI.getDAO(PlayerDataDAO.class);
+                PlayerDataRepository dao = XG7PluginsAPI.getRepository(PlayerDataRepository.class);
 
                 dao.getAsync(player.getUniqueId()).thenAccept((data) -> {
                     String dbLang = langName.split(":")[1];

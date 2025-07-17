@@ -8,12 +8,12 @@ import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
 import com.xg7plugins.data.config.core.MainConfigSection;
-import com.xg7plugins.data.database.dao.DAO;
+import com.xg7plugins.data.database.dao.Repository;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
 import com.xg7plugins.data.playerdata.PlayerData;
-import com.xg7plugins.data.playerdata.PlayerDataDAO;
+import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.dependencies.DependencyManager;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
@@ -276,20 +276,46 @@ public class XG7PluginsAPI {
         return isEnabledWorld(plugin, player.getWorld());
     }
 
+    /**
+     * Gets a list of enabled world names for a specific plugin.
+     *
+     * @param plugin The plugin to get enabled worlds for
+     * @return A list of enabled world names
+     */
     public static List<String> getEnabledWorldsOf(Plugin plugin) {
         return plugin.getEnvironmentConfig().getEnabledWorlds();
     }
 
-    public static <ID,T extends Entity<?, ?>, U extends DAO<ID,T>> U getDAO(Class<U> clazz) {
-        return database().getDaoManager().getDAO(clazz);
+    /**
+     * Gets a repository instance by its class type.
+     *
+     * @param <ID>  The type of the entity ID
+     * @param <T>   The type of the entity
+     * @param <U>   The type of the repository
+     * @param clazz The repository class to get
+     * @return The requested repository instance
+     */
+    public static <ID,T extends Entity<?, ?>, U extends Repository<ID,T>> U getRepository(Class<U> clazz) {
+        return database().getDaoManager().getRepository(clazz);
     }
 
-    public static List<DAO> getDAOs() {
-        return database().getDaoManager().getAllDAOs();
+    /**
+     * Gets a list of all registered repositories.
+     *
+     * @return A list containing all repository instances
+     */
+    public static List<Repository> getRepositories() {
+        return database().getDaoManager().getAllRepositories();
     }
 
-    public static List<DAO> getDAOsByPlugin(Plugin plugin) {
-        return database().getDaoManager().getAllDAOsByPlugin(plugin);
+    /**
+     * Gets a list of all repositories registered for a specific plugin.
+     *
+     * @param plugin The plugin to get repositories for
+     * @return A list of repositories associated with the plugin
+     */
+    public static List<Repository> getRepositoriesByPlugin(Plugin plugin) {
+        return database().getDaoManager().getAllRepositoriesByPlugin(plugin);
     }
 
     /**
@@ -299,7 +325,7 @@ public class XG7PluginsAPI {
      * @return A CompletableFuture that will contain the player data when available
      */
     public static CompletableFuture<PlayerData> requestPlayerData(UUID uuid) {
-        return getDAO(PlayerDataDAO.class).getAsync(uuid);
+        return getRepository(PlayerDataRepository.class).getAsync(uuid);
     }
 
     /**
@@ -312,12 +338,24 @@ public class XG7PluginsAPI {
         return requestPlayerData(player.getUniqueId());
     }
 
+    /**
+     * Gets player data by UUID synchronously.
+     *
+     * @param uuid The player's UUID
+     * @return The player data associated with the UUID
+     */
     public static PlayerData getPlayerData(UUID uuid) {
-        return getDAO(PlayerDataDAO.class).get(uuid);
+        return getRepository(PlayerDataRepository.class).get(uuid);
     }
 
+    /**
+     * Gets player data from the player instance synchronously.
+     *
+     * @param player The player to get data for
+     * @return The player data associated with the player
+     */
     public static PlayerData getPlayerData(Player player) {
-        return getDAO(PlayerDataDAO.class).get(player.getUniqueId());
+        return getRepository(PlayerDataRepository.class).get(player.getUniqueId());
     }
 
     /**

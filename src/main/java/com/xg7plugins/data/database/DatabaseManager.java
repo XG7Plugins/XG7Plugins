@@ -5,8 +5,8 @@ import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.database.dao.DAO;
-import com.xg7plugins.data.database.dao.DAOManager;
+import com.xg7plugins.data.database.dao.Repository;
+import com.xg7plugins.data.database.dao.RepositoryManager;
 import com.xg7plugins.data.database.connector.Connector;
 import com.xg7plugins.data.database.connector.ConnectorRegistry;
 import com.xg7plugins.data.database.connector.SQLConfigs;
@@ -36,7 +36,7 @@ import java.util.concurrent.CompletableFuture;
 public class DatabaseManager implements Manager {
 
     private final DatabaseProcessor processor = new DatabaseProcessor(this);
-    private final DAOManager daoManager = new DAOManager();
+    private final RepositoryManager daoManager = new RepositoryManager();
     private final TableCreator tableCreator = new TableCreator();
     private final ConnectorRegistry connectorRegistry;
 
@@ -47,7 +47,7 @@ public class DatabaseManager implements Manager {
      *
      * @param plugin The plugin requesting the connection
      * @return The database connection
-     * @throws Exception If connection cannot be established
+     * @throws Exception If the connection cannot be established
      */
     public Connection getConnection(Plugin plugin) throws Exception {
         return connectorRegistry.getConnection(plugin);
@@ -80,9 +80,9 @@ public class DatabaseManager implements Manager {
     }
 
     /**
-     * Establishes a database connection for a plugin and creates necessary tables.
+     * Establishes a database connection for a plugin and creates the necessary tables.
      *
-     * @param plugin The plugin to connect
+     * @param plugin        The plugin to connect
      * @param entityClasses Entity classes to create tables for
      */
     @SafeVarargs
@@ -130,9 +130,9 @@ public class DatabaseManager implements Manager {
 
     }
 
-    public final void registerDAOs(List<DAO<?, ?>> daos) {
-        if (daos == null) return;
-        daos.forEach(daoManager::registerDAO);
+    public final void registerRepositories(List<Repository<?, ?>> Repositories) {
+        if (Repositories == null) return;
+        Repositories.forEach(daoManager::registerRepository);
     }
 
     /**
@@ -165,7 +165,7 @@ public class DatabaseManager implements Manager {
     }
 
     /**
-     * Gets a cached entity from the cache using plugin name and ID as key.
+     * Gets a cached entity from the cache using the plugin name and ID as a key.
      *
      * @param plugin The plugin that owns the entity
      * @param id     The unique identifier of the entity
@@ -181,7 +181,7 @@ public class DatabaseManager implements Manager {
      *
      * @param plugin The plugin that owns the entity
      * @param id     The unique identifier to check
-     * @return CompletableFuture containing true if entity is cached, false otherwise
+     * @return CompletableFuture containing true if the entity is cached, false otherwise
      */
     public CompletableFuture<Boolean> containsCachedEntity(@NotNull Plugin plugin, String id) {
         return cachedEntities.containsKey(plugin.getName() + ":" + id);

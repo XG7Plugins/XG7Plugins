@@ -14,10 +14,10 @@ import com.xg7plugins.cooldowns.CooldownManager;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.data.config.default_type_adapters.SoundTypeAdapter;
-import com.xg7plugins.data.database.dao.DAO;
+import com.xg7plugins.data.database.dao.Repository;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.playerdata.PlayerData;
-import com.xg7plugins.data.playerdata.PlayerDataDAO;
+import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.dependencies.Dependency;
 import com.xg7plugins.dependencies.DependencyManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
@@ -200,8 +200,8 @@ public final class XG7Plugins extends Plugin {
         return new Class[]{PlayerData.class};
     }
     @Override
-    public List<DAO<?,?>> loadDAOs() {
-        return Collections.singletonList(new PlayerDataDAO());
+    public List<Repository<?,?>> loadRepositories() {
+        return Collections.singletonList(new PlayerDataRepository());
     }
     @Override
     public List<Command> loadCommands() {
@@ -218,6 +218,10 @@ public final class XG7Plugins extends Plugin {
     @Override
     public List<Dependency> loadDependencies() {
         return Collections.singletonList(Dependency.of("PlaceholderAPI", "https://ci.extendedclip.com/job/PlaceholderAPI/197/artifact/build/libs/PlaceholderAPI-2.11.6.jar"));
+    }
+    @Override
+    public PlaceholderExpansion loadPlaceholderExpansion() {
+        return new XG7PluginsPlaceholderExpansion();
     }
 
     @Override
@@ -236,6 +240,12 @@ public final class XG7Plugins extends Plugin {
         this.helpMessenger = new HelpMessenger(this, helpCommandGUI, helpCommandForm, helpInChat);
     }
 
+    /**
+     * Handles loading and initialization of a plugin.
+     * This method sets up all required components and configurations for a plugin to function.
+     *
+     * @param plugin The plugin instance to load
+     */
     private void loadPlugin(Plugin plugin) {
         debug.loading("Enabling " + plugin.getName() + "...");
 
@@ -267,7 +277,7 @@ public final class XG7Plugins extends Plugin {
         if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
 
         plugin.getDebug().loading("Loading entities manager...");
-        XG7PluginsAPI.database().registerDAOs(plugin.loadDAOs());
+        XG7PluginsAPI.database().registerRepositories(plugin.loadRepositories());
 
         plugin.getDebug().loading("Registering listeners...");
         XG7PluginsAPI.eventManager().registerListeners(plugin, plugin.loadEvents());
@@ -299,6 +309,12 @@ public final class XG7Plugins extends Plugin {
         }
     }
 
+    /**
+     * Registers a plugin with XG7Plugins.
+     * Adds the plugin to the plugins registry to be managed by the core.
+     *
+     * @param plugin The plugin instance to register
+     */
     public static void register(Plugin plugin) {
         Debug.of(XG7Plugins.getInstance()).loading("Registering " + plugin.getName() + "...");
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();
@@ -307,6 +323,12 @@ public final class XG7Plugins extends Plugin {
         Debug.of(XG7Plugins.getInstance()).loading(plugin.getName() + " registered.");
     }
 
+    /**
+     * Unregisters a plugin from XG7Plugins.
+     * Cleans up resources and removes the plugin from management.
+     *
+     * @param plugin The plugin instance to unregister
+     */
     public static void unregister(Plugin plugin) {
 
         XG7Plugins xg7Plugins = XG7Plugins.getInstance();

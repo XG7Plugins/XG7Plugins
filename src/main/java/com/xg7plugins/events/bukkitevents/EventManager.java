@@ -119,7 +119,7 @@ public class EventManager implements Manager {
 
     /**
      * Unregisters all event listeners associated with a specific plugin.
-     * Cleans up the listeners map after unregistration.
+     * Cleans up the listener map after unregistration.
      *
      * @param plugin The plugin whose listeners should be unregistered
      */

@@ -13,6 +13,12 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Anti-tab system for commands of XG7plugins
+ * <p>
+ * This class filters the commands shown to the player,
+ * based on their permissions
+ */
 @AllArgsConstructor
 @PacketListenerSetup(packet = PacketEventType.PLAY_SERVER_TAB_COMPLETE)
 public class AntiTab implements PacketListener {

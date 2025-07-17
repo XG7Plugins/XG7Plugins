@@ -16,11 +16,6 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Utility class responsible for analyzing Entity classes and creating corresponding database tables.
- * Provides functionality for:
- * - Mapping Java types to SQL data types
- * - Creating tables with primary and foreign key constraints
- * - Handling nested entities and collections
- * - Supporting table name customization through annotations
  */
 public class TableCreator {
 
@@ -49,7 +44,7 @@ public class TableCreator {
      * Maps Java class types to their corresponding SQL data types.
      * Supports primitive types, their wrappers, and common Java classes.
      *
-     * @param clazz The Java class to map to SQL type
+     * @param clazz The Java class to map to the SQL type
      * @return The corresponding SQL data type as a string, or null if the type cannot be mapped
      */
     public static String getSQLType(Class<?> clazz, int size) {

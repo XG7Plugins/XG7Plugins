@@ -101,7 +101,8 @@ public class Config {
      */
     public Config(Plugin plugin, YamlConfiguration config, String name) throws IOException {
         this(plugin,config,name,true);
-    }  /**
+    }  
+    /**
      * Factory method to get or create a Config instance.
      * Returns existing config if available, otherwise creates new one.
      *
@@ -116,6 +117,14 @@ public class Config {
         return new Config(plugin, name);
     }
 
+    /**
+     * Gets a ConfigSection instance for the plugin.
+     *
+     * @param plugin The plugin to get the ConfigSection for
+     * @param clazz  The ConfigSection class type
+     * @param <T>    Type that extends ConfigSection
+     * @return The ConfigSection instance
+     */
     public static <T extends ConfigSection> T of(Plugin plugin, Class<T> clazz) {
         ConfigManager configManager = XG7PluginsAPI.configManager(plugin);
         return configManager.getConfigSection(clazz);
@@ -189,7 +198,7 @@ public class Config {
      *
      * @param path              Path to verify in the configuration
      * @param ignoreNonexistent Whether to suppress warning messages
-     * @return true if path exists and has value, false otherwise
+     * @return true if the path exists and has value, false otherwise
      */
     private boolean verifyExists(String path, boolean ignoreNonexistent) {
         if (!config.contains(path)) {
@@ -239,7 +248,7 @@ public class Config {
 
     /**
      * Gets a time duration value from the configuration.
-     * Converts string time format to milliseconds.
+     * Converts a string time format to milliseconds.
      *
      * @param path              Path to the time value
      * @param ignoreNonexistent Whether to ignore missing values
@@ -304,7 +313,7 @@ public class Config {
     }
 
     /**
-     * Reloads the configuration from file.
+     * Reloads the configuration from the file.
      * Updates the config manager with the reloaded instance.
      */
     public void reload() {

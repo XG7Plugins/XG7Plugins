@@ -7,7 +7,7 @@ import com.xg7plugins.commands.core_commands.reload.ReloadCause;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.ConfigManager;
-import com.xg7plugins.data.database.dao.DAO;
+import com.xg7plugins.data.database.dao.Repository;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.dependencies.Dependency;
 import com.xg7plugins.events.Listener;
@@ -27,8 +27,8 @@ import java.util.*;
 /**
  * Abstract base class for XG7 plugins that extends Bukkit's JavaPlugin.
  * Provides a structured framework for plugin development with support for
- * configurations, commands, events, database, and dependency management.
- *
+ * configurations, commands, tasks, events, database, and more.
+ * <p>
  * This class manages the plugin lifecycle including loading, enabling,
  * reloading, and disabling.
  *
@@ -152,15 +152,20 @@ public abstract class Plugin extends JavaPlugin {
     }
 
     /**
-     * Loads the plugin's database entities.
+     * Loads the plugin's database entities table.
      *
-     * @return An array of classes extending Entity, used for database object mapping
+     * @return An array of classes extending Entity, used for database table creation
      */
     public Class<? extends Entity<?,?>>[] loadEntities() {
         return null;
     }
 
-    public List<DAO<?,?>> loadDAOs() {
+    /**
+     * Loads the plugin's database entity repositories.
+     *
+     * @return An array of Repositories
+     */
+    public List<Repository<?,?>> loadRepositories() {
         return null;
     }
 
@@ -209,7 +214,7 @@ public abstract class Plugin extends JavaPlugin {
     /**
      * Loads the plugin's optional dependencies.
      *
-     * @return A list of dependencies that the plugin can utilize
+     * @return A list of dependencies that the plugin can use
      */
     public List<Dependency> loadDependencies() {
         return null;
@@ -224,6 +229,11 @@ public abstract class Plugin extends JavaPlugin {
         return null;
     }
 
+    /**
+     * Loads the plugin's placeholder expansions, handled by PlaceholderAPI plugin.
+     *
+     * @return The plugin's PlaceholderAPI expansion
+     */
     public PlaceholderExpansion loadPlaceholderExpansion() {
         return null;
     }

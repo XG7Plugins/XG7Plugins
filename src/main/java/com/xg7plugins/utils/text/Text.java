@@ -63,7 +63,7 @@ public class Text {
     }
 
     /**
-     * Processes the text specifically for a player, including:
+     * Processes the text specifically for a player, including
      * - Condition processing
      * - PlaceholderAPI placeholders if available
      *
@@ -158,19 +158,42 @@ public class Text {
         send(this, sender);
     }
 
+    /**
+     * Gets the raw unformatted text string
+     *
+     * @return The raw text without any processing
+     */
     public String getTextRaw() {
         return this.text;
     }
 
+    /**
+     * Gets the text with all color codes and formatting tags removed
+     *
+     * @return Plain text without colors or formatting
+     */
     public String getPlainText() {
         return net.md_5.bungee.api.ChatColor.stripColor(TagResolver.removeTags(this.text));
     }
 
+    /**
+     * Gets the processed text in legacy format
+     * For MC < 1.8, removes tags only
+     * For MC >= 1.8, converts to a component, then converts the component to
+     * legacy text format
+     *
+     * @return Text formatted for the current MC version
+     */
     public String getText() {
         if (MinecraftVersion.isOlderThan(8)) return TagResolver.removeTags(this.text);
         return new TextComponent(getComponent()).toLegacyText();
     }
 
+    /**
+     * Gets the text converted into BaseComponents with remaining time placeholders parsed
+     *
+     * @return Array of BaseComponents representing the text
+     */
     public BaseComponent[] getComponent() {
         return TagResolver.deserialize(TimeParser.remainingTimeForValue(getTextRaw()));
     }

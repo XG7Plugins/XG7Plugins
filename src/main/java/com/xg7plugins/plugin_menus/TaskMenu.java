@@ -133,7 +133,7 @@ public class TaskMenu extends PagedMenu {
                         refresh(holder);
                         return;
                     }
-                    XG7PluginsAPI.taskManager().runTimerTask(XG7PluginsAPI.taskManager().getTimerTask(taskId));
+                    XG7PluginsAPI.taskManager().runTimerTask(XG7PluginsAPI.taskManager().get(taskId));
                     Text.sendTextFromLang(player, XG7Plugins.getInstance(),"task-command.restarted");
 
                     refresh(holder);

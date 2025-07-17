@@ -6,6 +6,11 @@ import com.xg7plugins.data.config.section.ConfigSection;
 import com.xg7plugins.utils.time.Time;
 import lombok.Getter;
 
+/**
+ * Config section for Redis cache in config.yml of XG7Plugins
+ *
+ * @see ConfigSection
+ */
 @Getter
 @ConfigFile(plugin = XG7Plugins.class, configName = "config", path = "redis-cache.")
 public class RedisCacheSection extends ConfigSection {

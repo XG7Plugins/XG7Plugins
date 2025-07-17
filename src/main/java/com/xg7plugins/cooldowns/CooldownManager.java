@@ -47,7 +47,7 @@ public class CooldownManager implements Manager {
      *
      * @param player     The player to apply the cooldown to
      * @param cooldownId The unique identifier for this cooldown
-     * @param time       The duration of the cooldown in seconds
+     * @param time       The duration of the cooldown in milliseconds
      */
     public void addCooldown(Player player, String cooldownId, long time) {
         addCooldown(player, new CooldownTask(cooldownId, time, null, null));
@@ -58,7 +58,7 @@ public class CooldownManager implements Manager {
      *
      * @param cooldownId The cooldown identifier to check
      * @param player     The player to check
-     * @return true if player has an active cooldown, false otherwise
+     * @return true if a player has an active cooldown, false otherwise
      */
     public boolean containsPlayer(String cooldownId, Player player) {
         return cooldowns.containsKey(player.getUniqueId()) && cooldowns.get(player.getUniqueId()).containsKey(cooldownId);

@@ -14,10 +14,12 @@ import java.lang.annotation.Target;
  * Example usage:
  * </p>
  * <pre>
+ * <code>
  * {@literal @}PacketEventHandler(priority = PacketListenerPriority.HIGH, packet = PacketEventType.ALL)
  * public class MyPacketHandler {
  *     // Handler implementation
  * }
+ * </code>
  * </pre>
  */
 @Target(ElementType.TYPE)

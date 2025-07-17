@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
+/**
+ * This class is the task that manages cooldowns by periodically updating cooldown timers
+ * and removing expired cooldowns
+ */
 public class CooldownManagerTask extends TimerTask {
 
     private final CooldownManager manager;

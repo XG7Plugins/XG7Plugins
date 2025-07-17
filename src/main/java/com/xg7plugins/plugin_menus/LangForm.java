@@ -4,7 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
-import com.xg7plugins.data.playerdata.PlayerDataDAO;
+import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
@@ -38,7 +38,7 @@ public class LangForm extends SimpleForm {
 
         XG7PluginsAPI.langManager().getLangs().asMap().join().entrySet().stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
 
-            PlayerData language = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId());
+            PlayerData language = XG7PluginsAPI.getRepository(PlayerDataRepository.class).get(player.getUniqueId());
 
             boolean selected = language != null && language.getLangId().equals(map.getKey().contains(":") ? map.getKey().split(":")[1] : map.getKey());
 
@@ -75,7 +75,7 @@ public class LangForm extends SimpleForm {
 
         XG7PluginsAPI.langManager().loadLangsFrom(plugin).thenRun(() -> {
 
-            PlayerData data = XG7PluginsAPI.getDAO(PlayerDataDAO.class).get(player.getUniqueId());
+            PlayerData data = XG7PluginsAPI.getRepository(PlayerDataRepository.class).get(player.getUniqueId());
 
             if (data == null) return;
 
@@ -93,7 +93,7 @@ public class LangForm extends SimpleForm {
                 return;
             }
 
-            PlayerDataDAO dao = XG7PluginsAPI.getDAO(PlayerDataDAO.class);
+            PlayerDataRepository dao = XG7PluginsAPI.getRepository(PlayerDataRepository.class);
 
             String dbLang = lang.split(":")[1];
 

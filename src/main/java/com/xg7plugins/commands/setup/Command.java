@@ -60,7 +60,7 @@ public interface Command {
     }
 
     /**
-     * Gets the icon representation of this command.
+     * Gets the icon representation of this command for help systems.
      *
      * @return The item representing this command's icon
      */

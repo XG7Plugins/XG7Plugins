@@ -12,12 +12,23 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Abstract class for managing config sections.
+ * Provides functionality to access, save and modify configuration values with type safety.
+ * <p>
+ * Usage examples can be found in {@link com.xg7plugins.data.config.core.MainConfigSection}
+ * which extends the base config functionality.
+ * The class automatically maps configuration values to fields using reflection.
+ */
 public abstract class ConfigSection {
 
     @Getter
     private final Config config;
     private final String mainSection;
 
+    /**
+     * Constructor that validates the {@link ConfigFile} annotation and initializes the config.
+     */
     public ConfigSection() {
         if (!this.getClass().isAnnotationPresent(ConfigFile.class)) {
             throw new IllegalStateException("ConfigSection class must be annotated with @ConfigFile");
@@ -26,7 +37,7 @@ public abstract class ConfigSection {
 
         Plugin plugin = XG7PluginsAPI.getXG7Plugin(configFile.plugin());
 
-        this.config = Config.of(configFile.configName(),  plugin);
+        this.config = Config.of(configFile.configName(), plugin);
         this.mainSection = configFile.path();
 
         try {
@@ -38,8 +49,11 @@ public abstract class ConfigSection {
 
     public ConfigFile getConfigFile() {
         return this.getClass().getAnnotation(ConfigFile.class);
-    };
+    }
 
+    /**
+     * Reloads the config values from file and updates all fields
+     */
     public void reload() {
         config.reload();
         try {
@@ -49,11 +63,18 @@ public abstract class ConfigSection {
         }
     }
 
+    /**
+     * Sets a config value and saves to file
+     * Used by forms like LangForm to persist changes
+     */
     public void setValue(String key, Object value) {
         config.set(mainSection + key, value);
         save();
     }
 
+    /**
+     * Saves current values to config file and updates fields
+     */
     public void save() {
         config.save();
         try {
@@ -63,15 +84,22 @@ public abstract class ConfigSection {
         }
     }
 
+    /**
+     * Maps config values to class fields using reflection
+     */
     public void setFieldValues() throws IllegalAccessException {
         Field[] fields = this.getClass().getDeclaredFields();
 
         for (Field field : fields) {
-             field.setAccessible(true);
-             setFieldValue(field);
+            field.setAccessible(true);
+            setFieldValue(field);
         }
     }
 
+    /**
+     * Sets a field's value based on its type from the config
+     * Supports primitive types, Time and custom objects
+     */
     private void setFieldValue(Field field) throws IllegalAccessException {
 
         Class<?> type = field.getType();
@@ -112,6 +140,10 @@ public abstract class ConfigSection {
 
     }
 
+    /**
+     * Sets a List field's value from config
+     * Used for arrays like enabledWorlds in EnvironmentConfig
+     */
     private void setFieldListValue(Field field) throws IllegalAccessException {
 
         Type genericType = field.getGenericType();
@@ -130,6 +162,9 @@ public abstract class ConfigSection {
         }
     }
 
+    /**
+     * Converts field names from camelCase to kebab-case for config paths
+     */
     private String camelToKebab(String input) {
         return input.replaceAll("([a-z])([A-Z])", "$1-$2").toLowerCase();
     }

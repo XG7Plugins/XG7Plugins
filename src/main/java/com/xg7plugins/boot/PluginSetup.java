@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Annotation used to configure plugin setup parameters.
- * This annotation is processed at runtime to initialize plugin settings.
+ * This annotation is processed to initialize plugin settings.
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PluginSetup {
@@ -32,10 +32,13 @@ public @interface PluginSetup {
      */
     String[] configs() default {};
 
+    /**
+     * Separated config sections to be loaded for easier access
+     */
     Class<? extends ConfigSection>[] configSections() default {};
 
     /**
-     * Messages to be drawn when plugin is enabled
+     * Messages to be drawn when the plugin is enabled
      */
     String[] onEnableDraw() default {};
 

@@ -17,6 +17,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+/**
+ * The main command handler for all XG7Plugins.
+ * <p>
+ * This class serves as the entry point for all plugin commands.
+ * It acts as a dynamic dispatcher for subcommands.
+ * <p>
+ * Example usage: <code>/[main-command-name] [subcommand]</code>
+ */
 @AllArgsConstructor
 @CommandSetup(
         name = "",

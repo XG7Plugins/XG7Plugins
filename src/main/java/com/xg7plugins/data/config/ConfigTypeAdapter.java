@@ -10,14 +10,20 @@ package com.xg7plugins.data.config;
 public interface ConfigTypeAdapter<T> {
 
     /**
-     * Creates an instance of type T from the given configuration section.
+     * Creates an instance of type T from the provided configuration.
      *
-     * @param section      The configuration section containing the data to be converted
-     * @param optionalArgs Additional arguments that may be needed during the conversion process
-     * @return An instance of type T populated with the configuration data
+     * @param config       The configuration object containing the data
+     * @param path         The path where the data is located in the configuration
+     * @param optionalArgs Optional arguments that may be needed during the conversion
+     * @return An instance of type T created from the configuration data
      */
     T fromConfig(Config config, String path, Object... optionalArgs);
 
+    /**
+     * Gets the target class type that this adapter converts to.
+     *
+     * @return The Class object representing the target type T
+     */
     Class<T> getTargetType();
 
 }

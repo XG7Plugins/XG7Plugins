@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
+/**
+ * Enumeration that provides different time formatting options.
+ * Each format represents a specific way to display time durations,
+ * from simple milliseconds to complex combinations of days, hours, minutes, seconds and milliseconds.
+ */
 @AllArgsConstructor
 public enum TimeFormat {
 
@@ -55,8 +60,20 @@ public enum TimeFormat {
         return days + n.get(0) + " " + hours + n.get(1) + " " + minutes + n.get(2) + " " + seconds + n.get(3) + " " + millis + n.get(4);
     });
 
+    /**
+     * Function that performs the actual time formatting.
+     * Takes a time value in milliseconds and a list of placeholder strings,
+     * returns the formatted time string.
+     */
     private final BiFunction<Long, List<String>, String> formatter;
 
+    /**
+     * Formats a time duration according to this format's specification.
+     * Uses placeholders from the main configuration file.
+     *
+     * @param time The time duration in milliseconds to format
+     * @return A formatted string representation of the time duration
+     */
     public String format(long time) {
 
         Config config = Config.mainConfigOf(XG7Plugins.getInstance());

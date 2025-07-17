@@ -14,11 +14,13 @@ import java.lang.annotation.RetentionPolicy;
  * Example usage:
  * </p>
  * <pre>
+ * <code>
  * public class Order implements Entity<Long, Order> {
  *     {@literal @}FKey(origin_table = Product.class, origin_column = "id")
  *     private Long productId;
  *     // other fields
  * }
+ * </code>
  * </pre>
  *
  * @see Entity

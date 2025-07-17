@@ -9,7 +9,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.data.config.section.ConfigBoolean;
 import com.xg7plugins.data.playerdata.PlayerData;
-import com.xg7plugins.data.playerdata.PlayerDataDAO;
+import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.item.Item;
@@ -72,7 +72,7 @@ public class LangCommand implements Command {
             return;
         }
 
-        PlayerDataDAO dao = XG7PluginsAPI.getDAO(PlayerDataDAO.class);
+        PlayerDataRepository dao = XG7PluginsAPI.getRepository(PlayerDataRepository.class);
 
         String dbLang = args.get(1, String.class);
 

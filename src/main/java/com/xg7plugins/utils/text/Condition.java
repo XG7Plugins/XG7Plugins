@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * Represents conditional text processing for player-specific messages.
  * This enum provides different types of conditions that can be used to show/hide text based on certain criteria.
  * <p>
- * Usage format: "?CONDITION_TYPE: value? text"
+ * Usage format: "?CONDITION_TYPE: value? Text"
  */
 @AllArgsConstructor
 @Getter

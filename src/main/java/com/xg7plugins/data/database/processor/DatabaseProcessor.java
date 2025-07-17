@@ -25,11 +25,11 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * Processes database operations asynchronously using queues and thread pools.
+ * Processes database operations with support for synchronous and asynchronous execution.
  * <p>
- * This class manages the execution of database queries and transactions,
- * handling them in separate queues and processing them asynchronously.
- * It provides methods to queue operations and checks their execution status.
+ * This class handles database queries and transactions execution,
+ * with asynchronous operations being configured in other parts of the code.
+ * It provides methods for direct database operations and checks their execution status.
  * </p>
  */
 @AllArgsConstructor
@@ -39,12 +39,13 @@ public class DatabaseProcessor {
     private final long timeout = Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("sql.connection-timeout").orElse(5000L);
 
     /**
-     * Processes the next transaction in the queue if available.
+     * Processes a database transaction.
      * <p>
      * Executes all SQL commands in the transaction as a single atomic unit,
      * committing if successful and rolling back if an error occurs.
      * </p>
      *
+     * @param transaction The transaction to process
      * @throws Exception If an error occurs during transaction processing
      */
     public void processTransaction(Transaction transaction) throws Exception {
@@ -120,7 +121,7 @@ public class DatabaseProcessor {
                 }
                 throw new RuntimeException(e);
             }
-        }  catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
             if (connection != null && !SQLConfigs.of(transaction.getPlugin()).getConnectionType().equals(ConnectionType.SQLITE)) {
@@ -130,12 +131,14 @@ public class DatabaseProcessor {
     }
 
     /**
-     * Processes the next query in the queue if available.
+     * Processes a database query.
      * <p>
-     * Executes the SQL query, collects the results, and provides them to the
-     * callback registered with the query.
+     * Executes the SQL query, collects the results, and returns them
+     * as a QueryResult object.
      * </p>
      *
+     * @param query The query to process
+     * @return The query results
      * @throws Exception If an error occurs during query processing
      */
     public QueryResult processQuery(Query query) throws Exception {
@@ -214,13 +217,13 @@ public class DatabaseProcessor {
     /**
      * Checks if an entity with the given ID exists in the database.
      * <p>
-     * First checks the entity cache, then performs a database lookup if necessary.
+     * First checks the entity cache, then performs a direct database lookup if necessary.
      * </p>
      *
      * @param plugin The plugin requesting the check
      * @param table  The entity class to check
      * @param id     The ID value to look for
-     * @return A CompletableFuture that resolves to true if the entity exists
+     * @return true if the entity exists, false otherwise
      */
     public boolean exists(Plugin plugin, Class<? extends Entity> table, Object id) {
         Debug.of(XG7Plugins.getInstance()).info("Checking existence for " + table.getSimpleName() + " with ID " + id);

@@ -42,7 +42,6 @@ public class CacheManager implements Manager {
     /**
      * Local cache storage using Caffeine cache implementation
      */
-
     private final HashMap<String, Cache<@NotNull Object, Object>> caches;
 
     public CacheManager(XG7Plugins plugin) {

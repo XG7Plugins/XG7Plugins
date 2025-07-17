@@ -125,7 +125,7 @@ public class ServerInfo {
 
     /**
      * Represents different Minecraft server software types.
-     * Currently supports SPIGOT and PAPER_SPIGOT variants.
+     * Currently, supports SPIGOT and PAPER_SPIGOT variants.
      */
     public enum Software {
         SPIGOT,

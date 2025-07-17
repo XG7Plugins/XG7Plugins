@@ -6,6 +6,10 @@ import com.xg7plugins.data.config.section.ConfigSection;
 import com.xg7plugins.utils.time.Time;
 import lombok.Getter;
 
+/**
+ * This class represents the majority of the main config keys,
+ * making easier to access
+ */
 @Getter
 @ConfigFile(plugin = XG7Plugins.class, configName = "config")
 public class MainConfigSection extends ConfigSection {

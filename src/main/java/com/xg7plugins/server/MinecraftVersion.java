@@ -23,49 +23,49 @@ public class MinecraftVersion {
         Matcher matcher = pattern.matcher(Bukkit.getServer().getVersion());
         version = matcher.find() ? Integer.parseInt(matcher.group(1)) : 0;
 
-        // Extract NMS package version name from server package
+        // Extract NMS package version name from the server package
         String version = org.bukkit.Bukkit.getServer().getClass().getPackage().getName();
-        // Does't work on 1.17+ on paper
+        // Doesn't work on 1.17+ on paper
         packageName = version.substring(version.lastIndexOf('.') + 1);
     }
 
     /**
-     * Checks if server version is older than target version
+     * Checks if the server version is older than a target version
      */
     public static boolean isOlderThan(int targetVersion) {
         return version < targetVersion;
     }
 
     /**
-     * Checks if server version is newer than target version
+     * Checks if the server version is newer than a target version
      */
     public static boolean isNewerThan(int targetVersion) {
         return version > targetVersion;
     }
 
     /**
-     * Checks if server version is older than or equal to target version
+     * Checks if the server version is older than or equal to a target version
      */
     public static boolean isOlderOrEqual(int targetVersion) {
         return version <= targetVersion;
     }
 
     /**
-     * Checks if server version is newer than or equal to target version
+     * Checks if the server version is newer than or equal to a target version
      */
     public static boolean isNewerOrEqual(int targetVersion) {
         return version >= targetVersion;
     }
 
     /**
-     * Checks if server version exactly matches target version
+     * Checks if the server version exactly matches a target version
      */
     public static boolean is(int targetVersion) {
         return targetVersion == version;
     }
 
     /**
-     * Checks if server version is between min and max versions (inclusive)
+     * Checks if the server version is between min and max versions (inclusive)
      */
     public static boolean isBetween(int minVersion, int maxVersion) {
         return minVersion <= version && version <= maxVersion;

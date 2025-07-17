@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Manages JSON data operations including saving, loading, and caching.
- * Provides functionality for serializing/deserializing objects to/from JSON format
+ * Provides functionality for serializing/deserializing objects to/from the JSON format
  * with support for type adapters and caching mechanism.
  */
 public class JsonManager implements Manager {

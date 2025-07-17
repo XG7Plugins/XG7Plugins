@@ -1,5 +1,12 @@
 package com.xg7plugins.events.packetevents;
 
+
+/**
+ * Enum defining all possible packet event types that can be handled.
+ * This includes both client and server-side packets for various Minecraft protocol states
+ * like handshake, login, status, configuration and play.
+ * This is a packet mapping for PacketEvents API
+ */
 public enum PacketEventType {
 
     ALL,

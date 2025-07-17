@@ -3,7 +3,7 @@ package com.xg7plugins.events.defaultevents;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.playerdata.PlayerData;
-import com.xg7plugins.data.playerdata.PlayerDataDAO;
+import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,7 +23,7 @@ public class JoinListener implements Listener {
     public void onAsyncJoin(AsyncPlayerPreLoginEvent event) {
 
         try {
-            XG7PluginsAPI.getDAO(PlayerDataDAO.class).add(new PlayerData(event.getUniqueId(), null));
+            XG7PluginsAPI.getRepository(PlayerDataRepository.class).add(new PlayerData(event.getUniqueId(), null));
         } catch (Exception e) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL,  e.getMessage());
             throw new RuntimeException(e);
@@ -41,7 +41,7 @@ public class JoinListener implements Listener {
 
                 if (playerData.getLangId() == null) {
                     playerData.setLangId(XG7PluginsAPI.langManager().getNewLangFor(event.getPlayer()).join());
-                    XG7PluginsAPI.getDAO(PlayerDataDAO.class).update(playerData);
+                    XG7PluginsAPI.getRepository(PlayerDataRepository.class).update(playerData);
                 }
             });
         } catch (Exception e) {

@@ -31,7 +31,7 @@ public class Debug {
     }
 
     /**
-     * Logs a loading message to console with the plugin's prefix.
+     * Logs a loading message to the console with the plugin's prefix.
      * This message type is always shown regardless of debug mode.
      *
      * @param message The message to display
@@ -41,7 +41,7 @@ public class Debug {
     }
 
     /**
-     * Logs an info message to console if debug mode is enabled.
+     * Logs an info message to the console if debug mode is enabled.
      * Uses the plugin's prefix with INFO level indicator.
      *
      * @param message The message to display
@@ -52,8 +52,8 @@ public class Debug {
     }
 
     /**
-     * Logs a warning message to console if debug mode is enabled.
-     * Uses the plugin's prefix with WARNING level indicator in yellow.
+     * Logs a warning message to the console if debug mode is enabled.
+     * Uses the plugin's prefix with the WARNING level indicator in yellow.
      *
      * @param message The message to display
      */
@@ -63,7 +63,7 @@ public class Debug {
     }
 
     /**
-     * Logs an error message to console.
+     * Logs an error message to the console.
      * This message type is always shown regardless of debug mode.
      * Uses the plugin's prefix with ERROR level indicator in red.
      *
@@ -74,7 +74,7 @@ public class Debug {
     }
 
     /**
-     * Logs a general message to console.
+     * Logs a general message to the console.
      * This message type is always shown regardless of debug mode.
      * Uses the plugin's prefix with LOG level indicator.
      *
