@@ -14,7 +14,6 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class SimpleForm extends Form<org.geysermc.cumulus.form.SimpleForm, SimpleFormResponse> {
 
-
     public SimpleForm(String id, String title, Plugin plugin) {
         super(id, title, plugin);
     }
@@ -24,24 +23,33 @@ public abstract class SimpleForm extends Form<org.geysermc.cumulus.form.SimpleFo
     public abstract List<ButtonComponent> buttons(Player player);
 
     @Override
-    public CompletableFuture<Boolean> send(Player player) {
-        return CompletableFuture.supplyAsync(() -> {
+    public boolean send(Player player) {
 
-            org.geysermc.cumulus.form.SimpleForm.Builder builder = org.geysermc.cumulus.form.SimpleForm.builder();
+        org.geysermc.cumulus.form.SimpleForm.Builder builder = org.geysermc.cumulus.form.SimpleForm.builder();
 
-            builder.title(Text.detectLangs(player, plugin,title).join().getText());
-            builder.content(Text.detectLangs(player, plugin,content(player)).join().getText());
+        builder.title(Text.detectLangs(player, plugin, title).join().getText());
+        builder.content(Text.detectLangs(player, plugin, content(player)).join().getText());
 
-            buttons(player).forEach(builder::button);
+        buttons(player).forEach(btn -> {
 
-            builder.invalidResultHandler((form, response) -> onError(form, response, player));
-            builder.validResultHandler((form, response) -> onFinish(form, response, player));
-            builder.closedResultHandler((form) -> onClose(form, player));
+            if (btn.image() != null) {
 
-            FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
+                builder.button(ButtonComponent.of(Text.detectLangs(player, plugin, btn.text()).join().getText(), btn.image()));
+                return;
 
-            return true;
-        }, XG7PluginsAPI.taskManager().getExecutor("menus"));
+            }
+
+            builder.button(ButtonComponent.of(Text.detectLangs(player, plugin, btn.text()).join().getText()));
+
+        });
+
+        builder.invalidResultHandler((form, response) -> onError(form, response, player));
+        builder.validResultHandler((form, response) -> onFinish(form, response, player));
+        builder.closedResultHandler((form) -> onClose(form, player));
+
+        FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
+
+        return true;
     }
 
 }

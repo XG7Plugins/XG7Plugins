@@ -6,6 +6,7 @@ import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;
+import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
@@ -16,6 +17,9 @@ import org.geysermc.cumulus.util.FormImage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public class LangForm extends SimpleForm {
@@ -34,9 +38,11 @@ public class LangForm extends SimpleForm {
 
         List<ButtonComponent> components = new ArrayList<>();
 
-        XG7PluginsAPI.langManager().loadLangsFrom(plugin).join();
+        XG7PluginsAPI.langManager().loadLangsFrom(XG7Plugins.getInstance()).join();
 
-        XG7PluginsAPI.langManager().getLangs().asMap().join().entrySet().stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
+        Set<Map.Entry<String, Config>> langsSet = XG7PluginsAPI.langManager().getLangs().asMap().join().entrySet();
+
+        langsSet.stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
 
             PlayerData language = XG7PluginsAPI.getRepository(PlayerDataRepository.class).get(player.getUniqueId());
 
@@ -79,7 +85,9 @@ public class LangForm extends SimpleForm {
 
             if (data == null) return;
 
-            String lang = XG7PluginsAPI.langManager().getLangs().asMap().join().keySet().toArray(new String[0])[result.clickedButtonId()];
+            Set<String> langsSet = XG7PluginsAPI.langManager().getLangs().asMap().join().keySet();
+
+            String lang = langsSet.stream().filter(l -> l.contains("XG7Plugins")).collect(Collectors.toList()).get(result.clickedButtonId());
             if (data.getLangId().equals(lang)) {
                 Text.fromLang(player, plugin, "lang-menu.already-selected").thenAccept(text -> text.send(player));
                 return;
@@ -101,8 +109,14 @@ public class LangForm extends SimpleForm {
 
             dao.update(data);
             XG7PluginsAPI.langManager().loadLangsFrom(XG7Plugins.getInstance()).join();
+
             Text.sendTextFromLang(player, plugin, "lang-menu.toggle-success");
+
+            XG7Scores.getInstance().removePlayer(player);
+            XG7Scores.getInstance().addPlayer(player);
+
             send(player);
+
 
 
             XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", Config.mainConfigOf(plugin).getTimeInMilliseconds("cooldown-to-toggle-lang").orElse(5000L));

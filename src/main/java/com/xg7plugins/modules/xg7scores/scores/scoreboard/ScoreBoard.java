@@ -53,10 +53,7 @@ public class ScoreBoard extends Score {
         if (!super.getPlayers().contains(player.getUniqueId())) {
             super.addPlayer(player);
 
-            PlayerBoard playerBoard = new PlayerBoard(this, healthDisplaySuffix, player, super.updateText, lines);
-
-            if (sideBar) playerBoard.createSidebar();
-            if (belowName) playerBoard.createBelowname();
+            PlayerBoard playerBoard = new PlayerBoard(this, healthDisplaySuffix, player, super.updateText, lines, sideBar, belowName);
 
             playerBoards.put(player.getUniqueId(), playerBoard);
 

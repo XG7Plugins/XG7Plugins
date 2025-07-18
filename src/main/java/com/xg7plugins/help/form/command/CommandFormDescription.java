@@ -51,7 +51,7 @@ public class CommandFormDescription extends ModalForm {
                 return;
             }
 
-            CommandForm commandMenu = new CommandForm(plugin, command.getSubCommands(), "Subcommands of: " + command.getCommandSetup().name(), origin, guiOrigin);
+            CommandForm commandMenu = new CommandForm(command.getSubCommands(), "Subcommands of: " + command.getCommandSetup().name(), origin, guiOrigin);
             commandMenu.send(player);
         } origin.send(player);
 

@@ -30,7 +30,7 @@ public class ActionBarSender implements TextSender {
 
         if (MinecraftVersion.isNewerThan(8)) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, text.getComponent());
-            XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 60L);
+            XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 3000L);
             return;
         }
 
@@ -42,7 +42,7 @@ public class ActionBarSender implements TextSender {
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutChat);
 
 
-        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 60L);
+        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 3000L);
 
     }
 

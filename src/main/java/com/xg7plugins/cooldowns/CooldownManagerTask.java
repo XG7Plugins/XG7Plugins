@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -41,6 +42,8 @@ public class CooldownManagerTask extends TimerTask {
 
         List<Pair<UUID, CooldownManager.CooldownTask>> toRemove = new ArrayList<>();
 
+        AtomicBoolean error = new AtomicBoolean(false);
+
         manager.getCooldowns().forEach((id, tasks) -> {
             Player player = Bukkit.getPlayer(id);
 
@@ -57,7 +60,7 @@ public class CooldownManagerTask extends TimerTask {
                     try {
                         task.getTick().accept(player);
                     } catch (Exception e) {
-                        if (task.getOnFinish() != null) task.getOnFinish().accept(player, true);
+                        error.set(true);
                         toRemove.add(Pair.of(id, task));
                         e.printStackTrace();
                         return;
@@ -66,7 +69,7 @@ public class CooldownManagerTask extends TimerTask {
                 }
                 if (task.getTime() <= 0) {
                     try {
-                        if (task.getOnFinish() != null) task.getOnFinish().accept(player, false);
+                        error.set(false);
                         toRemove.add(Pair.of(id, task));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -80,7 +83,7 @@ public class CooldownManagerTask extends TimerTask {
         for (Pair<UUID, CooldownManager.CooldownTask> pair : toRemove) {
             if (manager.getCooldowns().get(pair.getFirst()) == null) continue;
 
-            manager.removeCooldown(pair.getSecond().getId(), pair.getFirst());
+            manager.removeCooldown(pair.getSecond().getId(), pair.getFirst(), error.get());
 
             if (manager.getCooldowns().get(pair.getFirst()).isEmpty()) manager.getCooldowns().remove(pair.getFirst());
         }

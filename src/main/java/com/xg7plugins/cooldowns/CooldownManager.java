@@ -80,13 +80,32 @@ public class CooldownManager implements Manager {
      *
      * @param cooldownId The cooldown identifier to remove
      * @param playerID   The UUID of the player
+     * @param error   If the process returned an error
      */
-    public void removeCooldown(String cooldownId, UUID playerID) {
+    public void removeCooldown(String cooldownId, UUID playerID, boolean error) {
         CooldownTask task = cooldowns.get(playerID).get(cooldownId);
 
-        if (task.getOnFinish() != null) task.getOnFinish().accept(Bukkit.getPlayer(playerID), true);
+        if (task.getOnFinish() != null) task.getOnFinish().accept(Bukkit.getPlayer(playerID), error);
         cooldowns.get(playerID).remove(cooldownId);
     }
+
+    public void removeAll() {
+        cooldowns.forEach((playerId, taskMap) -> {
+            if (taskMap == null) return;
+
+            taskMap.forEach((cooldownId, task) -> {
+
+                if (task.getOnFinish() != null) {
+                    Player player = Bukkit.getPlayer(playerId);
+                    if (player != null) task.getOnFinish().accept(player, false);
+
+                }
+            });
+        });
+
+        cooldowns.clear(); // Limpa todos os dados após cancelar
+    }
+
 
     /**
      * Cancels the cooldown manager task

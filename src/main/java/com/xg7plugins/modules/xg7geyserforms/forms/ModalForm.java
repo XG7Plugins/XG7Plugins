@@ -25,23 +25,21 @@ public abstract class ModalForm extends Form<org.geysermc.cumulus.form.ModalForm
     }
 
     @Override
-    public CompletableFuture<Boolean> send(Player player) {
-        return CompletableFuture.supplyAsync(() -> {
-            org.geysermc.cumulus.form.ModalForm.Builder builder = org.geysermc.cumulus.form.ModalForm.builder();
+    public boolean send(Player player) {
+        org.geysermc.cumulus.form.ModalForm.Builder builder = org.geysermc.cumulus.form.ModalForm.builder();
 
-            builder.title(Text.detectLangs(player, plugin,title).join().getText());
-            builder.content(Text.detectLangs(player, plugin,content).join().getText());
-            builder.button1(Text.detectLangs(player, plugin,button1).join().getText());
-            builder.button2(Text.detectLangs(player, plugin,button2).join().getText());
+        builder.title(Text.detectLangs(player, plugin, title).join().getText());
+        builder.content(Text.detectLangs(player, plugin, content).join().getText());
+        builder.button1(Text.detectLangs(player, plugin, button1).join().getText());
+        builder.button2(Text.detectLangs(player, plugin, button2).join().getText());
 
-            builder.invalidResultHandler((form, response) -> AsyncTask.of(XG7Plugins.getInstance(),"menus", () -> onError(form, response, player)));
-            builder.validResultHandler((form, response) -> onFinish(form, response, player));
-            builder.closedResultHandler((form) -> onClose(form, player));
+        builder.invalidResultHandler((form, response) -> AsyncTask.of(XG7Plugins.getInstance(), "menus", () -> onError(form, response, player)));
+        builder.validResultHandler((form, response) -> onFinish(form, response, player));
+        builder.closedResultHandler((form) -> onClose(form, player));
 
-            FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
+        FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
 
-            return true;
-        }, XG7PluginsAPI.taskManager().getExecutor("menus"));
+        return true;
     }
 
 }

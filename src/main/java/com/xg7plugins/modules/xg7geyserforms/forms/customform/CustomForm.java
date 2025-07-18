@@ -24,21 +24,19 @@ public abstract class CustomForm extends Form<org.geysermc.cumulus.form.CustomFo
     public abstract List<IComponent> components(Player player);
 
     @Override
-    public CompletableFuture<Boolean> send(Player player) {
-        return CompletableFuture.supplyAsync(() -> {
-            org.geysermc.cumulus.form.CustomForm.Builder builder = org.geysermc.cumulus.form.CustomForm.builder();
+    public boolean send(Player player) {
+        org.geysermc.cumulus.form.CustomForm.Builder builder = org.geysermc.cumulus.form.CustomForm.builder();
 
-            builder.title(Text.detectLangs(player, plugin,title).join().getText());
+        builder.title(Text.detectLangs(player, plugin, title).join().getText());
 
-            components(player).stream().map(component -> component.build(player, plugin)).forEach(builder::component);
+        components(player).stream().map(component -> component.build(player, plugin)).forEach(builder::component);
 
-            builder.invalidResultHandler((form, response) -> onError(form, response, player));
-            builder.validResultHandler((form, response) -> onFinish(form, response, player));
-            builder.closedResultHandler((form) -> onClose(form, player));
+        builder.invalidResultHandler((form, response) -> onError(form, response, player));
+        builder.validResultHandler((form, response) -> onFinish(form, response, player));
+        builder.closedResultHandler((form) -> onClose(form, player));
 
-            FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
+        FloodgateApi.getInstance().sendForm(player.getUniqueId(), builder.build());
 
-            return true;
-        }, XG7PluginsAPI.taskManager().getExecutor("menus"));
+        return true;
     }
 }

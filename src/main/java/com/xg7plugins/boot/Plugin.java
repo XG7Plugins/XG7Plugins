@@ -117,15 +117,14 @@ public abstract class Plugin extends JavaPlugin {
      */
     public void onReload(ReloadCause cause) {
 
-        XG7Plugins xg7Plugin = XG7Plugins.getInstance();
-
         if (cause.equals(ReloadCause.CONFIG)) {
-            XG7PluginsAPI.configManager(xg7Plugin).reloadConfigs();
+            XG7PluginsAPI.configManager(this).reloadConfigs();
             debug = new Debug(this);
         }
         if (cause.equals(ReloadCause.EVENTS)) {
             XG7PluginsAPI.eventManager().reloadEvents(this);
             XG7PluginsAPI.packetEventManager().reloadListeners(this);
+            XG7PluginsAPI.moduleManager().loadListeners();
         }
         if (cause.equals(ReloadCause.DATABASE)) {
             XG7PluginsAPI.database().reloadConnection(this);
@@ -136,7 +135,13 @@ public abstract class Plugin extends JavaPlugin {
         }
         if (cause.equals(ReloadCause.TASKS)) {
             XG7PluginsAPI.taskManager().cancelAllRegisteredTasks(this);
-            XG7PluginsAPI.taskManager().reloadTasks(this);
+            XG7PluginsAPI.cooldowns().removeAll();
+            XG7PluginsAPI.cooldowns().cancelTask();
+            XG7PluginsAPI.taskManager().shutdown();
+            XG7PluginsAPI.taskManager().load();
+            XG7PluginsAPI.moduleManager().loadExecutors();
+            XG7PluginsAPI.moduleManager().loadTasks();
+            XG7PluginsAPI.taskManager().registerTimerTasks(this.loadRepeatingTasks());
         }
 
     }

@@ -118,7 +118,7 @@ public final class XG7Plugins extends Plugin {
 
         managerRegistry.registerManager(new DependencyManager());
         managerRegistry.registerManager(new CacheManager(this));
-        managerRegistry.registerManager(new TaskManager(this));
+        managerRegistry.registerManager(new TaskManager());
         managerRegistry.registerManager(new DatabaseManager(this));
         managerRegistry.registerManager(new LangManager(this, new String[]{"en", "pt", "es"}));
         managerRegistry.registerManager(new JsonManager(this));
@@ -165,6 +165,10 @@ public final class XG7Plugins extends Plugin {
         Bukkit.getOnlinePlayers().forEach(player -> player.kickPlayer("§cServer is restarting..."));
 
         this.plugins.forEach((name, plugin) -> unregister(plugin));
+
+        debug.loading("Stopping cooldowns...");
+        XG7PluginsAPI.cooldowns().removeAll();
+        XG7PluginsAPI.cooldowns().cancelTask();
 
         debug.loading("Stopping tasks...");
         XG7PluginsAPI.taskManager().shutdown();
@@ -297,7 +301,7 @@ public final class XG7Plugins extends Plugin {
         plugin.getDebug().loading("Loading help...");
         plugin.loadHelp();
 
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+        if (XG7PluginsAPI.dependencyManager().exists("PlaceholderAPI")) {
 
             PlaceholderExpansion placeholderExpansion = plugin.loadPlaceholderExpansion();
 

@@ -14,6 +14,8 @@ import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.MenuHolder;
+import com.xg7plugins.modules.xg7scores.XG7Scores;
+import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -40,10 +42,14 @@ public class LangCommand implements Command {
                 CommandMessages.NOT_A_PLAYER.send(sender);
                 return;
             }
-            if (XG7PluginsAPI.isGeyserFormsEnabled() && XG7GeyserForms.getInstance().sendForm((Player) sender, "lang-form"))
-                return;
+            XG7PluginsAPI.taskManager().runSync(BukkitTask.of(XG7Plugins.getInstance(), () -> {
+                if (XG7PluginsAPI.isGeyserFormsEnabled() && XG7GeyserForms.getInstance().sendForm((Player) sender, "lang-form"))
+                    return;
 
-            XG7Menus.getInstance().getMenu(XG7Plugins.getInstance(), "lang-menu").open((Player) sender);
+                XG7Menus.getInstance().getMenu(XG7Plugins.getInstance(), "lang-menu").open((Player) sender);
+
+            }));
+
             return;
         }
 
@@ -84,6 +90,9 @@ public class LangCommand implements Command {
 
         Player targetOnline = target.getPlayer();
         Text.sendTextFromLang(targetOnline, XG7Plugins.getInstance(), "lang-menu.toggle-success");
+
+        XG7Scores.getInstance().removePlayer(targetOnline);
+        XG7Scores.getInstance().addPlayer(targetOnline);
 
         if (targetOnline.getOpenInventory().getTopInventory().getHolder() instanceof MenuHolder) {
             MenuHolder holder = (MenuHolder) targetOnline.getOpenInventory().getTopInventory().getHolder();

@@ -23,6 +23,6 @@ public abstract class Form<F extends org.geysermc.cumulus.form.Form,R extends Fo
     public abstract void onError(F form, InvalidFormResponseResult<R> result, Player player);
     public abstract void onClose(F form, Player player);
 
-    public abstract CompletableFuture<Boolean> send(Player player);
+    public abstract boolean send(Player player);
 
 }

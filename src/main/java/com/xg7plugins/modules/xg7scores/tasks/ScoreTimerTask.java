@@ -9,6 +9,7 @@ import com.xg7plugins.tasks.tasks.TimerTask;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ScoreTimerTask extends TimerTask {
@@ -31,14 +32,16 @@ public class ScoreTimerTask extends TimerTask {
     @Override
     public void run() {
         scores.getScores().values().forEach(score -> {
-            scores.getPlayers().forEach(uuid -> {
+
+            new ArrayList<>(scores.getPlayers()).forEach(uuid -> {
                 try {
 
                     Player p = Bukkit.getPlayer(uuid);
 
                     if (p == null || !p.isOnline()) return;
 
-                    if (score.getCondition().apply(p) && !p.isDead() && XG7Plugins.getInstance().isEnabled()) score.addPlayer(p);
+                    if (score.getCondition().apply(p) && !p.isDead() && XG7Plugins.getInstance().isEnabled())
+                        score.addPlayer(p);
                     else if (score.getPlayers().contains(p.getUniqueId())) {
                         if (!XG7Plugins.getInstance().isEnabled()) return;
                         XG7PluginsAPI.taskManager().runSync(BukkitTask.of(XG7Plugins.getInstance(), () -> score.removePlayer(p)));

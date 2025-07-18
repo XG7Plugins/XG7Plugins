@@ -207,7 +207,7 @@ public class Time {
      * Formats this Time as a date string using a specified format
      */
     public String formatDate(String format) {
-        return new SimpleDateFormat().format(new Date(milliseconds));
+        return new SimpleDateFormat(format).format(new Date(milliseconds));
     }
 
 }

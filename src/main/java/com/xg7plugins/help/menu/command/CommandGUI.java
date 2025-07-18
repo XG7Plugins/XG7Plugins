@@ -27,7 +27,7 @@ public class CommandGUI extends PagedMenu {
     public CommandGUI(Plugin plugin, List<Command> commands, String title, CommandGUI superMenu, HelpGUI guiOrigin, String commandName) {
         super(
                 new CommandGUIConfiguration(commandName, plugin,title),
-                Slot.of(2,2), Slot.of(5,8)
+                Slot.of(2,2), Slot.of(4,8)
         );
         this.commands = commands.stream().collect(
                 Collectors.toMap(

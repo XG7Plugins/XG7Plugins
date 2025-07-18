@@ -10,6 +10,7 @@ import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import com.xg7plugins.tasks.tasks.AsyncTask;
+import com.xg7plugins.tasks.tasks.BukkitTask;
 import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
 
@@ -45,43 +46,40 @@ public abstract class PagedMenu extends Menu {
 
     public abstract List<Item> pagedItems(Player player);
 
-    @SneakyThrows
-    public void goPage(int page, PagedMenuHolder menuHolder) {
+    public boolean goPage(int page, PagedMenuHolder menuHolder) {
+
+        List<Item> pagedItems = pagedItems(menuHolder.getPlayer());
+
+        if (page < 0) return false;
+        if (page * Slot.areaOf(pos1, pos2) >= pagedItems.size()) return false;
+        List<Item> itemsToAdd = pagedItems.subList(page * (Slot.areaOf(pos1, pos2)), pagedItems.size());
 
 
-        XG7PluginsAPI.taskManager().scheduleAsync(AsyncTask.of(XG7Plugins.getInstance(), () -> {
-            try {
-                List<Item> pagedItems = pagedItems(menuHolder.getPlayer());
+        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> {
+            int index = 0;
 
-                if (page < 0) return;
-                if (page * Slot.areaOf(pos1, pos2) >= pagedItems.size()) return;
-                List<Item> itemsToAdd = pagedItems.subList(page * (Slot.areaOf(pos1, pos2)), pagedItems.size());
+            InventoryUpdater inventory = menuHolder.getInventoryUpdater();
 
-                int index = 0;
+            for (int x = pos1.getRow(); x <= pos2.getRow(); x++) {
+                for (int y = pos1.getColumn(); y <= pos2.getColumn(); y++) {
 
-                InventoryUpdater inventory = menuHolder.getInventoryUpdater();
-
-                for (int x = pos1.getRow(); x <= pos2.getRow(); x++) {
-                    for (int y = pos1.getColumn(); y <= pos2.getColumn(); y++) {
-
-                        if (index >= itemsToAdd.size()) {
-                            if (inventory.hasItem(Slot.of(x, y))) inventory.setItem(Slot.of(x, y), Item.air());
-                            continue;
-                        }
-                        inventory.setItem(Slot.of(x, y), itemsToAdd.get(index));
-
-                        index++;
+                    if (index >= itemsToAdd.size()) {
+                        if (inventory.hasItem(Slot.of(x, y))) inventory.setItem(Slot.of(x, y), Item.air());
+                        continue;
                     }
+                    inventory.setItem(Slot.of(x, y), itemsToAdd.get(index));
+
+                    index++;
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
         }), 100L);
+        return true;
     }
 
 
     public static void refresh(PagedMenuHolder menuHolder) {
-        BasicMenu.refresh(menuHolder).thenRun(() -> menuHolder.goPage(0));
+        BasicMenu.refresh(menuHolder);
+        menuHolder.goPage(0);
     }
 }

@@ -14,6 +14,7 @@ import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.PagedMenu;
+import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
@@ -112,6 +113,8 @@ public class LangMenu extends PagedMenu {
                     XG7PluginsAPI.langManager().loadLangsFrom(getMenuConfigs().getPlugin()).join();
                     Text.sendTextFromLang(player, getMenuConfigs().getPlugin(), "lang-menu.toggle-success");
                     refresh(holder);
+                    XG7Scores.getInstance().removePlayer(player);
+                    XG7Scores.getInstance().addPlayer(player);
 
 
                     XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("cooldown-to-toggle-lang").orElse(5000L));

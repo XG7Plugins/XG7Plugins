@@ -85,6 +85,7 @@ public class LegacyBossBar extends Score {
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
             if (player.isDead()) continue;
+            if (entities.get(player.getUniqueId()) == null) continue;
 
             Location playerLocation = Location.fromBukkit(player.getLocation());
             Vector direction = playerLocation.getDirection();

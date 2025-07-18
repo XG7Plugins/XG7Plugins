@@ -39,31 +39,30 @@ public abstract class StorageMenu extends Menu {
     public abstract List<Item> getStorageItems(Player player);
 
     public static void refresh(StorageMenuHolder menuHolder) {
-        BasicMenu.refresh(menuHolder).thenRun(() -> {
-            List<Item> storageItems = menuHolder.getMenu().getStorageItems(menuHolder.getPlayer());
+        BasicMenu.refresh(menuHolder);
+        List<Item> storageItems = menuHolder.getMenu().getStorageItems(menuHolder.getPlayer());
 
-            if (storageItems.isEmpty()) return;
+        if (storageItems.isEmpty()) return;
 
-            int index = 0;
+        int index = 0;
 
-            Slot pos1 = menuHolder.getMenu().getPos1();
-            Slot pos2 = menuHolder.getMenu().getPos2();
+        Slot pos1 = menuHolder.getMenu().getPos1();
+        Slot pos2 = menuHolder.getMenu().getPos2();
 
-            for (int x = pos1.getRow(); x <= pos2.getRow(); x++) {
-                for (int y = pos1.getColumn(); y <= pos2.getColumn(); y++) {
+        for (int x = pos1.getRow(); x <= pos2.getRow(); x++) {
+            for (int y = pos1.getColumn(); y <= pos2.getColumn(); y++) {
 
-                    if (index >= storageItems.size()) {
-                        if (menuHolder.getInventoryUpdater().hasItem(Slot.of(x, y))) {
-                            menuHolder.getInventoryUpdater().setItem(Slot.of(x, y), Item.air());
-                        }
-                        continue;
+                if (index >= storageItems.size()) {
+                    if (menuHolder.getInventoryUpdater().hasItem(Slot.of(x, y))) {
+                        menuHolder.getInventoryUpdater().setItem(Slot.of(x, y), Item.air());
                     }
-
-                    Item item = storageItems.get(index);
-                    menuHolder.getInventoryUpdater().setItem(Slot.of(x, y), item);
-                    index++;
+                    continue;
                 }
+
+                Item item = storageItems.get(index);
+                menuHolder.getInventoryUpdater().setItem(Slot.of(x, y), item);
+                index++;
             }
-        });
+        }
     }
 }

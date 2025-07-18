@@ -78,7 +78,7 @@ public class SeeSubcommand implements Command {
                     BasicMenu.refresh(event.getHolder());
                     return;
                 }
-                XG7PluginsAPI.taskManager().runTimerTask(XG7PluginsAPI.taskManager().getRegisteredTimerTask(task.getTask().getPlugin(),task.getId()));
+                XG7PluginsAPI.taskManager().runTimerTask(XG7PluginsAPI.taskManager().getTimerTask(task.getTask().getPlugin(),task.getId()));
                 Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.restarted");
 
                 BasicMenu.refresh(event.getHolder());

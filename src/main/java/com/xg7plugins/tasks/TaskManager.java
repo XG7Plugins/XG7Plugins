@@ -27,22 +27,19 @@ public class TaskManager implements Manager {
 
     private final Map<String, TimerTask> timerTaskMap = new ConcurrentHashMap<>();
     private final Map<String, ExecutorService> asyncExecutors = new HashMap<>();
-    private final ScheduledExecutorService mainScheduledAsyncExecutor;
+    private ScheduledExecutorService mainScheduledAsyncExecutor;
 
-    /**
-     * Initializes the TaskManager with necessary thread pools and executors.
-     *
-     * @param plugin The main plugin instance
-     */
-    public TaskManager(XG7Plugins plugin) {
-        Config config = Config.mainConfigOf(plugin);
-        mainScheduledAsyncExecutor = Executors.newScheduledThreadPool(config.get("repeating-tasks-threads", Integer.class).orElse(1));
+    public TaskManager() {
+        load();
+    }
+
+    public void load() {
+        mainScheduledAsyncExecutor = Executors.newScheduledThreadPool(Config.mainConfigOf(XG7Plugins.getInstance()).get("repeating-tasks-threads", Integer.class).orElse(1));
 
         registerExecutor("commands", Executors.newSingleThreadExecutor());
         registerExecutor("database", Executors.newCachedThreadPool());
         registerExecutor("files", Executors.newCachedThreadPool());
         registerExecutor("langs", Executors.newCachedThreadPool());
-        registerExecutor("menus", Executors.newSingleThreadExecutor());
         registerExecutor("cache", Executors.newSingleThreadExecutor());
     }
 

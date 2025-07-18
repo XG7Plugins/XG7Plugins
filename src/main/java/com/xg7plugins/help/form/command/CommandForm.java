@@ -1,5 +1,6 @@
 package com.xg7plugins.help.form.command;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.executors.MainCommand;
 import com.xg7plugins.commands.setup.Command;
@@ -25,8 +26,8 @@ public class CommandForm extends SimpleForm {
     @Getter
     private final HelpForm guiOrigin;
 
-    public CommandForm(Plugin plugin, List<Command> commands, String customTitle, CommandForm superForm, HelpForm guiOrigin) {
-        super("command-form" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, plugin);
+    public CommandForm(List<Command> commands, String customTitle, CommandForm superForm, HelpForm guiOrigin) {
+        super("command-form" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, XG7Plugins.getInstance());
 
         this.commands = commands.stream().collect(
                 Collectors.toMap(
@@ -34,7 +35,6 @@ public class CommandForm extends SimpleForm {
                         command -> command
                 )
         );
-
         this.guiOrigin = guiOrigin;
         this.superForm = superForm;
 

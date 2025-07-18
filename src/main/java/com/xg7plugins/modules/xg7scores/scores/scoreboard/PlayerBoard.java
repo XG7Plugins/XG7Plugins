@@ -32,7 +32,7 @@ class PlayerBoard {
     private final ScoreBoard scoreBoard;
     private final Player player;
 
-    public PlayerBoard(ScoreBoard board, String healthDisplaySuffix, Player player, List<String> title, List<String> lines) {
+    public PlayerBoard(ScoreBoard board, String healthDisplaySuffix, Player player, List<String> title, List<String> lines, boolean enableSidebar, boolean enableBelowName) {
         this.healthDisplaySuffix = healthDisplaySuffix;
         this.player = player;
         this.title = title;
@@ -42,12 +42,14 @@ class PlayerBoard {
         XG7PluginsAPI.taskManager().runSync(BukkitTask.of(XG7Plugins.getInstance(), () -> {
             this.bukkitScoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
             player.setScoreboard(bukkitScoreboard);
+
+            if (enableSidebar) createSidebar();
+            if (enableBelowName) createBelowname();
         }));
 
     }
 
     public void createSidebar() {
-        if (sidebarObjective != null) return;
         XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> {
             this.sidebarObjective = bukkitScoreboard.registerNewObjective("sb-" + scoreBoard.getId(), "dummy");
             sidebarObjective.setDisplaySlot(DisplaySlot.SIDEBAR);

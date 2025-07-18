@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TPSCalculator extends TimerTask {
 
-    private long startNanoTime;
+    private long startNanoTime = System.nanoTime();
 
     private final AtomicInteger ticks = new AtomicInteger();
     private final AtomicDouble lastTps = new AtomicDouble();
@@ -36,16 +36,21 @@ public class TPSCalculator extends TimerTask {
 
     @Override
     public void run() {
+
         long elapsed = System.nanoTime() - startNanoTime;
-        double seconds = elapsed / 1_000_000_000.0;
+        double seconds = (double) elapsed / 1e+9;
 
         if (seconds >= 1) {
             double tps = ticks.get() / seconds;
             lastTps.set(tps);
             ticks.set(0);
             startNanoTime = System.nanoTime();
+            return;
         }
+
+        ticks.incrementAndGet(); // só conta tick se não reiniciou ainda
     }
+
 
 
 

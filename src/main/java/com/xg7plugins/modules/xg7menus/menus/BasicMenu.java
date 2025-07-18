@@ -43,19 +43,17 @@ public interface BasicMenu {
     default void onRepeatingUpdate(BasicMenuHolder holder) {
 
     }
-    static CompletableFuture<Void> refresh(BasicMenuHolder holder) {
+    static void refresh(BasicMenuHolder holder) {
 
-        return CompletableFuture.runAsync(() -> {
-            holder.getInventory().clear();
+        holder.getInventory().clear();
 
-            for (Item item : holder.getMenu().getItems(holder.getPlayer())) {
-                holder.getInventoryUpdater().addItem(item);
-            }
-            if (holder.getMenu().getDefaultClickableItems() == null) return;
-            for (ClickableItem item : holder.getMenu().getDefaultClickableItems()) {
-                holder.getInventoryUpdater().addItem(item);
-            }
+        for (Item item : holder.getMenu().getItems(holder.getPlayer())) {
+            holder.getInventoryUpdater().addItem(item);
+        }
+        if (holder.getMenu().getDefaultClickableItems() == null) return;
+        for (ClickableItem item : holder.getMenu().getDefaultClickableItems()) {
+            holder.getInventoryUpdater().addItem(item);
+        }
 
-        }, XG7PluginsAPI.taskManager().getExecutor("menus"));
     }
 }
