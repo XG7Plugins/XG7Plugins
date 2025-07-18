@@ -47,7 +47,7 @@ public class LangMenu extends PagedMenu {
         manager.getLangs().asMap().join().entrySet().stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
             boolean selected = language != null && language.getLangId().equals(map.getKey().contains(":") ? map.getKey().split(":")[1] : map.getKey());
 
-            pagedItems.add(map.getValue().get("", Item.class, map.getKey(),selected).orElse(Item.air()));
+            pagedItems.add(map.getValue().get("", Item.class, false, map.getKey(),selected).orElse(Item.air()));
         });
 
         return pagedItems;

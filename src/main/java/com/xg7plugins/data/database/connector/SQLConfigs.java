@@ -40,7 +40,7 @@ public class SQLConfigs {
         username = pluginConfig.get("sql.username", String.class).orElse(null);
         password = pluginConfig.get("sql.password", String.class).orElse(null);
 
-        connectionString = pluginConfig.get("sql.url", String.class).orElse(null);
+        connectionString = pluginConfig.get("sql.url", String.class, true).orElse(null);
         connectionType = pluginConfig.get("sql.type", ConnectionType.class).orElse(ConnectionType.SQLITE);
     }
 
@@ -68,7 +68,7 @@ public class SQLConfigs {
     }
 
     /**
-     * Factory method to create a config from plugin configuration.
+     * Factory method to create a config from a plugin configuration.
      *
      * @param pluginConfig The plugin configuration
      * @return A new SQLConfigs instance

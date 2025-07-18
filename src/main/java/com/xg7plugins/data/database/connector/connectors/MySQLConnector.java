@@ -18,17 +18,26 @@ public class MySQLConnector implements Connector {
     public void connect(Plugin plugin, SQLConfigs sqlConfigs) {
         if (!ConnectionType.MYSQL.isDriverLoaded()) return;
 
-        HikariConfig hikariConfig = setupHikariConfig(plugin, ConnectionType.MYSQL, sqlConfigs);
+        plugin.getDebug().info("Connecting " + plugin.getName() + " to MySQL database...");
+
+        HikariConfig hikariConfig = setupHikariConfig(plugin, "jdbc:mysql://", ConnectionType.MYSQL, sqlConfigs);
 
         connections.put(plugin.getName(), new HikariDataSource(hikariConfig));
+
+        plugin.getDebug().info("Success!");
     }
 
 
     @Override
     public void disconnect(Plugin plugin) {
         if (!connections.containsKey(plugin.getName())) return;
+
+        plugin.getDebug().info("Disconnecting " + plugin.getName() + " from SQL database...");
+
         connections.get(plugin.getName()).close();
         connections.remove(plugin.getName());
+
+        plugin.getDebug().info("Success!");
     }
 
     @Override
@@ -41,12 +50,15 @@ public class MySQLConnector implements Connector {
         return ConnectionType.MYSQL;
     }
 
-    protected HikariConfig setupHikariConfig(Plugin plugin, ConnectionType type, SQLConfigs sqlConfigs) {
+    protected HikariConfig setupHikariConfig(Plugin plugin, String sqlUrl, ConnectionType type, SQLConfigs sqlConfigs) {
+
+        plugin.getDebug().info("Setting up HikariCP configuration for " + plugin.getName() + "...");
+
         HikariConfig hikariConfig = new HikariConfig();
 
         hikariConfig.setDriverClassName(type.getDriverClassName());
 
-        hikariConfig.setJdbcUrl(sqlConfigs.hasURL() ? sqlConfigs.getConnectionString() : "jdbc:mysql://" + sqlConfigs.getHost() + ":" + sqlConfigs.getPort() + "/" + sqlConfigs.getDatabase());
+        hikariConfig.setJdbcUrl(sqlConfigs.hasURL() ? sqlConfigs.getConnectionString() : sqlUrl + sqlConfigs.getHost() + ":" + sqlConfigs.getPort() + "/" + sqlConfigs.getDatabase());
 
         if (sqlConfigs.checkCredentials()) {
             hikariConfig.setPassword(sqlConfigs.getPassword());

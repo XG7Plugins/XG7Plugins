@@ -24,6 +24,8 @@ public class SQLiteConnector implements Connector {
 
         if (!ConnectionType.SQLITE.isDriverLoaded()) return;
 
+        plugin.getDebug().info("Connecting " + plugin.getName() + " to SQLite database...");
+
         File file = new File(plugin.getDataFolder(), "data.db");
         if (!file.exists()) file.createNewFile();
 
@@ -34,13 +36,21 @@ public class SQLiteConnector implements Connector {
         connections.put(plugin.getName(), sqliteConnection);
 
         XG7PluginsAPI.taskManager().runTimerTask(XG7PluginsAPI.taskManager().getTimerTask(XG7Plugins.getInstance(), "keep-alive-database"));
+
+        plugin.getDebug().info("Success!");
+
     }
 
     @Override
     public void disconnect(Plugin plugin) throws Exception {
         if (!connections.containsKey(plugin.getName())) return;
+
+        plugin.getDebug().info("Disconnecting " + plugin.getName() + " from SQLite database...");
+
         connections.get(plugin.getName()).close();
         connections.remove(plugin.getName());
+
+        plugin.getDebug().info("Success!");
     }
 
     @Override

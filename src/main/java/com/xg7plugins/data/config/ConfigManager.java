@@ -87,6 +87,7 @@ public class ConfigManager implements Manager {
      * @param <T>     The type parameter for the adapter
      */
     public <T> void registerAdapter(ConfigTypeAdapter<T> adapter) {
+        plugin.getDebug().info("Registering type adapter for: " + adapter.getTargetType().getSimpleName());
         adapters.put(adapter.getTargetType(), adapter);
     }
 
@@ -116,6 +117,7 @@ public class ConfigManager implements Manager {
      * @param section The configuration section to register
      */
     public void registerConfigSection(ConfigSection section) {
+        plugin.getDebug().info("Registering config section: " + section.getClass().getSimpleName());
         sections.put(section.getClass(), section);
     }
 

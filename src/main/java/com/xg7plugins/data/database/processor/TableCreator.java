@@ -78,6 +78,8 @@ public class TableCreator {
      */
     public CompletableFuture<Void> createTableOf(Plugin plugin, Class<? extends Entity> clazz) {
 
+        plugin.getDebug().info("Checking table for entity " + clazz.getSimpleName() + " ...");
+
         try {
             clazz.getDeclaredConstructor();
         } catch (NoSuchMethodException e) {
@@ -149,6 +151,7 @@ public class TableCreator {
                 connection.prepareStatement(query.toString()).executeUpdate();
                 connection.commit();
 
+                plugin.getDebug().info("Table for entity " + clazz.getSimpleName() + " created successfully.");
 
                 childs.forEach(child -> createTableOf(plugin, child).join());
 

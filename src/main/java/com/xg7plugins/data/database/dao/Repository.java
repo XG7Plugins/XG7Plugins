@@ -31,6 +31,8 @@ public interface Repository<ID, T extends Entity<?, ?>> {
             throw new NullPointerException("Entity is null");
         }
 
+        getPlugin().getDebug().info("Adding new " + getEntityClass().getSimpleName() + " with entity id " + entity.getID() + "...");
+
         if (XG7PluginsAPI.dbProcessor().exists(getPlugin(), getEntityClass(), entity.getID())) return true;
 
         try {
@@ -39,6 +41,7 @@ public interface Repository<ID, T extends Entity<?, ?>> {
                     entity,
                     Transaction.Type.INSERT
             ).process();
+            getPlugin().getDebug().info("Added!");
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -69,10 +72,13 @@ public interface Repository<ID, T extends Entity<?, ?>> {
     default T get(ID id) {
         if (id == null) return null;
 
+        getPlugin().getDebug().info("Getting " + getEntityClass().getSimpleName() + " with id " + id + "...");
+
         if (XG7PluginsAPI.database().containsCachedEntity(getPlugin(), id.toString()).join())
             return (T) XG7PluginsAPI.database().getCachedEntity(getPlugin(), id.toString()).join();
 
         try {
+            getPlugin().getDebug().info("Querying database...");
             return Query.selectFrom(getPlugin(), getEntityClass(), id).process().get(getEntityClass());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -92,6 +98,7 @@ public interface Repository<ID, T extends Entity<?, ?>> {
      */
     default List<T> getAll() {
         try {
+            getPlugin().getDebug().info("Getting all " + getEntityClass().getSimpleName() + " from database..");
             return Query.selectAllFrom(getPlugin(), getEntityClass()).process().getList(getEntityClass());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -116,6 +123,8 @@ public interface Repository<ID, T extends Entity<?, ?>> {
         if (entity == null) {
             throw new NullPointerException("Entity is null");
         }
+
+        getPlugin().getDebug().info("Updating " + getEntityClass().getSimpleName() + " with id " + entity.getID() + "...");
 
         try {
             Transaction.update(getPlugin(), entity).process();
@@ -145,6 +154,8 @@ public interface Repository<ID, T extends Entity<?, ?>> {
         if (entity == null) {
             throw new NullPointerException("Entity is null");
         }
+
+        getPlugin().getDebug().info("Deleting " + getEntityClass().getSimpleName() + " with id " + entity.getID() + "...");
 
         try {
             Transaction.delete(getPlugin(), entity).process();

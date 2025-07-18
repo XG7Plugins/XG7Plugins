@@ -41,6 +41,7 @@ public class ReloadCause {
     }
 
     public static void registerCause(Plugin plugin, ReloadCause cause) {
+        plugin.getDebug().info("Registering reload cause: " + cause);
         customCauses.putIfAbsent(plugin.getName(), new ArrayList<>());
         customCauses.get(plugin.getName()).add(cause);
     }

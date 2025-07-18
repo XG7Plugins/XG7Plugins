@@ -90,19 +90,19 @@ public class DatabaseManager implements Manager {
 
         if (entityClasses == null) return;
 
-        plugin.getDebug().loading("Connecting database...");
+        plugin.getDebug().info("Connecting " + plugin.getName() + " to database...");
 
         Config pluginConfig = Config.mainConfigOf(plugin);
         Config xg7PluginsConfig = Config.mainConfigOf(XG7Plugins.getInstance());
 
         if (!pluginConfig.get("sql", ConfigurationSection.class).isPresent()) {
-            plugin.getDebug().severe("Connection aborted!");
+            plugin.getDebug().severe("Connection aborted! No sql configs found in config.yml!");
             return;
         }
 
         SQLConfigs sqlConfigs = SQLConfigs.of(pluginConfig, xg7PluginsConfig);
 
-        plugin.getDebug().loading("Connection type: " + sqlConfigs.getConnectionType());
+        plugin.getDebug().info("Connection type: " + sqlConfigs.getConnectionType());
 
         Connector connector = connectorRegistry.getConnector(sqlConfigs.getConnectionType());
 

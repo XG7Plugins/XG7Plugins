@@ -49,7 +49,8 @@ public class Config {
         this.plugin = plugin;
         this.name = name;
 
-        plugin.getLogger().info("Loading " + name + ".yml...");
+        if (plugin.getDebug() != null) plugin.getDebug().info("Loading " + name + ".yml...");
+        else plugin.getLogger().info("Loading " + name + ".yml...");
 
         File configFile = new File(plugin.getDataFolder(), name + ".yml");
 
@@ -212,8 +213,8 @@ public class Config {
         return true;
     }
 
-    public <T> Optional<T> get(String path, Class<T> type, Object... optionalTypeArgs) {
-        return get(path,type,false,optionalTypeArgs);
+    public <T> Optional<T> get(String path, Class<T> type) {
+        return get(path,type,false);
     }
 
 

@@ -4,6 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.managers.Manager;
+import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.time.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,6 +38,9 @@ public class CooldownManager implements Manager {
      * @param task   The cooldown task to add
      */
     public void addCooldown(Player player, CooldownTask task) {
+
+        Debug.of(XG7Plugins.getInstance()).info("Adding " + player.getName() + " to cooldown " + task.getId() + " with time " + task.getTime() + "ms.");
+
         XG7PluginsAPI.taskManager().runTimerTask(this.task);
         cooldowns.putIfAbsent(player.getUniqueId(), new HashMap<>());
         cooldowns.get(player.getUniqueId()).put(task.getId(), task);
@@ -83,6 +87,9 @@ public class CooldownManager implements Manager {
      * @param error   If the process returned an error
      */
     public void removeCooldown(String cooldownId, UUID playerID, boolean error) {
+
+        Debug.of(XG7Plugins.getInstance()).info("Removing " + playerID + " from cooldown " + cooldownId + ". Errors? " + error);
+
         CooldownTask task = cooldowns.get(playerID).get(cooldownId);
 
         if (task.getOnFinish() != null) task.getOnFinish().accept(Bukkit.getPlayer(playerID), error);

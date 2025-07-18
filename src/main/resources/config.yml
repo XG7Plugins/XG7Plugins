@@ -10,6 +10,10 @@
 #Settings for all XG7plugins, and the Core
 
 #Visit our website: https://xg7plugins.com
+#See our documentation: https://xg7plugins.gitbook.io/doc/
+
+#TO REPORT SOME BUG, REPORT ON SPIGOT OR ON THE DISCORD SERVER:
+#https://discord.gg/2wzmnyu7S3
 
 #Plugin prefix used on messages
 prefix: "§bXG§37P§9lu§1gins §8>>§r"

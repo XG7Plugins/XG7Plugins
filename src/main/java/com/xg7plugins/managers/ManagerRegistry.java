@@ -50,8 +50,7 @@ public class ManagerRegistry {
      */
     public void registerManager(Manager manager) {
         if (manager == null) return;
-        if (plugin.getDebug() != null) plugin.getDebug().loading("Registering manager: " + manager.getClass().getSimpleName());
-        else Bukkit.getLogger().info("Registering manager: " + manager.getClass().getSimpleName());
+        if (plugin.getDebug() != null) plugin.getDebug().info("Registering manager: " + manager.getClass().getSimpleName());
         this.managers.put(manager.getClass(), manager);
     }
 

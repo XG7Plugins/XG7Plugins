@@ -110,6 +110,8 @@ public final class XG7Plugins extends Plugin {
         debug.loading("Loading plugin configurations...");
         try {
             XG7PluginsAPI.configManager(this).registerSections();
+            XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
+            XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -147,13 +149,8 @@ public final class XG7Plugins extends Plugin {
         }
 
         debug.loading("Loading plugins...");
-        register(this);
+
         plugins.forEach((name, plugin) -> loadPlugin(plugin));
-
-        XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
-        XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
-
-        if (XG7PluginsAPI.dependencyManager().exists("PlaceholderAPI")) new XG7PluginsPlaceholderExpansion().register();
 
         debug.loading("XG7Plugins enabled.");
 
@@ -253,6 +250,8 @@ public final class XG7Plugins extends Plugin {
     private void loadPlugin(Plugin plugin) {
         debug.loading("Enabling " + plugin.getName() + "...");
 
+        long msLoading = System.currentTimeMillis();
+
         debug.loading("Checking dependencies...");
         XG7PluginsAPI.dependencyManager().loadDependencies(plugin);
 
@@ -311,11 +310,13 @@ public final class XG7Plugins extends Plugin {
 
             placeholderExpansion.register();
         }
+
+        debug.loading(plugin.getName() + " loaded in " + (System.currentTimeMillis() - msLoading) + "ms.");
     }
 
     /**
      * Registers a plugin with XG7Plugins.
-     * Adds the plugin to the plugins registry to be managed by the core.
+     * Adds the plugin to the plugin registry to be managed by the core.
      *
      * @param plugin The plugin instance to register
      */
