@@ -137,11 +137,7 @@ public abstract class Plugin extends JavaPlugin {
             XG7PluginsAPI.taskManager().cancelAllRegisteredTasks(this);
             XG7PluginsAPI.cooldowns().removeAll();
             XG7PluginsAPI.cooldowns().cancelTask();
-            XG7PluginsAPI.taskManager().shutdown();
-            XG7PluginsAPI.taskManager().load();
-            XG7PluginsAPI.moduleManager().loadExecutors();
-            XG7PluginsAPI.moduleManager().loadTasks();
-            XG7PluginsAPI.taskManager().registerTimerTasks(this.loadRepeatingTasks());
+            XG7PluginsAPI.taskManager().reloadTasks(this);
         }
 
     }

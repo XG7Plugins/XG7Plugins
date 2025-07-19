@@ -34,7 +34,7 @@ public class TaskManager implements Manager {
     }
 
     public void load() {
-        mainScheduledAsyncExecutor = Executors.newScheduledThreadPool(Config.mainConfigOf(XG7Plugins.getInstance()).get("repeating-tasks-threads", Integer.class).orElse(1));
+        mainScheduledAsyncExecutor = Executors.newScheduledThreadPool(Config.mainConfigOf(XG7Plugins.getInstance()).get("scheduled-tasks-threads", Integer.class).orElse(1));
 
         registerExecutor("commands", Executors.newSingleThreadExecutor());
         registerExecutor("database", Executors.newCachedThreadPool());
@@ -76,6 +76,7 @@ public class TaskManager implements Manager {
         if (tasks == null) return;
         tasks.forEach(timerTask -> {
             if (timerTask == null) return;
+            XG7Plugins.getInstance().getDebug().info("Registering task: " + timerTask.getId());
             if (timerTask.getTaskState() == TaskState.RUNNING) {
                 timerTask.setTaskState(TaskState.IDLE);
                 runTimerTask(timerTask);
@@ -86,6 +87,7 @@ public class TaskManager implements Manager {
             timerTaskMap.put(taskId, timerTask);
 
         });
+
     }
     /**
      * Runs a task synchronously on the main server thread.
@@ -279,7 +281,7 @@ public class TaskManager implements Manager {
     /**
      * Cancels all registered tasks for a plugin.
      *
-     * @param plugin The plugin whose tasks should be cancelled
+     * @param plugin The plugin whose tasks should be canceled
      */
     public void cancelAllRegisteredTasks(Plugin plugin) {
         timerTaskMap.keySet().stream()

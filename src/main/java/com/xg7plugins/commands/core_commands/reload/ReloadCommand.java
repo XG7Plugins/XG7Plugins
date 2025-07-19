@@ -56,7 +56,14 @@ public class ReloadCommand implements Command {
 
         Debug.of(XG7Plugins.getInstance()).info("Reloading " + plugin.getEnvironmentConfig().getCustomPrefix() + " with cause " + cause.getName());
 
+        long msLoading = System.currentTimeMillis();
+
+        plugin.getDebug().loading("Reloading: " + plugin.getName() + " with cause " + cause.getName() + "..." );
+
         plugin.onReload(cause);
+
+        plugin.getDebug().loading(plugin.getName() + " reloaded in " + (System.currentTimeMillis() - msLoading) + "ms.");
+
 
         Text.sendTextFromLang(sender,XG7Plugins.getInstance(), "reload-message.with-cause",
                 Pair.of("plugin", plugin.getEnvironmentConfig().getPrefix()),
