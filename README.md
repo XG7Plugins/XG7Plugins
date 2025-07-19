@@ -9,5 +9,5 @@ See some of our projects:
 https://github.com/DaviXG7/XG7Lobby
 
 ## Docs:
-https://xg7plugins.gitbook.io/doc/xg7lobby-pt
+https://xg7plugins.gitbook.io/doc
 
