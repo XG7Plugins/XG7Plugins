@@ -17,7 +17,6 @@ import com.xg7plugins.managers.ManagerRegistry;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
 import lombok.*;
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.apache.commons.lang.IllegalClassException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -235,7 +234,7 @@ public abstract class Plugin extends JavaPlugin {
      *
      * @return The plugin's PlaceholderAPI expansion
      */
-    public PlaceholderExpansion loadPlaceholderExpansion() {
+    public Object loadPlaceholderExpansion() {
         return null;
     }
 

@@ -221,7 +221,7 @@ public final class XG7Plugins extends Plugin {
         return Collections.singletonList(Dependency.of("PlaceholderAPI", "https://ci.extendedclip.com/job/PlaceholderAPI/197/artifact/build/libs/PlaceholderAPI-2.11.6.jar"));
     }
     @Override
-    public PlaceholderExpansion loadPlaceholderExpansion() {
+    public Object loadPlaceholderExpansion() {
         return new XG7PluginsPlaceholderExpansion();
     }
 
@@ -302,7 +302,7 @@ public final class XG7Plugins extends Plugin {
 
         if (XG7PluginsAPI.dependencyManager().exists("PlaceholderAPI")) {
 
-            PlaceholderExpansion placeholderExpansion = plugin.loadPlaceholderExpansion();
+            PlaceholderExpansion placeholderExpansion = (PlaceholderExpansion) plugin.loadPlaceholderExpansion();
 
             if (placeholderExpansion == null) return;
 
