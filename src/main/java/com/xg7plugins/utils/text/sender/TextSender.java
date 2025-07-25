@@ -42,6 +42,10 @@ public interface TextSender {
             sender.sendMessage(text.getText());
             return;
         }
+        if (!(sender instanceof Player)) {
+            sender.spigot().sendMessage(text.getComponent());
+            return;
+        }
 
         ((Player) sender).spigot().sendMessage(text.getComponent());
     }
