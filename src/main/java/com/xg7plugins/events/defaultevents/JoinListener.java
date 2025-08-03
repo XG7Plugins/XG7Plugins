@@ -34,7 +34,6 @@ public class JoinListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onJoin(PlayerJoinEvent event) {
-        XG7Plugins plugin = XG7Plugins.getInstance();
         try {
             XG7PluginsAPI.requestPlayerData(event.getPlayer()).thenAccept(playerData -> {
                 if (playerData == null) return;

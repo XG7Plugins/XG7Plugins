@@ -10,6 +10,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.world.WorldEvent;
 
@@ -86,6 +87,11 @@ public class EventManager implements Manager {
                                 if (event2 instanceof BlockEvent) {
                                     BlockEvent blockEvent = (BlockEvent) event2;
                                     if (!XG7PluginsAPI.isEnabledWorld(plugin, blockEvent.getBlock().getWorld()))
+                                        return;
+                                }
+                                if (event2 instanceof InventoryInteractEvent) {
+                                    InventoryInteractEvent inventoryEvent = (InventoryInteractEvent) event2;
+                                    if (!XG7PluginsAPI.isEnabledWorld(plugin, inventoryEvent.getWhoClicked().getWorld()))
                                         return;
                                 }
                             }
