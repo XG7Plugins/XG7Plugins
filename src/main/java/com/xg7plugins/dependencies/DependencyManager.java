@@ -3,6 +3,10 @@ package com.xg7plugins.dependencies;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.managers.Manager;
 import com.xg7plugins.utils.Debug;
+
+import lombok.Getter;
+import lombok.Setter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.InvalidPluginException;
@@ -16,7 +20,11 @@ import java.util.*;
  * This class is responsible for ensuring all required dependencies are available
  * and properly loaded before plugin initialization.
  */
+@Getter
 public class DependencyManager implements Manager {
+
+    @Setter
+    private boolean needRestart = false;
 
     private final HashMap<String, Dependency> loadedDependencies = new HashMap<>();
 
@@ -62,9 +70,10 @@ public class DependencyManager implements Manager {
             try {
                 debug.loading("Plugin not found, downloading!");
                 dependency.downloadDependency();
+                needRestart = true;
                 debug.loading("Plugin downloaded!");
 
-                return loadPl(dependency, debug, file);
+                return true;
 
             } catch (Exception e) {
                 debug.severe("Error on loading dependency " + dependency.getName() + " " + Arrays.toString(e.getStackTrace()));

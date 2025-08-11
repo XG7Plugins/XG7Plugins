@@ -1,0 +1,147 @@
+
+#__   _______ ______ _____  _             _
+#\ \ / / ____|____  |  __ \| |           (_)
+# \ V / |  __    / /| |__) | |_   _  __ _ _ _ __  ___
+#  > <| | |_ |  / / |  ___/| | | | |/ _` | | '_ \/ __|
+# / . \ |__| | / /  | |    | | |_| | (_| | | | | \__ \
+#/_/ \_\_____|/_/   |_|    |_|\__,_|\__, |_|_| |_|___/
+#                                    __/ |
+#                                   |___/
+#Settings for all XG7plugins, and the Core
+
+#Visit our website: https://xg7plugins.com
+#See our documentation: https://xg7plugins.gitbook.io/doc/
+
+#TO REPORT SOME BUG, REPORT ON SPIGOT OR ON THE DISCORD SERVER:
+#https://discord.gg/2wzmnyu7S3
+
+#Plugin prefix used on messages
+prefix: "§bXG§37P§9lu§1gins §8>>§r"
+
+#Must be the same as in BungeeCord config
+plugin-server-name: "XG7PluginsServer"
+
+#Debug mode
+debug-enabled: false
+
+#When disabled, the plugin will choose
+#the main language from the server
+lang-enabled: true
+
+#Main language
+#Must be the name of the file in the lang folder
+main-lang: en
+
+#Anti'tab resource that filters all
+#commands based on player permissions
+anti-tab: true
+
+#Cache expires of langs
+lang-cache-expires: 30m
+
+#Auto chose lang for player
+auto-chose-lang: true
+
+#Cooldown to toggle languages when
+#chosed
+cooldown-to-toggle-lang: 5s
+
+#Cache expires of JSON
+json-cache-expires: 10m
+
+#Http request timeout
+#for http requests
+http-request-timeout: 10s
+
+#This plugin can use Floodgate
+#forms, makes it enabled if you have
+geyser-forms-enabled: true
+lang-form-enabled: true
+
+#Threads for executing scheduled/timer tasks
+scheduled-tasks-threads: 8
+
+#Delay sending a message or
+#make an action while is in cooldown
+player-cooldown-task-delay: 1s
+
+#Cache expires of menus
+menu-cache-expires: 10m
+
+#Defines if the help command
+#sends the help on an inventory
+#or in a gui
+help-command-in-gui: true
+
+#Same as the inventory but with
+#floodgate forms
+help-command-form: true
+
+#Define database values
+sql:
+
+  #Types: SQLITE, MYSQL, MARIADB
+  type: "sqlite"
+
+  host: "localhost"
+  port: 3306
+
+  database: "xg7plugins"
+
+  username: "root"
+  password: ""
+
+  #Connection string
+  #url: "jdbc:mysql://localhost:3306/"
+
+  #Cache expires of sql entities
+  cache-expires: 30m
+
+  #Don't work on SQLITE
+  #Connection pool
+  connection-timeout: 10s
+  idle-timeout: 600s
+
+  max-pool-size: 10
+  min-idle-connections: 5
+
+  #SQLITE database task for
+  #keep the database alive
+  keep-alive-delay: 600s
+
+#Define redis cache configuration
+redis-cache:
+
+  enabled: false
+
+  host: "localhost"
+  port: 6379
+
+  user-auth-enabled: false
+
+  username: ""
+  password: ""
+
+  cache-expires: true
+
+  min-idle-connections: 10
+  max-idle-connections: 50
+  max-connections: 100
+
+  max-wait-time: 10s
+
+#When using a time placeholder like @TIME_FORMAT:%time_milli%@
+#These placeholders indicate the time units,
+#For example, 1s (seconds), 1ms (milliseconds)
+time-placeholders:
+
+  milliseconds: "ms"
+  seconds: "s"
+  minutes: "m"
+  hours: "h"
+  days: "d"
+
+
+#DO NOT CHANGE
+#THIS IS FOR VERSION CONTROL
+config-version: 1.2

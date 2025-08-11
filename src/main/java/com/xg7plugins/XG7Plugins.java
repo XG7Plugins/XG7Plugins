@@ -64,23 +64,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 @Getter(AccessLevel.PUBLIC)
-@PluginSetup(
-        prefix = "§bXG§37P§9lu§1gins§r",
-        onEnableDraw = {
-                "§b __   _______ §3______ §9_____  _             §1_           ",
-                "§b \\ \\ / / ____|§3____ §9 |  __ \\| |           §1(_)          ",
-                "§b  \\ V / |  __  §3  / §9/| |__) | |_   _  __ _ §1_ _ __  ___ ",
-                "§b   > <| | |_ |  §3/ / §9|  ___/| | | | |/ _` | §1| '_ \\/ __|",
-                "§b  / . \\ |__| | §3/ / §9 | |    | | |_| | (_| | §1| | | \\__ \\",
-                "§b /_/ \\_\\_____|§3/_/  §9 |_|    |_|\\__,_|\\__,§1 |_|_| |_|___/",
-                "§9                                     __/ |            ",
-                "§9                                    |___/             "
-        },
-        mainCommandName = "xg7plugins",
-        mainCommandAliases = {"7pl", "7pls", "xg7pl"},
-        configSections = {MainConfigSection.class, RedisCacheSection.class},
-        reloadCauses = {"json"}
-)
+@PluginSetup(prefix = "§bXG§37P§9lu§1gins§r", onEnableDraw = {
+        "§b __   _______ §3______ §9_____  _             §1_           ",
+        "§b \\ \\ / / ____|§3____ §9 |  __ \\| |           §1(_)          ",
+        "§b  \\ V / |  __  §3  / §9/| |__) | |_   _  __ _ §1_ _ __  ___ ",
+        "§b   > <| | |_ |  §3/ / §9|  ___/| | | | |/ _` | §1| '_ \\/ __|",
+        "§b  / . \\ |__| | §3/ / §9 | |    | | |_| | (_| | §1| | | \\__ \\",
+        "§b /_/ \\_\\_____|§3/_/  §9 |_|    |_|\\__,_|\\__,§1 |_|_| |_|___/",
+        "§9                                     __/ |            ",
+        "§9                                    |___/             "
+}, mainCommandName = "xg7plugins", mainCommandAliases = { "7pl", "7pls",
+        "xg7pl" }, configSections = { MainConfigSection.class, RedisCacheSection.class }, reloadCauses = { "json" })
 public final class XG7Plugins extends Plugin {
 
     private ServerInfo serverInfo;
@@ -112,7 +106,8 @@ public final class XG7Plugins extends Plugin {
             XG7PluginsAPI.configManager(this).registerSections();
             XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
             XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
+                | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 
@@ -122,7 +117,7 @@ public final class XG7Plugins extends Plugin {
         managerRegistry.registerManager(new CacheManager(this));
         managerRegistry.registerManager(new TaskManager());
         managerRegistry.registerManager(new DatabaseManager(this));
-        managerRegistry.registerManager(new LangManager(this, new String[]{"en", "pt", "es"}));
+        managerRegistry.registerManager(new LangManager(this, new String[] { "en", "pt", "es" }));
         managerRegistry.registerManager(new JsonManager(this));
         managerRegistry.registerManager(new EventManager());
         managerRegistry.registerManager(new PacketEventManager());
@@ -153,6 +148,20 @@ public final class XG7Plugins extends Plugin {
         plugins.forEach((name, plugin) -> loadPlugin(plugin));
 
         debug.loading("XG7Plugins enabled.");
+
+        Bukkit.getScheduler().runTask(this, () -> {
+
+            if (XG7PluginsAPI.dependencyManager().isNeedRestart()) {
+                debug.loading("======================================================================");
+                debug.loading("§cShutdowning server for dependency updates... Please restart the server");
+                debug.loading("======================================================================");
+                Bukkit.shutdown();
+
+                return;
+            }
+
+
+        });
 
     }
 
@@ -193,33 +202,42 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void onReload(ReloadCause cause) {
         super.onReload(cause);
-        if (cause.equals("json")) XG7PluginsAPI.jsonManager().invalidateCache();
+        if (cause.equals("json"))
+            XG7PluginsAPI.jsonManager().invalidateCache();
         this.loadHelp();
 
     }
-    public Class<? extends Entity<?,?>>[] loadEntities() {
-        return new Class[]{PlayerData.class};
+
+    public Class<? extends Entity<?, ?>>[] loadEntities() {
+        return new Class[] { PlayerData.class };
     }
+
     @Override
-    public List<Repository<?,?>> loadRepositories() {
+    public List<Repository<?, ?>> loadRepositories() {
         return Collections.singletonList(new PlayerDataRepository());
     }
+
     @Override
     public List<Command> loadCommands() {
         return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand());
     }
+
     @Override
     public List<Listener> loadEvents() {
         return Collections.singletonList(new JoinListener());
     }
+
     @Override
     public List<TimerTask> loadRepeatingTasks() {
         return Arrays.asList(XG7PluginsAPI.cooldowns().getTask(), new DatabaseKeepAlive(), new TPSCalculator());
     }
+
     @Override
     public List<Dependency> loadDependencies() {
-        return Collections.singletonList(Dependency.of("PlaceholderAPI", "https://ci.extendedclip.com/job/PlaceholderAPI/197/artifact/build/libs/PlaceholderAPI-2.11.6.jar"));
+        return Collections.singletonList(Dependency.of("PlaceholderAPI",
+                "https://ci.extendedclip.com/job/PlaceholderAPI/197/artifact/build/libs/PlaceholderAPI-2.11.6.jar"));
     }
+
     @Override
     public Object loadPlaceholderExpansion() {
         return new XG7PluginsPlaceholderExpansion();
@@ -243,7 +261,8 @@ public final class XG7Plugins extends Plugin {
 
     /**
      * Handles loading and initialization of a plugin.
-     * This method sets up all required components and configurations for a plugin to function.
+     * This method sets up all required components and configurations for a plugin
+     * to function.
      *
      * @param plugin The plugin instance to load
      */
@@ -268,8 +287,8 @@ public final class XG7Plugins extends Plugin {
 
             try {
                 XG7PluginsAPI.configManager(plugin).registerSections();
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException |
-                     IllegalAccessException e) {
+            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
+                    | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -277,7 +296,8 @@ public final class XG7Plugins extends Plugin {
         plugin.getDebug().loading("Connecting plugin to database...");
         XG7PluginsAPI.database().connectPlugin(plugin, plugin.loadEntities());
 
-        if (plugin != this) Bukkit.getPluginManager().enablePlugin(plugin);
+        if (plugin != this)
+            Bukkit.getPluginManager().enablePlugin(plugin);
 
         plugin.getDebug().loading("Loading entities manager...");
         XG7PluginsAPI.database().registerRepositories(plugin.loadRepositories());
@@ -304,7 +324,8 @@ public final class XG7Plugins extends Plugin {
 
             PlaceholderExpansion placeholderExpansion = (PlaceholderExpansion) plugin.loadPlaceholderExpansion();
 
-            if (placeholderExpansion == null) return;
+            if (placeholderExpansion == null)
+                return;
 
             plugin.getDebug().loading("Registering PlaceholderAPI expansion...");
 

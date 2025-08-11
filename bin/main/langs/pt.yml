@@ -1,0 +1,159 @@
+config-version: 1.1
+
+locale: pt_BR
+formated-name: "Português (Brasil)"
+icon: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY2OGExZmI2YWY4MWIyMzFiYmNjNGRlNWY3Zjk1ODAzYmJkMTk0ZjU4MjdkYTAyN2ZhNzAzMjFjZjQ3YyJ9fX0="
+bedrock-icon: "URL, https://rondonia.ro.gov.br/wp-content/uploads/2020/09/Bandeira-Nacionals%C3%ADmbolo-maior-da-P%C3%A1tria-Brasileira-Foto-Divulga%C3%A7%C3%A3o.jpg"
+
+commands:
+  syntax-error: "&cVocê está usando o comando incorretamente! O correto é &7%syntax%"
+  player-not-found: "&cEsse jogador não foi encontrado ou nunca jogou antes!"
+  no-permission: "&cVocê não tem permissão para usar este comando!"
+  disabled-world: "&cVocê não pode executar este comando neste mundo!"
+  not-a-player: "&cVocê não pode executar este comando no console!"
+  is-a-player: "&cVocê não pode executar este comando sendo um jogador!"
+  not-online: "&cEsse jogador não está online!"
+  command-not-found: "&cComando não encontrado!"
+
+reload-message:
+  all-plugins: "%prefix% &aTodos os plugins foram recarregados!"
+  without-cause: "%prefix% %plugin% &arecarregado!"
+  with-cause: "%prefix% %cause% &arecarregado no plugin &r%plugin%"
+
+#Plugin defaults
+
+go-back-item: "Voltar"
+go-next-item: "Próximo"
+close-item: "&cFechar"
+refresh-item: "&9Atualizar página"
+
+go-back-to-help: "&6Voltar à ajuda"
+go-back-to-previous-commands: "&cVoltar aos comandos anteriores"
+
+lang-not-found: "%prefix% &cIdioma não encontrado!"
+
+lang-menu:
+  title: "&rIdiomas"
+
+  content: "Escolha um idioma!"
+
+  item-click:
+    - "Clique aqui para mudar o idioma para <rainbow>Português</rainbow>"
+
+  already-selected: "%prefix% &cVocê já está usando esse idioma!"
+
+  toggle-success: "%prefix% &aVocê mudou o idioma para &bportuguês!"
+
+  cooldown-to-toggle: "%prefix% &cVocê precisa esperar &b@SECONDS:%time%@ &cpara trocar de idioma novamente"
+
+tasks-menu:
+  title: "&rTarefas"
+
+  task-item:
+    - "&fID da tarefa: &b%id%"
+    - "&fPlugin da tarefa: &e%plugin%"
+    - "&fEstado da tarefa: &9%state%"
+    - " "
+    - "&fClique esquerdo -> &aCopiar ID"
+    - "?IF: %task_is_running%?&fClique direito -> &cParar tarefa"
+    - "?IF: %task_is_not_running%?&fClique direito -> &aIniciar tarefa"
+
+  copy-to-clipboard: "%prefix% &7Clique <click:suggest_command:%id%><hover:show_text:%id%>&baqui&r</hover></click> &7para copiar o ID da tarefa!"
+
+  notes:
+    - "&fUso de RAM do servidor: &9%ram%MB"
+    - "&fTPS do servidor: &9%tps%"
+    - "&fTarefas em execução: &9%tasks%"
+
+task-command:
+  not-found: "%prefix% &cTarefa não encontrada!"
+  deleted: "%prefix% &aTarefa deletada!"
+  stopped: "%prefix% &aTarefa parada!"
+  restarted: "%prefix% &aTarefa reiniciada!"
+
+  already-running: "%prefix% &cTarefa já está em execução!"
+  already-stopped: "%prefix% &aTarefa já está parada!"
+
+commands-display:
+
+  if-subcommand: "&aClique para ver os subcomandos!"
+
+  command-item:
+    usage: "&fUso: &a%syntax%"
+    desc: "&fDescrição: &e%description%"
+    perm: "&fPermissão: &c%permission%"
+    player-only: "&fApenas jogadores podem usar: &b%player_only%"
+
+commands-form:
+  content: "Clique em uma opção para ver sua descrição e uso!"
+  subcommands-label: "Clique para ver os subcomandos!"
+  no-subcommands: "Este comando não possui subcomandos!"
+
+  back: "&cVoltar à ajuda"
+  subcommands-back: "&cVoltar aos comandos anteriores"
+
+help-menu:
+
+  index:
+
+    title: "&rAjuda do <rainbow>XG7Plugins</rainbow>"
+
+    see-in-chat: "Clique aqui para ver a ajuda no chat"
+
+    profile-item:
+      name: "Perfil: %player_name%"
+      lang-chose: "&5Idioma atual: %b%xg7plugins_player_lang%"
+    lang-item:
+      name: "&bIdiomas"
+      lore: "&5Clique aqui para mudar o idioma do perfil"
+    tasks-item:
+      name: "&bTarefas"
+      lore: "&5Clique aqui para ver as tarefas"
+    about-item:
+      name: "&bSobre"
+      lore: "&5Clique aqui para ver as informações do plugin"
+    commands-item:
+      name: "&bComandos"
+      lore: "&5Clique aqui para ver os comandos"
+
+  about:
+    - "Sobre o &9XG7Plugins"
+    - ""
+    - "Versão: &a%version%&r"
+    - "Website: &a&n%website%&r"
+    - "GitHub: &a&n%github%&r"
+    - "Discord: &a&n%discord%&r"
+    - ""
+    - "Este plugin foi feito"
+    - "para criação de outros"
+    - "plugins do XG7."
+    - "Seu objetivo é gerenciar"
+    - "tarefas, incluir bibliotecas"
+    - "(como menus, placares,"
+    - "etc.) e facilitar"
+    - "a criação de plugins."
+    - "Também possui um sistema"
+    - "de idiomas para facilitar"
+    - "a inclusão de novas línguas."
+    - ""
+    - "&oDesenvolvido por DaviXG7"
+
+  command-help:
+    title: "Comandos do &e%plugin_name%"
+    subcommands-title: "Subcomandos de &b%subcommand%"
+
+help-in-chat:
+
+  page-not-found: "&cPágina não encontrada"
+
+  title: "&7Bem-vindo à página de ajuda do &6XG7Plugins&7!"
+
+  content: "&eO XG7Plugins é um plugin que facilita a criação de outros plugins do XG7. Clique para ver mais informações."
+
+  back: "&aClique para voltar à ajuda"
+
+  lang: "&aIdiomas&f: &1clique aqui para mudar o idioma do perfil"
+  tasks: "&aTarefas&f: &1clique aqui para ver as tarefas"
+  commands: "&aComandos&f: &1clique aqui para ver os comandos"
+
+  commands-title: "&7Comandos do &6XG7Plugins &8(&7%page%&8/&7%max_page%&8)"
