@@ -1,6 +1,6 @@
 package com.xg7plugins.events.bukkitevents;
 
-import com.xg7plugins.data.config.section.ConfigBoolean;
+import com.xg7plugins.data.config.section.ConfigVerify;
 import org.bukkit.event.EventPriority;
 
 import java.lang.annotation.ElementType;
@@ -43,7 +43,7 @@ public @interface EventHandler {
      *
      * @return ConfigBoolean annotation containing configuration parameters
      */
-    ConfigBoolean isEnabled() default @ConfigBoolean(
+    ConfigVerify isEnabled() default @ConfigVerify(
             configName = "",
             path = ""
     );

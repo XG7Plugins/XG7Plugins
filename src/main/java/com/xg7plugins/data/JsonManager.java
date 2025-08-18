@@ -10,8 +10,12 @@ import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.data.config.Config;
 import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.managers.Manager;
+import com.xg7plugins.utils.FileUtil;
 
 import java.io.*;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -67,22 +71,12 @@ public class JsonManager implements Manager {
         return CompletableFuture.runAsync(() -> {
             plugin.getDebug().info("Saving " + path + "...");
 
-            File file = new File(plugin.getDataFolder(), path);
-            if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
-            if (!file.exists()) {
-                try {
-                    if (!file.createNewFile()) return;
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
+            File file = FileUtil.createFile(plugin, path);
 
-
-            try (Writer writer = new BufferedWriter(new FileWriter(file, false))) {
-                gson.toJson(object, writer);
-            } catch (Exception e) {
-                plugin.getDebug().severe("Error on object serialize: " + e.getMessage());
-                e.printStackTrace();
+            try {
+                FileUtil.writeFile(plugin, path, gson.toJson(object));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
 
             cache.put(plugin + ":" + path, object);
@@ -90,6 +84,38 @@ public class JsonManager implements Manager {
             plugin.getDebug().info("Saved!");
         }, XG7PluginsAPI.taskManager().getExecutor("files"));
 
+    }
+
+    /**
+     * Adiciona ou atualiza apenas uma entrada em um JSON de Map<String, T>.
+     *
+     * @param path O caminho do arquivo JSON
+     * @param key  A chave a ser adicionada/atualizada
+     * @param value O valor a ser salvo
+     * @param <T>  Tipo do valor
+     * @return CompletableFuture que completa quando o registro for salvo
+     */
+    public <T> CompletableFuture<Void> saveEntry(Plugin plugin, String path, String key, T value) {
+        return CompletableFuture.runAsync(() -> {
+            File file = FileUtil.createFile(plugin, path);
+
+            Type mapType = new TypeToken<java.util.Map<String, Object>>() {}.getType();
+            Map<String, Object> map = new HashMap<>();
+
+            try (FileReader reader = new FileReader(file)) {
+                Map<String, Object> existing = gson.fromJson(reader, mapType);
+                if (existing != null) map.putAll(existing);
+            } catch (IOException ignored) {
+            }
+
+            map.put(key, value);
+
+            try {
+                FileUtil.writeFile(plugin, path, gson.toJson(map));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**

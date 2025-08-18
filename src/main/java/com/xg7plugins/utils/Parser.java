@@ -31,6 +31,16 @@ public enum Parser {
      * @return The converted value of type T
      */
     public <T> T convert(String value) {
+        if (value == null) return null;
         return (T) converter.apply(value);
+    }
+
+    public static <T> Parser getParserOf(Class<T> type) {
+        try {
+            Parser.valueOf(type.getSimpleName());
+        } catch (Exception ig) {
+            return null;
+        }
+        return null;
     }
 }

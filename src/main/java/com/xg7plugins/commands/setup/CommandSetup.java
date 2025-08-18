@@ -1,7 +1,7 @@
 package com.xg7plugins.commands.setup;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.section.ConfigBoolean;
+import com.xg7plugins.data.config.section.ConfigVerify;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -44,7 +44,7 @@ public @interface CommandSetup {
     /**
      * Configuration for enabling/disabling the command
      */
-    ConfigBoolean isEnabled() default @ConfigBoolean(
+    ConfigVerify isEnabled() default @ConfigVerify(
             configName = "",
             path = ""
     );

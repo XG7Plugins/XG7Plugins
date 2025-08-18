@@ -7,7 +7,7 @@ import com.xg7plugins.commands.CommandMessages;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
-import com.xg7plugins.data.config.section.ConfigBoolean;
+import com.xg7plugins.data.config.section.ConfigVerify;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
@@ -28,7 +28,7 @@ import org.bukkit.entity.Player;
         permission = "xg7plugins.command.lang",
         pluginClass = XG7Plugins.class,
         isAsync = true,
-        isEnabled = @ConfigBoolean(
+        isEnabled = @ConfigVerify(
                 configName = "config",
                 path = "lang-enabled"
         )

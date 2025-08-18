@@ -5,7 +5,7 @@ package com.xg7plugins.data.config.section;
  * Used to mark fields that represent boolean configuration values
  * and specify how they should be handled in the configuration system.
  */
-public @interface ConfigBoolean {
+public @interface ConfigVerify {
 
     /**
      * The name of the configuration where this boolean value is stored.

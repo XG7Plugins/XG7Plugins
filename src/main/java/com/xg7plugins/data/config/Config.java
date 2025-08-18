@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.config.section.ConfigSection;
+import com.xg7plugins.utils.FileUtil;
 import com.xg7plugins.utils.time.Time;
 import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
@@ -60,7 +61,7 @@ public class Config {
 
         if (plugin.getResource(name + ".yml") != null) {
 
-            YamlConfiguration resourceConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource(name + ".yml"), StandardCharsets.UTF_8));
+            YamlConfiguration resourceConfig = YamlConfiguration.loadConfiguration(FileUtil.reader(FileUtil.fromResource(plugin, name + ".yml")));
             if (!resourceConfig.getString("config-version").equals(config.getString("config-version"))) {
 
                 File backupFile = new File(plugin.getDataFolder(), name + "-old.yml");
