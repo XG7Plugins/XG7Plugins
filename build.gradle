@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com'
-version = '1.2.5'
+version = '1.2.5.1'
 
 repositories {
     mavenCentral()
@@ -51,6 +51,8 @@ dependencies {
     implementation group: 'com.mysql', name: 'mysql-connector-j', version: '9.3.0'
     implementation 'com.zaxxer:HikariCP:4.0.3'
 
+
+
 }
 
 
@@ -78,6 +80,27 @@ tasks.shadowJar {
     relocate("com.cryptomorin.xseries", "com.xg7plugins.libs.xseries")
 
     relocate("com.github.retrooper.packetevents", "com.xg7plugins.libs.packetevents")
+
+    minimize {
+        exclude(dependency("com.github.ben-manes.caffeine:.*"))
+        exclude(dependency("redis.clients:.*"))
+        exclude(dependency("com.zaxxer:HikariCP:.*"))
+        exclude(dependency("com.mojang:authlib:.*"))
+        exclude(dependency("com.mysql:mysql-connector-j:.*"))
+        exclude(dependency("org.mariadb.jdbc:mariadb-java-client:.*"))
+
+    }
+
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    exclude 'module-info.class'
+    exclude 'META-INF/versions/**'
+    exclude 'META-INF/LICENSE*'
+    exclude 'META-INF/NOTICE*'
+
+
+
 }
 
 tasks.jar {

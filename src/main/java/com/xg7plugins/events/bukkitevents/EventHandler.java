@@ -41,7 +41,7 @@ public @interface EventHandler {
     /**
      * Configures whether this event handler is enabled through configuration settings.
      *
-     * @return ConfigBoolean annotation containing configuration parameters
+     * @return ConfigVerify annotation containing configuration parameters
      */
     ConfigVerify isEnabled() default @ConfigVerify(
             configName = "",

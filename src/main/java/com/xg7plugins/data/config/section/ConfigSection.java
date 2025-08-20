@@ -115,7 +115,7 @@ public abstract class ConfigSection {
 
             Parser parser = Parser.getParserOf(type);
 
-            defaultValue = configField.defaultValue().isEmpty() || parser == null ? DefaultValues.ofType(type) : parser.convert(configField.defaultValue());
+            defaultValue = configField.defaultValue().isEmpty() || parser == null ? DefaultValues.ofType(type).getDefaultValue() : parser.convert(configField.defaultValue());
 
         }
 
