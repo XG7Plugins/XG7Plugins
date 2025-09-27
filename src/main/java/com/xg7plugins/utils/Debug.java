@@ -3,7 +3,7 @@ package com.xg7plugins.utils;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 
@@ -25,8 +25,7 @@ public class Debug {
      */
     public Debug(Plugin plugin) {
         this.plugin = plugin;
-        Config config = Config.mainConfigOf(plugin);
-        debugEnabled = config.getConfig().getBoolean("debug-enabled");
+        debugEnabled = ConfigFile.mainConfigOf(plugin).root().get("debug-enabled");
         PacketEvents.getAPI().getSettings().debug(plugin instanceof XG7Plugins && debugEnabled);
     }
 

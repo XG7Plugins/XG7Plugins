@@ -21,6 +21,7 @@ public class PagedMenuHolder extends MenuHolder {
     }
 
     public void goPage(int page) {
+        System.out.println("Going to page: " + page);
         if (getMenu().goPage(page, this)) this.page = page;
     }
     public void nextPage() {

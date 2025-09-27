@@ -5,7 +5,8 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.gson.Gson;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.managers.Manager;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
@@ -46,24 +47,26 @@ public class CacheManager implements Manager {
 
     public CacheManager(XG7Plugins plugin) {
 
-        RedisCacheSection config = Config.of(plugin, RedisCacheSection.class);
+        ConfigSection config = ConfigFile.mainConfigOf(plugin).section("redis");
 
         this.caches = new HashMap<>();
 
-        if (!config.isEnabled()) return;
+        if (!config.get("enabled", false)) return;
 
-        this.cacheExpires = config.isCacheExpires();
+        this.cacheExpires = config.get("cache-expires", true);
+
+        int minIdle = config.get("min-idle-connections", 4);
 
         try {
-            pool = config.isUserAuthEnabled() ? new JedisPool(config.getHost(), config.getPort(), config.getUsername(), config.getPassword()) : new JedisPool(config.getHost(), config.getPort());
+            pool = config.get("user-auth-enabled", false) ? new JedisPool(config.get("host"), config.get("port", 6379), config.get("username"), config.get("password")) : new JedisPool(config.get("host", "localhost"), config.get("port", 6379));
 
-            pool.setMinIdle(config.getMinIdleConnections());
-            pool.setMaxIdle(config.getMaxIdleConnections());
-            pool.setMaxTotal(config.getMaxConnections());
-            pool.setMaxWaitMillis(config.getMaxWaitTime().getMilliseconds());
+            pool.setMinIdle(minIdle);
+            pool.setMaxIdle(config.get("max-idle-connections", 8));
+            pool.setMaxTotal(config.get("max-connections", 8));
+            pool.setMaxWaitMillis(config.get("max-wait-time", 2000L));
 
             Jedis jedis = pool.getResource();
-            if (config.isUserAuthEnabled()) jedis.auth(config.getPassword());
+            if (config.get("user-auth-enabled", false)) jedis.auth(config.get("password", ""));
             jedis.close();
         } catch (Exception e) {
             plugin.getDebug().severe("Failed to connect to Redis: " + e.getMessage());

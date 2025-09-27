@@ -44,6 +44,8 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
                 return XG7PluginsAPI.taskManager().getTimerTaskMap().values().stream().filter(task -> task.getTaskState() == TaskState.RUNNING).count() + "";
             case "tasks_idle":
                 return XG7PluginsAPI.taskManager().getTimerTaskMap().values().stream().filter(task -> task.getTaskState() == TaskState.IDLE).count() + "";
+            case "tasks_total":
+                    return XG7PluginsAPI.taskManager().getTimerTaskMap().values().size() + "";
             case "is_bedrock_player":
                 return (XG7PluginsAPI.dependencyManager().exists("floodgate") && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) + "";
             case "geyser_forms_enabled":

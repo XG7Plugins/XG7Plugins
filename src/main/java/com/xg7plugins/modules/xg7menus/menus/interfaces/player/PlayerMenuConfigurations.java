@@ -35,44 +35,65 @@ public interface PlayerMenuConfigurations extends BasicMenuConfigs {
     }
 
     static PlayerMenuConfigurations of(Plugin plugin, String id,
-                                           EnumSet<MenuAction> allowedActions, boolean enabled,
-                                           List<Pair<String,String>> placeholders,
-                                           String onDropMessage, String onPickupMessage,
-                                           String onBreakMessage, String onPlaceMessage,
-                                           String onClickMessage, String onDragMessage,
-                                           String onInteractMessage) {
+                                       EnumSet<MenuAction> allowedActions, boolean enabled,
+                                       List<Pair<String, String>> placeholders,
+                                       String onDropMessage, String onPickupMessage,
+                                       String onBreakMessage, String onPlaceMessage,
+                                       String onClickMessage, String onDragMessage,
+                                       String onInteractMessage, long repeatingUpdateDelay) {
         return new PlayerMenuConfigsImpl(plugin, id, allowedActions, enabled, placeholders,
                 onDropMessage, onPickupMessage, onBreakMessage, onPlaceMessage,
-                onClickMessage, onDragMessage, onInteractMessage);
+                onClickMessage, onDragMessage, onInteractMessage, repeatingUpdateDelay);
     }
 
     static PlayerMenuConfigurations of(Plugin plugin, String id) {
-        return of(plugin, id, null);
+        return of(plugin, id, EnumSet.noneOf(MenuAction.class), true, new ArrayList<>(), "", "", "", "", "", "", "", -1);
     }
+
     static PlayerMenuConfigurations of(Plugin plugin, String id, boolean enabled) {
-        return of(plugin, id, null, enabled);
+        return of(plugin, id, EnumSet.noneOf(MenuAction.class), enabled, new ArrayList<>(), "", "", "", "", "", "", "", -1);
     }
+
     static PlayerMenuConfigurations of(Plugin plugin, String id, EnumSet<MenuAction> allowedActions) {
-        return of(plugin, id, allowedActions, true, new ArrayList<>());
+        return of(plugin, id, allowedActions, true, new ArrayList<>(), "", "", "", "", "", "", "", -1);
     }
 
     static PlayerMenuConfigurations of(Plugin plugin, String id, EnumSet<MenuAction> allowedActions, boolean enabled) {
-        return of(plugin, id, allowedActions, enabled, new ArrayList<>());
+        return of(plugin, id, allowedActions, enabled, new ArrayList<>(), "", "", "", "", "", "", "", -1);
     }
+
     static PlayerMenuConfigurations of(Plugin plugin, String id,
-                                           EnumSet<MenuAction> allowedActions, boolean enabled,
-                                           List<Pair<String,String>> placeholders) {
-        return of(plugin, id,allowedActions,enabled,placeholders,"","","","","","","");
+                                       EnumSet<MenuAction> allowedActions, boolean enabled,
+                                       List<Pair<String, String>> placeholders) {
+        return of(plugin, id, allowedActions, enabled, placeholders, "", "", "", "", "", "", "", -1);
+    }
+
+    static PlayerMenuConfigurations of(Plugin plugin, String id,
+                                       EnumSet<MenuAction> allowedActions, boolean enabled,
+                                       List<Pair<String, String>> placeholders,
+                                       long repeatingUpdateDelay) {
+        return of(plugin, id, allowedActions, enabled, placeholders, "", "", "", "", "", "", "", repeatingUpdateDelay);
     }
 
     static PlayerMenuConfigurations ofWithMessages(Plugin plugin, String id,
-                                                       String onDropMessage, String onPickupMessage,
-                                                       String onBreakMessage, String onPlaceMessage,
-                                                       String onClickMessage, String onDragMessage,
-                                                       String onInteractMessage) {
+                                                   String onDropMessage, String onPickupMessage,
+                                                   String onBreakMessage, String onPlaceMessage,
+                                                   String onClickMessage, String onDragMessage,
+                                                   String onInteractMessage) {
         return of(plugin, id, null, true, new ArrayList<>(),
                 onDropMessage, onPickupMessage, onBreakMessage, onPlaceMessage,
-                onClickMessage, onDragMessage, onInteractMessage);
+                onClickMessage, onDragMessage, onInteractMessage, -1);
+    }
+
+    static PlayerMenuConfigurations ofWithMessages(Plugin plugin, String id,
+                                                   String onDropMessage, String onPickupMessage,
+                                                   String onBreakMessage, String onPlaceMessage,
+                                                   String onClickMessage, String onDragMessage,
+                                                   String onInteractMessage,
+                                                   long repeatingUpdateDelay) {
+        return of(plugin, id, null, true, new ArrayList<>(),
+                onDropMessage, onPickupMessage, onBreakMessage, onPlaceMessage,
+                onClickMessage, onDragMessage, onInteractMessage, repeatingUpdateDelay);
     }
 
 

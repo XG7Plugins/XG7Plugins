@@ -6,7 +6,8 @@ import com.xg7plugins.commands.executors.MainCommand;
 import com.xg7plugins.commands.executors.PluginCommandExecutor;
 import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.managers.Manager;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
@@ -76,10 +77,10 @@ public class CommandManager implements Manager {
             CommandSetup commandSetup = command.getCommandSetup();
 
             if (!commandSetup.isEnabled().configName().isEmpty()) {
-                Config config = Config.of(commandSetup.isEnabled().configName(), plugin);
+                ConfigFile config = ConfigFile.of(commandSetup.isEnabled().configName(), plugin);
 
                 boolean invert = commandSetup.isEnabled().invert();
-                boolean enabled = config != null && config.get(commandSetup.isEnabled().path(), Boolean.class).orElse(false);
+                boolean enabled = config != null && config.root().get(commandSetup.isEnabled().path(), false);
 
                 if (invert == enabled) {
                     plugin.getDebug().info("Command " + commandSetup.name() + " is disabled by configuration");
@@ -87,11 +88,13 @@ public class CommandManager implements Manager {
                 }
             }
 
-            List<String> configAliases = Config.of("commands", plugin)
+
+            ConfigSection commandConfig = ConfigFile.of("commands", plugin).root();
+
+            List<String> configAliases = commandConfig
                     .getList(commandSetup.name(), String.class)
                     .orElse(new ArrayList<>());
 
-            Config commandConfig = Config.of("commands", plugin);
             if (!commandConfig.contains(commandSetup.name())) {
                 plugin.getDebug().warn("Command " + commandSetup.name() + " not found in commands.yml - skipping registration");
                 return;

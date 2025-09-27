@@ -45,10 +45,9 @@ public class TPSCalculator extends TimerTask {
             lastTps.set(tps);
             ticks.set(0);
             startNanoTime = System.nanoTime();
-            return;
         }
 
-        ticks.incrementAndGet(); // só conta tick se não reiniciou ainda
+        ticks.incrementAndGet();
     }
 
 

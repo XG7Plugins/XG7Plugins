@@ -27,8 +27,14 @@ public abstract class ScoreBuilder<S,B extends ScoreBuilder<S,B>> {
 
     public abstract S build(Plugin plugin);
 
-    public static ScoreBoardBuilder scoreBoard(String id) {
-        return new ScoreBoardBuilder(id);
+    public static SidebarBuilder sidebar(String id) {
+        return new SidebarBuilder(id);
+    }
+    public static BelowNameBuilder belowName(String id) {
+        return new BelowNameBuilder(id);
+    }
+    public static TabListScoreBuild tablistScore(String id) {
+        return new TabListScoreBuild(id);
     }
     public static TablistBuilder tablist(String id) {
         return new TablistBuilder(id);

@@ -40,7 +40,7 @@ public class ScoreTimerTask extends TimerTask {
 
                     if (p == null || !p.isOnline()) return;
 
-                    if (score.getCondition().apply(p) && !p.isDead() && XG7Plugins.getInstance().isEnabled())
+                    if (score.getCondition().apply(p) && XG7Plugins.getInstance().isEnabled())
                         score.addPlayer(p);
                     else if (score.getPlayers().contains(p.getUniqueId())) {
                         if (!XG7Plugins.getInstance().isEnabled()) return;

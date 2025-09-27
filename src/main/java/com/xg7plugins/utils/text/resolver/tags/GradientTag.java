@@ -6,7 +6,9 @@ import com.xg7plugins.utils.text.resolver.TagResolver;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 
+import java.awt.*;
 import java.util.List;
+import java.util.function.ToIntFunction;
 
 public class GradientTag implements Tag {
     @Override
@@ -15,38 +17,35 @@ public class GradientTag implements Tag {
     }
 
     @Override
-    public void resolve(TextComponent component, List<String> openArgs, List<String> closeArgs) {
+    public void resolve(TextComponent component, List<String> openArgs) {
 
         if (MinecraftVersion.isOlderThan(16)) return;
 
-        if (openArgs.size() != 1) {
-            throw new IllegalArgumentException("Gradient tag must have 1 open arguments");
-        }
-        if (closeArgs.size() != 1) {
-            throw new IllegalArgumentException("Gradient tag must have 1 close arguments");
+        if (openArgs.size() < 2) {
+            throw new IllegalArgumentException("Gradient tag must have at least 2 colors");
         }
 
         String content = ChatColor.stripColor(component.toPlainText());
 
-        String start = openArgs.get(0).replace("#", "");
-        String end = closeArgs.get(0).replace("#", "");
+        Color[] colors = new Color[openArgs.size()];
+        for (int i = 0; i < openArgs.size(); i++) {
+            String colorHex = openArgs.get(i).replace("#", "");
+            if (colorHex.length() != 6) {
+                throw new IllegalArgumentException("Color hex must have 6 characters: " + openArgs.get(i));
+            }
+            colors[i] = Color.decode("#" + colorHex);
+        }
 
-        if (start.length() != 6 || end.length() != 6)
-            throw new IllegalArgumentException("Start and end hex must have 6 characters");
-
-        java.awt.Color from = java.awt.Color.decode("#" + start);
-        java.awt.Color to = java.awt.Color.decode("#" + end);
-
-        double[] red = linear(from.getRed(), to.getRed(), content.length());
-        double[] green = linear(from.getGreen(), to.getGreen(), content.length());
-        double[] blue = linear(from.getBlue(), to.getBlue(), content.length());
+        double[] red = multiColorLinear(colors, Color::getRed, content.length());
+        double[] green = multiColorLinear(colors, Color::getGreen, content.length());
+        double[] blue = multiColorLinear(colors, Color::getBlue, content.length());
 
         component.setText("");
         component.getExtra().clear();
 
         for (int i = 0; i < content.length(); i++) {
             char c = content.charAt(i);
-            java.awt.Color color = new java.awt.Color(
+            Color color = new Color(
                     (int) Math.round(red[i]),
                     (int) Math.round(green[i]),
                     (int) Math.round(blue[i])
@@ -58,11 +57,37 @@ public class GradientTag implements Tag {
             component.addExtra(part);
         }
     }
-    private static double[] linear(double from, double to, int max) {
-        final double[] res = new double[max];
-        for (int i = 0; i < max; i++) {
-            res[i] = from + i * ((to - from) / (max - 1));
+
+    private double[] multiColorLinear(Color[] colors, ToIntFunction<Color> componentExtractor, int steps) {
+        if (colors.length < 2) {
+            throw new IllegalArgumentException("Must have at least 2 colors");
         }
-        return res;
+
+        if (steps <= 1) {
+            return new double[]{componentExtractor.applyAsInt(colors[0])};
+        }
+
+        double[] result = new double[steps];
+
+        int segments = colors.length - 1;
+
+        double stepsPerSegment = (double) (steps - 1) / segments;
+
+        for (int i = 0; i < steps; i++) {
+            double position = i / stepsPerSegment;
+            int segmentIndex = Math.min((int) position, segments - 1);
+
+            double segmentPosition = position - segmentIndex;
+
+            Color startColor = colors[segmentIndex];
+            Color endColor = colors[segmentIndex + 1];
+
+            int startValue = componentExtractor.applyAsInt(startColor);
+            int endValue = componentExtractor.applyAsInt(endColor);
+
+            result[i] = startValue + (endValue - startValue) * segmentPosition;
+        }
+
+        return result;
     }
 }

@@ -19,6 +19,12 @@ public interface MenuConfigurations extends BasicMenuConfigs {
     }
     String getTitle();
 
+    static MenuConfigsImpl of(Plugin plugin, String id, String title, InventoryType type, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String, String>> placeholders, long repeatingUpdateDelay) {
+        return new MenuConfigsImpl(plugin, id, title, type, allowedActions, enabled, placeholders, repeatingUpdateDelay);
+    }
+    static MenuConfigsImpl of(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String, String>> placeholders, long repeatingUpdateDelay) {
+        return new MenuConfigsImpl(plugin, id, title, rows, allowedActions, enabled, placeholders, repeatingUpdateDelay);
+    }
     static MenuConfigsImpl of(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled) {
         return new MenuConfigsImpl(plugin, id, title, rows, allowedActions, enabled);
     }
@@ -29,16 +35,16 @@ public interface MenuConfigurations extends BasicMenuConfigs {
         return new MenuConfigsImpl(plugin, id, title, type, allowedActions, enabled);
     }
     static MenuConfigsImpl of(Plugin plugin, String id, String title, int rows, boolean enabled) {
-        return new MenuConfigsImpl(plugin, id, title, rows, null, enabled);
+        return new MenuConfigsImpl(plugin, id, title, rows, EnumSet.noneOf(MenuAction.class), enabled);
     }
     static MenuConfigsImpl of(Plugin plugin, String id, String title, InventoryType type, boolean enabled) {
-        return new MenuConfigsImpl(plugin, id, title, type, null, enabled);
+        return new MenuConfigsImpl(plugin, id, title, type, EnumSet.noneOf(MenuAction.class), enabled);
     }
     static MenuConfigsImpl of(Plugin plugin, String id, String title, int rows) {
-        return new MenuConfigsImpl(plugin, id, title, rows, null, true);
+        return new MenuConfigsImpl(plugin, id, title, rows, EnumSet.noneOf(MenuAction.class), true);
     }
     static MenuConfigsImpl of(Plugin plugin, String id, String title, InventoryType type) {
-        return new MenuConfigsImpl(plugin, id, title, type, null, true);
+        return new MenuConfigsImpl(plugin, id, title, type, EnumSet.noneOf(MenuAction.class), true);
     }
 
 

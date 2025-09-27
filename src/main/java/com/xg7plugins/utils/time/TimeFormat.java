@@ -1,7 +1,8 @@
 package com.xg7plugins.utils.time;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
@@ -76,13 +77,13 @@ public enum TimeFormat {
      */
     public String format(long time) {
 
-        Config config = Config.mainConfigOf(XG7Plugins.getInstance());
+        ConfigSection config = ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root();
 
         List<String> placeholders = new ArrayList<>();
 
         String thisName = this.name().toLowerCase();
 
-        for (String name : thisName.split("_")) placeholders.add(config.get("time-placeholders." + name, String.class).orElse(name));
+        for (String name : thisName.split("_")) placeholders.add(config.get("time-placeholders." + name, name));
 
         return formatter.apply(time, placeholders);
     }

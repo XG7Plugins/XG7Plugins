@@ -2,7 +2,8 @@ package com.xg7plugins.cooldowns;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.managers.Manager;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.time.Time;
@@ -28,7 +29,7 @@ public class CooldownManager implements Manager {
     private final CooldownManagerTask task;
 
     public CooldownManager(XG7Plugins plugin) {
-        this.task = new CooldownManagerTask(this, Config.mainConfigOf(plugin).getTime("player-cooldown-task-delay").orElse(Time.of(1)).getMilliseconds());
+        this.task = new CooldownManagerTask(this, ConfigFile.mainConfigOf(plugin).root().getTimeInMilliseconds("player-cooldown-task-delay", 1000L));
     }
 
     /**

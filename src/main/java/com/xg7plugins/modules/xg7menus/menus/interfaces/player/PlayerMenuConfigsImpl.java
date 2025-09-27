@@ -26,6 +26,12 @@ public class PlayerMenuConfigsImpl implements PlayerMenuConfigurations {
     private final String onDragMessage;
     private final String onInteractMessage;
 
+    private final long repeatingUpdateDelay;
+
+    @Override
+    public long repeatingUpdateMills() {
+        return repeatingUpdateDelay;
+    }
 
     @Override
     public String getId() {

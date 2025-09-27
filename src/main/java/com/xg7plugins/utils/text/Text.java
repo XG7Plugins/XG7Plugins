@@ -1,10 +1,7 @@
 package com.xg7plugins.utils.text;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.lang.Lang;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.Pair;
@@ -16,6 +13,8 @@ import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
 import lombok.Setter;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
@@ -198,6 +197,10 @@ public class Text {
         return TagResolver.deserialize(TimeParser.remainingTimeForValue(getTextRaw()));
     }
 
+    public Component toAdventureComponent() {
+        return LegacyComponentSerializer.legacySection().deserialize(getText());
+    }
+
     /**
      * Detects and processes language placeholders in the text
      *
@@ -222,7 +225,7 @@ public class Text {
 
             while (langMatch.find()) {
                 String path = langMatch.group(1);
-                result.replace(langMatch.start(), langMatch.end(), lang.get(path));
+                result.replace(langMatch.start(), langMatch.end(), lang.getSecond().get(path));
             }
 
             Text objectText = new Text(result.toString());
@@ -240,7 +243,7 @@ public class Text {
     }
     public static CompletableFuture<Text> fromLang(CommandSender sender, Plugin plugin, String path, boolean textForSender) {
         return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
-            String text = lang.get(path);
+            String text = lang.getSecond().get(path);
 
             text = text.replace("%prefix%", plugin.getEnvironmentConfig().getCustomPrefix())
                     .replace("%player%", sender == null ? "No name" : sender.getName());

@@ -2,10 +2,10 @@ package com.xg7plugins.data.database.connector;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.data.database.ConnectionType;
 import lombok.Data;
-import org.checkerframework.checker.units.qual.C;
 
 /**
  * Configuration holder for SQL database connections.
@@ -33,15 +33,18 @@ public class SQLConfigs {
      *
      * @param pluginConfig The plugin configuration
      */
-    public SQLConfigs(Config pluginConfig) {
-        host = pluginConfig.get("sql.host", String.class).orElse(null);
-        port = pluginConfig.get("sql.port", Integer.class).orElse(0);
-        database = pluginConfig.get("sql.database", String.class).orElse(null);
-        username = pluginConfig.get("sql.username", String.class).orElse(null);
-        password = pluginConfig.get("sql.password", String.class).orElse(null);
+    public SQLConfigs(ConfigFile pluginConfig) {
 
-        connectionString = pluginConfig.get("sql.url", String.class, true).orElse(null);
-        connectionType = pluginConfig.get("sql.type", ConnectionType.class).orElse(ConnectionType.SQLITE);
+        ConfigSection config = pluginConfig.root();
+
+        host = config.get("sql.host");
+        port = config.get("sql.port", 0);
+        database = config.get("sql.database");
+        username = config.get("sql.username");
+        password = config.get("sql.password");
+
+        connectionString = config.get("sql.url");
+        connectionType = config.get("sql.type", ConnectionType.SQLITE);
     }
 
     /**
@@ -50,21 +53,22 @@ public class SQLConfigs {
      * @param pluginConfig The plugin-specific configuration
      * @param mainConfig The main system configuration with defaults
      */
-    public SQLConfigs(Config pluginConfig, Config mainConfig) {
+    public SQLConfigs(ConfigFile pluginConfig, ConfigFile mainConfig) {
         this(pluginConfig);
-        this.cacheExpires = mainConfig.getTimeInMilliseconds("sql.cache-expires").orElse(0L);
 
-        this.connectionTimeout = mainConfig.getTimeInMilliseconds("sql.connection-timeout").orElse(0L);
+        ConfigSection config = mainConfig.root();
 
-        this.idleTimeout = mainConfig.getTimeInMilliseconds("sql.idle-timeout").orElse(0L);
+        this.cacheExpires = config.getTimeInMilliseconds("sql.cache-expires", 0L);
 
-        this.maxPoolSize = mainConfig.get("sql.max-pool-size", Integer.class)
-                .orElse(10); // Default suggested value
+        this.connectionTimeout = config.getTimeInMilliseconds("sql.connection-timeout", 0L);
 
-        this.minIdle = mainConfig.get("sql.min-idle-connections", Integer.class)
-                .orElse(5); // Default suggested value
+        this.idleTimeout = config.getTimeInMilliseconds("sql.idle-timeout", 0L);
 
-        this.keepAliveTime = mainConfig.getTimeInMilliseconds("sql.keep-alive-delay").orElse(0L);
+        this.maxPoolSize = config.get("sql.max-pool-size", 10);
+
+        this.minIdle = config.get("sql.min-idle-connections", 5);
+
+        this.keepAliveTime = config.getTimeInMilliseconds("sql.keep-alive-delay", 0L);
     }
 
     /**
@@ -73,7 +77,7 @@ public class SQLConfigs {
      * @param pluginConfig The plugin configuration
      * @return A new SQLConfigs instance
      */
-    public static SQLConfigs of(Config pluginConfig) {
+    public static SQLConfigs of(ConfigFile pluginConfig) {
         return new SQLConfigs(pluginConfig);
     }
     
@@ -84,12 +88,12 @@ public class SQLConfigs {
      * @param mainConfig The main system configuration
      * @return A new SQLConfigs instance with complete settings
      */
-    public static SQLConfigs of(Config pluginConfig, Config mainConfig) {
+    public static SQLConfigs of(ConfigFile pluginConfig, ConfigFile mainConfig) {
         return new SQLConfigs(pluginConfig,mainConfig);
     }
 
     public static SQLConfigs of(Plugin plugin) {
-        return of(Config.mainConfigOf(plugin), Config.mainConfigOf(XG7Plugins.getInstance()));
+        return of(ConfigFile.mainConfigOf(plugin), ConfigFile.mainConfigOf(XG7Plugins.getInstance()));
     }
 
     /**

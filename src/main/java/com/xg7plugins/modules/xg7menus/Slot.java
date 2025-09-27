@@ -14,7 +14,7 @@ public class Slot {
     private final int row;
     private final int column;
     public Slot(int row, int column, boolean ignoreBounds) {
-        if ((!ignoreBounds && (row > 6 || column > 9)) || row < 1 || column < 1) throw new MenuException(MenuException.ExceptionCause.SLOT_OUT_OF_BOUNDS, "Inventory coordinate invalid!");
+        if ((!ignoreBounds && (row > 6 || column > 9 || row < 1 || column < 1))) throw new MenuException(MenuException.ExceptionCause.SLOT_OUT_OF_BOUNDS, "Inventory coordinate invalid!");
         this.row = row;
         this.column = column;
     }
@@ -28,7 +28,10 @@ public class Slot {
         return get(row, column);
     }
     public static Slot fromSlot(int slot) {
-        return slot == 0 ? new Slot(1, 1) : new Slot((int) (slot / 9) + 1, (slot % 9) + 1);
+        return slot == 0 ? new Slot(1, 1) : new Slot((slot / 9) + 1, (slot % 9) + 1);
+    }
+    public static Slot fromSlot(int slot, boolean ignoreBounds) {
+        return slot == 0 ? new Slot(1, 1, ignoreBounds) : new Slot((slot / 9) + 1, (slot % 9) + 1, ignoreBounds);
     }
     public static Slot of(int row, int column) {
         return new Slot(row, column);

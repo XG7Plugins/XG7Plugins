@@ -3,12 +3,12 @@ package com.xg7plugins.modules.xg7scores.builder;
 
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.modules.xg7scores.scores.Tablist;
+import com.xg7plugins.modules.xg7scores.scores.TabList;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TablistBuilder extends ScoreBuilder<Tablist, TablistBuilder> {
+public class TablistBuilder extends ScoreBuilder<TabList, TablistBuilder> {
 
     private List<String> header = new ArrayList<>();
     private List<String> footer = new ArrayList<>();
@@ -45,7 +45,7 @@ public class TablistBuilder extends ScoreBuilder<Tablist, TablistBuilder> {
         return this;
     }
 
-    public Tablist build(Plugin plugin) {
-        return new Tablist(delayToUpdate, header, footer, playerPrefix,playerSuffix,id, condition, plugin);
+    public TabList build(Plugin plugin) {
+        return new TabList(delayToUpdate, header, footer, playerPrefix, playerSuffix, id, condition, plugin);
     }
 }

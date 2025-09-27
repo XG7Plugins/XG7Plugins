@@ -15,7 +15,7 @@ public class RainbowTag implements Tag {
     }
 
     @Override
-    public void resolve(TextComponent component, List<String> openArgs, List<String> closeArgs) {
+    public void resolve(TextComponent component, List<String> openArgs) {
 
         String content = ChatColor.stripColor(component.toPlainText());
 

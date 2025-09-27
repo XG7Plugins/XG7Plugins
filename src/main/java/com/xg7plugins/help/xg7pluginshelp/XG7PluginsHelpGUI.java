@@ -4,11 +4,11 @@ import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.BookItem;
+import com.xg7plugins.modules.xg7menus.item.impl.BookItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
-import com.xg7plugins.modules.xg7menus.item.SkullItem;
+import com.xg7plugins.modules.xg7menus.item.impl.SkullItem;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
 import com.xg7plugins.utils.text.Text;
@@ -57,7 +57,7 @@ public class XG7PluginsHelpGUI extends Menu {
                 break;
             case 31:
 
-                Config lang = XG7PluginsAPI.langManager().getLangByPlayer(plugin, player).join().getLangConfiguration();
+                ConfigSection lang = XG7PluginsAPI.langManager().getLangByPlayer(plugin, player).join().getSecond().getLangConfiguration();
 
                 List<String> about = lang.getList("help-menu.about", String.class).orElse(new ArrayList<>());
 

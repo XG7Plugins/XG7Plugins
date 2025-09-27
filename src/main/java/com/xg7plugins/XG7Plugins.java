@@ -3,17 +3,17 @@ package com.xg7plugins;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginSetup;
+import com.xg7plugins.boot.VersionChecker;
 import com.xg7plugins.cache.CacheManager;
-import com.xg7plugins.cache.RedisCacheSection;
-import com.xg7plugins.commands.core_commands.LangCommand;
-import com.xg7plugins.commands.core_commands.reload.ReloadCause;
-import com.xg7plugins.commands.core_commands.reload.ReloadCommand;
-import com.xg7plugins.commands.core_commands.task_command.TaskCommand;
+import com.xg7plugins.commands.impl.LangCommand;
+import com.xg7plugins.commands.impl.reload.ReloadCause;
+import com.xg7plugins.commands.impl.reload.ReloadCommand;
+import com.xg7plugins.commands.impl.task_command.TaskCommand;
 import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.cooldowns.CooldownManager;
 import com.xg7plugins.data.JsonManager;
-import com.xg7plugins.data.config.core.MainConfigSection;
-import com.xg7plugins.data.config.default_type_adapters.SoundTypeAdapter;
+import com.xg7plugins.config.typeadapter.impl.SoundTypeAdapter;
 import com.xg7plugins.data.database.dao.Repository;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.playerdata.PlayerData;
@@ -28,19 +28,25 @@ import com.xg7plugins.help.menu.HelpGUI;
 import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpForm;
 import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpGUI;
 import com.xg7plugins.help.xg7pluginshelp.chathelp.XG7PluginsChatHelp;
-import com.xg7plugins.plugin_menus.LangForm;
-import com.xg7plugins.plugin_menus.LangMenu;
-import com.xg7plugins.plugin_menus.TaskMenu;
+import com.xg7plugins.menus.LangForm;
+import com.xg7plugins.menus.LangMenu;
+import com.xg7plugins.menus.TaskMenu;
 import com.xg7plugins.modules.ModuleManager;
-import com.xg7plugins.data.config.default_type_adapters.LangItemTypeAdapter;
+import com.xg7plugins.config.typeadapter.impl.LangItemTypeAdapter;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.events.Listener;
-import com.xg7plugins.events.defaultevents.JoinListener;
+import com.xg7plugins.events.listeners.JoinListener;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
+import com.xg7plugins.modules.xg7scores.scores.scoreboards.BelowNameScore;
+import com.xg7plugins.modules.xg7scores.scores.scoreboards.TabListScore;
+import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.LegacySidebar;
+import com.xg7plugins.modules.xg7scores.organizer.impl.LuckpermsRule;
+import com.xg7plugins.modules.xg7scores.organizer.impl.OPRule;
+import com.xg7plugins.modules.xg7scores.scores.TabList;
 import com.xg7plugins.server.ServerInfo;
 import com.xg7plugins.tasks.*;
 import com.xg7plugins.tasks.plugin_tasks.DatabaseKeepAlive;
@@ -53,18 +59,24 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.ServerOperator;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Getter(AccessLevel.PUBLIC)
-@PluginSetup(prefix = "§bXG§37P§9lu§1gins§r", onEnableDraw = {
+@PluginSetup(
+        prefix = "§bXG§37P§9lu§1gins§r",
+        onEnableDraw = {
         "§b __   _______ §3______ §9_____  _             §1_           ",
         "§b \\ \\ / / ____|§3____ §9 |  __ \\| |           §1(_)          ",
         "§b  \\ V / |  __  §3  / §9/| |__) | |_   _  __ _ §1_ _ __  ___ ",
@@ -73,11 +85,15 @@ import java.util.concurrent.ExecutionException;
         "§b /_/ \\_\\_____|§3/_/  §9 |_|    |_|\\__,_|\\__,§1 |_|_| |_|___/",
         "§9                                     __/ |            ",
         "§9                                    |___/             "
-}, mainCommandName = "xg7plugins", mainCommandAliases = { "7pl", "7pls",
-        "xg7pl" }, configSections = { MainConfigSection.class, RedisCacheSection.class }, reloadCauses = { "json" })
+        },
+        mainCommandName = "xg7plugins",
+        mainCommandAliases = { "7pl", "7pls", "xg7pl" },
+        reloadCauses = { "json" }
+)
 public final class XG7Plugins extends Plugin {
 
     private ServerInfo serverInfo;
+    private VersionChecker versionChecker;
 
     private final ConcurrentHashMap<String, Plugin> plugins = new ConcurrentHashMap<>();
 
@@ -88,12 +104,14 @@ public final class XG7Plugins extends Plugin {
                 .bStats(false)
                 .checkForUpdates(true);
         PacketEvents.getAPI().load();
+        versionChecker = new VersionChecker();
         super.onLoad();
     }
 
     @Override
     public void onEnable() {
         super.onEnable();
+        System.setProperty("adventure.text.warnWhenLegacyFormattingDetected", "false");
         debug.loading("Enabling XG7Plugins...");
         PacketEvents.getAPI().init();
 
@@ -102,14 +120,9 @@ public final class XG7Plugins extends Plugin {
         Metrics.getMetrics(this, 24626);
 
         debug.loading("Loading plugin configurations...");
-        try {
-            XG7PluginsAPI.configManager(this).registerSections();
-            XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
-            XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
-                | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+
+        XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
+        XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
 
         debug.loading("Loading managers...");
 
@@ -143,6 +156,23 @@ public final class XG7Plugins extends Plugin {
             geyserForms.registerForm(new LangForm());
         }
 
+        if (ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("organize-tablist", true)) {
+
+            debug.loading("Loading tab organizer...");
+
+            XG7Scores scores = XG7Scores.getInstance();
+
+            scores.registerTablistOrgaizerRule(new OPRule());
+
+            if (XG7PluginsAPI.isDependencyEnabled("LuckPerms")) {
+
+                LuckPerms luckPerms = Bukkit.getServicesManager().getRegistration(LuckPerms.class).getProvider();
+
+                luckPerms.getGroupManager().loadAllGroups().thenRun(() -> luckPerms.getGroupManager().getLoadedGroups().forEach(group -> scores.registerTablistOrgaizerRule(new LuckpermsRule(group))));
+
+            }
+        }
+
         debug.loading("Loading plugins...");
 
         plugins.forEach((name, plugin) -> loadPlugin(plugin));
@@ -156,10 +186,13 @@ public final class XG7Plugins extends Plugin {
                 debug.loading("§cShutdowning server for dependency updates... Please restart the server");
                 debug.loading("======================================================================");
                 Bukkit.shutdown();
-
                 return;
             }
 
+            List<CommandSender> players = Bukkit.getOnlinePlayers().stream().filter(ServerOperator::isOp).collect(Collectors.toList());
+
+            versionChecker.notify(players);
+            versionChecker.notify(Collections.singletonList(Bukkit.getConsoleSender()));
 
         });
 
@@ -284,13 +317,6 @@ public final class XG7Plugins extends Plugin {
             plugin.getDebug().loading("Loading plugin configurations...");
 
             XG7PluginsAPI.configManager(plugin).registerAdapter(new SoundTypeAdapter());
-
-            try {
-                XG7PluginsAPI.configManager(plugin).registerSections();
-            } catch (NoSuchMethodException | InvocationTargetException | InstantiationException
-                    | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
         }
 
         plugin.getDebug().loading("Connecting plugin to database...");

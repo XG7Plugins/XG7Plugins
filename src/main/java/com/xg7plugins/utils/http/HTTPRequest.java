@@ -1,10 +1,10 @@
 package com.xg7plugins.utils.http;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.config.core.MainConfigSection;
+import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.time.Time;
 import lombok.AllArgsConstructor;
 
 import java.io.*;
@@ -26,6 +26,7 @@ public class HTTPRequest {
 
     public HTTPResponse send() throws IOException {
         HttpURLConnection conn = request();
+
         BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
         StringBuilder sb = new StringBuilder();
         String output;
@@ -68,7 +69,7 @@ public class HTTPRequest {
         conn.setRequestProperty("Cache-Control", "no-cache");
         conn.setRequestProperty("Pragma", "no-cache");
 
-        conn.setConnectTimeout(new Long(Config.of(XG7Plugins.getInstance(), MainConfigSection.class).getHttpRequestTimeout().getMilliseconds()).intValue());
+        conn.setConnectTimeout((int) ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("http-requests-timeout", Time.of(5)).toMilliseconds());
 
         if (headers != null) for (Pair<String,String> header : headers) conn.setRequestProperty(header.getFirst(), header.getSecond());
 
@@ -79,12 +80,6 @@ public class HTTPRequest {
                 os.write(input, 0, input.length);
             }
         }
-
-        debug.info("Request made to: " + this.url);
-        debug.info("Response code: " + conn.getResponseCode());
-        debug.info("Response message: " + conn.getResponseMessage());
-        debug.info("Response headers: " + conn.getHeaderFields());
-        debug.info("Response body: " + conn.getResponseMessage());
 
         return conn;
     }

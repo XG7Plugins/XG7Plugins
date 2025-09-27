@@ -47,6 +47,20 @@ public enum MenuAction {
     public boolean isLeftClick() {
         return this == LEFT || this == SHIFT_LEFT || this == DOUBLE_CLICK || this == CREATIVE || this == LEFT_CLICK_AIR || this == LEFT_CLICK_BLOCK;
     }
+
+    public boolean isAirInteract() {
+        return this == LEFT_CLICK_AIR || this == RIGHT_CLICK_AIR;
+    }
+
+    public boolean isPlayerInteract() {
+        return this == PLAYER_DROP || this == PLAYER_PICKUP || this == PLAYER_BREAK_BLOCK || this == PLAYER_PLACE_BLOCK || this == LEFT_CLICK_AIR || this == RIGHT_CLICK_AIR || this == PHYSICAL || this == LEFT_CLICK_BLOCK || this == RIGHT_CLICK_BLOCK;
+    }
+
+    public boolean isMenuInteract() {
+        return this == LEFT || this == SHIFT_LEFT || this == RIGHT || this == SHIFT_RIGHT || this == WINDOW_BORDER_LEFT || this == WINDOW_BORDER_RIGHT || this == MIDDLE || this == NUMBER_KEY || this == KEYBOARD || this == DOUBLE_CLICK || this == DROP || this == CONTROL_DROP || this == CREATIVE || this == SWAP_OFFHAND;
+    }
+
+
     public boolean isBlockInteract() {
         return this == RIGHT_CLICK_BLOCK || this == LEFT_CLICK_BLOCK;
     }

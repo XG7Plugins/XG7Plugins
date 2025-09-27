@@ -208,7 +208,7 @@ public class Transaction {
                 transaction.addColumns(columnName);
 
                 if (Time.class.isAssignableFrom(field.getType())) {
-                    transaction.params(((Time) value).getMilliseconds());
+                    transaction.params(((Time) value).toMilliseconds());
                     continue;
                 }
                 transaction.params(value);

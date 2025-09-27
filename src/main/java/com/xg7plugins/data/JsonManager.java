@@ -7,8 +7,7 @@ import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.cache.ObjectCache;
-import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.config.core.MainConfigSection;
+import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.managers.Manager;
 import com.xg7plugins.utils.FileUtil;
 
@@ -31,7 +30,7 @@ public class JsonManager implements Manager {
     public JsonManager(XG7Plugins plugin) {
         cache = new ObjectCache<>(
                 plugin,
-                Config.of(plugin, MainConfigSection.class).getJsonCacheExpires().getMilliseconds(),
+                ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().getTimeInMilliseconds("json-cache-expires", 10 * 60 * 1000L),
                 false,
                 "json-cache",
                 false,
@@ -97,7 +96,15 @@ public class JsonManager implements Manager {
      */
     public <T> CompletableFuture<Void> saveEntry(Plugin plugin, String path, String key, T value) {
         return CompletableFuture.runAsync(() -> {
-            File file = FileUtil.createFile(plugin, path);
+            File file = new File(plugin.getDataFolder(), path);
+            if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+            if (!file.exists()) {
+                try {
+                    if (!file.createNewFile()) return;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
             Type mapType = new TypeToken<java.util.Map<String, Object>>() {}.getType();
             Map<String, Object> map = new HashMap<>();
@@ -110,12 +117,12 @@ public class JsonManager implements Manager {
 
             map.put(key, value);
 
-            try {
-                FileUtil.writeFile(plugin, path, gson.toJson(map));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            try (Writer writer = new BufferedWriter(new FileWriter(file, false))) {
+                gson.toJson(map, writer);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
+        }, XG7PluginsAPI.taskManager().getExecutor("files"));
     }
 
     /**
@@ -173,6 +180,27 @@ public class JsonManager implements Manager {
             cache.put(plugin.getName() + ":" + path, t);
             return t;
         }, XG7PluginsAPI.taskManager().getExecutor("files"));
+    }
+
+    public <T> CompletableFuture<T> loadEntry(Plugin plugin, String path, String key, Class<T> clazz) {
+        return CompletableFuture.supplyAsync(() -> {
+            File file = new File(plugin.getDataFolder(), path);
+            if (!file.exists()) return null;
+
+            try (FileReader reader = new FileReader(file)) {
+                Type mapType = new TypeToken<Map<String, com.google.gson.JsonElement>>() {}.getType();
+                Map<String, com.google.gson.JsonElement> map = gson.fromJson(reader, mapType);
+
+                if (map == null) return null;
+                com.google.gson.JsonElement element = map.get(key);
+
+                if (element == null) return null;
+                return gson.fromJson(element, clazz);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        });
     }
 
 

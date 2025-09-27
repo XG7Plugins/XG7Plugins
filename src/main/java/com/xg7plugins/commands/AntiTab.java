@@ -3,7 +3,8 @@ package com.xg7plugins.commands;
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTabComplete;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.events.packetevents.PacketListenerSetup;
 import com.xg7plugins.events.packetevents.PacketEventType;
@@ -58,6 +59,6 @@ public class AntiTab implements PacketListener {
 
     @Override
     public boolean isEnabled() {
-        return Config.mainConfigOf(XG7Plugins.getInstance()).get("anti-tab", Boolean.class).orElse(false);
+        return ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("anti-tab", false);
     }
 }

@@ -12,8 +12,10 @@ public class MenuEvent implements Cancellable {
     private boolean cancelled;
     protected final BasicMenuHolder holder;
 
-    public MenuEvent(BasicMenuHolder holder) {
+    public MenuEvent(BasicMenuHolder holder, boolean cancelled) {
         this.holder = holder;
+
+        this.cancelled = cancelled;
     }
 
 }

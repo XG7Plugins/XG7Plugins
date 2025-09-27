@@ -2,7 +2,7 @@ package com.xg7plugins.data.database.processor;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.data.database.ConnectionType;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.data.database.connector.SQLConfigs;
@@ -36,7 +36,10 @@ import java.util.*;
 public class DatabaseProcessor {
 
     private final DatabaseManager databaseManager;
-    private final long timeout = Config.mainConfigOf(XG7Plugins.getInstance()).getTimeInMilliseconds("sql.connection-timeout").orElse(5000L);
+
+    private long timeout() {
+        return ConfigFile.mainConfigOf(XG7Plugins.getInstance()).section("sql").getTimeInMilliseconds("connection-timeout", 5000L);
+    }
 
     /**
      * Processes a database transaction.
@@ -79,7 +82,7 @@ public class DatabaseProcessor {
                     Debug.of(XG7Plugins.getInstance()).info("Executing query: " + currentQuery);
 
                     ps = connection.prepareStatement(currentQuery);
-                    ps.setQueryTimeout((int) (timeout / 1000));
+                    ps.setQueryTimeout((int) (timeout() / 1000));
 
                     for (int i = 0; i < query.getSecond().size(); i++) {
                         Object o = query.getSecond().get(i);
@@ -167,7 +170,7 @@ public class DatabaseProcessor {
             }
 
             try (PreparedStatement ps = connection.prepareStatement(query.getQuery())) {
-                ps.setQueryTimeout((int) (timeout / 1000));
+                ps.setQueryTimeout((int) (timeout() / 1000));
                 Debug.of(XG7Plugins.getInstance()).info("Setting " + query.getParams().size() + " parameters");
 
                 for (int i = 0; i < query.getParams().size(); i++) {

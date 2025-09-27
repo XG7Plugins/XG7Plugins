@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com'
-version = '1.2.5.1'
+version = '1.2.6'
 
 repositories {
     mavenCentral()
@@ -34,7 +34,7 @@ repositories {
 dependencies {
 
     api("com.github.cryptomorin:XSeries:13.3.3")
-    api("com.github.retrooper:packetevents-spigot:2.9.4")
+    api("com.github.retrooper:packetevents-spigot:2.9.5")
 
     compileOnly 'io.netty:netty-all:4.1.111.Final'
 
@@ -51,7 +51,7 @@ dependencies {
     implementation group: 'com.mysql', name: 'mysql-connector-j', version: '9.3.0'
     implementation 'com.zaxxer:HikariCP:4.0.3'
 
-
+    compileOnly 'net.luckperms:api:5.4'
 
 }
 

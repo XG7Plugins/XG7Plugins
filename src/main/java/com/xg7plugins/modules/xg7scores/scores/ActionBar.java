@@ -3,6 +3,7 @@ package com.xg7plugins.modules.xg7scores.scores;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.chat.ChatTypes;
 import com.github.retrooper.packetevents.protocol.chat.message.ChatMessageLegacy;
+import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerChatMessage;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
@@ -32,26 +33,30 @@ public class ActionBar extends Score {
 
     @Override
     public void update() {
+
         for (UUID id : super.getPlayers()) {
+
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
-            if (containsPlayer(id)) continue;
+
+            if (containsPlayerInBlacklist(id)) continue;
+
 
             String message = Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).join().getText();
 
             if (MinecraftVersion.isNewerThan(8)) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
-                return;
+                continue;
             }
 
-            WrapperPlayServerChatMessage packetPlayOutChat = new WrapperPlayServerChatMessage(new ChatMessageLegacy(net.kyori.adventure.text.Component.text(message), ChatTypes.GAME_INFO));
+            User user = PacketEvents.getAPI().getPlayerManager().getUser(player);
 
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packetPlayOutChat);
+            user.sendMessage(Text.format(message).toAdventureComponent(), ChatTypes.GAME_INFO);
 
         }
     }
 
-    public static boolean containsPlayer(UUID id) {
+    public static boolean containsPlayerInBlacklist(UUID id) {
         return sendActionBlackList.contains(id);
     }
     public static void addToBlacklist(Player player) {

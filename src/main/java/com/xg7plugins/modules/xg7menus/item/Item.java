@@ -12,9 +12,13 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.modules.xg7menus.Slot;
+import com.xg7plugins.modules.xg7menus.item.impl.ClickableItem;
+import com.xg7plugins.modules.xg7menus.item.parser.ItemParser;
+import com.xg7plugins.modules.xg7menus.item.parser.impl.*;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
+import dev.lone.itemsadder.api.CustomStack;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -37,6 +41,25 @@ import java.util.stream.Collectors;
 @Getter
 public class Item implements Cloneable {
 
+    private static final List<ItemParser<?>> parsers = new ArrayList<>();
+
+    public static void registerParser(ItemParser<?> parser) {
+        parsers.add(parser);
+    }
+
+    static {
+        registerParser(new PotionParser());
+        registerParser(new SkullParser());
+        registerParser(new EnchantedBookParser());
+        registerParser(new LeatherArmorParser());
+        registerParser(new SimpleFireworkParser());
+        registerParser(new SpawnerParser());
+    }
+
+    public static ItemParser<?> getParser(XMaterial material) {
+        return parsers.stream().filter(p -> p.getMaterials().contains(material)).findFirst().orElse(null);
+    }
+
     protected ItemStack itemStack;
     protected int slot;
 
@@ -55,15 +78,35 @@ public class Item implements Cloneable {
     public static Item from(XMaterial material) {
         return new Item(material.parseItem());
     }
-    public static Item from(String material) {
-        if (material == null) return Item.from(Material.STONE);
-        if (material.startsWith("eyJ0")) return SkullItem.newSkull().setValue(material);
-        if (material.equals("THIS_PLAYER")) return SkullItem.newSkull().renderPlayerSkull(true);
+    public static <T extends Item> T from(String material) {
+
+        if (material == null) return (T) Item.from(Material.STONE);
+
+        if (material.toUpperCase().startsWith("ITEMSADDER:")) {
+            String id = material.substring(11);
+            return (T) Item.from(CustomStack.getInstance(id).getItemStack());
+        }
+
         if (material.split(", ").length == 2) {
             String[] args = material.split(", ");
-            return Item.from(new MaterialData(Material.getMaterial(args[0]), Byte.parseByte(args[1])));
+            return (T) Item.from(new MaterialData(Material.getMaterial(args[0]), Byte.parseByte(args[1])));
         }
-        return Item.from(XMaterial.matchXMaterial(material).orElse(XMaterial.STONE));
+
+        String[] splitMaterial = material.split(":");
+
+        String realMaterial = splitMaterial[0];
+
+
+        XMaterial xMaterial = XMaterial.matchXMaterial(realMaterial).orElse(XMaterial.STONE);
+
+        ItemParser<?> parser = getParser(xMaterial);
+
+        if (parser != null) return (T) parser.parse(xMaterial, Arrays.copyOfRange(splitMaterial, 1, splitMaterial.length));
+
+        return (T) Item.from(xMaterial);
+    }
+    public static Item from(CustomStack stack) {
+        return Item.from(stack.getItemStack());
     }
     public static Item from(Material material) {
         return new Item(new ItemStack(material));

@@ -4,7 +4,11 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.modules.Module;
+import com.xg7plugins.modules.xg7scores.organizer.TabListSorter;
+import com.xg7plugins.modules.xg7scores.organizer.TabListRule;
+import com.xg7plugins.modules.xg7scores.organizer.impl.NoPermRule;
 import com.xg7plugins.modules.xg7scores.tasks.ScoreTimerTask;
+import com.xg7plugins.modules.xg7scores.tasks.TabListSorterTask;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -23,12 +27,16 @@ public class XG7Scores implements Module {
 
     private final List<UUID> players = new ArrayList<>();
 
+    private final TabListSorter organizer = new TabListSorter(new ArrayList<>());
+
     @Override
     public void onInit() {
 
         instance = this;
 
         XG7Plugins.getInstance().getDebug().loading("XG7Scores initialized");
+
+        organizer.addRule(new NoPermRule());
     }
 
     @Override
@@ -39,9 +47,13 @@ public class XG7Scores implements Module {
         XG7Plugins.getInstance().getDebug().loading("XG7Scores disabled");
     }
 
+    public void registerTablistOrgaizerRule(TabListRule rule) {
+        organizer.addRule(rule);
+    }
+
     @Override
     public List<TimerTask> loadTasks() {
-        return Collections.singletonList(new ScoreTimerTask(this));
+        return Arrays.asList(new ScoreTimerTask(this), new TabListSorterTask());
     }
 
     @Override

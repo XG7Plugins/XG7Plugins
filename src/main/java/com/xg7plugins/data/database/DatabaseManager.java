@@ -4,7 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.data.database.dao.Repository;
 import com.xg7plugins.data.database.dao.RepositoryManager;
 import com.xg7plugins.data.database.connector.Connector;
@@ -19,7 +19,6 @@ import com.xg7plugins.data.database.processor.DatabaseProcessor;
 import com.xg7plugins.managers.Manager;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
@@ -60,11 +59,10 @@ public class DatabaseManager implements Manager {
      */
     public DatabaseManager(XG7Plugins plugin) {
         plugin.getManagerRegistry().registerManager(daoManager);
-        Config config = Config.mainConfigOf(plugin);
 
         cachedEntities = new ObjectCache<>(
                 plugin,
-                config.getTimeInMilliseconds("sql.cache-expires").orElse(30 * 60 * 1000L),
+                ConfigFile.mainConfigOf(plugin).section("sql").getTimeInMilliseconds("cache-expires", 30 * 60 * 1000L),
                 false,
                 "cached-entities",
                 false,
@@ -92,10 +90,10 @@ public class DatabaseManager implements Manager {
 
         plugin.getDebug().info("Connecting " + plugin.getName() + " to database...");
 
-        Config pluginConfig = Config.mainConfigOf(plugin);
-        Config xg7PluginsConfig = Config.mainConfigOf(XG7Plugins.getInstance());
+        ConfigFile pluginConfig = ConfigFile.mainConfigOf(plugin);
+        ConfigFile xg7PluginsConfig = ConfigFile.mainConfigOf(XG7Plugins.getInstance());
 
-        if (!pluginConfig.get("sql", ConfigurationSection.class).isPresent()) {
+        if (!pluginConfig.root().contains("sql")) {
             plugin.getDebug().severe("Connection aborted! No sql configs found in config.yml!");
             return;
         }

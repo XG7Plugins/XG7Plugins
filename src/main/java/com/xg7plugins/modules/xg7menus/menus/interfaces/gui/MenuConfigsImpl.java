@@ -19,8 +19,9 @@ public class MenuConfigsImpl implements MenuConfigurations {
     private final EnumSet<MenuAction> allowedActions;
     private final boolean enabled;
     private final List<Pair<String,String>> placeholders;
+    private final long repeatingUpdateDelay;
 
-    public MenuConfigsImpl(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String,String>> placeholders) {
+    public MenuConfigsImpl(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String,String>> placeholders, long repeatingUpdateDelay) {
         this.plugin = plugin;
         this.id = id;
         this.title = title;
@@ -28,8 +29,9 @@ public class MenuConfigsImpl implements MenuConfigurations {
         this.allowedActions = allowedActions;
         this.enabled = enabled;
         this.placeholders = placeholders;
+        this.repeatingUpdateDelay = repeatingUpdateDelay;
     }
-    public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String,String>> placeholders) {
+    public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String,String>> placeholders, long repeatingUpdateDelay) {
         this.plugin = plugin;
         this.id = id;
         this.title = title;
@@ -37,6 +39,14 @@ public class MenuConfigsImpl implements MenuConfigurations {
         this.allowedActions = allowedActions;
         this.enabled = enabled;
         this.placeholders = placeholders;
+        this.repeatingUpdateDelay = repeatingUpdateDelay;
+    }
+
+    public MenuConfigsImpl(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String,String>> placeholders) {
+        this(plugin, id, title, rows, allowedActions, enabled, placeholders, -1);
+    }
+    public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type, EnumSet<MenuAction> allowedActions, boolean enabled, List<Pair<String,String>> placeholders) {
+        this(plugin, id, title, type, allowedActions, enabled, placeholders, -1);
     }
     public MenuConfigsImpl(Plugin plugin, String id, String title, int rows, EnumSet<MenuAction> allowedActions, boolean enabled) {
         this(plugin, id, title, rows, allowedActions, enabled, Collections.emptyList());
@@ -57,6 +67,11 @@ public class MenuConfigsImpl implements MenuConfigurations {
 
     public MenuConfigsImpl(Plugin plugin, String id, String title, InventoryType type) {
         this(plugin, id, title, type, null, true, Collections.emptyList());
+    }
+
+    @Override
+    public long repeatingUpdateMills() {
+        return repeatingUpdateDelay;
     }
 
 

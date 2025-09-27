@@ -15,12 +15,11 @@ public class ActionEvent extends MenuEvent {
     private final Item clickedItem;
 
 
-    public ActionEvent(BasicMenuHolder holder, MenuAction menuAction, int rawSlot, Slot clickedSlot, Item clickedItem) {
-        super(holder);
+    public ActionEvent(BasicMenuHolder holder, MenuAction menuAction, int rawSlot, Slot clickedSlot, Item clickedItem, boolean cancelled) {
+        super(holder, cancelled);
         this.menuAction = menuAction;
         this.rawSlot = rawSlot;
         this.clickedSlot = clickedSlot;
         this.clickedItem = clickedItem;
-        setCancelled(true);
     }
 }

@@ -3,7 +3,7 @@ package com.xg7plugins.help.xg7pluginshelp;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;
 import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.text.Text;
@@ -24,7 +24,7 @@ public class XG7PluginsHelpForm extends SimpleForm {
     @Override
     public String content(Player player) {
 
-        Config lang = XG7PluginsAPI.langManager().getLangByPlayer(plugin, player).join().getLangConfiguration();
+        ConfigSection lang = XG7PluginsAPI.langManager().getLangByPlayer(plugin, player).join().getSecond().getLangConfiguration();
 
         String about = String.join("\n", lang.getList("help-menu.about", String.class).orElse(new ArrayList<>()));
 

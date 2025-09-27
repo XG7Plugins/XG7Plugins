@@ -1,7 +1,7 @@
 package com.xg7plugins.server;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -38,7 +38,10 @@ public class ServerInfo {
      */
     public ServerInfo(XG7Plugins plugin) throws ExecutionException, InterruptedException {
         this();
-        this.name = Config.mainConfigOf(plugin).get("plugin-server-name", String.class).orElseThrow(() -> new RuntimeException("Server name not found"));
+        this.name = ConfigFile.mainConfigOf(plugin).root().get("plugin-server-name");
+        if (name == null) {
+            throw new RuntimeException("Server name not found");
+        }
         this.address = Bukkit.getIp();
         this.port = Bukkit.getPort();
         this.software = Software.getSoftware();

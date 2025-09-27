@@ -2,7 +2,7 @@ package com.xg7plugins.modules.xg7menus.editor;
 
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.ClickableItem;
+import com.xg7plugins.modules.xg7menus.item.impl.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
@@ -81,15 +81,25 @@ public class InventoryUpdater implements InventoryEditor {
         holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_CLEARED);
     }
 
+    public void fillInventory(Item item, boolean override) {
+        if (override) {
+            IntStream.range(0, holder.getInventory().getSize()).forEach(i -> setItem(Slot.fromSlot(i), item));
+            holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
+            return;
+        }
+        for (int i = 0; i < holder.getInventory().getSize(); i++) {
+            if (hasItem(Slot.fromSlot(i))) continue;
+            setItem(Slot.fromSlot(i), item);
+        }
+        holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
+
+    }
     @Override
     public void fillInventory(Item item) {
-        IntStream.range(0, holder.getInventory().getSize()).forEach(i -> setItem(Slot.fromSlot(i), item));
-
-        holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
+        fillInventory(item, true);
     }
 
-    @Override
-    public void fillInventory(List<Item> items, boolean randomize, boolean fillAll) {
+    public void fillInventory(List<Item> items, boolean randomize, boolean fillAll, boolean override) {
         if (items.isEmpty()) return;
         List<Item> itemList = new ArrayList<>(items);
         int index = 0;
@@ -102,14 +112,21 @@ public class InventoryUpdater implements InventoryEditor {
                 if (randomize) Collections.shuffle(itemList);
             }
 
+            index++;
+
+            if (!override && hasItem(Slot.fromSlot(i))) continue;
+
             setItem(Slot.fromSlot(i), itemList.get(index));
 
-            index++;
         }
 
         holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_FILLED);
     }
 
+    @Override
+    public void fillInventory(List<Item> items, boolean randomize, boolean fillAll) {
+        fillInventory(items, randomize, fillAll, true);
+    }
     @Override
     public void fillRow(int row, Item item) {
         IntStream.range(0, 9).forEach(i -> setItem(Slot.of(row, i + 1), item));

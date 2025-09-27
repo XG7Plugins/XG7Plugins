@@ -41,12 +41,13 @@ public abstract class PagedMenu extends Menu {
 
         XG7Menus.registerHolder(menuHolder);
 
-
     }
 
     public abstract List<Item> pagedItems(Player player);
 
     public boolean goPage(int page, PagedMenuHolder menuHolder) {
+
+        System.out.println("A");
 
         List<Item> pagedItems = pagedItems(menuHolder.getPlayer());
 
@@ -73,7 +74,7 @@ public abstract class PagedMenu extends Menu {
                 }
             }
 
-        }), 100L);
+        }), 250L);
         return true;
     }
 

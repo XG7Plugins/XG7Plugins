@@ -1,9 +1,12 @@
-config-version: 1.1
+config-version: 1.2
 
 locale: pt_BR
 formated-name: "Português (Brasil)"
-icon: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY2OGExZmI2YWY4MWIyMzFiYmNjNGRlNWY3Zjk1ODAzYmJkMTk0ZjU4MjdkYTAyN2ZhNzAzMjFjZjQ3YyJ9fX0="
+icon: "PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY2OGExZmI2YWY4MWIyMzFiYmNjNGRlNWY3Zjk1ODAzYmJkMTk0ZjU4MjdkYTAyN2ZhNzAzMjFjZjQ3YyJ9fX0="
 bedrock-icon: "URL, https://rondonia.ro.gov.br/wp-content/uploads/2020/09/Bandeira-Nacionals%C3%ADmbolo-maior-da-P%C3%A1tria-Brasileira-Foto-Divulga%C3%A7%C3%A3o.jpg"
+
+plugin-update-available: "¡Hay una nueva versión de %plugin% disponible! Nueva versión: &7%version%&r"
+
 
 commands:
   syntax-error: "&cVocê está usando o comando incorretamente! O correto é &7%syntax%"

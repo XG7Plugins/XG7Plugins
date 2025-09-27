@@ -6,8 +6,8 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
-import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.config.core.MainConfigSection;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
@@ -54,7 +54,7 @@ public class MainCommand implements Command {
     @Override
     public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
 
-        boolean antiTab = Config.of(XG7Plugins.getInstance(), MainConfigSection.class).isAntiTab();
+        boolean antiTab = ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("anti-tab");
 
         List<String> suggestions = new ArrayList<>();
         if (args.len() == 1) {

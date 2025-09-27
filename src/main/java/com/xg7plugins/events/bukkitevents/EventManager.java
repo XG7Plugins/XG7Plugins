@@ -2,7 +2,8 @@ package com.xg7plugins.events.bukkitevents;
 
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.managers.Manager;
@@ -52,10 +53,10 @@ public class EventManager implements Manager {
                 EventHandler eventHandler = method.getAnnotation(EventHandler.class);
 
                 if (!eventHandler.isEnabled().configName().isEmpty()) {
-                    Config config = Config.of(eventHandler.isEnabled().configName(), plugin);
+                    ConfigSection section = ConfigFile.of(eventHandler.isEnabled().configName(), plugin).root();
 
                     boolean invert = eventHandler.isEnabled().invert();
-                    boolean enabled = config != null && config.get(eventHandler.isEnabled().path(), Boolean.class).orElse(false);
+                    boolean enabled = section.get(eventHandler.isEnabled().path(), false);
 
                     if (invert == enabled) continue;
                 }

@@ -1,7 +1,7 @@
 package com.xg7plugins.data.database.connector;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.data.database.ConnectionType;
 
 import java.sql.Connection;
@@ -42,10 +42,7 @@ public class ConnectorRegistry {
      * @return The connector for the plugin, or null if not configured
      */
     public Connector getConnector(Plugin plugin) {
-        Config config = Config.mainConfigOf(plugin);
-        ConnectionType type = config.get("sql.type", ConnectionType.class).orElse(null);
-        if (type != null) return connectors.get(type);
-        return null;
+        return connectors.get(ConfigFile.mainConfigOf(plugin).section("sql").get("type", ConnectionType.SQLITE));
     }
 
     /**
@@ -56,9 +53,6 @@ public class ConnectorRegistry {
      * @throws Exception If connection creation fails
      */
     public Connection getConnection(Plugin plugin) throws Exception {
-        Config config = Config.mainConfigOf(plugin);
-        Connector connector = connectors.get(config.get("sql.type", ConnectionType.class).orElse(null));
-        if (connector != null) return connector.getConnection(plugin);
-        return null;
+        return getConnector(plugin).getConnection(plugin);
     }
 }

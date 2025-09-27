@@ -4,12 +4,13 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
-import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.config.core.MainConfigSection;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.managers.Manager;
 import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 public class LangManager implements Manager {
 
     private final XG7Plugins plugin;
-    private final ObjectCache<String, Config> langs;
+    private final ObjectCache<String, Lang> langs;
     private final String mainLang;
     private final String[] defLangs;
     private final boolean langEnabled;
@@ -34,19 +35,19 @@ public class LangManager implements Manager {
         this.plugin = plugin;
         this.defLangs = defaultLangs;
 
-        MainConfigSection config = Config.of(plugin, MainConfigSection.class);
+        ConfigSection config = ConfigFile.mainConfigOf(plugin).root();
 
-        this.langEnabled = config.isLangEnabled();
+        this.langEnabled = config.get("lang-enabled", false);
 
-        this.mainLang = config.getMainLang();
+        this.mainLang = config.get("main-lang", "en");
         this.langs = new ObjectCache<>(
                 plugin,
-                config.getLangCacheExpires().getMilliseconds(),
+                config.getTimeInMilliseconds("lang-cache-expires", 30 * 60 * 1000L),
                 false,
                 "langs",
                 true,
                 String.class,
-                Config.class
+                Lang.class
         );
 
         plugin.getDebug().loading("Loaded!");
@@ -72,11 +73,11 @@ public class LangManager implements Manager {
 
             File langFile = new File(langFolder, lang + ".yml");
             if (!langFile.exists()) plugin.saveResource("langs/" + lang + ".yml", false);
-            langs.put(plugin.getName() + ":" + lang, Config.of("langs/" + lang, plugin));
+            langs.put(plugin.getName() + ":" + lang, new Lang(plugin, ConfigFile.of("langs/" + lang, plugin), lang));
         }, XG7PluginsAPI.taskManager().getExecutor("files"));
     }
 
-    public CompletableFuture<Lang> getLang(Plugin plugin, String lang, boolean selected) {
+    public CompletableFuture<Lang> getLang(Plugin plugin, String lang) {
 
         String finalLang;
 
@@ -84,24 +85,21 @@ public class LangManager implements Manager {
         else finalLang = lang;
 
         if (langs.containsKey(plugin.getName() + ":" + finalLang).join()) {
-            return CompletableFuture.completedFuture(new Lang(plugin, langs.get(plugin.getName() + ":" + finalLang).join(), finalLang,selected));
+            return CompletableFuture.completedFuture(langs.get(plugin.getName() + ":" + finalLang).join());
         }
 
         return CompletableFuture.supplyAsync(() -> {
 
             loadLang(plugin, finalLang).join();
 
-            return new Lang(plugin, langs.get(plugin.getName() + ":" + finalLang).join(), finalLang, selected);
+            return langs.get(plugin.getName() + ":" + finalLang).join();
 
         }, XG7PluginsAPI.taskManager().getExecutor("langs"));
     }
 
-    public CompletableFuture<Lang> getLang(Plugin plugin, String lang) {
-        return getLang(plugin, lang, false);
-    }
-
-    public CompletableFuture<Lang> getLangByPlayer(Plugin plugin, Player player) {
-        if (!langEnabled || player == null) return getLang(plugin, mainLang);
+    public CompletableFuture<Pair<Boolean, Lang>> getLangByPlayer(Plugin plugin, Player player) {
+        if (!langEnabled || player == null)
+            return CompletableFuture.supplyAsync(() -> new Pair<>(false, getLang(plugin, mainLang).join()), XG7PluginsAPI.taskManager().getExecutor("langs"));
 
         if (XG7PluginsAPI.database().containsCachedEntity(this.plugin, player.getUniqueId().toString()).join()) {
             PlayerData data = (PlayerData) XG7PluginsAPI.database().getCachedEntity(this.plugin, player.getUniqueId().toString()).join();
@@ -114,29 +112,28 @@ public class LangManager implements Manager {
         }, XG7PluginsAPI.taskManager().getExecutor("langs"));
     }
 
-    private CompletableFuture<Lang> getLangByPlayerData(Plugin plugin, PlayerData playerData) {
-
-        if (playerData == null || playerData.getLangId() == null) return getLang(plugin, mainLang,true);
-
-        return getLang(plugin, playerData.getLangId(), true);
+    private CompletableFuture<Pair<Boolean, Lang>> getLangByPlayerData(Plugin plugin, PlayerData playerData) {
+        return CompletableFuture.supplyAsync(() -> new Pair<>(true, getLang(plugin, playerData == null || playerData.getLangId() == null ? mainLang : playerData.getLangId()).join()), XG7PluginsAPI.taskManager().getExecutor("langs"));
     }
 
     public CompletableFuture<String> getNewLangFor(@NotNull Player player) {
         Objects.requireNonNull(player, "Player cannot be null!");
 
+        
+
         if (!langEnabled) return CompletableFuture.completedFuture(mainLang);
 
         return CompletableFuture.supplyAsync(() -> {
 
-            if(!Config.mainConfigOf(plugin).get("auto-chose-lang", Boolean.class).orElse(true)) return mainLang;
+            if(!ConfigFile.mainConfigOf(plugin).root().get("auto-chose-lang", true)) return mainLang;
 
             loadLangsFrom(XG7Plugins.getInstance()).join();
 
-            List<Config> langs = this.langs.asMap().join().entrySet().stream().filter(e -> e.getKey().startsWith(XG7Plugins.getInstance().getName() + ":")).map(Map.Entry::getValue).collect(Collectors.toList());
+            List<Lang> langs = this.langs.asMap().join().entrySet().stream().filter(e -> e.getKey().startsWith(XG7Plugins.getInstance().getName() + ":")).map(Map.Entry::getValue).collect(Collectors.toList());
 
             String locale = MinecraftVersion.isNewerOrEqual(12) ? player.getLocale() : ReflectionObject.of(player).getMethod("getHandle").invokeToRObject().getField("locale");
 
-            return langs.stream().filter(lang -> lang.get("locale", String.class).orElse("en_US").equals(locale)).findFirst().map(config -> config.getName().replace("langs/", "")).orElse(mainLang);
+            return langs.stream().filter(lang -> lang.get("locale").equalsIgnoreCase(locale)).findFirst().map(lang -> lang.getLangConfigFile().getName().replace("langs/", "")).orElse(mainLang);
         }, XG7PluginsAPI.taskManager().getExecutor("langs"));
 
     }

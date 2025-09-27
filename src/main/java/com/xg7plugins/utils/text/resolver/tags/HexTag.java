@@ -15,7 +15,7 @@ public class HexTag implements Tag {
     }
 
     @Override
-    public void resolve(TextComponent component, List<String> openArgs, List<String> closeArgs) {
+    public void resolve(TextComponent component, List<String> openArgs) {
 
         if (MinecraftVersion.isOlderThan(16)) return;
 

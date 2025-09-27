@@ -1,8 +1,5 @@
 package com.xg7plugins.utils.text.sender;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.config.core.MainConfigSection;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;

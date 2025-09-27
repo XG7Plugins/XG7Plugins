@@ -1,6 +1,8 @@
 package com.xg7plugins.data.database.processor;
 
 import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.data.database.ConnectionType;
+import com.xg7plugins.data.database.connector.SQLConfigs;
 import com.xg7plugins.data.database.entity.*;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.boot.Plugin;
@@ -11,6 +13,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -147,9 +151,21 @@ public class TableCreator {
                 query.append(")");
 
                 Connection connection = databaseManager.getConnection(plugin);
+                try {
 
-                connection.prepareStatement(query.toString()).executeUpdate();
-                connection.commit();
+                    PreparedStatement stmt = connection.prepareStatement(query.toString());
+                    stmt.executeUpdate();
+
+                    connection.commit();
+
+                } catch (SQLException e) {
+                    connection.rollback();
+                    throw e;
+                } finally {
+                    if (!SQLConfigs.of(plugin).getConnectionType().equals(ConnectionType.SQLITE)) {
+                        connection.close();
+                    }
+                }
 
                 plugin.getDebug().info("Table for entity " + clazz.getSimpleName() + " created successfully.");
 

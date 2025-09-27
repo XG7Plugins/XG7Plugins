@@ -2,7 +2,7 @@ package com.xg7plugins.tasks;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.data.config.Config;
+import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.managers.Manager;
 import com.xg7plugins.tasks.tasks.AsyncTask;
 import com.xg7plugins.tasks.tasks.BukkitTask;
@@ -34,7 +34,7 @@ public class TaskManager implements Manager {
     }
 
     public void load() {
-        mainScheduledAsyncExecutor = Executors.newScheduledThreadPool(Config.mainConfigOf(XG7Plugins.getInstance()).get("scheduled-tasks-threads", Integer.class).orElse(1));
+        mainScheduledAsyncExecutor = Executors.newScheduledThreadPool(ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("scheduled-tasks-threads", 1));
 
         registerExecutor("commands", Executors.newSingleThreadExecutor());
         registerExecutor("database", Executors.newCachedThreadPool());

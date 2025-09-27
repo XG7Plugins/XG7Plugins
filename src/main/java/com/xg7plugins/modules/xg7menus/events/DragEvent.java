@@ -17,12 +17,11 @@ public class DragEvent extends MenuEvent {
     private final Set<Integer> draggedRawSlots;
     private final MenuAction menuAction = MenuAction.DRAG;
 
-    public DragEvent(BasicMenuHolder holder, List<Item> draggedItems, Set<Slot> draggedSlots, Set<Integer> draggedRawSlots) {
-        super(holder);
+    public DragEvent(BasicMenuHolder holder, List<Item> draggedItems, Set<Slot> draggedSlots, Set<Integer> draggedRawSlots, boolean cancelled) {
+        super(holder, cancelled);
 
         this.draggedItems = draggedItems;
         this.draggedSlots = draggedSlots;
         this.draggedRawSlots = draggedRawSlots;
-        setCancelled(true);
     }
 }

@@ -165,6 +165,10 @@ public class Location implements Cloneable {
         return Math.abs(location.getX() - x) <= distance && Math.abs(location.getY() - y) <= distance && Math.abs(location.getZ() - z) <= distance;
     }
 
+    public double distance(Location location) {
+        return Math.sqrt(Math.pow(location.getX() - x, 2) + Math.pow(location.getY() - y, 2) + Math.pow(location.getZ() - z, 2));
+    }
+
     /**
      * Creates a new location instance
      *

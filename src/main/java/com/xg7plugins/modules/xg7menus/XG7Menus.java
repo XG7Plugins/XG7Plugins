@@ -4,18 +4,20 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.modules.Module;
-import com.xg7plugins.modules.xg7menus.menuhandler.MenuHandler;
-import com.xg7plugins.modules.xg7menus.menuhandler.PlayerMenuHandler;
+import com.xg7plugins.modules.xg7menus.handlers.MenuHandler;
+import com.xg7plugins.modules.xg7menus.handlers.PlayerMenuHandler;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.MenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.PlayerMenuHolder;
-import com.xg7plugins.modules.xg7menus.task.MenuTimerTask;
+import com.xg7plugins.modules.xg7menus.task.MenuUpdaterTimerTask;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Getter
 public class XG7Menus implements Module {
@@ -100,8 +102,13 @@ public class XG7Menus implements Module {
     }
 
     @Override
+    public Map<String, ExecutorService> getExecutors() {
+        return Collections.singletonMap("menus", Executors.newSingleThreadExecutor());
+    }
+
+    @Override
     public List<TimerTask> loadTasks() {
-        return Collections.singletonList(new MenuTimerTask(this));
+        return Collections.singletonList(new MenuUpdaterTimerTask(this));
     }
 
 

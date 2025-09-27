@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class TagResolver {
 
-    private static final Pattern TAG_PATTERN = Pattern.compile("<(\\w+)(?::([^>]*))?>(.*?)</\\1(?::([^>]*))?>");
+    private static final Pattern TAG_PATTERN = Pattern.compile("<(\\w+)(?::([^>]*))?>(.*?)</\\1>");
 
     private static final HashMap<String, Tag> tags = new HashMap<>();
 
@@ -43,7 +43,6 @@ public class TagResolver {
 
             while (matcher.find()) {
 
-                // Adiciona texto anterior ao <tag>
                 if (matcher.start() > lastIndex) {
                     String startText = text.substring(lastIndex, matcher.start());
                     lastColors = ChatColor.getLastColors(startText);
@@ -55,24 +54,20 @@ public class TagResolver {
                 String tagName = matcher.group(1);
                 String[] openArgs = matcher.group(2) != null ? matcher.group(2).split(":") : new String[0];
                 String content = lastColors + matcher.group(3);
-                String[] closeArgs = matcher.group(4) != null ? matcher.group(4).split(":") : new String[0];
 
-                // Recursivo: resolve o conteúdo dentro da tag
                 TextComponent innerComponent = new TextComponent(deserialize(content));
 
                 Tag tag = tags.get(tagName);
                 if (tag == null) throw new IllegalArgumentException("Unknown tag: " + tagName);
 
-                tag.resolve(innerComponent, Arrays.asList(openArgs), Arrays.asList(closeArgs));
+                tag.resolve(innerComponent, Arrays.asList(openArgs));
 
-                // Atualiza as cores com base no último componente
                 lastColors = getLastColorsOf(innerComponent.getExtra());
 
                 lastIndex = matcher.end();
                 components.add(innerComponent);
             }
 
-            // Adiciona o restante do texto após a última tag
             if (lastIndex < text.length()) {
                 String remaining = text.substring(lastIndex);
                 TextComponent remainingComponent = new TextComponent(lastColors + remaining);

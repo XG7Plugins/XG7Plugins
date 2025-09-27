@@ -1,7 +1,9 @@
 package com.xg7plugins.utils.time;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -18,6 +20,7 @@ public class Time {
     /**
      * The time value stored in milliseconds
      */
+    @Getter(AccessLevel.NONE)
     private long milliseconds;
 
     /**
@@ -182,6 +185,25 @@ public class Time {
     private Time() {
     }
 
+    public long toMilliseconds() {
+        return milliseconds;
+    }
+    public long toSeconds() {
+        return milliseconds / 1000;
+    }
+    public long toMinutes() {
+        return milliseconds / 60000;
+    }
+    public long toHours() {
+        return milliseconds / 3600000;
+    }
+    public long toDays() {
+        return milliseconds / 86400000;
+    }
+    public long toTicks() {
+        return milliseconds / 50;
+    }
+
     /**
      * Gets remaining time from a future timestamp
      */
@@ -193,7 +215,7 @@ public class Time {
      * Gets remaining time from a future Time
      */
     public static Time getRemainingTime(Time time) {
-        return getRemainingTime(time.getMilliseconds());
+        return getRemainingTime(time.toMilliseconds());
     }
 
     /**

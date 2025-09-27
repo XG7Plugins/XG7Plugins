@@ -18,7 +18,7 @@ public interface BasicMenuConfigs {
         return true;
     }
     // -1 means no repeating update
-    default int repeatingUpdateMills() {
+    default long repeatingUpdateMills() {
         return -1;
     }
 

@@ -8,6 +8,6 @@ public interface Tag {
 
     String name();
 
-    void resolve(TextComponent component, List<String> openArgs, List<String> closeArgs);
+    void resolve(TextComponent component, List<String> openArgs);
 
 }

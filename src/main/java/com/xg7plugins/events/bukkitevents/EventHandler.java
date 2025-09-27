@@ -1,6 +1,6 @@
 package com.xg7plugins.events.bukkitevents;
 
-import com.xg7plugins.data.config.section.ConfigVerify;
+import com.xg7plugins.config.utils.ConfigCheck;
 import org.bukkit.event.EventPriority;
 
 import java.lang.annotation.ElementType;
@@ -41,9 +41,9 @@ public @interface EventHandler {
     /**
      * Configures whether this event handler is enabled through configuration settings.
      *
-     * @return ConfigVerify annotation containing configuration parameters
+     * @return ConfigCheck annotation containing configuration parameters
      */
-    ConfigVerify isEnabled() default @ConfigVerify(
+    ConfigCheck isEnabled() default @ConfigCheck(
             configName = "",
             path = ""
     );

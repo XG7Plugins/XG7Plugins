@@ -5,9 +5,8 @@ import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.CommandManager;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.JsonManager;
-import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.config.ConfigManager;
-import com.xg7plugins.data.config.core.MainConfigSection;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.ConfigManager;
 import com.xg7plugins.data.database.dao.Repository;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.data.database.entity.Entity;
@@ -61,7 +60,7 @@ public class XG7PluginsAPI {
      * @param name The name of the plugin
      * @return The requested plugin instance, or null if not found
      */
-    public static <T extends Plugin> T getXG7Plugins(String name) {
+    public static <T extends Plugin> T getXG7Plugin(String name) {
         return (T) XG7Plugins.getInstance().getPlugins().get(name);
     }
 
@@ -79,7 +78,7 @@ public class XG7PluginsAPI {
      *
      * @return A set with all XG7 plugin names
      */
-    public static Set<String> getAllXG7PluginsName() {
+    public static Set<String> getAllXG7PluginsNames() {
         return XG7Plugins.getInstance().getPlugins().values().stream().map(Plugin::getName).collect(Collectors.toSet());
     }
 
@@ -240,7 +239,7 @@ public class XG7PluginsAPI {
      * @return true if Geyser forms support is enabled, false otherwise
      */
     public static boolean isGeyserFormsEnabled() {
-        return dependencyManager().exists("floodgate") && Config.of(XG7Plugins.getInstance(), MainConfigSection.class).isGeyserFormsEnabled();
+        return dependencyManager().exists("floodgate") && ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("geyser-forms-enabled", false);
     }
 
     /**

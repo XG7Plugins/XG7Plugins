@@ -1,7 +1,5 @@
 package com.xg7plugins.boot;
 
-import com.xg7plugins.data.config.section.ConfigSection;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -31,11 +29,6 @@ public @interface PluginSetup {
      * Configuration files to be loaded
      */
     String[] configs() default {};
-
-    /**
-     * Separated config sections to be loaded for easier access
-     */
-    Class<? extends ConfigSection>[] configSections() default {};
 
     /**
      * Messages to be drawn when the plugin is enabled

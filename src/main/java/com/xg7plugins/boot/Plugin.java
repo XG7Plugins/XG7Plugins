@@ -3,10 +3,11 @@ package com.xg7plugins.boot;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.commands.CommandManager;
-import com.xg7plugins.commands.core_commands.reload.ReloadCause;
+import com.xg7plugins.commands.impl.reload.ReloadCause;
 import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.data.config.Config;
-import com.xg7plugins.data.config.ConfigManager;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.config.ConfigManager;
 import com.xg7plugins.data.database.dao.Repository;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.dependencies.Dependency;
@@ -45,7 +46,6 @@ public abstract class Plugin extends JavaPlugin {
 
     protected HelpMessenger helpMessenger;
 
-
     public Plugin() {
         pluginSetup = getClass().getAnnotation(PluginSetup.class);
         if (pluginSetup == null) throw new IllegalClassException("PluginSetup annotation not found in " + getClass().getName());
@@ -62,7 +62,7 @@ public abstract class Plugin extends JavaPlugin {
         managerRegistry.registerManagers(new ConfigManager(this, pluginSetup.configs()));
         managerRegistry.registerManagers(new CommandManager(this));
 
-        environmentConfig.setEnabledWorlds(Config.mainConfigOf(this).getList("enabled-worlds",String.class, true).orElse(Collections.emptyList()));
+        environmentConfig.setEnabledWorlds(ConfigFile.mainConfigOf(this).root().getList("enabled-worlds", String.class).orElse(Collections.emptyList()));
 
         debug = new Debug(this);
 
@@ -77,16 +77,16 @@ public abstract class Plugin extends JavaPlugin {
     public void onEnable() {
         if (pluginSetup.onEnableDraw().length != 0) Arrays.stream(pluginSetup.onEnableDraw()).forEach(Bukkit.getConsoleSender()::sendMessage);
 
-        Config config = Config.mainConfigOf(this);
+        ConfigSection config = ConfigFile.mainConfigOf(this).root();
 
-        environmentConfig.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix", String.class).orElse(environmentConfig.getPrefix())));
+        environmentConfig.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix", environmentConfig.getPrefix())));
 
         environmentConfig.setEnabledWorlds(config.getList("enabled-worlds", String.class).orElse(Collections.emptyList()));
 
         debug.loading("Custom prefix: " + environmentConfig.getCustomPrefix());
 
         Bukkit.getScheduler().runTask(this, () -> {
-            if (!Config.mainConfigOf(XG7Plugins.getInstance()).get("anti-tab", Boolean.class).orElse(false)) return;
+            if (!ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("anti-tab", false)) return;
 
             debug.loading("Loading anti-tab feature...");
 
