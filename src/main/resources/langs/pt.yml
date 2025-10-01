@@ -5,8 +5,7 @@ formated-name: "Português (Brasil)"
 icon: "PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY2OGExZmI2YWY4MWIyMzFiYmNjNGRlNWY3Zjk1ODAzYmJkMTk0ZjU4MjdkYTAyN2ZhNzAzMjFjZjQ3YyJ9fX0="
 bedrock-icon: "URL, https://rondonia.ro.gov.br/wp-content/uploads/2020/09/Bandeira-Nacionals%C3%ADmbolo-maior-da-P%C3%A1tria-Brasileira-Foto-Divulga%C3%A7%C3%A3o.jpg"
 
-plugin-update-available: "¡Hay una nueva versión de %plugin% disponible! Nueva versión: &7%version%&r"
-
+plugin-update-available: "&aUma nova versão de &e%plugin% &aestá disponível! Nova versão: &7%version%&r"
 
 command-errors:
   syntax-error: "&cVocê está usando o comando incorretamente! A forma correta é &7%syntax%"
@@ -25,6 +24,11 @@ reload-message:
   with-cause: "%prefix% %cause% &arecarregado no plugin &r%plugin%"
 
 #Plugin defaults
+
+plugin-not-found: "&cPlugin não encontrado!"
+comment-message-sent: "&aSua mensagem foi enviada ao criador!"
+
+unknown-cause: "&cCausa desconhecida de recarregamento para este plugin!"
 
 go-back-item: "Voltar"
 go-next-item: "Próximo"

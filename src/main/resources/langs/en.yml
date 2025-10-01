@@ -5,7 +5,7 @@ formated-name: "English"
 icon: "PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2QxNWQ1NjYyMDJhYzBlNzZjZDg5Nzc1OWRmNWQwMWMxMWY5OTFiZDQ2YzVjOWEwNDM1N2VhODllZTc1In19fQ=="
 bedrock-icon: "URL, https://cdn.britannica.com/33/4833-050-F6E415FE/Flag-United-States-of-America.jpg"
 
-plugin-update-available: "&aA new version of %plugin% is available! New version: &7%version%&r"
+plugin-update-available: "&aA new version of &e%plugin% &ais available! New version: &7%version%&r"
 
 command-errors:
   syntax-error: "&cYou are using the command incorrectly! The right way is &7%syntax%"
@@ -24,6 +24,11 @@ reload-message:
   with-cause: "%prefix% %cause% &areloaded in plugin &r%plugin%"
 
 #Plugin defaults
+
+plugin-not-found: "&cPlugin not found!"
+comment-message-sent: "&aYour message has been sent to the creator!"
+
+unknown-cause: "&cUnknow reload cause for this plugin!"
 
 go-back-item: "Back"
 go-next-item: "Next"

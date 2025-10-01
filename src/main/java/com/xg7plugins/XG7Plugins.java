@@ -5,6 +5,7 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.PluginSetup;
 import com.xg7plugins.boot.VersionChecker;
 import com.xg7plugins.cache.CacheManager;
+import com.xg7plugins.commands.impl.CommentCommand;
 import com.xg7plugins.commands.impl.LangCommand;
 import com.xg7plugins.commands.impl.reload.ReloadCause;
 import com.xg7plugins.commands.impl.reload.ReloadCommand;
@@ -252,7 +253,7 @@ public final class XG7Plugins extends Plugin {
 
     @Override
     public List<Command> loadCommands() {
-        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand());
+        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new CommentCommand());
     }
 
     @Override

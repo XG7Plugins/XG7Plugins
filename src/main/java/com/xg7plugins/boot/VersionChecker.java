@@ -66,9 +66,8 @@ public class VersionChecker {
                         ((Player) sender).playSound(((Player) sender).getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 10);
                     }
 
-                    System.out.println("sending for " + sender);
                     Text.format(" ").send(sender);
-                    Text.sendTextFromLang(sender, version.getPlugin(), "plugin-update-available", Pair.of("plugin", version.getPlugin().getName()), Pair.of("version", "<click:SUGGEST_COMMAND:" + version.getDownloadUrl() + ">§n" + version.getNewVersion() + "</click>")).join();
+                    Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "plugin-update-available", Pair.of("plugin", version.getPlugin().getName()), Pair.of("version", "<hover:SHOW_TEXT:Download><click:SUGGEST_COMMAND:" + version.getDownloadUrl() + ">§n" + version.getNewVersion() + "</click></hover>")).join();
                     Text.format(" ").send(sender);
                 }
 

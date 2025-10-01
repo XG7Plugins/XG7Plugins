@@ -49,7 +49,8 @@ public class ReloadCommand implements Command {
         Plugin plugin = args.get(0, Plugin.class);
 
         if (args.len() == 1) {
-            if (plugin == null) return CommandState.ERROR;
+            if (plugin == null) return CommandState.error("plugin-not-found");
+
             Debug.of(XG7Plugins.getInstance()).info("Reloading " + plugin.getEnvironmentConfig().getCustomPrefix());
             plugin.onReload(ReloadCause.ALL);
             Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "reload-message.without-cause", Pair.of("plugin", plugin.getEnvironmentConfig().getCustomPrefix()));
@@ -58,7 +59,7 @@ public class ReloadCommand implements Command {
 
         ReloadCause cause = ReloadCause.of(plugin, args.get(1, String.class));
 
-        if (cause == null) return CommandState.ERROR;
+        if (cause == null) return CommandState.error("unknown-cause");
 
         Debug.of(XG7Plugins.getInstance()).info("Reloading " + plugin.getEnvironmentConfig().getCustomPrefix() + " with cause " + cause.getName());
 
