@@ -59,7 +59,7 @@ public class CommentCommand implements Command {
                 "  \"embeds\": [\n" +
                 "    {\n" +
                 "      \"title\": \"🚀 Mensagem de: %name% Plugin: %plugin%\",\n" +
-                "      \"description\": \"IP|PORTA: %ip%\\nMensagem: %message%\",\n" +
+                "      \"description\": \"**IP|PORTA:** %ip%\\nMensagem: %message%\",\n" +
                 "      \"color\": 65535,\n" +
                 "      \"footer\": {\n" +
                 "        \"text\": \"<3\"\n" +
@@ -70,7 +70,7 @@ public class CommentCommand implements Command {
                 "}";
 
         jsonBody = jsonBody.replace("%name%", sender.getName());
-        jsonBody = jsonBody.replace("%plugin%", plugin.getName() + " " + plugin.getDescription().getVersion());
+        jsonBody = jsonBody.replace("%plugin%", plugin.getName() + " v" + plugin.getDescription().getVersion());
         jsonBody = jsonBody.replace("%message%", message);
         jsonBody = jsonBody.replace("%ip%", plugin.getServer().getIp() + ":" + plugin.getServer().getPort());
 
