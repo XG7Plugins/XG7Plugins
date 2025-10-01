@@ -59,7 +59,7 @@ public class CommentCommand implements Command {
                 "  \"embeds\": [\n" +
                 "    {\n" +
                 "      \"title\": \"🚀 Mensagem de: %name% Plugin: %plugin%\",\n" +
-                "      \"description\": \"**IP|PORTA:** %ip%\\nMensagem: %message%\",\n" +
+                "      \"description\": \"**IP | PORTA:** %ip%\\nMensagem: %message%\",\n" +
                 "      \"color\": 65535,\n" +
                 "      \"footer\": {\n" +
                 "        \"text\": \"<3\"\n" +
