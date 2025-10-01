@@ -25,10 +25,10 @@ reload-message:
 
 # Plugin defaults
 
-plugin-not-found: "&c¡Plugin no encontrado!"
-comment-message-sent: "&aTu mensaje ha sido enviado al creador!"
+plugin-not-found: "%prefix% &c¡Plugin no encontrado!"
+comment-message-sent: "%prefix% &aTu mensaje ha sido enviado al creador!"
 
-unknown-cause: "&c¡Causa de recarga desconocida para este plugin!"
+unknown-cause: "%prefix% &c¡Causa de recarga desconocida para este plugin!"
 
 
 go-back-item: "Atrás"

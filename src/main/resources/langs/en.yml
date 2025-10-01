@@ -25,10 +25,10 @@ reload-message:
 
 #Plugin defaults
 
-plugin-not-found: "&cPlugin not found!"
-comment-message-sent: "&aYour message has been sent to the creator!"
+plugin-not-found: "%prefix% &cPlugin not found!"
+comment-message-sent: "%prefix% &aYour message has been sent to the creator!"
 
-unknown-cause: "&cUnknow reload cause for this plugin!"
+unknown-cause: "%prefix% &cUnknow reload cause for this plugin!"
 
 go-back-item: "Back"
 go-next-item: "Next"

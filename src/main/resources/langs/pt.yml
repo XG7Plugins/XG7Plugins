@@ -25,10 +25,10 @@ reload-message:
 
 #Plugin defaults
 
-plugin-not-found: "&cPlugin não encontrado!"
-comment-message-sent: "&aSua mensagem foi enviada ao criador!"
+plugin-not-found: "%prefix% &cPlugin não encontrado!"
+comment-message-sent: "%prefix% &aSua mensagem foi enviada ao criador!"
 
-unknown-cause: "&cCausa desconhecida de recarregamento para este plugin!"
+unknown-cause: "%prefix% &cCausa desconhecida de recarregamento para este plugin!"
 
 go-back-item: "Voltar"
 go-next-item: "Próximo"
