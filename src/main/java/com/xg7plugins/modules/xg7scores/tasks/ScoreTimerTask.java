@@ -44,7 +44,7 @@ public class ScoreTimerTask extends TimerTask {
                         score.addPlayer(p);
                     else if (score.getPlayers().contains(p.getUniqueId())) {
                         if (!XG7Plugins.getInstance().isEnabled()) return;
-                        XG7PluginsAPI.taskManager().runSync(BukkitTask.of(XG7Plugins.getInstance(), () -> score.removePlayer(p)));
+                        XG7PluginsAPI.taskManager().runSync(BukkitTask.of( () -> score.removePlayer(p)));
                     }
 
                 } catch (Exception e) {

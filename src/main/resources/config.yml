@@ -32,6 +32,8 @@ lang-enabled: true
 #Must be the name of the file in the lang folder
 main-lang: en
 
+organize-tablist: true
+
 #Anti'tab resource that filters all
 #commands based on player permissions
 anti-tab: true
@@ -76,6 +78,8 @@ open-help-command-gui: true
 #Same as the inventory but with
 #floodgate forms
 send-help-command-form: true
+
+disable-version-check: false
 
 #Define database values
 sql:
@@ -144,4 +148,4 @@ time-placeholders:
 
 #DO NOT CHANGE
 #THIS IS FOR VERSION CONTROL
-config-version: 3
+config-version: 4

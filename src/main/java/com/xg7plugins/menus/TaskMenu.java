@@ -51,12 +51,12 @@ public class TaskMenu extends PagedMenu {
             builder.name("&e" + task.getId());
             builder.lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()));
 
-            builder.setNBTTag("task-id", task.getTask().getPlugin().getName() + ":" + task.getId());
+            builder.setNBTTag("task-id", task.getPlugin().getName() + ":" + task.getId());
             builder.setNBTTag("task-state", task.getTaskState().name());
 
             builder.setBuildPlaceholders(
-                    Pair.of("plugin", task.getTask().getPlugin().getName()),
-                    Pair.of("id", task.getTask().getPlugin().getName() + ":" + task.getId()),
+                    Pair.of("plugin", task.getPlugin().getName()),
+                    Pair.of("id", task.getPlugin().getName() + ":" + task.getId()),
                     Pair.of("state", task.getTaskState().name()),
                     Pair.of("task_is_running", String.valueOf(task.getTaskState() == TaskState.RUNNING)),
                     Pair.of("task_is_not_running", String.valueOf(task.getTaskState() == TaskState.IDLE))

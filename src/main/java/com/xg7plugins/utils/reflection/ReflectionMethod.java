@@ -1,11 +1,14 @@
 package com.xg7plugins.utils.reflection;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Utility class for handling method reflection operations.
@@ -15,7 +18,12 @@ import java.lang.reflect.Method;
 public class ReflectionMethod {
 
     private Object object;
+    @Getter
     private Method method;
+
+    public ReflectionMethod(Method method) {
+        this.method = method;
+    }
 
     /**
      * Invokes the reflected method with the given arguments.
@@ -75,6 +83,10 @@ public class ReflectionMethod {
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
         return method.getAnnotation(annotationClass);
+    }
+
+    public List<Class<?>> getParamsTypes() {
+        return Arrays.asList(method.getParameterTypes());
     }
 
 }

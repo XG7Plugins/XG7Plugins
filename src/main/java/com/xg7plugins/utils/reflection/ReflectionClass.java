@@ -9,6 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class for working with Java reflection on classes.
@@ -150,7 +153,17 @@ public class ReflectionClass {
      */
     @SneakyThrows
     public ReflectionMethod getMethod(String name, Class<?>... parameterTypes) {
-        return new ReflectionMethod(null, aClass.getMethod(name, parameterTypes));
+        return new ReflectionMethod(aClass.getMethod(name, parameterTypes));
+    }
+
+    public List<ReflectionMethod> getMethods() {
+        List<ReflectionMethod> methods = new ArrayList<>();
+
+        for (Method method : aClass.getDeclaredMethods()) {
+            methods.add(new ReflectionMethod(method));
+        }
+
+        return methods;
     }
 
     /**

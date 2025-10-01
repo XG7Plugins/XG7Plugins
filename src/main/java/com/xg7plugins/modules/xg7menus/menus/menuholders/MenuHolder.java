@@ -36,7 +36,7 @@ public class MenuHolder extends BasicMenuHolder implements InventoryHolder {
 
             player.openInventory(inventory);
 
-            XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(XG7Plugins.getInstance(), () -> BasicMenu.refresh(this)), 100L);
+            XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of( () -> BasicMenu.refresh(this)), 100L);
     }
 
 

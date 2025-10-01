@@ -4,7 +4,7 @@ import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.CommandMessages;
+import com.xg7plugins.commands.CommandState;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
@@ -31,10 +31,9 @@ public class RestartTaskSubCommand implements Command {
     }
 
     @Override
-    public void onCommand(CommandSender sender, CommandArgs args) {
+    public CommandState onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandSetup().syntax());
-            return;
+            return CommandState.syntaxError(getCommandSetup().syntax());
         }
 
         TaskManager manager = XG7PluginsAPI.taskManager();
@@ -42,22 +41,24 @@ public class RestartTaskSubCommand implements Command {
         String id = args.get(0, String.class);
 
         if (!manager.containsTimerTask(id)) {
-            Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.not-found");
-            return;
+            Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.not-found");
+            return CommandState.ERROR;
         }
 
         TimerTask task = manager.getTimerTask(id);
 
         if (task.getTaskState() == TaskState.RUNNING) {
-            Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.already-running");
-            return;
+            Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.already-running");
+            return CommandState.ERROR;
         }
 
         manager.runTimerTask(task);
 
         XG7Plugins.getInstance().getDebug().warn("Task " + id + " was restarted by " + sender.getName());
 
-        Text.sendTextFromLang(sender,XG7Plugins.getInstance(),"task-command.restarted");
+        Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.restarted");
+
+        return CommandState.FINE;
     }
 
     @Override

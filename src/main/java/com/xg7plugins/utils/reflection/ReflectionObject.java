@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A utility class that provides reflection-based access to object fields and methods.
@@ -91,6 +94,10 @@ public class ReflectionObject {
         return null;
     }
 
+    public ReflectionObject getFieldRObject(String name) {
+        return ReflectionObject.of(getField(name));
+    }
+
     /**
      * Gets the value of a field from a specific superclass of the reflected object.
      *
@@ -120,6 +127,18 @@ public class ReflectionObject {
     @SneakyThrows
     public ReflectionMethod getMethod(String name, Class<?>... parameterTypes) {
         return new ReflectionMethod(object, objectClass.getMethod(name, parameterTypes));
+    }
+
+    public List<ReflectionMethod> getMethods() {
+        List<ReflectionMethod> methods = new ArrayList<>();
+
+        for (Method method : objectClass.getDeclaredMethods()) {
+            methods.add(new ReflectionMethod(object, method));
+        }
+
+        
+
+        return methods;
     }
 
 }

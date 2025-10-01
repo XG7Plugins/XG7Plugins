@@ -37,7 +37,7 @@ public enum Parser {
 
     public static <T> Parser getParserOf(Class<T> type) {
         try {
-            Parser.valueOf(type.getSimpleName());
+            Parser.valueOf(type.getSimpleName().toUpperCase());
         } catch (Exception ig) {
             return null;
         }

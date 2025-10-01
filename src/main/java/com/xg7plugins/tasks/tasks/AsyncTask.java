@@ -1,9 +1,7 @@
 package com.xg7plugins.tasks.tasks;
 
-import com.xg7plugins.boot.Plugin;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 
 import java.util.concurrent.ScheduledFuture;
 
@@ -15,7 +13,7 @@ import java.util.concurrent.ScheduledFuture;
  */
 @Getter
 @Setter
-public abstract class AsyncTask extends Task {
+public abstract class AsyncTask implements Task {
 
     /**
      * The future object representing the scheduled task
@@ -30,24 +28,21 @@ public abstract class AsyncTask extends Task {
     /**
      * Creates a new AsyncTask with the specified plugin and executor name
      *
-     * @param plugin       The plugin that owns this task
      * @param executorName The name of the executor service to use
      */
-    public AsyncTask(Plugin plugin, String executorName) {
-        super(plugin);
+    public AsyncTask(String executorName) {
         this.executorName = executorName;
     }
 
     /**
      * Creates a new AsyncTask with the specified plugin, executor name and runnable
      *
-     * @param plugin       The plugin that owns this task
      * @param executorName The name of the executor service to use
      * @param runnable     The code to execute
      * @return A new AsyncTask instance
      */
-    public static AsyncTask of(Plugin plugin, String executorName, Runnable runnable) {
-        return new AsyncTask(plugin, executorName) {
+    public static AsyncTask of(String executorName, Runnable runnable) {
+        return new AsyncTask(executorName) {
             @Override
             public void run() {
                 runnable.run();
@@ -58,12 +53,11 @@ public abstract class AsyncTask extends Task {
     /**
      * Creates a new AsyncTask with the specified plugin and runnable, using the default executor
      *
-     * @param plugin   The plugin that owns this task
      * @param runnable The code to execute
      * @return A new AsyncTask instance
      */
-    public static AsyncTask of(Plugin plugin, Runnable runnable) {
-        return new AsyncTask(plugin, null) {
+    public static AsyncTask of(Runnable runnable) {
+        return new AsyncTask(null) {
             @Override
             public void run() {
                 runnable.run();

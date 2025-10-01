@@ -3,7 +3,7 @@ package com.xg7plugins.commands.impl.task_command;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
-import com.xg7plugins.commands.CommandMessages;
+import com.xg7plugins.commands.CommandState;
 import com.xg7plugins.commands.impl.task_command.sub_commands.DeleteTaskSubCommand;
 import com.xg7plugins.commands.impl.task_command.sub_commands.RestartTaskSubCommand;
 import com.xg7plugins.commands.impl.task_command.sub_commands.SeeSubcommand;
@@ -39,14 +39,15 @@ public class TaskCommand implements Command {
         return subCommands;
     }
     @Override
-    public void onCommand(CommandSender sender, CommandArgs args) {
-        if (!(sender instanceof  Player)) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandSetup().syntax());
-            return;
+    public CommandState onCommand(CommandSender sender, CommandArgs args) {
+        if (!(sender instanceof Player)) {
+            return CommandState.syntaxError(getCommandSetup().syntax());
         }
 
         XG7Menus.getInstance().getMenu(XG7Plugins.getInstance(), "tasks-menu").open((Player) sender);
+        return CommandState.FINE;
     }
+
 
     @Override
     public List<String> onTabComplete(CommandSender sender, CommandArgs args) {

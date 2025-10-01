@@ -1,4 +1,4 @@
-config-version: 1.2
+config-version: 2
 
 locale: en_US
 formated-name: "English"
@@ -7,7 +7,7 @@ bedrock-icon: "URL, https://cdn.britannica.com/33/4833-050-F6E415FE/Flag-United-
 
 plugin-update-available: "&aA new version of %plugin% is available! New version: &7%version%&r"
 
-commands:
+command-errors:
   syntax-error: "&cYou are using the command incorrectly! The right way is &7%syntax%"
   player-not-found: "&cThis player hasn't found or never played before!"
   no-permission: "&cYou don't have permission to use this command!"
@@ -16,6 +16,7 @@ commands:
   is-a-player: "&cYou cannot execute this command being a player!"
   not-online: "&cThis player is not online!"
   command-not-found: "&cCommand not found!"
+  illegal-type: "&cYour entered value isn't a(n) %type%"
 
 reload-message:
   all-plugins: "%prefix% &aAll plugins reloaded!"

@@ -9,6 +9,8 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.utils.reflection.ReflectionClass;
+import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import net.md_5.bungee.api.ChatMessageType;
@@ -49,9 +51,22 @@ public class ActionBar extends Score {
                 continue;
             }
 
-            User user = PacketEvents.getAPI().getPlayerManager().getUser(player);
+            ReflectionClass componentClass = ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".ChatComponentText");
 
-            user.sendMessage(Text.format(message).toAdventureComponent(), ChatTypes.GAME_INFO);
+            ReflectionObject chatComponentOb = componentClass
+                    .getConstructor(String.class)
+                    .newInstance(message);
+
+            ReflectionObject packet = ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".PacketPlayOutChat")
+                    .getConstructor(ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".IChatBaseComponent").getAClass(), byte.class)
+                    .newInstance(chatComponentOb.getObject(), (byte) 2);
+
+            ReflectionObject.of(player)
+                    .getMethod("getHandle")
+                    .invokeToRObject()
+                    .getFieldRObject("playerConnection")
+                    .getMethod("sendPacket", ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".Packet").getAClass())
+                    .invoke(packet.getObject());
 
         }
     }

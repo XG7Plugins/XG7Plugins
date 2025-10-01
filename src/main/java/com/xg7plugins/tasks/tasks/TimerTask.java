@@ -30,6 +30,8 @@ public abstract class TimerTask {
      * Current state of the task (IDLE/RUNNING)
      */
     private TaskState taskState;
+
+    private Plugin plugin;
     /**
      * The underlying task implementation
      */
@@ -55,8 +57,9 @@ public abstract class TimerTask {
         this.period = period;
         this.taskState = state;
         this.executorName = null;
+        this.plugin = plugin;
 
-        this.task = isBukkitAsync ? BukkitTask.of(plugin, true, this::run) : BukkitTask.of(plugin, this::run);
+        this.task = isBukkitAsync ? BukkitTask.of(true, this::run) : BukkitTask.of(this::run);
     }
 
     /**
@@ -75,7 +78,8 @@ public abstract class TimerTask {
         this.period = period;
         this.taskState = state;
         this.executorName = executorName;
-        this.task = AsyncTask.of(plugin, this::run);
+        this.plugin = plugin;
+        this.task = AsyncTask.of(this::run);
     }
 
     /**

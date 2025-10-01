@@ -10,31 +10,15 @@ import java.util.concurrent.ScheduledFuture;
 /**
  * Abstract base class for tasks that can be scheduled and executed by the plugin
  */
-@Setter
-@Getter
-public abstract class Task {
-
-    /**
-     * Reference to the plugin that owns this task
-     */
-    private final Plugin plugin;
-
-    /**
-     * Constructor
-     *
-     * @param plugin The plugin that owns this task
-     */
-    public Task(Plugin plugin) {
-        this.plugin = plugin;
-    }
+public interface Task {
 
     /**
      * Execute the task logic
      */
-    public abstract void run();
+    void run();
 
     /**
      * Cancel/stop the task execution
      */
-    public abstract void cancel();
+    void cancel();
 }

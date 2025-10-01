@@ -1,4 +1,4 @@
-config-version: 1.2
+config-version: 2
 
 locale: pt_BR
 formated-name: "Português (Brasil)"
@@ -8,15 +8,16 @@ bedrock-icon: "URL, https://rondonia.ro.gov.br/wp-content/uploads/2020/09/Bandei
 plugin-update-available: "¡Hay una nueva versión de %plugin% disponible! Nueva versión: &7%version%&r"
 
 
-commands:
-  syntax-error: "&cVocê está usando o comando incorretamente! O correto é &7%syntax%"
-  player-not-found: "&cEsse jogador não foi encontrado ou nunca jogou antes!"
+command-errors:
+  syntax-error: "&cVocê está usando o comando incorretamente! A forma correta é &7%syntax%"
+  player-not-found: "&cEste jogador não foi encontrado ou nunca jogou antes!"
   no-permission: "&cVocê não tem permissão para usar este comando!"
-  disabled-world: "&cVocê não pode executar este comando neste mundo!"
+  disabled-world: "&cVocê não pode executar este comando em um mundo desabilitado!"
   not-a-player: "&cVocê não pode executar este comando no console!"
   is-a-player: "&cVocê não pode executar este comando sendo um jogador!"
-  not-online: "&cEsse jogador não está online!"
+  not-online: "&cEste jogador não está online!"
   command-not-found: "&cComando não encontrado!"
+  illegal-type: "&cO valor que você digitou não é um(a) %type%"
 
 reload-message:
   all-plugins: "%prefix% &aTodos os plugins foram recarregados!"

@@ -41,12 +41,8 @@ import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
-import com.xg7plugins.modules.xg7scores.scores.scoreboards.BelowNameScore;
-import com.xg7plugins.modules.xg7scores.scores.scoreboards.TabListScore;
-import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.LegacySidebar;
 import com.xg7plugins.modules.xg7scores.organizer.impl.LuckpermsRule;
 import com.xg7plugins.modules.xg7scores.organizer.impl.OPRule;
-import com.xg7plugins.modules.xg7scores.scores.TabList;
 import com.xg7plugins.server.ServerInfo;
 import com.xg7plugins.tasks.*;
 import com.xg7plugins.tasks.plugin_tasks.DatabaseKeepAlive;
@@ -65,7 +61,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.ServerOperator;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -238,6 +233,11 @@ public final class XG7Plugins extends Plugin {
         if (cause.equals("json"))
             XG7PluginsAPI.jsonManager().invalidateCache();
         this.loadHelp();
+
+        List<CommandSender> players = Bukkit.getOnlinePlayers().stream().filter(ServerOperator::isOp).collect(Collectors.toList());
+
+        versionChecker.notify(players);
+        versionChecker.notify(Collections.singletonList(Bukkit.getConsoleSender()));
 
     }
 

@@ -41,7 +41,7 @@ public class LegacyBossBar extends Score {
     public synchronized void addPlayer(Player player) {
         if (super.getPlayers().contains(player.getUniqueId())) return;
 
-        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(plugin, () -> {
+        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of( () -> {
 
             super.addPlayer(player);
 

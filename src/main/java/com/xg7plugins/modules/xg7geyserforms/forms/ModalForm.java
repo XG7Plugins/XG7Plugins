@@ -33,7 +33,7 @@ public abstract class ModalForm extends Form<org.geysermc.cumulus.form.ModalForm
         builder.button1(Text.detectLangs(player, plugin, button1).join().getText());
         builder.button2(Text.detectLangs(player, plugin, button2).join().getText());
 
-        builder.invalidResultHandler((form, response) -> AsyncTask.of(XG7Plugins.getInstance(), "menus", () -> onError(form, response, player)));
+        builder.invalidResultHandler((form, response) -> AsyncTask.of( "menus", () -> onError(form, response, player)));
         builder.validResultHandler((form, response) -> onFinish(form, response, player));
         builder.closedResultHandler((form) -> onClose(form, player));
 

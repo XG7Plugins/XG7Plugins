@@ -90,8 +90,8 @@ public class XG7Scores implements Module {
     }
 
     public void removePlayer(Player player) {
-        players.remove(player.getUniqueId());
         scores.values().forEach(score -> score.removePlayer(player));
+        players.remove(player.getUniqueId());
     }
 
     public void addPlayer(Player player) {

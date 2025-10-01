@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTe
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -15,6 +16,7 @@ public class TabListSorter {
     private final Map<String, WrapperPlayServerTeams> teams = new HashMap<>();
     private final Map<UUID, String> teamByPlayer = new HashMap<>();
     private final Set<String> globallyCreatedTeams = new HashSet<>();
+    private final Set<UUID> updateList = new HashSet<>();
 
     public TabListSorter(List<TabListRule> rules) {
         rules.forEach(rule -> this.rules.put(rule.getId(), rule));
@@ -42,6 +44,13 @@ public class TabListSorter {
                 .orElse(null);
     }
 
+    public void addToUpdateList(UUID uuid) {
+        updateList.add(uuid);
+    }
+    public void removeFromUpdateList(UUID uuid) {
+        updateList.remove(uuid);
+    }
+
     public void addPlayer(Player player) {
         TabListRule rule = findRuleByPlayer(player);
         if (rule == null) return;
@@ -55,9 +64,9 @@ public class TabListSorter {
     }
 
     public void updatePlayer(Player player) {
+        if (!updateList.contains(player.getUniqueId())) return;
         TabListRule correctRule = findRuleByPlayer(player);
         if (correctRule == null) {
-            System.out.println("[DEBUG] Nenhuma regra encontrada para " + player.getName() + ". Removendo player...");
             removePlayer(player);
             return;
         }
@@ -65,32 +74,15 @@ public class TabListSorter {
         String correctTeamId = correctRule.getId();
         String currentTeamId = teamByPlayer.get(player.getUniqueId());
 
-        System.out.println("[DEBUG] Player: " + player.getName());
-        System.out.println("[DEBUG] Regra correta: " + correctTeamId);
-        System.out.println("[DEBUG] Time atual: " + currentTeamId);
+        if (Objects.equals(currentTeamId, correctTeamId)) return;
 
-        if (Objects.equals(currentTeamId, correctTeamId)) {
-            System.out.println("[DEBUG] Player já está no time correto (" + correctTeamId + "). Nenhuma ação necessária.");
-            return;
-        }
+        if (currentTeamId != null) removePlayerFromTeam(player, currentTeamId);
 
-        if (currentTeamId != null) {
-            System.out.println("[DEBUG] Removendo player " + player.getName() + " do time antigo: " + currentTeamId);
-            removePlayerFromTeam(player, currentTeamId);
-        }
+        if (!globallyCreatedTeams.contains(correctTeamId)) createTeamGlobally(correctTeamId);
 
-        if (!globallyCreatedTeams.contains(correctTeamId)) {
-            System.out.println("[DEBUG] Time " + correctTeamId + " ainda não existe globalmente. Criando...");
-            createTeamGlobally(correctTeamId);
-        } else {
-            System.out.println("[DEBUG] Time " + correctTeamId + " já existe globalmente.");
-        }
-
-        System.out.println("[DEBUG] Adicionando player " + player.getName() + " ao time " + correctTeamId);
         addPlayerToTeam(player, correctTeamId);
 
         teamByPlayer.put(player.getUniqueId(), correctTeamId);
-        System.out.println("[DEBUG] Atualizado teamByPlayer: " + player.getUniqueId() + " -> " + correctTeamId);
 
     }
 
@@ -153,5 +145,28 @@ public class TabListSorter {
                         WrapperPlayServerTeams.OptionData.ALL
                 )
         );
+    }
+
+    public void createAllTeamsForPlayer(Player player) {
+        teams.values().forEach(team -> {
+            team.setTeamMode(WrapperPlayServerTeams.TeamMode.CREATE);
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, team);
+        });
+        teamByPlayer.forEach((key, value) -> {
+
+            WrapperPlayServerTeams team = teams.get(value);
+
+            if (team == null) return;
+
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(key);
+
+            team.setTeamMode(WrapperPlayServerTeams.TeamMode.ADD_ENTITIES);
+            team.setPlayers(Collections.singletonList(Objects.requireNonNull(offlinePlayer.getName())));
+
+
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, team);
+
+
+        });
     }
 }

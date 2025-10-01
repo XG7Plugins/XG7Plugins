@@ -75,7 +75,12 @@ public abstract class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (pluginSetup.onEnableDraw().length != 0) Arrays.stream(pluginSetup.onEnableDraw()).forEach(Bukkit.getConsoleSender()::sendMessage);
+        if (pluginSetup.onEnableDraw().length != 0) {
+            Arrays.stream(pluginSetup.onEnableDraw()).forEach(Bukkit.getConsoleSender()::sendMessage);
+            Bukkit.getConsoleSender().sendMessage("Plugin version: " + this.getDescription().getVersion());
+            Bukkit.getConsoleSender().sendMessage("Found bug? Report us: https://discord.gg/yghhDAaCED");
+            Bukkit.getConsoleSender().sendMessage("Consider donating <3: https://ko-fi.com/davixg7");
+        }
 
         ConfigSection config = ConfigFile.mainConfigOf(this).root();
 
@@ -120,6 +125,9 @@ public abstract class Plugin extends JavaPlugin {
             XG7PluginsAPI.configManager(this).reloadConfigs();
             debug = new Debug(this);
         }
+
+        debug = new Debug(this);
+
         if (cause.equals(ReloadCause.EVENTS)) {
             XG7PluginsAPI.eventManager().reloadEvents(this);
             XG7PluginsAPI.packetEventManager().reloadListeners(this);

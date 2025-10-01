@@ -3,7 +3,7 @@ package com.xg7plugins.commands.executors;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.PluginSetup;
 import com.xg7plugins.commands.CommandManager;
-import com.xg7plugins.commands.CommandMessages;
+import com.xg7plugins.commands.CommandState;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.CommandSetup;
@@ -43,15 +43,15 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
 
         if (command instanceof MainCommand) {
             if (!sender.hasPermission(commandConfig.permission()) && !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
-                CommandMessages.COMMAND_NOT_FOUND.send(sender);
+                CommandState.COMMAND_NOT_FOUND.send(sender);
                 return true;
             }
             if (!sender.hasPermission(commandConfig.permission())) {
-                CommandMessages.NO_PERMISSION.send(sender);
+                CommandState.NO_PERMISSION.send(sender);
                 return true;
             }
             if (strings.length == 0) {
-                CommandMessages.SYNTAX_ERROR.send(sender, commandConfig.syntax());
+                CommandState.syntaxError(commandConfig.syntax()).send(sender);
                 return true;
             }
 
@@ -61,7 +61,7 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
             }
             command = manager.getCommand(plConfig.mainCommandName() + strings[0]);
             if (command == null) {
-                CommandMessages.COMMAND_NOT_FOUND.send(sender);
+                CommandState.COMMAND_NOT_FOUND.send(sender);
                 return true;
             }
             strings = Arrays.copyOfRange(strings, 1, strings.length);
@@ -122,20 +122,20 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
         CommandSetup commandConfig = command.getCommandSetup();
 
         if (!sender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
-            CommandMessages.NO_PERMISSION.send(sender);
+            CommandState.NO_PERMISSION.send(sender);
             return;
         }
         if (commandConfig.isPlayerOnly() && !(sender instanceof Player)) {
-            CommandMessages.NOT_A_PLAYER.send(sender);
+            CommandState.NOT_A_PLAYER.send(sender);
             return;
         }
         if (commandConfig.isConsoleOnly() && sender instanceof Player) {
-            CommandMessages.IS_A_PLAYER.send(sender);
+            CommandState.IS_A_PLAYER.send(sender);
             return;
         }
         if (sender instanceof Player) {
             if (commandConfig.isInEnabledWorldOnly() && !XG7PluginsAPI.isInAnEnabledWorld(manager.getPlugin(), ((Player) sender))) {
-                CommandMessages.DISABLED_WORLD.send(sender);
+                CommandState.DISABLED_WORLD.send(sender);
                 return;
             }
         }
@@ -146,13 +146,23 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
 
             final Command finalCommand = command;
 
-            XG7PluginsAPI.taskManager().runAsync(AsyncTask.of(manager.getPlugin(), "commands", () -> finalCommand.onCommand(sender,commandArgs)));
+            XG7PluginsAPI.taskManager().runAsync(AsyncTask.of("commands", () -> {
+                CommandState state = finalCommand.onCommand(sender,commandArgs);
+                state.send(sender);
+
+                command.getPlugin().getDebug().info("Returned state: " + state);
+            }));
 
             return;
         }
 
         try {
-            command.onCommand(sender,commandArgs);
+            
+            CommandState state = command.onCommand(sender,commandArgs);
+            
+            state.send(sender);
+
+            command.getPlugin().getDebug().info("Returned state: " + state);
         } catch (Exception e) {
             e.printStackTrace();
         }

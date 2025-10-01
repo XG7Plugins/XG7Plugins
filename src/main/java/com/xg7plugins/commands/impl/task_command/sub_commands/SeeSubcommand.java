@@ -4,14 +4,14 @@ import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.CommandMessages;
+import com.xg7plugins.commands.CommandState;
 import com.xg7plugins.commands.setup.CommandArgs;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
-import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.lang.Lang;
 import com.xg7plugins.modules.xg7menus.builders.MenuBuilder;
-import com.xg7plugins.modules.xg7menus.item.impl.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.impl.ClickableItem;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import com.xg7plugins.tasks.tasks.AsyncTask;
@@ -40,64 +40,75 @@ public class SeeSubcommand implements Command {
     }
 
     @Override
-    public void onCommand(CommandSender sender, CommandArgs args) {
+    public CommandState onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() != 1) {
-            CommandMessages.SYNTAX_ERROR.send(sender, getCommandSetup().syntax());
-            return;
+            return CommandState.syntaxError(getCommandSetup().syntax());
         }
 
         TaskManager manager = XG7PluginsAPI.taskManager();
-
         String id = args.get(0, String.class);
 
         if (!manager.containsTimerTask(id)) {
             Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.not-found");
-            return;
+            return CommandState.ERROR;
         }
+
         TimerTask task = manager.getTimerTask(id);
 
         if (!(sender instanceof Player)) {
             sender.sendMessage("Task info: " + task.getId());
             sender.sendMessage("Task state: " + task.getTaskState().name());
-            sender.sendMessage("Task plugin: " + task.getTask().getPlugin().getName());
+            sender.sendMessage("Task plugin: " + task.getPlugin().getName());
             sender.sendMessage("Task executor: " + (task.getTask() instanceof AsyncTask ? ((AsyncTask) task.getTask()).getExecutorName() : ""));
             sender.sendMessage("Task delay: " + task.getDelay());
             sender.sendMessage("Task async: " + (task.getTask() instanceof AsyncTask));
-            return;
+            return CommandState.FINE;
         }
 
         Player player = (Player) sender;
 
-        ConfigSection lang = XG7PluginsAPI.langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getSecond().getLangConfiguration();
+        Lang lang = XG7PluginsAPI.langManager()
+                .getLangByPlayer(XG7Plugins.getInstance(), player)
+                .join()
+                .getSecond();
 
-        ClickableItem builder = Item.from(XMaterial.REPEATER.parseMaterial()).clickable().onClick(event -> {
-            if (event.getMenuAction().isRightClick()) {
-                if (task.getTaskState() == TaskState.RUNNING) {
-                    XG7PluginsAPI.taskManager().cancelRepeatingTask(task.getTask().getPlugin().getName() + ":" + task.getId());
-                    Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.stopped");
+        ClickableItem builder = Item.from(XMaterial.REPEATER.parseMaterial())
+                .clickable()
+                .onClick(event -> {
+                    if (event.getMenuAction().isRightClick()) {
+                        if (task.getTaskState() == TaskState.RUNNING) {
+                            XG7PluginsAPI.taskManager().cancelRepeatingTask(task.getPlugin().getName() + ":" + task.getId());
+                            Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.stopped");
+                            BasicMenu.refresh(event.getHolder());
+                            return;
+                        }
+                        XG7PluginsAPI.taskManager().runTimerTask(
+                                XG7PluginsAPI.taskManager().getTimerTask(task.getPlugin(), task.getId())
+                        );
+                        Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.restarted");
+                        BasicMenu.refresh(event.getHolder());
+                        return;
+                    }
+                    if (event.getMenuAction().isLeftClick()) {
+                        Text.sendTextFromLang(
+                                sender,
+                                XG7Plugins.getInstance(),
+                                "tasks-menu.copy-to-clipboard",
+                                Pair.of("id", task.getPlugin().getName() + ":" + task.getId())
+                        );
+                    }
                     BasicMenu.refresh(event.getHolder());
-                    return;
-                }
-                XG7PluginsAPI.taskManager().runTimerTask(XG7PluginsAPI.taskManager().getTimerTask(task.getTask().getPlugin(),task.getId()));
-                Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.restarted");
+                });
 
-                BasicMenu.refresh(event.getHolder());
-                return;
-            }
-            if (event.getMenuAction().isLeftClick()) {
-                Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "tasks-menu.copy-to-clipboard", Pair.of("id", task.getTask().getPlugin().getName() + ":" + task.getId()));
-            }
-            BasicMenu.refresh(event.getHolder());
-        });
         builder.name("&e" + task.getId());
-        builder.lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()));
+        builder.lore(lang.getLangConfiguration().getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()));
 
-        builder.setNBTTag("task-id", task.getTask().getPlugin().getName() + ":" + task.getId());
+        builder.setNBTTag("task-id", task.getPlugin().getName() + ":" + task.getId());
         builder.setNBTTag("task-state", task.getTaskState().name());
 
         builder.setBuildPlaceholders(
-                Pair.of("plugin", task.getTask().getPlugin().getName()),
-                Pair.of("id", task.getTask().getPlugin().getName() + ":" + task.getId()),
+                Pair.of("plugin", task.getPlugin().getName()),
+                Pair.of("id", task.getPlugin().getName() + ":" + task.getId()),
                 Pair.of("state", task.getTaskState().name()),
                 Pair.of("task_is_running", String.valueOf(task.getTaskState() == TaskState.RUNNING)),
                 Pair.of("task_is_not_running", String.valueOf(task.getTaskState() == TaskState.IDLE))
@@ -111,6 +122,7 @@ public class SeeSubcommand implements Command {
                 3
         )).items(builder).build().open((Player) sender);
 
+        return CommandState.FINE;
     }
 
     @Override

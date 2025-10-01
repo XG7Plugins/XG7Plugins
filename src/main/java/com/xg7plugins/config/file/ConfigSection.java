@@ -27,17 +27,17 @@ import java.util.*;
 public class ConfigSection {
 
     private final ConfigFile file;
-    private final String parentPath;
+    private final String currentPath;
     private final YamlConfiguration config;
 
     public ConfigSection(ConfigFile file, String path, YamlConfiguration config) {
         this.file = file;
-        this.parentPath = path.isEmpty() ? "" : path + ".";
+        this.currentPath = path.isEmpty() ? "" : path + ".";
         this.config = config;
     }
 
     public boolean contains(String path) {
-        return config.contains(this.parentPath + path);
+        return config.contains(this.currentPath + path);
     }
 
     /**
@@ -57,31 +57,31 @@ public class ConfigSection {
     public <T> T get(String path, Class<T> type, T defaultValue, boolean ignoreNonexistent, Object... optionalTypeArgs) {
         if (!verifyExists(path, ignoreNonexistent)) return defaultValue;
 
-        if (type == Object.class) return (T) config.get(this.parentPath + path);
+        if (type == Object.class) return (T) config.get(this.currentPath + path);
 
         if (type == String.class) {
-            return (T) config.getString(this.parentPath + path);
+            return (T) config.getString(this.currentPath + path);
         }
         if (type == Integer.class || type == int.class) {
-            return (T) Integer.valueOf(config.getInt(this.parentPath + path));
+            return (T) Integer.valueOf(config.getInt(this.currentPath + path));
         }
         if (type == Boolean.class || type == boolean.class) {
-            return (T) Boolean.valueOf(config.getBoolean(this.parentPath + path));
+            return (T) Boolean.valueOf(config.getBoolean(this.currentPath + path));
         }
         if (type == Double.class || type == double.class) {
-            return (T) Double.valueOf(config.getDouble(this.parentPath + path));
+            return (T) Double.valueOf(config.getDouble(this.currentPath + path));
         }
         if (type == Long.class || type == long.class) {
-            return (T) Long.valueOf(config.getLong(this.parentPath + path));
+            return (T) Long.valueOf(config.getLong(this.currentPath + path));
         }
         if (type == Float.class || type == float.class) {
-            return (T) Float.valueOf((float) config.getDouble(this.parentPath + path));
+            return (T) Float.valueOf((float) config.getDouble(this.currentPath + path));
         }
         if (type == Short.class || type == short.class) {
-            return (T) Short.valueOf((short) config.getInt(this.parentPath + path));
+            return (T) Short.valueOf((short) config.getInt(this.currentPath + path));
         }
         if (type == XMaterial.class) {
-            return (T) XMaterial.matchXMaterial(config.getString(this.parentPath + path)).orElse((XMaterial) defaultValue);
+            return (T) XMaterial.matchXMaterial(config.getString(this.currentPath + path)).orElse((XMaterial) defaultValue);
         }
 
         if (type.isEnum()) {
@@ -89,7 +89,7 @@ public class ConfigSection {
                 @SuppressWarnings("unchecked")
                 Class<? extends Enum<?>> enumClass = (Class<? extends Enum<?>>) type;
                 return (T) Enum.valueOf((Class<? extends Enum>) enumClass,
-                        config.getString(this.parentPath + path).toUpperCase());
+                        config.getString(this.currentPath + path).toUpperCase());
             } catch (Exception e) {
                 return defaultValue;
             }
@@ -97,18 +97,18 @@ public class ConfigSection {
 
         if (type == UUID.class) {
             try {
-                return (T) UUID.fromString(config.getString(this.parentPath + path));
+                return (T) UUID.fromString(config.getString(this.currentPath + path));
             } catch (Exception e) {
                 return defaultValue;
             }
         }
 
         if (OfflinePlayer.class.isAssignableFrom(type)) {
-            return (T) Bukkit.getOfflinePlayer(config.getString(this.parentPath + path));
+            return (T) Bukkit.getOfflinePlayer(config.getString(this.currentPath + path));
         }
 
         if (World.class.isAssignableFrom(type)) {
-            return (T) Bukkit.getWorld(config.getString(this.parentPath + path));
+            return (T) Bukkit.getWorld(config.getString(this.currentPath + path));
         }
 
         ConfigTypeAdapter<T> adapter =
@@ -119,7 +119,7 @@ public class ConfigSection {
             return defaultValue;
         }
 
-        T value = adapter.fromConfig(this, this.parentPath + path, optionalTypeArgs);
+        T value = adapter.fromConfig(this, this.currentPath + path, optionalTypeArgs);
         return value != null ? value : defaultValue;
     }
 
@@ -134,11 +134,11 @@ public class ConfigSection {
      */
     private boolean verifyExists(String path, boolean ignoreNonexistent) {
         if (!contains(path)) {
-            if (!ignoreNonexistent) file.getPlugin().getLogger().warning(this.parentPath + path + " not found in " + file.getName() + ".yml");
+            if (!ignoreNonexistent) file.getPlugin().getLogger().warning(this.currentPath + path + " not found in " + file.getName() + ".yml");
             return false;
         }
-        if (config.get(this.parentPath + path) == null) {
-            if (!ignoreNonexistent) file.getPlugin().getLogger().warning(this.parentPath + path + " in " + file.getName() + " is empty");
+        if (config.get(this.currentPath + path) == null) {
+            if (!ignoreNonexistent) file.getPlugin().getLogger().warning(this.currentPath + path + " in " + file.getName() + " is empty");
             return false;
         }
         return true;
@@ -169,18 +169,18 @@ public class ConfigSection {
     public <T> Optional<List<T>> getList(String path, Class<T> type, boolean ignoreNonexistent) {
         if (!verifyExists(path, ignoreNonexistent)) return Optional.empty();
 
-        if (type == String.class) return Optional.of((List<T>) config.getStringList(this.parentPath + path));
-        if (type == Integer.class || type == int.class) return Optional.of((List<T>) config.getIntegerList(this.parentPath + path));
-        if (type == Boolean.class || type == boolean.class) return Optional.of((List<T>) config.getBooleanList(this.parentPath + path));
-        if (type == Double.class || type == double.class) return Optional.of((List<T>) config.getDoubleList(this.parentPath + path));
-        if (type == Long.class || type == long.class) return Optional.of((List<T>) config.getLongList(this.parentPath + path));
-        if (type == Float.class || type == float.class) return Optional.of((List<T>) config.getFloatList(this.parentPath + path));
-        if (type == Map.class) return Optional.of((List<T>) config.getMapList(this.parentPath + path));
-        if (type == Short.class || type == short.class) return Optional.of((List<T>) config.getShortList(this.parentPath + path));
+        if (type == String.class) return Optional.of((List<T>) config.getStringList(this.currentPath + path));
+        if (type == Integer.class || type == int.class) return Optional.of((List<T>) config.getIntegerList(this.currentPath + path));
+        if (type == Boolean.class || type == boolean.class) return Optional.of((List<T>) config.getBooleanList(this.currentPath + path));
+        if (type == Double.class || type == double.class) return Optional.of((List<T>) config.getDoubleList(this.currentPath + path));
+        if (type == Long.class || type == long.class) return Optional.of((List<T>) config.getLongList(this.currentPath + path));
+        if (type == Float.class || type == float.class) return Optional.of((List<T>) config.getFloatList(this.currentPath + path));
+        if (type == Map.class) return Optional.of((List<T>) config.getMapList(this.currentPath + path));
+        if (type == Short.class || type == short.class) return Optional.of((List<T>) config.getShortList(this.currentPath + path));
         if (type.isEnum()) {
             Class<? extends Enum<?>> enumClass = (Class<? extends Enum<?>>) type;
 
-            List<String> enumValues = config.getStringList(this.parentPath + path);
+            List<String> enumValues = config.getStringList(this.currentPath + path);
 
             List<T> enumList = new ArrayList<>();
 
@@ -199,6 +199,18 @@ public class ConfigSection {
     }
 
 
+    //Return path with no dots -> config.section -> config.section
+    public String getPath() {
+        return currentPath.isEmpty() ? "" : currentPath.substring(0, currentPath.lastIndexOf("."));
+    }
+
+    //Return the last path -> config.section -> section
+    public String getName() {
+        String path = getPath();
+        if (path.isEmpty()) return ""; // raiz
+        int lastDot = path.lastIndexOf(".");
+        return lastDot == -1 ? path : path.substring(lastDot + 1);
+    }
 
     /**
      * Gets a time duration value from the configuration.
@@ -210,9 +222,9 @@ public class ConfigSection {
      */
     @NotNull
     public Time getTimeOrDefault(String path, Time defaultTime, boolean ignoreNonexistent) {
-        String time = config.getString(this.parentPath + path);
+        String time = config.getString(this.currentPath + path);
         if (time == null) {
-            if (!ignoreNonexistent) file.getPlugin().getDebug().warn(this.parentPath + path + " not found in " + file.getName() + ".yml");
+            if (!ignoreNonexistent) file.getPlugin().getDebug().warn(this.currentPath + path + " not found in " + file.getName() + ".yml");
             return defaultTime;
         }
         long milliseconds;
@@ -261,7 +273,7 @@ public class ConfigSection {
 
     public Set<String> getKeys(boolean deep) {
 
-        String realPath = parentPath.isEmpty() ? "" : parentPath.substring(0, parentPath.lastIndexOf("."));
+        String realPath = currentPath.isEmpty() ? "" : currentPath.substring(0, currentPath.lastIndexOf("."));
 
         return config.getConfigurationSection(realPath).getKeys(deep);
     }
@@ -277,18 +289,18 @@ public class ConfigSection {
      */
     @SneakyThrows
     public <T> boolean is(String path, Class<T> type) {
-        return (boolean) config.getClass().getMethod("is" + type.getSimpleName(), String.class).invoke(config, this.parentPath + path);
+        return (boolean) config.getClass().getMethod("is" + type.getSimpleName(), String.class).invoke(config, this.currentPath + path);
     }
 
     public boolean exists() {
-        return file.exists() && config.contains(parentPath);
+        return file.exists() && config.contains(currentPath);
     }
 
     public ConfigSection parent() {
-        return parentPath.contains(".") ? file.section(parentPath.substring(0, parentPath.lastIndexOf("."))) : file.root();
+        return currentPath.contains(".") ? file.section(currentPath.substring(0, currentPath.lastIndexOf("."))) : file.root();
     }
     public ConfigSection child(String path) {
-        return file.section(this.parentPath + path);
+        return file.section(this.currentPath + path);
     }
 
 }

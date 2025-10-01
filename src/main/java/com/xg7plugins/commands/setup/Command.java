@@ -2,7 +2,7 @@ package com.xg7plugins.commands.setup;
 
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.CommandMessages;
+import com.xg7plugins.commands.CommandState;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import org.bukkit.command.CommandSender;
 
@@ -34,8 +34,8 @@ public interface Command {
      * @param sender The command sender
      * @param args   The command arguments
      */
-    default void onCommand(CommandSender sender, CommandArgs args) {
-        CommandMessages.SYNTAX_ERROR.send(sender, getCommandSetup().syntax());
+    default CommandState onCommand(CommandSender sender, CommandArgs args) {
+        return CommandState.syntaxError(getCommandSetup().syntax());
     }
 
     /**

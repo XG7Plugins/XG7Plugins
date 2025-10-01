@@ -56,10 +56,10 @@ public class XG7PluginsHelpForm extends SimpleForm {
     public void onFinish(org.geysermc.cumulus.form.SimpleForm form, SimpleFormResponse result, Player player) {
         switch (result.clickedButtonId()) {
             case 0:
-                XG7PluginsAPI.taskManager().runSync(BukkitTask.of(XG7Plugins.getInstance(), () -> player.performCommand("lang")));
+                XG7PluginsAPI.taskManager().runSync(BukkitTask.of(() -> player.performCommand("lang")));
                 break;
             case 1:
-                XG7PluginsAPI.taskManager().runSync(BukkitTask.of(XG7Plugins.getInstance(), () -> player.performCommand("tasks")));
+                XG7PluginsAPI.taskManager().runSync(BukkitTask.of(() -> player.performCommand("tasks")));
                 break;
             case 2:
                 plugin.getHelpMessenger().getForm().getForm("commands").send(player);

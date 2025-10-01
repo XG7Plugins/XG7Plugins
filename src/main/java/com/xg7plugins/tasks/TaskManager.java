@@ -83,7 +83,7 @@ public class TaskManager implements Manager {
                 return;
             }
 
-            String taskId = timerTask.getTask().getPlugin().getName() + ":" + timerTask.getId();
+            String taskId = timerTask.getPlugin().getName() + ":" + timerTask.getId();
             timerTaskMap.put(taskId, timerTask);
 
         });
@@ -98,7 +98,7 @@ public class TaskManager implements Manager {
     public void runSync(BukkitTask bukkitTask) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTask(bukkitTask.getPlugin(), bukkitTask::run).getTaskId();
+        int taskID = Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), bukkitTask::run).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -131,7 +131,7 @@ public class TaskManager implements Manager {
     public void runAsyncBukkitTask(BukkitTask bukkitTask) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTaskAsynchronously(bukkitTask.getPlugin(), bukkitTask::run).getTaskId();
+        int taskID = Bukkit.getScheduler().runTaskAsynchronously(XG7Plugins.getInstance(), bukkitTask::run).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -146,7 +146,7 @@ public class TaskManager implements Manager {
     public void scheduleSync(BukkitTask bukkitTask, long delay) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTaskLater(bukkitTask.getPlugin(), bukkitTask::run, TimeParser.convertMillisToTicks(delay)).getTaskId();
+        int taskID = Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), bukkitTask::run, TimeParser.convertMillisToTicks(delay)).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -181,7 +181,7 @@ public class TaskManager implements Manager {
     public void scheduleAsyncBukkitTask(BukkitTask bukkitTask, long delay) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTaskLaterAsynchronously(bukkitTask.getPlugin(), bukkitTask::run, TimeParser.convertMillisToTicks(delay)).getTaskId();
+        int taskID = Bukkit.getScheduler().runTaskLaterAsynchronously(XG7Plugins.getInstance(), bukkitTask::run, TimeParser.convertMillisToTicks(delay)).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -194,10 +194,10 @@ public class TaskManager implements Manager {
      * @param period     Period between executions in milliseconds
      */
     @SneakyThrows
-    public void scheduleSyncRepeating(BukkitTask bukkitTask, long delay, long period) {
+    public void scheduleSyncRepeating(Plugin plugin, BukkitTask bukkitTask, long delay, long period) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTaskTimer(bukkitTask.getPlugin(), bukkitTask::run, TimeParser.convertMillisToTicks(delay), TimeParser.convertMillisToTicks(period)).getTaskId();
+        int taskID = Bukkit.getScheduler().runTaskTimer(plugin, bukkitTask::run, TimeParser.convertMillisToTicks(delay), TimeParser.convertMillisToTicks(period)).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -232,10 +232,10 @@ public class TaskManager implements Manager {
      * @param period     Period between executions in milliseconds
      */
     @SneakyThrows
-    public void scheduleAsyncRepeatingBukkitTask(BukkitTask bukkitTask, long delay, long period) {
+    public void scheduleAsyncRepeatingBukkitTask(Plugin plugin, BukkitTask bukkitTask, long delay, long period) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTaskTimerAsynchronously(bukkitTask.getPlugin(), bukkitTask::run, TimeParser.convertMillisToTicks(delay), TimeParser.convertMillisToTicks(period)).getTaskId();
+        int taskID = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, bukkitTask::run, TimeParser.convertMillisToTicks(delay), TimeParser.convertMillisToTicks(period)).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -298,7 +298,7 @@ public class TaskManager implements Manager {
     public void deleteRepeatingTask(TimerTask timerTask) {
         cancelRepeatingTask(timerTask);
 
-        timerTaskMap.remove(timerTask.getTask().getPlugin().getName() + ":" + timerTask.getId());
+        timerTaskMap.remove(timerTask.getPlugin().getName() + ":" + timerTask.getId());
     }
 
     /**
@@ -350,7 +350,7 @@ public class TaskManager implements Manager {
     public void runTimerTask(TimerTask timerTask) {
         if (timerTask == null) return;
 
-        String taskId = timerTask.getTask().getPlugin().getName() + ":" + timerTask.getId();
+        String taskId = timerTask.getPlugin().getName() + ":" + timerTask.getId();
         timerTaskMap.put(taskId, timerTask);
 
         if (timerTask.getTaskState() == TaskState.RUNNING) return;
@@ -358,8 +358,8 @@ public class TaskManager implements Manager {
         if (timerTask.getTask() instanceof BukkitTask) {
             BukkitTask bukkitTask = (BukkitTask) timerTask.getTask();
             if (bukkitTask.isAsync())
-                scheduleAsyncRepeatingBukkitTask(bukkitTask, timerTask.getDelay(), timerTask.getPeriod());
-            else scheduleSyncRepeating(bukkitTask, timerTask.getDelay(), timerTask.getPeriod());
+                scheduleAsyncRepeatingBukkitTask(timerTask.getPlugin(), bukkitTask, timerTask.getDelay(), timerTask.getPeriod());
+            else scheduleSyncRepeating(timerTask.getPlugin(), bukkitTask, timerTask.getDelay(), timerTask.getPeriod());
         } else scheduleAsyncRepeating((AsyncTask) timerTask.getTask(), timerTask.getDelay(), timerTask.getPeriod());
 
         timerTask.setTaskState(TaskState.RUNNING);
@@ -371,7 +371,7 @@ public class TaskManager implements Manager {
      * @param plugin The plugin whose tasks should be reloaded
      */
     public void reloadTasks(Plugin plugin) {
-        timerTaskMap.values().stream().filter(timerTask -> timerTask.getTask().getPlugin().getName().equals(plugin.getName())).forEach(this::runTimerTask);
+        timerTaskMap.values().stream().filter(timerTask -> timerTask.getPlugin().getName().equals(plugin.getName())).forEach(this::runTimerTask);
     }
 
     /**
