@@ -26,6 +26,11 @@ public class XG7GeyserForms implements Module {
     }
 
     @Override
+    public void onReload() {
+
+    }
+
+    @Override
     public String getName() {
         return "XG7GeyserForms";
     }

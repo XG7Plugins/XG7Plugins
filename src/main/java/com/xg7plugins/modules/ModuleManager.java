@@ -35,10 +35,12 @@ public class ModuleManager implements Manager {
             this.extensions.put(extension.getName(), extension);
         }
 
-        initModules();
-        loadTasks();
         loadExecutors();
+        loadTasks();
         loadListeners();
+
+        initModules();
+
     }
 
     /**
@@ -81,6 +83,10 @@ public class ModuleManager implements Manager {
      */
     public void disableModules() {
         extensions.values().forEach(Module::onDisable);
+    }
+
+    public void reloadModules() {
+        extensions.values().forEach(Module::onReload);
     }
 
 }

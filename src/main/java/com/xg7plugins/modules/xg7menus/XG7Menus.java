@@ -50,6 +50,19 @@ public class XG7Menus implements Module {
         });
     }
 
+    public void closeAllMenus(Player player) {
+        player.closeInventory();
+        if (XG7Menus.hasPlayerMenuHolder(player.getUniqueId())) {
+            PlayerMenuHolder holder = XG7Menus.getPlayerMenuHolder(player.getUniqueId());
+            holder.getMenu().close(holder);
+        }
+    }
+
+    @Override
+    public void onReload() {
+        Bukkit.getOnlinePlayers().forEach(this::closeAllMenus);
+    }
+
     @Override
     public String getName() {
         return "XG7Menus";
@@ -59,12 +72,16 @@ public class XG7Menus implements Module {
         if (menus == null) return;
         for (BasicMenu menu : menus) {
             if (!menu.getMenuConfigs().isEnabled()) continue;
-            XG7Plugins.getInstance().getDebug().loading("Registering menu " + menu.getMenuConfigs().getId());
+            XG7Plugins.getInstance().getDebug().info("Registering menu " + menu.getMenuConfigs().getId());
             registeredMenus.put(menu.getMenuConfigs().getPlugin().getName() + ":" + menu.getMenuConfigs().getId(), menu);
         }
     }
     public <T extends BasicMenu> T getMenu(Plugin plugin, String id) {
         return (T) registeredMenus.get(plugin.getName() + ":" + id);
+    }
+
+    public void unregisterMenu(Plugin plugin, String id) {
+        registeredMenus.remove(plugin.getName() + ":" + id);
     }
 
     public static void registerPlayerMenuHolder(PlayerMenuHolder holder) {

@@ -11,7 +11,6 @@ import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.http.HTTP;
-import com.xg7plugins.utils.http.HTTPResponse;
 import com.xg7plugins.utils.text.Text;
 import org.apache.logging.log4j.util.Strings;
 import org.bukkit.command.CommandSender;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 @CommandSetup(
@@ -32,6 +32,9 @@ import java.util.List;
         isAsync = true
 )
 public class CommentCommand implements Command {
+
+    private final AtomicLong cooldown = new AtomicLong(System.currentTimeMillis());
+
     @Override
     public Item getIcon() {
         return Item.commandIcon(XMaterial.DIAMOND, this);
@@ -41,6 +44,11 @@ public class CommentCommand implements Command {
 
         if (args.len() < 2) {
             return CommandState.syntaxError(getCommandSetup().syntax());
+        }
+
+        if (cooldown.get() > System.currentTimeMillis()) {
+            Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "comment-cooldown", Pair.of("time", (cooldown.get() - System.currentTimeMillis()) + ""));
+            return CommandState.ERROR;
         }
 
         Plugin plugin = args.get(0, Plugin.class);
@@ -82,6 +90,8 @@ public class CommentCommand implements Command {
             );
 
             Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "comment-message-sent");
+
+            cooldown.set(System.currentTimeMillis() + 1000 * 60 * 3);
 
         } catch (IOException e) {
             e.printStackTrace();

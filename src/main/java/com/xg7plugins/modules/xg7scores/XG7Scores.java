@@ -47,6 +47,11 @@ public class XG7Scores implements Module {
         XG7Plugins.getInstance().getDebug().loading("XG7Scores disabled");
     }
 
+    @Override
+    public void onReload() {
+        scores.values().forEach(Score::removeAllPlayers);
+    }
+
     public void registerTablistOrgaizerRule(TabListRule rule) {
         organizer.addRule(rule);
     }

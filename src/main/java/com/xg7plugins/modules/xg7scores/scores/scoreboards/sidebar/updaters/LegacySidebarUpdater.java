@@ -1,34 +1,50 @@
-package com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar;
+package com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.updaters;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateScore;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.Sidebar;
 import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
+import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.function.Function;
 
-public class LegacySidebar extends GenericSidebar {
+@AllArgsConstructor
+public class LegacySidebarUpdater implements SidebarUpdater {
 
     private final Map<UUID, Map<Integer, Pair<String, String>>> playerLastLines = new HashMap<>();
     private final Map<UUID, List<String>> playerUsedEntries = new HashMap<>();
 
-    public LegacySidebar(List<String> title, List<String> lines, String id, Function<Player, Boolean> condition, long taskDelay, Plugin plugin) {
-        super(title, lines, id, condition, taskDelay, plugin);
+    private final Sidebar sidebar;
+
+    @Override
+    public boolean checkVersion(Player player) {
+
+        User user = PacketEvents.getAPI().getPlayerManager().getUser(player);
+
+        if (user == null) return MinecraftVersion.isOlderThan(13);
+
+        ClientVersion clientVersion = user.getClientVersion();
+
+        return clientVersion.isOlderThan(ClientVersion.V_1_13) || MinecraftVersion.isOlderThan(13);
     }
 
     @Override
     public void setLine(Player player, int score, String text) {
         UUID uuid = player.getUniqueId();
 
-        String translatedText = Text.detectLangs(player, plugin, text).join().getText();
+        String translatedText = Text.detectLangs(player, sidebar.getPlugin(), text).join().getText();
 
         Map<Integer, Pair<String, String>> lastLines = playerLastLines.computeIfAbsent(uuid, k -> new HashMap<>());
         List<String> usedEntries = playerUsedEntries.computeIfAbsent(uuid, k -> new ArrayList<>());
@@ -37,44 +53,49 @@ public class LegacySidebar extends GenericSidebar {
             return;
         }
 
+        String teamName = "team_" + score + "_" + uuid;
+
         if (lastLines.containsKey(score)) {
             String oldEntry = lastLines.get(score).getSecond();
 
-            WrapperPlayServerUpdateScore removeOldScore = new WrapperPlayServerUpdateScore(
-                    oldEntry,
-                    WrapperPlayServerUpdateScore.Action.REMOVE_ITEM,
-                    "sb-" + getId(),
-                    Optional.of(score)
-            );
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeOldScore);
-
             WrapperPlayServerTeams removeTeam = new WrapperPlayServerTeams(
-                    "team_" + score,
+                    teamName,
                     WrapperPlayServerTeams.TeamMode.REMOVE,
                     Optional.empty(),
                     Collections.emptyList()
             );
+
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeTeam);
 
+            System.out.println("removing entry: " + oldEntry + " for " + player.getName());
+
+            WrapperPlayServerUpdateScore removeOldScore = new WrapperPlayServerUpdateScore(
+                    oldEntry,
+                    WrapperPlayServerUpdateScore.Action.REMOVE_ITEM,
+                    "sb-" + sidebar.getId(),
+                    Optional.of(score)
+            );
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeOldScore);
             usedEntries.remove(oldEntry);
         }
 
         String prefix = translatedText.substring(0, Math.min(translatedText.length(), 16));
         String entry = translatedText.length() > 16 ? translatedText.substring(16, Math.min(translatedText.length(), 56)) : "";
-        String suffix = translatedText.length() > 56 ? translatedText.substring(56, Math.min(translatedText.length(), MinecraftVersion.isNewerThan(12) ? translatedText.length() : 72)) : "";
 
-        if (MinecraftVersion.isNewerOrEqual(13)) {
-            suffix = ChatColor.getLastColors(prefix) + entry + suffix;
-            entry = "";
-        }
+        String entryColors = ChatColor.getLastColors(prefix);
+        String finalEntry = entryColors + entry;
+        int originalEntryLength = finalEntry.length();
 
-        String finalEntry = entry;
         while (usedEntries.contains(finalEntry)) {
-            finalEntry += "§r" + ChatColor.getLastColors(prefix);
+            finalEntry += "§r";
         }
         usedEntries.add(finalEntry);
 
-        String teamName = "team_" + score;
+        int addedChars = finalEntry.length() - originalEntryLength;
+
+        int suffixStart = 56 + addedChars;
+        String suffix = translatedText.length() > suffixStart ? ChatColor.getLastColors(finalEntry) + translatedText.substring(suffixStart, Math.min(translatedText.length(), 72 + addedChars)) : "";
+
         WrapperPlayServerTeams.ScoreBoardTeamInfo teamInfo = new WrapperPlayServerTeams.ScoreBoardTeamInfo(
                 Component.text(teamName),
                 Text.format(prefix).toAdventureComponent(),
@@ -96,12 +117,14 @@ public class LegacySidebar extends GenericSidebar {
         WrapperPlayServerUpdateScore updateScore = new WrapperPlayServerUpdateScore(
                 finalEntry,
                 WrapperPlayServerUpdateScore.Action.CREATE_OR_UPDATE_ITEM,
-                "sb-" + getId(),
+                "sb-" + sidebar.getId(),
                 Optional.of(score)
         );
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, updateScore);
 
         lastLines.put(score, Pair.of(translatedText, finalEntry));
+
+        System.out.println("entry: " + finalEntry + " for " + player.getName());
     }
 
     @Override
@@ -112,16 +135,8 @@ public class LegacySidebar extends GenericSidebar {
         if (lastLines != null && lastLines.containsKey(score)) {
             String entry = lastLines.get(score).getSecond();
 
-            WrapperPlayServerUpdateScore removeScore = new WrapperPlayServerUpdateScore(
-                    entry,
-                    WrapperPlayServerUpdateScore.Action.REMOVE_ITEM,
-                    "sb-" + getId(),
-                    Optional.of(score)
-            );
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeScore);
-
             WrapperPlayServerTeams removeTeam = new WrapperPlayServerTeams(
-                    "team_" + score,
+                    "team_" + score + "_" + uuid,
                     WrapperPlayServerTeams.TeamMode.REMOVE,
                     Optional.empty(),
                     Collections.emptyList()
@@ -129,6 +144,15 @@ public class LegacySidebar extends GenericSidebar {
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeTeam);
 
             lastLines.remove(score);
+
+            WrapperPlayServerUpdateScore removeScore = new WrapperPlayServerUpdateScore(
+                    entry,
+                    WrapperPlayServerUpdateScore.Action.REMOVE_ITEM,
+                    "sb-" + sidebar.getId(),
+                    Optional.of(score)
+            );
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeScore);
+
             List<String> usedEntries = playerUsedEntries.get(uuid);
             if (usedEntries != null) {
                 usedEntries.remove(entry);
@@ -137,7 +161,7 @@ public class LegacySidebar extends GenericSidebar {
     }
 
     @Override
-    public synchronized void removePlayer(Player player) {
+    public synchronized void prepareToRemove(Player player) {
         if (player == null) return;
 
         UUID uuid = player.getUniqueId();
@@ -146,7 +170,7 @@ public class LegacySidebar extends GenericSidebar {
         if (lastLines != null) {
             for (int score : lastLines.keySet()) {
                 WrapperPlayServerTeams removeTeam = new WrapperPlayServerTeams(
-                        "team_" + score,
+                        "team_" + score + "_" + uuid,
                         WrapperPlayServerTeams.TeamMode.REMOVE,
                         Optional.empty(),
                         Collections.emptyList()
@@ -157,7 +181,5 @@ public class LegacySidebar extends GenericSidebar {
 
         playerLastLines.remove(uuid);
         playerUsedEntries.remove(uuid);
-
-        super.removePlayer(player);
     }
 }

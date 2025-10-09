@@ -84,7 +84,7 @@ import java.util.stream.Collectors;
         },
         mainCommandName = "xg7plugins",
         mainCommandAliases = { "7pl", "7pls", "xg7pl" },
-        reloadCauses = { "json" }
+        reloadCauses = { "json", "modules" }
 )
 public final class XG7Plugins extends Plugin {
 
@@ -231,8 +231,18 @@ public final class XG7Plugins extends Plugin {
     @Override
     public void onReload(ReloadCause cause) {
         super.onReload(cause);
-        if (cause.equals("json"))
-            XG7PluginsAPI.jsonManager().invalidateCache();
+        if (cause.equals("json")) XG7PluginsAPI.jsonManager().invalidateCache();
+
+        if (cause.equals(ReloadCause.TASKS)) {
+            XG7PluginsAPI.moduleManager().loadTasks();
+        }
+        if (cause.equals(ReloadCause.EVENTS)) {
+            XG7PluginsAPI.moduleManager().loadListeners();
+        }
+        if (cause.equals("modules")) {
+            XG7PluginsAPI.moduleManager().reloadModules();
+        }
+
         this.loadHelp();
 
         List<CommandSender> players = Bukkit.getOnlinePlayers().stream().filter(ServerOperator::isOp).collect(Collectors.toList());

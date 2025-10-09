@@ -1,15 +1,15 @@
 package com.xg7plugins.modules.xg7scores.builder;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.GenericSidebar;
-import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.LegacySidebar;
 import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.Sidebar;
+import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.updaters.LegacySidebarUpdater;
+import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.updaters.NewerSidebarUpdater;
 import com.xg7plugins.server.MinecraftVersion;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SidebarBuilder<T extends GenericSidebar> extends ScoreBuilder<T, SidebarBuilder<T>> {
+public class SidebarBuilder<T extends Sidebar> extends ScoreBuilder<T, SidebarBuilder<T>> {
 
     private List<String> title = new ArrayList<>();
     private List<String> lines = new ArrayList<>();
@@ -37,8 +37,6 @@ public class SidebarBuilder<T extends GenericSidebar> extends ScoreBuilder<T, Si
 
     public T build(Plugin plugin) {
         if (id == null || delayToUpdate == 0) throw new IllegalArgumentException("You must specify the id and the delay to update the score");
-
-        if (MinecraftVersion.isOlderThan(13)) return (T) new LegacySidebar(title,lines,id,condition,delayToUpdate,plugin);
 
         return (T) new Sidebar(title,lines,id,condition,delayToUpdate,plugin);
     }

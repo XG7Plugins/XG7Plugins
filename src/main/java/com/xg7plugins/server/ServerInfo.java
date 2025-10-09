@@ -2,6 +2,7 @@ package com.xg7plugins.server;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.utils.reflection.ReflectionClass;
 import lombok.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -139,7 +140,7 @@ public class ServerInfo {
         }
 
         public static Software getSoftware() {
-            return Bukkit.getServer().getName().contains("Paper") ? PAPER_SPIGOT : SPIGOT;
+            return ReflectionClass.exists("com.destroystokyo.paper.PaperConfig") || ReflectionClass.exists("io.papermc.paper.configuration.Configuration") ? PAPER_SPIGOT : SPIGOT;
         }
     }
 

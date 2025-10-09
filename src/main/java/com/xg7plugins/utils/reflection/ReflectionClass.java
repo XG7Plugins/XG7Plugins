@@ -228,4 +228,13 @@ public class ReflectionClass {
     public Class<?> getClassInside(String name) {
         return Class.forName(aClass.getName() + "$" + name);
     }
+
+    public static boolean exists(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 }

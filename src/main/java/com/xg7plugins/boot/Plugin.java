@@ -131,7 +131,6 @@ public abstract class Plugin extends JavaPlugin {
         if (cause.equals(ReloadCause.EVENTS)) {
             XG7PluginsAPI.eventManager().reloadEvents(this);
             XG7PluginsAPI.packetEventManager().reloadListeners(this);
-            XG7PluginsAPI.moduleManager().loadListeners();
         }
         if (cause.equals(ReloadCause.DATABASE)) {
             XG7PluginsAPI.database().reloadConnection(this);

@@ -119,6 +119,7 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
     private void processCommand(Command command, CommandSender sender, String[] strings) {
         if (processSubCommands(command, sender, strings, 0)) return;
 
+
         CommandSetup commandConfig = command.getCommandSetup();
 
         if (!sender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
@@ -157,7 +158,9 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
         }
 
         try {
-            
+
+            command.getPlugin().getDebug().info(sender.getName() + " is executing: /" + command.getCommandSetup().name());
+
             CommandState state = command.onCommand(sender,commandArgs);
             
             state.send(sender);

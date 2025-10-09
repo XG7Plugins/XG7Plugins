@@ -28,6 +28,8 @@ public interface Module {
      */
     void onDisable();
 
+    void onReload();
+
     /**
      * Provides a map of named executor services used by this module.
      * By default, returns an empty map.

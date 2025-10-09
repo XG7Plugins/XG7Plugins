@@ -27,6 +27,7 @@ reload-message:
 
 plugin-not-found: "%prefix% &cPlugin not found!"
 comment-message-sent: "%prefix% &aYour message has been sent to the creator!"
+comment-cooldown: "%prefix% &aYou are in cooldown to send a comment! Wait @MINUTES_SECONDS:%time%@ to send another comment!"
 
 unknown-cause: "%prefix% &cUnknow reload cause for this plugin!"
 
