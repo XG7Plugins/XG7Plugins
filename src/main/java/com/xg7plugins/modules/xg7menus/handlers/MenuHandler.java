@@ -1,6 +1,6 @@
 package com.xg7plugins.modules.xg7menus.handlers;
 
-import com.xg7plugins.events.Listener;
+import com.xg7plugins.events.bukkitevents.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.XG7Menus;

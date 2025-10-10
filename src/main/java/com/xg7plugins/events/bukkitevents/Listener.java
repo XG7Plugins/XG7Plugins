@@ -1,4 +1,4 @@
-package com.xg7plugins.events;
+package com.xg7plugins.events.bukkitevents;
 
 /**
  * Interface representing a listener that can be enabled or disabled.

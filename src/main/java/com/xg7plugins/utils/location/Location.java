@@ -211,9 +211,6 @@ public class Location implements Cloneable {
     public org.bukkit.Location getBukkitLocation() {
         return new org.bukkit.Location(getWorld(), x, y, z, yaw, pitch);
     }
-    public com.github.retrooper.packetevents.protocol.world.Location getProtocolLocation() {
-        return new com.github.retrooper.packetevents.protocol.world.Location(x,y,z,yaw,pitch);
-    }
 
     public void teleport(Entity entity) {
         entity.teleport(getBukkitLocation());
