@@ -2,6 +2,7 @@ package com.xg7plugins.server;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import lombok.Data;
 import org.bukkit.Bukkit;
@@ -39,17 +40,17 @@ public class ServerInfo {
      */
     public ServerInfo(XG7Plugins plugin) throws ExecutionException, InterruptedException {
         this();
-        this.name = ConfigFile.mainConfigOf(plugin).root().get("plugin-server-name");
-        if (name == null) {
-            throw new RuntimeException("Server name not found");
-        }
-        this.address = Bukkit.getIp();
-        this.port = Bukkit.getPort();
+
+        ConfigSection serverConfig =  ConfigFile.mainConfigOf(plugin).section("server");
+
+        this.name = serverConfig.get("server-name");
+        this.address = serverConfig.get("server-address");
+        this.port = serverConfig.get("server-port", 25565);
+
         this.software = Software.getSoftware();
     }
 
     private ServerInfo() {
-        this.software = Software.getSoftware();
         this.bungeecord = Bukkit.spigot().getConfig().getBoolean("settings.bungeecord");
 
         if (bungeecord) XG7Plugins.getInstance().getServer().getMessenger().registerOutgoingPluginChannel(XG7Plugins.getInstance(), "BungeeCord");

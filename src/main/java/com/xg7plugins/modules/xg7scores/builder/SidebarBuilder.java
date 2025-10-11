@@ -2,9 +2,6 @@ package com.xg7plugins.modules.xg7scores.builder;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.Sidebar;
-import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.updaters.LegacySidebarUpdater;
-import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.updaters.NewerSidebarUpdater;
-import com.xg7plugins.server.MinecraftVersion;
 
 import java.util.ArrayList;
 import java.util.List;

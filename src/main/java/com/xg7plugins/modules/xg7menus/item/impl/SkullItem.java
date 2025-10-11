@@ -22,6 +22,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
@@ -64,6 +66,15 @@ public class SkullItem extends Item {
         }
 
         SkullMeta skullMeta = (SkullMeta) this.itemStack.getItemMeta();
+
+        if (MinecraftVersion.isNewerOrEqual(18, 2) && !XG7PluginsAPI.getServerSoftware().isPaper()) {
+            try {
+                setByURL(new URL(value));
+                return this;
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         setValueOf(skullMeta, value);
 
@@ -120,18 +131,35 @@ public class SkullItem extends Item {
             return this;
         }
 
+        if (MinecraftVersion.isNewerOrEqual(18, 2)) {
+
+            ReflectionObject playerProfile = ReflectionObject.of(player)
+                    .getMethod("getPlayerProfile")
+                    .invokeToRObject();
+
+            if (playerProfile.getObject() == null) return this;
+
+            SkullMeta meta = (SkullMeta) this.itemStack.getItemMeta();
+
+            ReflectionObject.of(meta).getMethod("setOwnerProfile", ReflectionClass.of("org.bukkit.profile.PlayerProfile").getAClass())
+                    .invoke(playerProfile.getObject());
+
+            return this;
+        }
+
+
         SkullMeta meta = (SkullMeta) this.itemStack.getItemMeta();
 
-        GameProfile profile = ReflectionObject.of(player)
+        ReflectionObject profile = ReflectionObject.of(player)
                 .getMethod("getProfile")
-                .invoke();
+                .invokeToRObject();
 
-        if (profile == null) return this;
+        if (profile.getObject() == null) return this;
 
         try {
             Field profileField = meta.getClass().getDeclaredField("profile");
             profileField.setAccessible(true);
-            profileField.set(meta, profile);
+            profileField.set(meta, profile.getObject());
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
@@ -218,6 +246,8 @@ public class SkullItem extends Item {
             return;
         }
 
+        if (MinecraftVersion.isNewerOrEqual(18, 2)) return;
+
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "null");
         gameProfile.getProperties().put("textures", new Property("textures", value));
         try {
@@ -227,6 +257,28 @@ public class SkullItem extends Item {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setByURL(URL url) {
+        if (MinecraftVersion.isOlderThan(18, 2)) return;
+        if (XG7PluginsAPI.getServerSoftware().isPaper()) return;
+
+        ReflectionObject playerProfile = ReflectionClass.of(Bukkit.class)
+                .getMethod("createProfile", UUID.class)
+                .invokeToRObject(UUID.randomUUID());
+
+        // Cria ProfileProperty
+        ReflectionObject textures = ReflectionObject.of(playerProfile).getMethod("getTextures").invokeToRObject();
+
+        textures.getMethod("setSkin", URL.class).invoke(url);
+
+        SkullMeta meta = (SkullMeta) this.itemStack.getItemMeta();
+
+        ReflectionObject.of(meta).getMethod("setOwnerProfile", ReflectionClass.of("org.bukkit.profile.PlayerProfile").getAClass())
+                .invoke(playerProfile.getObject());
+
+
+
     }
 
 }

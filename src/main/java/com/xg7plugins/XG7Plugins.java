@@ -120,9 +120,22 @@ public final class XG7Plugins extends Plugin {
         XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
         XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
 
-        debug.loading("Loading managers...");
+        debug.loading("Loading dependencies...");
 
         managerRegistry.registerManager(new DependencyManager());
+
+        plugins.values().forEach(this::checkDependencies);
+
+        if (XG7PluginsAPI.dependencyManager().isNeedRestart()) {
+            debug.loading("======================================================================");
+            debug.loading("§cShutdowning server for dependency updates... Please restart the server");
+            debug.loading("======================================================================");
+            Bukkit.shutdown();
+            return;
+        }
+
+        debug.loading("Loading managers...");
+
         managerRegistry.registerManager(new CacheManager(this));
         managerRegistry.registerManager(new TaskManager());
         managerRegistry.registerManager(new DatabaseManager(this));
@@ -177,14 +190,6 @@ public final class XG7Plugins extends Plugin {
 
         Bukkit.getScheduler().runTask(this, () -> {
 
-            if (XG7PluginsAPI.dependencyManager().isNeedRestart()) {
-                debug.loading("======================================================================");
-                debug.loading("§cShutdowning server for dependency updates... Please restart the server");
-                debug.loading("======================================================================");
-                Bukkit.shutdown();
-                return;
-            }
-
             List<CommandSender> players = Bukkit.getOnlinePlayers().stream().filter(ServerOperator::isOp).collect(Collectors.toList());
 
             versionChecker.notify(players);
@@ -233,9 +238,6 @@ public final class XG7Plugins extends Plugin {
         super.onReload(cause);
         if (cause.equals("json")) XG7PluginsAPI.jsonManager().invalidateCache();
 
-        if (cause.equals(ReloadCause.TASKS)) {
-            XG7PluginsAPI.moduleManager().loadTasks();
-        }
         if (cause.equals(ReloadCause.EVENTS)) {
             XG7PluginsAPI.moduleManager().loadListeners();
         }
@@ -410,6 +412,17 @@ public final class XG7Plugins extends Plugin {
         xg7Plugins.getPlugins().remove(plugin.getName());
         debug.loading(plugin.getName() + " unregistered.");
 
+    }
+
+    private void checkDependencies(Plugin plugin) {
+        debug.loading("Checking dependencies...");
+        XG7PluginsAPI.dependencyManager().loadDependencies(plugin);
+
+        if (!XG7PluginsAPI.dependencyManager().loadRequiredDependencies(plugin)) {
+            debug.severe("Error on loading dependencies for " + plugin.getName() + ", disabling plugin...");
+            Bukkit.getPluginManager().disablePlugin(plugin);
+            return;
+        }
     }
 
     public static @NotNull XG7Plugins getInstance() {

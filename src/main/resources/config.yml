@@ -18,8 +18,12 @@
 #Plugin prefix used on messages
 prefix: "§bXG§37P§9lu§1gins §8>>§r"
 
-#Must be the same as in BungeeCord config
-plugin-server-name: "XG7PluginsServer"
+#Must be the same as in BungeeCord config!
+server:
+  server-name: "XG7PluginsServer"
+  ip: "0.0.0.0"
+  port: 25565
+
 
 #Debug mode
 debug-enabled: false
@@ -148,4 +152,4 @@ time-placeholders:
 
 #DO NOT CHANGE
 #THIS IS FOR VERSION CONTROL
-config-version: 4
+config-version: 5

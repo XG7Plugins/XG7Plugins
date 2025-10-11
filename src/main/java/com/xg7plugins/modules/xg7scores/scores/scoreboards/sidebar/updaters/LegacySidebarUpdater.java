@@ -67,8 +67,6 @@ public class LegacySidebarUpdater implements SidebarUpdater {
 
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, removeTeam);
 
-            System.out.println("removing entry: " + oldEntry + " for " + player.getName());
-
             WrapperPlayServerUpdateScore removeOldScore = new WrapperPlayServerUpdateScore(
                     oldEntry,
                     WrapperPlayServerUpdateScore.Action.REMOVE_ITEM,
@@ -123,8 +121,6 @@ public class LegacySidebarUpdater implements SidebarUpdater {
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, updateScore);
 
         lastLines.put(score, Pair.of(translatedText, finalEntry));
-
-        System.out.println("entry: " + finalEntry + " for " + player.getName());
     }
 
     @Override
