@@ -16,10 +16,16 @@ import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.MenuHolder;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.tasks.tasks.BukkitTask;
+import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CommandSetup(
         name = "lang",
@@ -79,6 +85,8 @@ public class LangCommand implements Command {
 
         dao.update(new PlayerData(target.getUniqueId(), dbLang));
 
+        Text.sendTextFromLang(sender, getPlugin(), "lang-other", Pair.of("target", target.getName()), Pair.of("lang", dbLang));
+
         XG7PluginsAPI.langManager().loadLangsFrom(XG7Plugins.getInstance()).join();
 
         if (target.isOnline()) {
@@ -90,9 +98,22 @@ public class LangCommand implements Command {
                 MenuHolder holder = (MenuHolder) targetOnline.getOpenInventory().getTopInventory().getHolder();
                 holder.getMenu().open(targetOnline);
             }
+            Text.sendTextFromLang(targetOnline, getPlugin(), "lang-changed-by-other", Pair.of("target", sender.getName()), Pair.of("lang", dbLang));
         }
 
+
         return CommandState.FINE;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
+        if (!sender.hasPermission("xg7plugins.command.lang.other")) return null;
+
+        if (args.len() == 1) return new ArrayList<>(XG7PluginsAPI.getAllPlayerNames());
+
+        if (args.len() == 2) return Arrays.asList(XG7PluginsAPI.langManager().getDefLangs());
+
+        return null;
     }
 
     public Item getIcon() {

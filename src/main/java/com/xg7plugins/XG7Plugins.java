@@ -2,7 +2,8 @@ package com.xg7plugins;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.boot.PluginSetup;
+import com.xg7plugins.boot.setup.Collaborator;
+import com.xg7plugins.boot.setup.PluginSetup;
 import com.xg7plugins.boot.VersionChecker;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.impl.CommentCommand;
@@ -29,9 +30,9 @@ import com.xg7plugins.help.menu.HelpGUI;
 import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpForm;
 import com.xg7plugins.help.xg7pluginshelp.XG7PluginsHelpGUI;
 import com.xg7plugins.help.xg7pluginshelp.chathelp.XG7PluginsChatHelp;
-import com.xg7plugins.menus.LangForm;
-import com.xg7plugins.menus.LangMenu;
-import com.xg7plugins.menus.TaskMenu;
+import com.xg7plugins.menus.lang.LangForm;
+import com.xg7plugins.menus.lang.LangMenu;
+import com.xg7plugins.menus.tasks.TaskMenu;
 import com.xg7plugins.modules.ModuleManager;
 import com.xg7plugins.config.typeadapter.impl.LangItemTypeAdapter;
 import com.xg7plugins.lang.LangManager;
@@ -84,7 +85,11 @@ import java.util.stream.Collectors;
         },
         mainCommandName = "xg7plugins",
         mainCommandAliases = { "7pl", "7pls", "xg7pl" },
-        reloadCauses = { "json", "modules" }
+        reloadCauses = { "json", "modules" },
+        collaborators = {
+                @Collaborator(uuid = "45766b7f-9789-40e1-bd0b-46fa0d032bde", name = "&aDaviXG7", role = "&bCreator of all plugin"),
+                @Collaborator(uuid = "3b57c818-7cc7-4553-bb58-cf01a09b2dd1", name = "&aAceitou", role = "&bVideo editor"),
+        }
 )
 public final class XG7Plugins extends Plugin {
 
@@ -147,11 +152,8 @@ public final class XG7Plugins extends Plugin {
         managerRegistry.registerManager(new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores()));
 
         debug.loading("Loading server info...");
-        try {
-            this.serverInfo = new ServerInfo(this);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
+        this.serverInfo = new ServerInfo();
 
         debug.loading("Loading Menus...");
 

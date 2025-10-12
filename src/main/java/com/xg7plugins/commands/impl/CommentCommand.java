@@ -80,7 +80,7 @@ public class CommentCommand implements Command {
         jsonBody = jsonBody.replace("%name%", sender.getName());
         jsonBody = jsonBody.replace("%plugin%", plugin.getName() + " v" + plugin.getDescription().getVersion());
         jsonBody = jsonBody.replace("%message%", message);
-        jsonBody = jsonBody.replace("%ip%", plugin.getServer().getIp() + ":" + plugin.getServer().getPort());
+        jsonBody = jsonBody.replace("%ip%", XG7PluginsAPI.getServerInfo().getAddress() + ":" + XG7PluginsAPI.getServerInfo().getPort());
 
         try {
             HTTP.post(

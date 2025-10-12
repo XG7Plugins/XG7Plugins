@@ -1,10 +1,11 @@
 package com.xg7plugins.modules.xg7menus.menus;
 
+import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
-import com.xg7plugins.modules.xg7menus.item.impl.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
+import com.xg7plugins.modules.xg7menus.item.clickable.ClickableItem;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
 import org.bukkit.entity.Player;
 
@@ -16,14 +17,19 @@ public interface BasicMenu {
 
     List<Item> getItems(Player player);
 
-    default List<ClickableItem> getDefaultClickableItems() {
-        return null;
-    }
-
     void open(Player player);
     void close(BasicMenuHolder menuHolder);
 
     default void onClick(ActionEvent event) {
+        event.setCancelled(true);
+        InventoryUpdater updater = event.getHolder().getInventoryUpdater();
+
+        Item item = updater.getItem(event.getClickedSlot());
+
+        if (item instanceof ClickableItem) {
+            ClickableItem clickableItem = (ClickableItem) item;
+            clickableItem.onClick(event);
+        }
 
     }
     default void onDrag(DragEvent event) {
@@ -45,13 +51,9 @@ public interface BasicMenu {
 
         holder.getInventory().clear();
 
-        for (Item item : holder.getMenu().getItems(holder.getPlayer())) {
-            holder.getInventoryUpdater().addItem(item);
-        }
-        if (holder.getMenu().getDefaultClickableItems() == null) return;
-        for (ClickableItem item : holder.getMenu().getDefaultClickableItems()) {
-            holder.getInventoryUpdater().addItem(item);
-        }
+        holder.getInventoryUpdater().refresh();
+
+        
 
     }
 }

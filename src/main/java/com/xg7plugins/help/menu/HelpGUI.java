@@ -22,6 +22,7 @@ public class HelpGUI extends MenuNavigation implements HelpComponent {
         super(new HashMap<>());
         this.menus.put("index", index);
         this.menus.put("commands", new CommandGUI(plugin, new ArrayList<>(XG7PluginsAPI.commandListOf(plugin)), "lang:[help-menu.command-help.title]", null, this));
+        this.menus.put("collaborators", new CollaboratorsMenu(this, plugin));
         this.plugin = plugin;
     }
 

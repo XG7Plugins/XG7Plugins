@@ -2,6 +2,7 @@ package com.xg7plugins.config.typeadapter.impl;
 
 import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.config.typeadapter.ConfigTypeAdapter;
+import com.xg7plugins.menus.lang.LangItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class LangItemTypeAdapter implements ConfigTypeAdapter<Item> {
         boolean selected = (boolean) args[1];
         String langid = (String) args[0];
 
-        Item langItem = Item.from(config.get("icon", "STONE"));
+        LangItem langItem = new LangItem(Item.from(config.get("icon", "STONE")));
 
         String name = config.get("formated-name", "LANG NOT NAMED");
 

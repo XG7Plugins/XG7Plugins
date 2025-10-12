@@ -12,7 +12,9 @@ import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.item.impl.ClickableItem;
+import com.xg7plugins.modules.xg7menus.events.ActionEvent;
+import com.xg7plugins.modules.xg7menus.item.clickable.ClickableItem;
+import com.xg7plugins.modules.xg7menus.item.clickable.impl.ClickableItemImpl;
 import com.xg7plugins.modules.xg7menus.item.parser.ItemParser;
 import com.xg7plugins.modules.xg7menus.item.parser.impl.*;
 import com.xg7plugins.server.MinecraftVersion;
@@ -36,6 +38,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Getter
@@ -157,12 +160,19 @@ public class Item implements Cloneable {
         return slot(slot.get());
     }
 
-    public ClickableItem clickable() {
-        return new ClickableItem(this.itemStack, this.slot);
+    public ClickableItem clickable(Consumer<ActionEvent> clickEvent) {
+        return (ClickableItem) new ClickableItemImpl(this.itemStack, clickEvent)
+                .slot(slot)
+                .setBuildPlaceholders(buildPlaceholders);
     }
 
     public Item setBuildPlaceholders(Pair<String,String>... placeholders) {
         this.buildPlaceholders = Arrays.asList(placeholders);
+        return this;
+    }
+
+    public Item setBuildPlaceholders(List<Pair<String,String>> placeholders) {
+        this.buildPlaceholders = placeholders;
         return this;
     }
 

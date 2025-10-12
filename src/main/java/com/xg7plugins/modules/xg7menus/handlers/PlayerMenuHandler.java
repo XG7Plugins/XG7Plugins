@@ -52,11 +52,6 @@ public class PlayerMenuHandler implements Listener {
 
         ActionEvent actionEvent = new ActionEvent(holder, menuAction, slotClicked.get(), slotClicked, Item.from(event.getItem()).slot(slotClicked), event.isCancelled());
 
-        if (holder.getInventoryUpdater().hasClickActionOn(slotClicked)) {
-            holder.getInventoryUpdater().getClickAction(slotClicked).accept(actionEvent);
-            event.setCancelled(actionEvent.isCancelled());
-            return;
-        }
         holder.getMenu().onClick(actionEvent);
 
         String message = holder.getMenu().getMenuConfigs().getOnInteractMessage(holder.getPlayer());
@@ -88,12 +83,6 @@ public class PlayerMenuHandler implements Listener {
 
         ActionEvent actionEvent = new ActionEvent(holder, menuAction, slotClicked.get(), slotClicked,Item.from(event.getCurrentItem()).slot(slotClicked), event.isCancelled());
 
-        if (holder.getInventoryUpdater().hasClickActionOn(slotClicked)) {
-            holder.getInventoryUpdater().getClickAction(slotClicked).accept(actionEvent);
-            event.setCancelled(actionEvent.isCancelled());
-
-            return;
-        }
         holder.getMenu().onClick(actionEvent);
 
         String message = holder.getMenu().getMenuConfigs().getOnClickMessage(holder.getPlayer());

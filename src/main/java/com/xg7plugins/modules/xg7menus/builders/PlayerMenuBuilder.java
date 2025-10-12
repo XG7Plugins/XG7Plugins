@@ -44,7 +44,6 @@ public class PlayerMenuBuilder extends BasicMenuBuilder<PlayerMenuBuilder, Playe
         return new SimplePlayerMenu(
                 (PlayerMenuConfigurations) menuConfigs,
                 items,
-                clickableItems,
                 clickConsumer,
                 dragConsumer,
                 openEventConsumer,

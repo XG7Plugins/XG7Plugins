@@ -1,4 +1,4 @@
-config-version: 2
+config-version: 3
 
 locale: pt_BR
 formated-name: "Português (Brasil)"
@@ -10,7 +10,7 @@ plugin-update-available: "&aUma nova versão de &e%plugin% &aestá disponível! 
 command-errors:
   syntax-error: "&cVocê está usando o comando incorretamente! A forma correta é &7%syntax%"
   player-not-found: "&cEste jogador não foi encontrado ou nunca jogou antes!"
-  no-permission: "&cVocê não tem permissão para usar este comando!"
+  no-permission: "&cVocê não tem permissão para fazer isso!"
   disabled-world: "&cVocê não pode executar este comando em um mundo desabilitado!"
   not-a-player: "&cVocê não pode executar este comando no console!"
   is-a-player: "&cVocê não pode executar este comando sendo um jogador!"
@@ -38,7 +38,19 @@ refresh-item: "&9Atualizar página"
 go-back-to-help: "&6Voltar à ajuda"
 go-back-to-previous-commands: "&cVoltar aos comandos anteriores"
 
+collaborators-menu:
+
+  title: "&0Colaboradores de %plugin%:"
+
+  collaborators-item:
+    name: "&bColaboradores"
+    lore: "Clique aqui para ver os colaboradores"
+
+
 lang-not-found: "%prefix% &cIdioma não encontrado!"
+
+lang-other: "%prefix% &aVocê mudou o idioma de %target% para &b%lang%&a!"
+lang-changed-by-other: "%prefix% &aSeu idioma foi alterado para &b%lang%&a por %target%!"
 
 lang-menu:
   title: "&rIdiomas"
@@ -110,7 +122,7 @@ help-menu:
 
     profile-item:
       name: "Perfil: %player_name%"
-      lang-chose: "&5Idioma atual: %b%xg7plugins_player_lang%"
+      lang-chose: "&5Idioma atual: &b%xg7plugins_player_lang%"
     lang-item:
       name: "&bIdiomas"
       lore: "&5Clique aqui para mudar o idioma do perfil"
@@ -125,24 +137,24 @@ help-menu:
       lore: "&5Clique aqui para ver os comandos"
 
   about:
-    - "Sobre o &9XG7Plugins"
+    - "&0Sobre o &9XG7Plugins"
     - ""
-    - "Versão: &a%version%&r"
-    - "Website: &a&n%website%&r"
-    - "GitHub: &a&n%github%&r"
-    - "Discord: &a&n%discord%&r"
+    - "&0Versão: &a%version%&r"
+    - "&0Website: &a&n%website%&r"
+    - "&0GitHub: &a&n%github%&r"
+    - "&0Discord: &a&n%discord%&r"
     - ""
-    - "Este plugin foi feito"
-    - "para criação de outros"
-    - "plugins do XG7."
-    - "Seu objetivo é gerenciar"
-    - "tarefas, incluir bibliotecas"
-    - "(como menus, placares,"
-    - "etc.) e facilitar"
-    - "a criação de plugins."
-    - "Também possui um sistema"
-    - "de idiomas para facilitar"
-    - "a inclusão de novas línguas."
+    - "&0Este plugin foi feito"
+    - "&0para criação de outros"
+    - "&0plugins do XG7."
+    - "&0Seu objetivo é gerenciar"
+    - "&0tarefas, incluir bibliotecas"
+    - "&0(como menus, placares,"
+    - "&0etc.) e facilitar"
+    - "&0a criação de plugins."
+    - "&0Também possui um sistema"
+    - "&0de idiomas para facilitar"
+    - "&0a inclusão de novas línguas."
     - ""
     - "&oDesenvolvido por DaviXG7"
 

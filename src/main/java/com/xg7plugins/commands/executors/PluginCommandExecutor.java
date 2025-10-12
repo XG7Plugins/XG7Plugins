@@ -1,7 +1,7 @@
 package com.xg7plugins.commands.executors;
 
 import com.xg7plugins.XG7PluginsAPI;
-import com.xg7plugins.boot.PluginSetup;
+import com.xg7plugins.boot.setup.PluginSetup;
 import com.xg7plugins.commands.CommandManager;
 import com.xg7plugins.commands.CommandState;
 import com.xg7plugins.commands.setup.Command;
@@ -65,6 +65,11 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
                 return true;
             }
             strings = Arrays.copyOfRange(strings, 1, strings.length);
+        }
+
+        if (!sender.hasPermission(commandConfig.permission()) && !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
+            CommandState.NO_PERMISSION.send(sender);
+            return true;
         }
 
         processCommand(command, sender, strings);
@@ -197,7 +202,7 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
 
         }
 
-        if (sender.hasPermission(commandConfig.permission()) && !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
+        if (!sender.hasPermission(commandConfig.permission()) && !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
             return Collections.emptyList();
         }
 

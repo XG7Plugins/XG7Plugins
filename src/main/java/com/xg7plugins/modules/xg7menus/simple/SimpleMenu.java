@@ -3,7 +3,6 @@ package com.xg7plugins.modules.xg7menus.simple;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
-import com.xg7plugins.modules.xg7menus.item.impl.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
@@ -19,7 +18,6 @@ import java.util.function.Consumer;
 public class SimpleMenu extends Menu {
 
     private List<Item> items = new ArrayList<>();
-    private List<ClickableItem> defaultClickableItems = null;
 
     private Consumer<ActionEvent> clickConsumer = e -> {};
     private Consumer<DragEvent> dragConsumer = e -> {};
@@ -32,10 +30,9 @@ public class SimpleMenu extends Menu {
         super(menuConfigs);
     }
 
-    public SimpleMenu(MenuConfigurations menuConfigs, List<Item> items, List<ClickableItem> defaultClickableItems, Consumer<ActionEvent> clickConsumer, Consumer<DragEvent> dragConsumer, Consumer<MenuEvent> openEventConsumer, Consumer<MenuEvent> closeEventConsumer, BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer, Consumer<BasicMenuHolder> repeatingUpdateConsumer) {
+    public SimpleMenu(MenuConfigurations menuConfigs, List<Item> items, Consumer<ActionEvent> clickConsumer, Consumer<DragEvent> dragConsumer, Consumer<MenuEvent> openEventConsumer, Consumer<MenuEvent> closeEventConsumer, BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer, Consumer<BasicMenuHolder> repeatingUpdateConsumer) {
         super(menuConfigs);
         this.items = items;
-        this.defaultClickableItems = defaultClickableItems;
         this.clickConsumer = clickConsumer;
         this.dragConsumer = dragConsumer;
         this.openEventConsumer = openEventConsumer;
@@ -50,12 +47,8 @@ public class SimpleMenu extends Menu {
     }
 
     @Override
-    public List<ClickableItem> getDefaultClickableItems() {
-        return defaultClickableItems;
-    }
-
-    @Override
     public void onClick(ActionEvent event) {
+        super.onClick(event);
         clickConsumer.accept(event);
     }
 

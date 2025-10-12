@@ -23,9 +23,9 @@ import java.util.concurrent.ExecutionException;
 @Data
 public class ServerInfo {
 
-    private String name;
-    private String address;
-    private int port;
+    private final String name;
+    private final String address;
+    private final int port;
     private transient final boolean bungeecord;
     private transient Software software;
     private transient final HashMap<String, Object> atributes = new HashMap<>();
@@ -33,27 +33,19 @@ public class ServerInfo {
     /**
      * Creates a new ServerInfo instance with plugin configuration.
      * Initializes server details including name, address and port.
-     *
-     * @param plugin The XG7Plugins instance
-     * @throws ExecutionException   If there is an error accessing configuration
-     * @throws InterruptedException If the initialization process is interrupted
      */
-    public ServerInfo(XG7Plugins plugin) throws ExecutionException, InterruptedException {
-        this();
-
-        ConfigSection serverConfig =  ConfigFile.mainConfigOf(plugin).section("server");
-
-        this.name = serverConfig.get("server-name");
-        this.address = serverConfig.get("server-address");
-        this.port = serverConfig.get("server-port", 25565);
-
-        this.software = Software.getSoftware();
-    }
-
-    private ServerInfo() {
+    public ServerInfo() {
         this.bungeecord = Bukkit.spigot().getConfig().getBoolean("settings.bungeecord");
 
+        ConfigSection serverConfig =  ConfigFile.mainConfigOf(XG7Plugins.getInstance()).section("server");
+
+        this.name = serverConfig.get("server-name");
+        this.address = serverConfig.get("ip");
+        this.port = serverConfig.get("port", 25565);
+
         if (bungeecord) XG7Plugins.getInstance().getServer().getMessenger().registerOutgoingPluginChannel(XG7Plugins.getInstance(), "BungeeCord");
+
+        this.software = Software.getSoftware();
     }
 
     /**
@@ -112,7 +104,7 @@ public class ServerInfo {
      * @param key  The attribute key
      * @param type The expected attribute type
      * @param <T>  The generic type parameter
-     * @return Optional containing the attribute value if present and of correct type
+     * @return Optional containing the attribute value if present and of the correct type
      */
     public <T> Optional<T> getAttribute(String key, Class<T> type) {
         return Optional.ofNullable(type.cast(atributes.get(key)));
@@ -130,7 +122,7 @@ public class ServerInfo {
 
     /**
      * Represents different Minecraft server software types.
-     * Currently, supports SPIGOT and PAPER_SPIGOT variants.
+     * Currently, it supports SPIGOT and PAPER_SPIGOT variants.
      */
     public enum Software {
         SPIGOT,

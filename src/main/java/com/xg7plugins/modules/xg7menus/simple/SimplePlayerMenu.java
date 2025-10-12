@@ -3,7 +3,6 @@ package com.xg7plugins.modules.xg7menus.simple;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
-import com.xg7plugins.modules.xg7menus.item.impl.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
@@ -19,7 +18,6 @@ import java.util.function.Consumer;
 public class SimplePlayerMenu extends PlayerMenu {
 
     private List<Item> items = new ArrayList<>();
-    private List<ClickableItem> defaultClickableItems = null;
 
     private Consumer<ActionEvent> clickConsumer = e -> {};
     private Consumer<DragEvent> dragConsumer = e -> {};
@@ -37,10 +35,9 @@ public class SimplePlayerMenu extends PlayerMenu {
         super(menuConfigurations);
     }
 
-    public SimplePlayerMenu(PlayerMenuConfigurations menuConfigs, List<Item> items, List<ClickableItem> defaultClickableItems, Consumer<ActionEvent> clickConsumer, Consumer<DragEvent> dragConsumer, Consumer<MenuEvent> openEventConsumer, Consumer<MenuEvent> closeEventConsumer, BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer, Consumer<BasicMenuHolder> repeatingUpdateConsumer, Consumer<ActionEvent> dropConsumer, Consumer<ActionEvent> pickupConsumer, Consumer<ActionEvent> breakBlocksConsumer, Consumer<ActionEvent> placeBlocksConsumer) {
+    public SimplePlayerMenu(PlayerMenuConfigurations menuConfigs, List<Item> items, Consumer<ActionEvent> clickConsumer, Consumer<DragEvent> dragConsumer, Consumer<MenuEvent> openEventConsumer, Consumer<MenuEvent> closeEventConsumer, BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer, Consumer<BasicMenuHolder> repeatingUpdateConsumer, Consumer<ActionEvent> dropConsumer, Consumer<ActionEvent> pickupConsumer, Consumer<ActionEvent> breakBlocksConsumer, Consumer<ActionEvent> placeBlocksConsumer) {
         super(menuConfigs);
         this.items = items;
-        this.defaultClickableItems = defaultClickableItems;
         this.clickConsumer = clickConsumer;
         this.dragConsumer = dragConsumer;
         this.openEventConsumer = openEventConsumer;
@@ -59,12 +56,8 @@ public class SimplePlayerMenu extends PlayerMenu {
     }
 
     @Override
-    public List<ClickableItem> getDefaultClickableItems() {
-        return defaultClickableItems;
-    }
-
-    @Override
     public void onClick(ActionEvent event) {
+        super.onClick(event);
         clickConsumer.accept(event);
     }
 

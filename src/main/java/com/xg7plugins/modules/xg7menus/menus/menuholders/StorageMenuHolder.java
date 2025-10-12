@@ -23,7 +23,7 @@ public class StorageMenuHolder extends MenuHolder {
 
         List<Item> items = new ArrayList<>();
 
-        StorageMenu menu = (StorageMenu) getMenu();
+        StorageMenu menu = getMenu();
 
         Slot pos1 = menu.getPos1();
         Slot pos2 = menu.getPos2();

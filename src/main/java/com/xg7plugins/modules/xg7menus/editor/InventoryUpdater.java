@@ -2,10 +2,10 @@ package com.xg7plugins.modules.xg7menus.editor;
 
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.impl.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
+import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,32 +16,27 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
-@AllArgsConstructor
 public class InventoryUpdater implements InventoryEditor {
 
     private final BasicMenuHolder holder;
 
-    @Getter
-    private final HashMap<Integer, Consumer<ActionEvent>> clickActions = new HashMap<>();
+    private final HashMap<Slot, Item> items = new HashMap<>();
+
+    public InventoryUpdater(BasicMenuHolder holder) {
+        this.holder = holder;
+
+        for (Item item : holder.getMenu().getItems(holder.getPlayer())) items.put(Slot.fromSlot(item.getSlot()), item);
+    }
 
     @Override
     public void setItem(Slot slot, Item item) {
         if (item.isAir()) {
             holder.getInventory().clear(slot.get());
-            clickActions.remove(slot.get());
             holder.getMenu().onUpdate(holder, MenuUpdateActions.ITEM_REMOVED);
             return;
         }
         holder.getInventory().setItem(slot.get(), item.getItemFor(holder.getPlayer(), holder.getMenu().getMenuConfigs().getPlugin()));
-
-        if (item instanceof ClickableItem && item.getSlot() == slot.get()) {
-            ClickableItem clickableItem = (ClickableItem) item;
-            clickActions.put(slot.get(), clickableItem.getOnClick());
-            holder.getMenu().onUpdate(holder, MenuUpdateActions.ITEM_CHANGED);
-            return;
-        }
-
-        clickActions.remove(slot.get());
+        items.put(slot, item);
 
         holder.getMenu().onUpdate(holder, MenuUpdateActions.ITEM_CHANGED);
     }
@@ -56,28 +51,32 @@ public class InventoryUpdater implements InventoryEditor {
         holder.getInventory().addItem(item.getItemFor(holder.getPlayer(), holder.getMenu().getMenuConfigs().getPlugin()));
     }
 
+    public void refresh() {
+        items.forEach(this::setItem);
+    }
+
 
     @Override
     public Item getItem(Slot slot) {
-        return Item.from(holder.getInventory().getItem(slot.get())).slot(slot);
+        return items.get(slot) == null ? Item.air() : items.get(slot);
     }
 
     @Override
     public boolean hasItem(Slot slot) {
-        return !Item.from(holder.getInventory().getItem(slot.get())).isAir();
+        return items.containsKey(slot) && !items.get(slot).isAir();
     }
 
     @Override
     public void removeItem(Slot slot) {
         holder.getInventory().clear(slot.get());
-        clickActions.remove(slot.get());
+        items.remove(slot);
         holder.getMenu().onUpdate(holder, MenuUpdateActions.ITEM_REMOVED);
     }
 
     @Override
     public void clearInventory() {
         holder.getInventory().clear();
-        clickActions.clear();
+        items.clear();
         holder.getMenu().onUpdate(holder, MenuUpdateActions.INV_CLEARED);
     }
 
@@ -248,19 +247,7 @@ public class InventoryUpdater implements InventoryEditor {
 
     @Override
     public List<Item> getItems() {
-        return Collections.emptyList();
-    }
-
-    public Consumer<ActionEvent> getClickAction(Slot slot) {
-        return clickActions.get(slot.get());
-    }
-
-    public void setClickAction(Slot slot, Consumer<ActionEvent> action) {
-        clickActions.put(slot.get(), action);
-    }
-
-    public boolean hasClickActionOn(Slot slot) {
-        return clickActions.containsKey(slot.get());
+        return new ArrayList<>(items.values());
     }
 
 }

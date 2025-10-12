@@ -1,7 +1,7 @@
 package com.xg7plugins.commands;
 
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.boot.PluginSetup;
+import com.xg7plugins.boot.setup.PluginSetup;
 import com.xg7plugins.commands.executors.MainCommand;
 import com.xg7plugins.commands.executors.PluginCommandExecutor;
 import com.xg7plugins.commands.setup.*;

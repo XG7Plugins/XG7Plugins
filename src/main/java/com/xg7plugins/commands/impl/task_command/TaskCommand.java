@@ -53,10 +53,13 @@ public class TaskCommand implements Command {
     public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
         List<String> suggestions = new ArrayList<>();
 
+        if (args.len() == 1) {
+            return Command.super.onTabComplete(sender, args);
+        }
+
         if (args.len() == 2) {
-            Command subCommand = getSubCommands().stream().filter(cmd -> cmd.getCommandSetup().name().equalsIgnoreCase(args.get(0, String.class))).findFirst().orElse(null);
-            if (subCommand == null) return suggestions;
-            if (!sender.hasPermission(subCommand.getCommandSetup().permission()) || !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) return suggestions;
+            if (!args.get(0, String.class).equals("see")) return suggestions;
+            if (!sender.hasPermission("xg7plugins.command.tasks.see") || !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) return suggestions;
             suggestions.addAll(XG7PluginsAPI.taskManager().getTimerTaskMap().keySet());
         }
         return suggestions;

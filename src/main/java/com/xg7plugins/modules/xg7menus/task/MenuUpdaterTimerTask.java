@@ -38,11 +38,19 @@ public class MenuUpdaterTimerTask extends TimerTask {
 
         Predicate<? super BasicMenuHolder> filter = holder -> holder.getMenu().getMenuConfigs().repeatingUpdateMills() >= 0 && counter.get() % holder.getMenu().getMenuConfigs().repeatingUpdateMills() == 0;
 
-        List<BasicMenuHolder> allHoldersCopy = menus.getMenuHolders().values().stream().filter(filter).collect(Collectors.toList());
+        List<BasicMenuHolder> allHoldersCopy;
 
-        allHoldersCopy.addAll(menus.getPlayerMenusMap().values().stream().filter(filter).collect(Collectors.toList()));
+        synchronized (menus.getMenuHolders()) {
+            allHoldersCopy = new ArrayList<>(new ArrayList<>(menus.getMenuHolders().values()));
+        }
+        synchronized (menus.getPlayerMenusMap()) {
+            allHoldersCopy.addAll(new ArrayList<>(menus.getPlayerMenusMap().values()));
+        }
 
-        allHoldersCopy.forEach(holder -> holder.getMenu().onRepeatingUpdate(holder));
+        allHoldersCopy.stream()
+                .filter(filter)
+                .forEach(holder -> holder.getMenu().onRepeatingUpdate(holder));
+
 
         counter.incrementAndGet();
     }

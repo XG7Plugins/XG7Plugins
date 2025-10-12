@@ -3,7 +3,6 @@ package com.xg7plugins.modules.xg7menus.builders;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
-import com.xg7plugins.modules.xg7menus.item.impl.ClickableItem;
 import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenuConfigs;
@@ -21,7 +20,6 @@ public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extend
     protected BasicMenuConfigs menuConfigs;
 
     protected List<Item> items = new ArrayList<>();
-    protected List<ClickableItem> clickableItems = null;
 
     protected Consumer<ActionEvent> clickConsumer = e -> {};
     protected Consumer<DragEvent> dragConsumer = e -> {};
@@ -35,18 +33,7 @@ public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extend
 
     @SuppressWarnings("unchecked")
     public B items(List<Item> items) {
-        List<Item> itemList = new ArrayList<>();
-        List<ClickableItem> clickableItemList = new ArrayList<>();
-
-        for (Item item : items) {
-            if (item instanceof ClickableItem) {
-                clickableItemList.add((ClickableItem) item);
-                continue;
-            }
-            itemList.add(item);
-        }
-        this.items = itemList;
-        this.clickableItems = clickableItemList;
+        this.items = items;
         return (B) this;
     }
 

@@ -14,7 +14,6 @@ public class MenuBuilder extends BasicMenuBuilder<MenuBuilder, Menu> {
         return new SimpleMenu(
                 (MenuConfigurations) menuConfigs,
                 items,
-                clickableItems,
                 clickConsumer,
                 dragConsumer,
                 openEventConsumer,

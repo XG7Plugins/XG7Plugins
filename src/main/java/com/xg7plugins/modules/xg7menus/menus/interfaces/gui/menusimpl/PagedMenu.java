@@ -47,8 +47,6 @@ public abstract class PagedMenu extends Menu {
 
     public boolean goPage(int page, PagedMenuHolder menuHolder) {
 
-        
-
         List<Item> pagedItems = pagedItems(menuHolder.getPlayer());
 
         if (page < 0) return false;

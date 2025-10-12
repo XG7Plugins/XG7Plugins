@@ -2,6 +2,7 @@ package com.xg7plugins.boot;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.boot.setup.PluginSetup;
 import com.xg7plugins.commands.CommandManager;
 import com.xg7plugins.commands.impl.reload.ReloadCause;
 import com.xg7plugins.commands.setup.Command;

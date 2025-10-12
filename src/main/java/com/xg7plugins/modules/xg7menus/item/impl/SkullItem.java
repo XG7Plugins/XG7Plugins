@@ -276,9 +276,6 @@ public class SkullItem extends Item {
 
         ReflectionObject.of(meta).getMethod("setOwnerProfile", ReflectionClass.of("org.bukkit.profile.PlayerProfile").getAClass())
                 .invoke(playerProfile.getObject());
-
-
-
     }
 
 }

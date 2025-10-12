@@ -1,4 +1,4 @@
-config-version: 2
+config-version: 3
 
 locale: en_US
 formated-name: "English"
@@ -10,7 +10,7 @@ plugin-update-available: "&aA new version of &e%plugin% &ais available! New vers
 command-errors:
   syntax-error: "&cYou are using the command incorrectly! The right way is &7%syntax%"
   player-not-found: "&cThis player hasn't found or never played before!"
-  no-permission: "&cYou don't have permission to use this command!"
+  no-permission: "&cYou don't have permission to perform this!"
   disabled-world: "&cYou cannot execute this command in a disabled world!"
   not-a-player: "&cYou cannot execute this command in console!"
   is-a-player: "&cYou cannot execute this command being a player!"
@@ -39,7 +39,19 @@ refresh-item: "&9Refresh page"
 go-back-to-help: "&6Back to help"
 go-back-to-previous-commands: "&cBack to the previous commands"
 
+collaborators-menu:
+
+  title: "&0Collaborators of %plugin%:"
+
+  collaborators-item:
+    name: "&bCollaborators"
+    lore: "Click here to see the collaborators"
+
+
 lang-not-found: "%prefix% &cLanguage not found!"
+
+lang-other: "%prefix% &aYou changed the language of %target% to &b%lang%&a!"
+lang-changed-by-other: "%prefix% &aYour language has been changed to &b%lang%&a by %target%!"
 
 lang-menu:
   title: "&rLanguages"
@@ -111,7 +123,7 @@ help-menu:
 
     profile-item:
       name: "Profile: %player_name%"
-      lang-chose: "&5Current language: %b%xg7plugins_player_lang%"
+      lang-chose: "&5Current language: &b%xg7plugins_player_lang%"
     lang-item:
       name: "&bLanguages"
       lore: "&5Click here to change profile lang"
@@ -126,24 +138,24 @@ help-menu:
       lore: "&5Click here to see the commands"
 
   about:
-    - "About &9XG7Plugins"
+    - "&0About &9XG7Plugins"
     - ""
-    - "Version: &a%version%&r"
-    - "Website: &a&n%website%&r"
-    - "GitHub: &a&n%github%&r"
-    - "Discord: &a&n%discord%&r"
+    - "&0Version: &a%version%&r"
+    - "&0Website: &a&n%website%&r"
+    - "&0GitHub: &a&n%github%&r"
+    - "&0Discord: &a&n%discord%&r"
     - ""
-    - "This plugin was made"
-    - "for creating other"
-    - "plugins for XG7."
-    - "Its goal is to manage"
-    - "tasks, include libraries"
-    - "(such as menus, scores,"
-    - "etc.) and facilitate"
-    - "the creation of plugins."
-    - "It also has a language"
-    - "system for the inclusion"
-    - "of new languages."
+    - "&0This plugin was made"
+    - "&0for creating other"
+    - "&0plugins for XG7."
+    - "&0Its goal is to manage"
+    - "&0tasks, include libraries"
+    - "&0(such as menus, scores,"
+    - "&0etc.) and facilitate"
+    - "&0the creation of plugins."
+    - "&0It also has a language"
+    - "&0system for the inclusion"
+    - "&0of new languages."
     - ""
     - "&oDeveloped by DaviXG7"
 
