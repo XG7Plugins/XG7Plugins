@@ -3,12 +3,13 @@ package com.xg7plugins.modules;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.managers.Manager;
 import lombok.Getter;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 public class ModuleManager implements Manager {
 
-    private final HashMap<String, Module> extensions = new HashMap<>();
+    private final HashMap<String, Module> modules = new HashMap<>();
     private final Plugin plugin;
 
     /**
@@ -32,61 +33,86 @@ public class ModuleManager implements Manager {
         this.plugin = XG7Plugins.getInstance();
 
         for (Module extension : extensions) {
-            this.extensions.put(extension.getName(), extension);
+            this.modules.put(extension.getName(), extension);
         }
 
-        loadExecutors();
-        loadTasks();
-        loadListeners();
+        ConfigSection moduleSection = ConfigFile.mainConfigOf(XG7Plugins.getInstance()).section("modules-enabled");
 
-        initModules();
-
+        this.modules.values().stream()
+                .filter(module -> moduleSection.get(module.getName().toLowerCase(), false) && module.canBeEnabled())
+                .forEach(this::initModule);
     }
 
     /**
      * Initializes all registered modules by calling their onInit method.
      */
-    public void initModules() {
-        extensions.values().forEach(Module::onInit);
+    public void initModule(Module module) {
+        loadExecutors(module);
+        loadTasks(module);
+        loadListeners(module);
+
+        module.onInit();
+        module.setEnabled(true);
+    }
+
+    public void disableModule(Module module) {
+        module.loadTasks().forEach(task -> XG7PluginsAPI.taskManager().deleteRepeatingTask(XG7Plugins.getInstance(), task.getId()));
+        module.getExecutors().forEach((n, e) -> XG7PluginsAPI.taskManager().removeExecutor(n));
+
+        module.onDisable();
+        module.setEnabled(false);
+    }
+
+    public void reloadModule(Module module) {
+        module.onReload();
     }
 
     /**
      * Loads and registers all tasks from the registered modules.
      */
-    public void loadTasks() {
-        extensions.values().forEach(extension -> XG7PluginsAPI.taskManager().registerTimerTasks(extension.loadTasks()));
+    public void loadTasks(Module module) {
+        XG7PluginsAPI.taskManager().registerTimerTasks(module.loadTasks());
     }
 
     /**
      * Loads and registers all executors from the registered modules.
      */
-    public void loadExecutors() {
-        extensions.values().forEach(extension -> extension.getExecutors().forEach(XG7PluginsAPI.taskManager()::registerExecutor));
+    public void loadExecutors(Module module) {
+        module.getExecutors().forEach(XG7PluginsAPI.taskManager()::registerExecutor);
     }
 
     /**
      * Loads and registers all event listeners from the registered modules.
      * Handles both packet listeners and regular event listeners.
      */
-    public void loadListeners() {
-        extensions.values().forEach(extension -> {
-            List<Listener> listeners = extension.loadListeners();
+    public void loadListeners(Module module) {
+        List<Listener> listeners = module.loadListeners();
 
-            XG7PluginsAPI.packetEventManager().registerListeners(XG7Plugins.getInstance(), listeners.stream().filter(l -> l instanceof PacketListener).map(l -> (PacketListener) l).collect(Collectors.toList()));
-            XG7PluginsAPI.eventManager().registerListeners(XG7Plugins.getInstance(), listeners);
+        XG7PluginsAPI.packetEventManager().registerListeners(XG7Plugins.getInstance(), listeners.stream().filter(l -> l instanceof PacketListener).map(l -> (PacketListener) l).collect(Collectors.toList()));
+        XG7PluginsAPI.eventManager().registerListeners(XG7Plugins.getInstance(), listeners);
+    }
 
-        });
+    public boolean isModuleEnabled(String moduleName) {
+        return modules.containsKey(moduleName) &&  modules.get(moduleName).isEnabled();
     }
 
     /**
      * Disables all registered modules by calling them onDisable method.
      */
-    public void disableModules() {
-        extensions.values().forEach(Module::onDisable);
+    public void disableAllModules() {
+        modules.values().forEach(this::disableModule);
     }
 
-    public void reloadModules() {
-        extensions.values().forEach(Module::onReload);
+    public void reloadAllModules() {
+        modules.values().forEach(this::reloadModule);
+    }
+
+    public <T extends Module> T getModule(String moduleName) {
+        return (T) modules.get(moduleName);
+    }
+
+    public <T extends Module> T getModule(Class<T> moduleClass) {
+        return modules.values().stream().filter(moduleClass::isInstance).map(moduleClass::cast).findFirst().orElse(null);
     }
 
 }

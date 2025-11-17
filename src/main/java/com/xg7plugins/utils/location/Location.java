@@ -138,6 +138,10 @@ public class Location implements Cloneable {
         return this;
     }
 
+    public Vector toVector() {
+        return new Vector(x,y,z);
+    }
+
     /**
      * Gets the direction vector based on pitch/yaw
      *
@@ -162,10 +166,13 @@ public class Location implements Cloneable {
      * @return true if the location is within the distance
      */
     public boolean isNearby(Location location, double distance) {
+        if (!location.getWorld().getUID().equals(getWorld().getUID())) return false;
         return Math.abs(location.getX() - x) <= distance && Math.abs(location.getY() - y) <= distance && Math.abs(location.getZ() - z) <= distance;
     }
 
     public double distance(Location location) {
+        if (location == null) return Double.MAX_VALUE;
+        if (!location.getWorld().getUID().equals(getWorld().getUID())) return Double.MAX_VALUE;
         return Math.sqrt(Math.pow(location.getX() - x, 2) + Math.pow(location.getY() - y, 2) + Math.pow(location.getZ() - z, 2));
     }
 

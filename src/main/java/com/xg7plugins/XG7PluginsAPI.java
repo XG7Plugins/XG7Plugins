@@ -3,6 +3,7 @@ package com.xg7plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.CommandManager;
+import com.xg7plugins.commands.node.CommandNode;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.data.JsonManager;
 import com.xg7plugins.config.file.ConfigFile;
@@ -19,6 +20,11 @@ import com.xg7plugins.events.packetevents.PacketEventManager;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.managers.ManagerRegistry;
 import com.xg7plugins.modules.ModuleManager;
+import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
+import com.xg7plugins.modules.xg7holograms.XG7Holograms;
+import com.xg7plugins.modules.xg7menus.XG7Menus;
+import com.xg7plugins.modules.xg7npcs.XG7NPCs;
+import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.server.ServerInfo;
 import com.xg7plugins.cooldowns.CooldownManager;
 import com.xg7plugins.tasks.TaskManager;
@@ -154,6 +160,26 @@ public class XG7PluginsAPI {
         return ManagerRegistry.get(XG7Plugins.getInstance(), ModuleManager.class);
     }
 
+    public static XG7Menus menus() {
+        return moduleManager().getModule(XG7Menus.class);
+    }
+
+    public static XG7Scores scores() {
+        return moduleManager().getModule(XG7Scores.class);
+    }
+
+    public static XG7GeyserForms geyserForms() {
+        return moduleManager().getModule(XG7GeyserForms.class);
+    }
+
+    public static XG7Holograms holograms() {
+        return moduleManager().getModule(XG7Holograms.class);
+    }
+
+    public static XG7NPCs npcs() {
+        return moduleManager().getModule(XG7NPCs.class);
+    }
+
     /**
      * Gets the configuration manager for a specific plugin.
      *
@@ -191,8 +217,12 @@ public class XG7PluginsAPI {
      * @param plugin The plugin to get commands for
      * @return A map containing command names/aliases mapped to Command instances
      */
-    public static Map<String, Command> commandMapOf(Plugin plugin) {
-        return commandManager(plugin).getMappedCommands();
+    public static Map<String, CommandNode> commandNodesOf(Plugin plugin) {
+        return commandManager(plugin).getCommandNodeMap();
+    }
+
+    public static Set<CommandNode> rootCommandNodesOf(Plugin plugin) {
+        return new HashSet<>(XG7PluginsAPI.commandNodesOf(plugin).values());
     }
 
     /**

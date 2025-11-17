@@ -1,7 +1,8 @@
 package com.xg7plugins.modules.xg7menus.editor;
 
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
+import com.xg7plugins.utils.item.Item;
 
 import java.util.List;
 
@@ -9,9 +10,11 @@ public interface InventoryEditor {
 
     void setItem(Slot slot, Item item);
 
+    void setItem(InventoryItem item);
+
     void addItem(Item item);
 
-    Item getItem(Slot slot);
+    InventoryItem getItem(Slot slot);
 
     void removeItem(Slot slot);
 
@@ -35,7 +38,7 @@ public interface InventoryEditor {
 
     void frame(Slot startSlot, Slot endSlot, List<Item> items, boolean randomize, boolean fillAll);
 
-    List<Item> getItems();
+    List<InventoryItem> getItems();
 
 
 }

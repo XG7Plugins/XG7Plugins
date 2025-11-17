@@ -3,13 +3,16 @@ package com.xg7plugins.help.menu.command;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.executors.MainCommand;
+import com.xg7plugins.commands.node.CommandConfig;
+import com.xg7plugins.commands.node.CommandNode;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.help.menu.HelpGUI;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.PagedMenu;
+import com.xg7plugins.utils.item.Item;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
@@ -19,19 +22,19 @@ import java.util.stream.Collectors;
 
 public class CommandGUI extends PagedMenu {
 
-    private final Map<String, Command> commands;
+    private final Map<String, CommandNode> commands;
     private final CommandGUI superMenu;
 
     private final HelpGUI guiOrigin;
 
-    public CommandGUI(Plugin plugin, List<Command> commands, String title, CommandGUI superMenu, HelpGUI guiOrigin, String commandName) {
+    public CommandGUI(Plugin plugin, List<CommandNode> commands, String title, CommandGUI superMenu, HelpGUI guiOrigin, String commandName) {
         super(
                 new CommandGUIConfiguration(commandName, plugin,title),
                 Slot.of(2,2), Slot.of(4,8)
         );
         this.commands = commands.stream().collect(
                 Collectors.toMap(
-                        command -> command.getCommandSetup().name(),
+                        CommandNode::getName,
                         command -> command
                 )
         );
@@ -40,32 +43,36 @@ public class CommandGUI extends PagedMenu {
 
     }
 
-    public CommandGUI(Plugin plugin, List<Command> commands, String title, CommandGUI superMenu, HelpGUI guiOrigin) {
+    public CommandGUI(Plugin plugin, List<CommandNode> commands, String title, CommandGUI superMenu, HelpGUI guiOrigin) {
         this(plugin, commands, title, superMenu, guiOrigin, null);
     }
 
     @Override
-    public List<Item> pagedItems(Player player) {
+    public List<InventoryItem> pagedItems(Player player) {
 
         return commands
                 .entrySet()
                 .stream()
-                .filter(e -> !(e.getValue() instanceof MainCommand))
+                .filter(e -> !(e.getValue().getCommand() instanceof MainCommand))
                 .map(e -> {
-                    Item item = e.getValue().getIcon();
+                    CommandNode command = e.getValue();
+                    XMaterial iconMaterial = command.getParent() == null? command.getCommand().getCommandSetup().iconMaterial() : command.getCommandMethod().getAnnotation(CommandConfig.class).iconMaterial();
+
+                    InventoryItem item = Item.commandIcon(iconMaterial, command).toInventoryItem(null);
                     item.setNBTTag("command", e.getKey());
+
                     return item;
                 })
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<Item> getItems(Player player) {
+    public List<InventoryItem> getItems(Player player) {
         return Arrays.asList(
-                Item.from(XMaterial.ARROW).name("lang:[go-back-item]").slot(45),
-                Item.from(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR)).name("lang:[go-back-to-help]").slot(48),
-                Item.from(XMaterial.REDSTONE).name("lang:[go-back-to-previous-commands]").slot(50),
-                Item.from(XMaterial.ARROW).name("lang:[go-next-item]").slot(53)
+                InventoryItem.from(XMaterial.ARROW).name("lang:[go-back-item]").toInventoryItem(45),
+                InventoryItem.from(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR)).name("lang:[go-back-to-help]").toInventoryItem(48),
+                InventoryItem.from(XMaterial.REDSTONE).name("lang:[go-back-to-previous-commands]").toInventoryItem(50),
+                InventoryItem.from(XMaterial.ARROW).name("lang:[go-next-item]").toInventoryItem(53)
         );
     }
 
@@ -90,17 +97,17 @@ public class CommandGUI extends PagedMenu {
                 superMenu.open(holder.getPlayer());
                 return;
             default:
-                Item item = event.getClickedItem();
+                InventoryItem item = event.getClickedItem();
 
                 if (item.isAir()) return;
 
-                Command command = commands.get(item.getTag("command", String.class).orElse(null));
+                CommandNode command = commands.get(item.getTag("command", String.class).orElse(null));
 
                 if (command == null) return;
 
-                if (command.getSubCommands().isEmpty()) return;
+                if (command.getChildren().isEmpty()) return;
 
-                CommandGUI commandMenu = new CommandGUI(guiOrigin.getPlugin(), command.getSubCommands(), "lang:[help-menu.command-help.subcommands-title]", this, guiOrigin, command.getCommandSetup().name());
+                CommandGUI commandMenu = new CommandGUI(guiOrigin.getPlugin(), command.getChildren(), "lang:[help-menu.command-help.subcommands-title]", this, guiOrigin, command.getName());
 
                 commandMenu.open(holder.getPlayer());
                 break;

@@ -2,7 +2,7 @@ package com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl;
 
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.StorageMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
@@ -36,11 +36,11 @@ public abstract class StorageMenu extends Menu {
 
     }
 
-    public abstract List<Item> getStorageItems(Player player);
+    public abstract List<InventoryItem> getStorageItems(Player player);
 
     public static void refresh(StorageMenuHolder menuHolder) {
         BasicMenu.refresh(menuHolder);
-        List<Item> storageItems = menuHolder.getMenu().getStorageItems(menuHolder.getPlayer());
+        List<InventoryItem> storageItems = menuHolder.getMenu().getStorageItems(menuHolder.getPlayer());
 
         if (storageItems.isEmpty()) return;
 
@@ -54,12 +54,12 @@ public abstract class StorageMenu extends Menu {
 
                 if (index >= storageItems.size()) {
                     if (menuHolder.getInventoryUpdater().hasItem(Slot.of(x, y))) {
-                        menuHolder.getInventoryUpdater().setItem(Slot.of(x, y), Item.air());
+                        menuHolder.getInventoryUpdater().setItem(Slot.of(x, y), InventoryItem.air());
                     }
                     continue;
                 }
 
-                Item item = storageItems.get(index);
+                InventoryItem item = storageItems.get(index);
                 menuHolder.getInventoryUpdater().setItem(Slot.of(x, y), item);
                 index++;
             }

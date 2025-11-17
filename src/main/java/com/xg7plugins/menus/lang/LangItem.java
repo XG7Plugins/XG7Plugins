@@ -4,19 +4,20 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.data.playerdata.PlayerDataRepository;
+import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.modules.xg7menus.item.clickable.ClickableItem;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.PagedMenu;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
 public class LangItem extends ClickableItem {
     public LangItem(Item item) {
-        super(item.getItemStack());
+        super(item.getItemStack(), null);
     }
 
     @Override
@@ -54,8 +55,8 @@ public class LangItem extends ClickableItem {
             XG7PluginsAPI.langManager().loadLangsFrom(holder.getMenu().getMenuConfigs().getPlugin()).join();
             Text.sendTextFromLang(player, holder.getMenu().getMenuConfigs().getPlugin(), "lang-menu.toggle-success");
             PagedMenu.refresh(holder);
-            XG7Scores.getInstance().removePlayer(player);
-            XG7Scores.getInstance().addPlayer(player);
+            XG7PluginsAPI.scores().removePlayer(player);
+            XG7PluginsAPI.scores().addPlayer(player);
 
 
             XG7PluginsAPI.cooldowns().addCooldown(player, "lang-change", ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().getTimeInMilliseconds("cooldown-to-toggle-lang", 5000L));

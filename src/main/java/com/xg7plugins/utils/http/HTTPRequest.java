@@ -35,11 +35,7 @@ public class HTTPRequest {
         }
         br.close();
         conn.disconnect();
-        return new HTTPResponse(sb.toString(), conn.getResponseCode(), conn.getResponseMessage());
-    }
-    public InputStream getInputStream() throws IOException {
-        HttpURLConnection conn = request();
-        return conn.getInputStream();
+        return new HTTPResponse(sb.toString(), conn.getResponseCode(), conn.getResponseMessage(), conn.getInputStream());
     }
 
     /**

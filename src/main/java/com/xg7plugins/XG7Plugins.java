@@ -8,9 +8,10 @@ import com.xg7plugins.boot.VersionChecker;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.impl.CommentCommand;
 import com.xg7plugins.commands.impl.LangCommand;
+import com.xg7plugins.commands.impl.Test;
 import com.xg7plugins.commands.impl.reload.ReloadCause;
 import com.xg7plugins.commands.impl.reload.ReloadCommand;
-import com.xg7plugins.commands.impl.task_command.TaskCommand;
+import com.xg7plugins.commands.impl.TaskCommand;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.cooldowns.CooldownManager;
@@ -33,6 +34,7 @@ import com.xg7plugins.help.xg7pluginshelp.chathelp.XG7PluginsChatHelp;
 import com.xg7plugins.menus.lang.LangForm;
 import com.xg7plugins.menus.lang.LangMenu;
 import com.xg7plugins.menus.tasks.TaskMenu;
+import com.xg7plugins.modules.Module;
 import com.xg7plugins.modules.ModuleManager;
 import com.xg7plugins.config.typeadapter.impl.LangItemTypeAdapter;
 import com.xg7plugins.lang.LangManager;
@@ -41,7 +43,13 @@ import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.listeners.JoinListener;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
+import com.xg7plugins.modules.xg7geyserforms.forms.Form;
+import com.xg7plugins.modules.xg7holograms.XG7Holograms;
+import com.xg7plugins.modules.xg7holograms.hologram.Hologram;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
+import com.xg7plugins.modules.xg7npcs.XG7NPCs;
+import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.modules.xg7scores.organizer.impl.LuckpermsRule;
 import com.xg7plugins.modules.xg7scores.organizer.impl.OPRule;
@@ -67,7 +75,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Getter(AccessLevel.PUBLIC)
@@ -113,14 +120,14 @@ public final class XG7Plugins extends Plugin {
     public void onEnable() {
         super.onEnable();
         System.setProperty("adventure.text.warnWhenLegacyFormattingDetected", "false");
-        debug.loading("Enabling XG7Plugins...");
+        debug.info("Enabling XG7Plugins...");
         PacketEvents.getAPI().init();
 
-        debug.loading("Loading metrics...");
+        debug.info("Loading metrics...");
 
         Metrics.getMetrics(this, 24626);
 
-        debug.loading("Loading plugin configurations...");
+        debug.info("Loading plugin configurations...");
 
         XG7PluginsAPI.configManager(this).registerAdapter(new LangItemTypeAdapter());
         XG7PluginsAPI.configManager(this).registerAdapter(new SoundTypeAdapter());
@@ -132,14 +139,14 @@ public final class XG7Plugins extends Plugin {
         plugins.values().forEach(this::checkDependencies);
 
         if (XG7PluginsAPI.dependencyManager().isNeedRestart()) {
-            debug.loading("======================================================================");
-            debug.loading("§cShutdowning server for dependency updates... Please restart the server");
-            debug.loading("======================================================================");
+            debug.severe("======================================================================");
+            debug.severe("Shutdowning server for dependency updates... Please restart the server");
+            debug.severe("======================================================================");
             Bukkit.shutdown();
             return;
         }
 
-        debug.loading("Loading managers...");
+        debug.info("Loading managers...");
 
         managerRegistry.registerManager(new CacheManager(this));
         managerRegistry.registerManager(new TaskManager());
@@ -149,29 +156,17 @@ public final class XG7Plugins extends Plugin {
         managerRegistry.registerManager(new EventManager());
         managerRegistry.registerManager(new PacketEventManager());
         managerRegistry.registerManager(new CooldownManager(this));
-        managerRegistry.registerManager(new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores()));
+        managerRegistry.registerManager(new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores(), new XG7Holograms(), new XG7NPCs()));
 
-        debug.loading("Loading server info...");
+        debug.info("Loading server info...");
 
         this.serverInfo = new ServerInfo();
 
-        debug.loading("Loading Menus...");
-
-        XG7Menus menus = XG7Menus.getInstance();
-
-        menus.registerMenus(new LangMenu(), new TaskMenu(this));
-
-        if (XG7PluginsAPI.isGeyserFormsEnabled()) {
-            debug.loading("Loading GeyserForms...");
-            XG7GeyserForms geyserForms = XG7GeyserForms.getInstance();
-            geyserForms.registerForm(new LangForm());
-        }
-
         if (ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("organize-tablist", true)) {
 
-            debug.loading("Loading tab organizer...");
+            debug.info("Loading tab organizer...");
 
-            XG7Scores scores = XG7Scores.getInstance();
+            XG7Scores scores = XG7PluginsAPI.scores();
 
             scores.registerTablistOrgaizerRule(new OPRule());
 
@@ -184,11 +179,11 @@ public final class XG7Plugins extends Plugin {
             }
         }
 
-        debug.loading("Loading plugins...");
+        debug.info("Loading plugins...");
 
         plugins.forEach((name, plugin) -> loadPlugin(plugin));
 
-        debug.loading("XG7Plugins enabled.");
+        debug.info("XG7Plugins enabled.");
 
         Bukkit.getScheduler().runTask(this, () -> {
 
@@ -208,26 +203,26 @@ public final class XG7Plugins extends Plugin {
 
         this.plugins.forEach((name, plugin) -> unregister(plugin));
 
-        debug.loading("Stopping cooldowns...");
+        debug.info("Stopping cooldowns...");
         XG7PluginsAPI.cooldowns().removeAll();
         XG7PluginsAPI.cooldowns().cancelTask();
 
-        debug.loading("Stopping tasks...");
+        debug.info("Stopping tasks...");
         XG7PluginsAPI.taskManager().shutdown();
 
-        debug.loading("Stopping scores...");
-        XG7Scores.getInstance().onDisable();
+        debug.info("Stopping scores...");
+        XG7PluginsAPI.scores().onDisable();
 
-        debug.loading("Stopping cache...");
+        debug.info("Stopping cache...");
         XG7PluginsAPI.cacheManager().shutdown();
 
-        debug.loading("Disabling modules...");
-        XG7PluginsAPI.moduleManager().disableModules();
+        debug.info("Disabling modules...");
+        XG7PluginsAPI.moduleManager().disableAllModules();
 
-        debug.loading("Stopping PacketEvents...");
+        debug.info("Stopping PacketEvents...");
         PacketEvents.getAPI().terminate();
 
-        debug.loading("Stopping database...");
+        debug.info("Stopping database...");
         try {
             XG7PluginsAPI.database().shutdown();
         } catch (Exception e) {
@@ -241,10 +236,10 @@ public final class XG7Plugins extends Plugin {
         if (cause.equals("json")) XG7PluginsAPI.jsonManager().invalidateCache();
 
         if (cause.equals(ReloadCause.EVENTS)) {
-            XG7PluginsAPI.moduleManager().loadListeners();
+            XG7PluginsAPI.moduleManager().getModules().values().stream().filter(Module::isEnabled).forEach(XG7PluginsAPI.moduleManager()::loadListeners);
         }
         if (cause.equals("modules")) {
-            XG7PluginsAPI.moduleManager().reloadModules();
+            XG7PluginsAPI.moduleManager().getModules().values().stream().filter(Module::isEnabled).forEach(XG7PluginsAPI.moduleManager()::reloadModule);
         }
 
         this.loadHelp();
@@ -267,7 +262,7 @@ public final class XG7Plugins extends Plugin {
 
     @Override
     public List<Command> loadCommands() {
-        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new CommentCommand());
+        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new CommentCommand(), new Test());
     }
 
     @Override
@@ -289,6 +284,16 @@ public final class XG7Plugins extends Plugin {
     @Override
     public Object loadPlaceholderExpansion() {
         return new XG7PluginsPlaceholderExpansion();
+    }
+
+    @Override
+    public List<BasicMenu> loadMenus() {
+        return Arrays.asList(new LangMenu(), new TaskMenu(this));
+    }
+
+    @Override
+    public List<Form<?,?>> loadForms() {
+        return Collections.singletonList(new LangForm());
     }
 
     @Override
@@ -357,6 +362,26 @@ public final class XG7Plugins extends Plugin {
 
         plugin.getDebug().loading("Loading langs...");
         XG7PluginsAPI.langManager().loadLangsFrom(plugin);
+
+        if (XG7PluginsAPI.menus().isEnabled()) {
+            plugin.getDebug().loading("Loading default menus...");
+            XG7PluginsAPI.menus().registerMenus(plugin.loadMenus());
+        }
+
+        if (XG7PluginsAPI.geyserForms().isEnabled()) {
+            plugin.getDebug().loading("Loading default geyser forms...");
+            List<Form<?,?>> forms = plugin.loadForms();
+            if (forms != null && !forms.isEmpty()) forms.forEach(XG7PluginsAPI.geyserForms()::registerForm);
+        }
+        if (XG7PluginsAPI.scores().isEnabled()) {
+            plugin.getDebug().loading("Loading default scores...");
+            XG7PluginsAPI.scores().registerScores(plugin.loadScores());
+        }
+        if (XG7PluginsAPI.holograms().isEnabled()) {
+            plugin.getDebug().loading("Loading default holograms...");
+            List<Hologram<?>> holograms = plugin.loadHolograms();
+            if (holograms != null && !holograms.isEmpty()) holograms.forEach(XG7PluginsAPI.holograms()::registerHologram);
+        }
 
         plugin.getDebug().loading("Loading help...");
         plugin.loadHelp();

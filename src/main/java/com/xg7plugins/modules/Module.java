@@ -1,5 +1,6 @@
 package com.xg7plugins.modules;
 
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.tasks.tasks.Task;
 import com.xg7plugins.tasks.tasks.TimerTask;
@@ -66,5 +67,9 @@ public interface Module {
      * @return The module's name
      */
     String getName();
+
+    boolean isEnabled();
+    default boolean canBeEnabled() { return true; };
+    void setEnabled(boolean enabled);
 
 }

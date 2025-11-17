@@ -3,9 +3,12 @@ package com.xg7plugins.help.form.command;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.executors.MainCommand;
+import com.xg7plugins.commands.node.CommandConfig;
+import com.xg7plugins.commands.node.CommandNode;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.help.form.HelpForm;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;
+import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.text.Text;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -20,18 +23,18 @@ import java.util.stream.Collectors;
 
 public class CommandForm extends SimpleForm {
 
-    private final Map<String, Command> commands;
+    private final Map<String, CommandNode> commands;
     private final CommandForm superForm;
 
     @Getter
     private final HelpForm guiOrigin;
 
-    public CommandForm(List<Command> commands, String customTitle, CommandForm superForm, HelpForm guiOrigin) {
+    public CommandForm(List<CommandNode> commands, String customTitle, CommandForm superForm, HelpForm guiOrigin) {
         super("command-form" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, XG7Plugins.getInstance());
 
         this.commands = commands.stream().collect(
                 Collectors.toMap(
-                        command -> command.getCommandSetup().name(),
+                        CommandNode::getName,
                         command -> command
                 )
         );
@@ -48,8 +51,8 @@ public class CommandForm extends SimpleForm {
     @Override
     public List<ButtonComponent> buttons(Player player) {
 
-        List<ButtonComponent> buttons = commands.values().stream().filter(cmd -> !(cmd instanceof MainCommand)).map(
-                command -> ButtonComponent.of(command.getCommandSetup().name())
+        List<ButtonComponent> buttons = commands.values().stream().filter(cmd -> !(cmd.getCommand() instanceof MainCommand)).map(
+                command -> ButtonComponent.of(command.getName())
         ).collect(Collectors.toList());
 
         buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"commands-form.back").join().getText()));
@@ -70,12 +73,18 @@ public class CommandForm extends SimpleForm {
             guiOrigin.getForm("index").send(player);
             return;
         }
-        Command command = commands.get(clickedButton.text());
+        CommandNode command = commands.get(clickedButton.text());
         if (command == null) {
             guiOrigin.getForm("index").send(player);
             return;
         }
-        CommandFormDescription commandDescription = new CommandFormDescription(this, command, command.getIcon().getItemFor(player, plugin), guiOrigin);
+        CommandFormDescription commandDescription = new CommandFormDescription(
+                this,
+                command,
+                Item.commandIcon(command.getCommandMethod() == null ? command.getCommand().getCommandSetup().iconMaterial() : command.getCommandMethod().getAnnotation(CommandConfig.class).iconMaterial(), command)
+                        .getItemFor(player, plugin),
+                guiOrigin
+        );
         commandDescription.send(player);
 
     }

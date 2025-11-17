@@ -1,6 +1,5 @@
 package com.xg7plugins.modules.xg7menus.handlers;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.cooldowns.CooldownManager;
 import com.xg7plugins.events.Listener;
@@ -9,7 +8,7 @@ import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.PlayerMenuHolder;
 import com.xg7plugins.utils.reflection.ReflectionObject;
@@ -50,7 +49,7 @@ public class PlayerMenuHandler implements Listener {
 
         event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(menuAction));
 
-        ActionEvent actionEvent = new ActionEvent(holder, menuAction, slotClicked.get(), slotClicked, Item.from(event.getItem()).slot(slotClicked), event.isCancelled());
+        ActionEvent actionEvent = new ActionEvent(holder, menuAction, slotClicked.get(), slotClicked, InventoryItem.from(event.getItem()).toInventoryItem(slotClicked), event.isCancelled());
 
         holder.getMenu().onClick(actionEvent);
 
@@ -81,7 +80,7 @@ public class PlayerMenuHandler implements Listener {
 
         event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(menuAction));
 
-        ActionEvent actionEvent = new ActionEvent(holder, menuAction, slotClicked.get(), slotClicked,Item.from(event.getCurrentItem()).slot(slotClicked), event.isCancelled());
+        ActionEvent actionEvent = new ActionEvent(holder, menuAction, slotClicked.get(), slotClicked, InventoryItem.from(event.getCurrentItem()).toInventoryItem(slotClicked), event.isCancelled());
 
         holder.getMenu().onClick(actionEvent);
 
@@ -100,7 +99,7 @@ public class PlayerMenuHandler implements Listener {
             return;
         PlayerMenuHolder holder = XG7Menus.getPlayerMenuHolder(event.getWhoClicked().getUniqueId());
 
-        List<Item> draggedItems = event.getNewItems().entrySet().stream().map((e) -> Item.from(e.getValue()).slot(e.getKey())).collect(Collectors.toList());
+        List<InventoryItem> draggedItems = event.getNewItems().entrySet().stream().map((e) -> InventoryItem.from(e.getValue()).toInventoryItem(e.getKey())).collect(Collectors.toList());
 
         Set<Slot> slotsClicked = event.getInventorySlots().stream().map(Slot::fromSlot).collect(Collectors.toSet());
         Set<Integer> rawSlots = event.getRawSlots();

@@ -1,6 +1,7 @@
 package com.xg7plugins.modules.xg7menus;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.modules.Module;
@@ -22,8 +23,7 @@ import java.util.concurrent.Executors;
 @Getter
 public class XG7Menus implements Module {
 
-    @Getter
-    private static XG7Menus instance;
+    private boolean enabled;
 
     private final HashMap<UUID, PlayerMenuHolder> playerMenusMap = new HashMap<>();
     private final HashMap<UUID, MenuHolder> menuHolders = new HashMap<>();
@@ -32,8 +32,6 @@ public class XG7Menus implements Module {
 
     @Override
     public void onInit() {
-        instance = this;
-
         XG7Plugins.getInstance().getDebug().loading("XG7Menus initialized");
     }
 
@@ -68,7 +66,7 @@ public class XG7Menus implements Module {
         return "XG7Menus";
     }
 
-    public void registerMenus(BasicMenu... menus) {
+    public void registerMenus(List<BasicMenu> menus) {
         if (menus == null) return;
         for (BasicMenu menu : menus) {
             if (!menu.getMenuConfigs().isEnabled()) continue;
@@ -86,36 +84,36 @@ public class XG7Menus implements Module {
 
     public static void registerPlayerMenuHolder(PlayerMenuHolder holder) {
         XG7Plugins.getInstance().getDebug().info("Registering player menu holder for " + holder.getPlayer().getUniqueId());
-        XG7Menus.getInstance().getPlayerMenusMap().put(holder.getPlayer().getUniqueId(), holder);
+        XG7PluginsAPI.menus().getPlayerMenusMap().put(holder.getPlayer().getUniqueId(), holder);
     }
 
     public static void removePlayerMenuHolder(UUID playerId) {
         XG7Plugins.getInstance().getDebug().info("Removing player menu holder for " + playerId);
-        XG7Menus.getInstance().getPlayerMenusMap().remove(playerId);
+        XG7PluginsAPI.menus().getPlayerMenusMap().remove(playerId);
     }
 
     public static <T extends PlayerMenuHolder> T getPlayerMenuHolder(UUID playerId) {
-        return (T) XG7Menus.getInstance().getPlayerMenusMap().get(playerId);
+        return (T) XG7PluginsAPI.menus().getPlayerMenusMap().get(playerId);
     }
     public static boolean hasPlayerMenuHolder(UUID playerId) {
-        return XG7Menus.getInstance().getPlayerMenusMap().containsKey(playerId);
+        return XG7PluginsAPI.menus().getPlayerMenusMap().containsKey(playerId);
     }
 
     public static void registerHolder(MenuHolder holder) {
         XG7Plugins.getInstance().getDebug().info("Registering menu holder for " + holder.getPlayer().getUniqueId());
-        XG7Menus.getInstance().getMenuHolders().put(holder.getPlayer().getUniqueId(), holder);
+        XG7PluginsAPI.menus().getMenuHolders().put(holder.getPlayer().getUniqueId(), holder);
     }
     public static void removeHolder(UUID playerID) {
         XG7Plugins.getInstance().getDebug().info("Removing menu holder for " + playerID);
-        XG7Menus.getInstance().getMenuHolders().remove(playerID);
+        XG7PluginsAPI.menus().getMenuHolders().remove(playerID);
     }
 
     public static <T extends MenuHolder> T getHolder(UUID playerId) {
-        return (T) XG7Menus.getInstance().getMenuHolders().get(playerId);
+        return (T) XG7PluginsAPI.menus().getMenuHolders().get(playerId);
     }
 
     public static boolean hasHolder(UUID playerId) {
-        return XG7Menus.getInstance().getMenuHolders().containsKey(playerId);
+        return XG7PluginsAPI.menus().getMenuHolders().containsKey(playerId);
     }
 
     @Override
@@ -128,7 +126,10 @@ public class XG7Menus implements Module {
         return Collections.singletonList(new MenuUpdaterTimerTask(this));
     }
 
-
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
 
 }

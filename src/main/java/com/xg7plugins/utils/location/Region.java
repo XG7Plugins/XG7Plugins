@@ -93,20 +93,21 @@ public class Region implements Cloneable {
         }
     }
 
-    /**
-     * Calculates the area of the region's face in the specified direction.
-     *
-     * @param direction The direction of the face (NORTH, SOUTH, EAST, or WEST)
-     * @return The area of the face in square blocks
-     */
-    public double getArea(Direction direction) {
-        switch (direction) {
-            case NORTH:
-            case SOUTH:
-                return Math.abs(endPoint.getX() - startPoint.getX()) * Math.abs(endPoint.getZ() - startPoint.getZ());
-            case EAST:
-            case WEST:
-                return Math.abs(endPoint.getY() - startPoint.getY()) * Math.abs(endPoint.getZ() - startPoint.getZ());
+    public double getArea(Side side) {
+        double dx = Math.abs(endPoint.getX() - startPoint.getX());
+        double dy = Math.abs(endPoint.getY() - startPoint.getY());
+        double dz = Math.abs(endPoint.getZ() - startPoint.getZ());
+
+        switch (side) {
+            case TOP:
+            case BOTTOM:
+                return dx * dz;
+            case LEFT:
+            case RIGHT:
+                return dy * dz;
+            case FRONT:
+            case BACK:
+                return dx * dy;
             default:
                 return 0;
         }
@@ -122,26 +123,12 @@ public class Region implements Cloneable {
     }
 
     @Override
-    public Location clone() {
+    public Region clone() {
         try {
-            return (Location) super.clone();
+            return (Region) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
-    }
-
-    /**
-     * Represents the three possible orientations in 3D space.
-     */
-    public enum Orientation {
-        X, Y, Z
-    }
-
-    /**
-     * Represents the four cardinal directions.
-     */
-    public enum Direction {
-        NORTH, EAST, SOUTH, WEST
     }
 
 }

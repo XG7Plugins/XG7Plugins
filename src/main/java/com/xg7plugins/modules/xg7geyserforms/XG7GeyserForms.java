@@ -1,5 +1,6 @@
 package com.xg7plugins.modules.xg7geyserforms;
 
+import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.modules.Module;
 import com.xg7plugins.modules.xg7geyserforms.forms.Form;
 import lombok.Getter;
@@ -11,13 +12,12 @@ import java.util.HashMap;
 @Getter
 public class XG7GeyserForms implements Module {
 
+    private boolean enabled;
+
     private final HashMap<String, Form<?,?>> forms = new HashMap<>();
-    @Getter
-    private static XG7GeyserForms instance;
 
     @Override
     public void onInit() {
-        instance = this;
     }
 
     @Override
@@ -54,5 +54,15 @@ public class XG7GeyserForms implements Module {
         forms.get(formId).send(player);
 
         return true;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean canBeEnabled() {
+        return XG7PluginsAPI.isGeyserFormsEnabled();
     }
 }

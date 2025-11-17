@@ -4,11 +4,11 @@ import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.CommandState;
+import com.xg7plugins.commands.node.CommandConfig;
+import com.xg7plugins.commands.utils.CommandState;
 import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.commands.setup.CommandArgs;
+import com.xg7plugins.commands.utils.CommandArgs;
 import com.xg7plugins.commands.setup.CommandSetup;
-import com.xg7plugins.modules.xg7menus.item.Item;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.http.HTTP;
 import com.xg7plugins.utils.text.Text;
@@ -28,18 +28,14 @@ import java.util.concurrent.atomic.AtomicLong;
         description = "Sends a comment of a plugin to creator",
         syntax = "/comment <plugin> message",
         permission = "xg7plugins.comment",
-        pluginClass = XG7Plugins.class,
-        isAsync = true
+        iconMaterial = XMaterial.DIAMOND,
+        pluginClass = XG7Plugins.class
 )
 public class CommentCommand implements Command {
 
     private final AtomicLong cooldown = new AtomicLong(System.currentTimeMillis());
 
-    @Override
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.DIAMOND, this);
-    }
-
+    @CommandConfig(isAsync = true)
     public CommandState onCommand(CommandSender sender, CommandArgs args) {
 
         if (args.len() < 2) {

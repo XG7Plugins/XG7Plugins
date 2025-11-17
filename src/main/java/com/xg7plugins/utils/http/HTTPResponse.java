@@ -6,6 +6,8 @@ import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.io.InputStream;
+
 /**
  * Represents an HTTP response with content, status code, and status message.
  * Provides methods to parse the response content as JSON or convert it to Java objects.
@@ -26,6 +28,8 @@ public class HTTPResponse {
      * The HTTP status message associated with the status code
      */
     private final String statusMessage;
+
+    private final InputStream inputStream;
 
     /**
      * Converts the response content to a JsonObject.

@@ -4,10 +4,9 @@ import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTabComplete;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.config.file.ConfigFile;
-import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.events.PacketListener;
-import com.xg7plugins.events.packetevents.PacketListenerSetup;
 import com.xg7plugins.events.packetevents.PacketEventType;
+import com.xg7plugins.events.packetevents.PacketListenerSetup;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 
@@ -42,9 +41,9 @@ public class AntiTab implements PacketListener {
             label = label.contains(" ") ? label.split(" ")[0] : label;
             label = label.contains(":") ? label.split(":")[0] : label;
 
-            if (!commandManager.getMappedCommands().containsKey(label)) return true;
+            if (!commandManager.getCommandNodeMap().containsKey(label)) return true;
 
-            String permission = commandManager.getMappedCommands().get(label).getCommandSetup().permission();
+            String permission = commandManager.getCommandNodeMap().get(label).getCommand().getCommandSetup().permission();
 
             return permission == null || permission.isEmpty()
                     || player.hasPermission(permission)

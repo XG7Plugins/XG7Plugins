@@ -1,10 +1,9 @@
 package com.xg7plugins.help.form.command;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.node.CommandNode;
 import com.xg7plugins.help.form.HelpForm;
 import com.xg7plugins.modules.xg7geyserforms.forms.ModalForm;
-import com.xg7plugins.modules.xg7menus.item.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.geysermc.cumulus.response.ModalFormResponse;
@@ -17,20 +16,20 @@ public class CommandFormDescription extends ModalForm {
 
     private final CommandForm origin;
     private final HelpForm guiOrigin;
-    private final Command command;
+    private final CommandNode command;
 
-    public CommandFormDescription(CommandForm origin, Command command, ItemStack commandIcon, HelpForm guiOrigin) {
+    public CommandFormDescription(CommandForm origin, CommandNode command, ItemStack commandIcon, HelpForm guiOrigin) {
         super(
                 XG7Plugins.getInstance(),
                 "command-desc" + UUID.randomUUID(),
-                "Contents of command: " + command.getCommandSetup().name(),
+                "Contents of command: " + command.getName(),
 
                 commandIcon.getItemMeta().getLore().get(0) + "\n" +
                         commandIcon.getItemMeta().getLore().get(1) + "\n" +
                         commandIcon.getItemMeta().getLore().get(2) + "\n" +
                         commandIcon.getItemMeta().getLore().get(3),
 
-                command.getSubCommands().isEmpty() ? "lang:[commands-form.no-subcommands]" : "lang:[commands-form.subcommands-label]",
+                command.getChildren().isEmpty() ? "lang:[commands-form.no-subcommands]" : "lang:[commands-form.subcommands-label]",
                 "lang:[commands-form.subcommands-back]"
         );
         this.origin = origin;
@@ -46,12 +45,12 @@ public class CommandFormDescription extends ModalForm {
     @Override
     public void onFinish(org.geysermc.cumulus.form.ModalForm form, ModalFormResponse result, Player player) {
         if (result.clickedFirst()) {
-            if (command.getSubCommands().isEmpty()) {
+            if (command.getChildren().isEmpty()) {
                 FloodgateApi.getInstance().sendForm(player.getUniqueId(), form);
                 return;
             }
 
-            CommandForm commandMenu = new CommandForm(command.getSubCommands(), "Subcommands of: " + command.getCommandSetup().name(), origin, guiOrigin);
+            CommandForm commandMenu = new CommandForm(command.getChildren(), "Subcommands of: " + command.getName(), origin, guiOrigin);
             commandMenu.send(player);
         } origin.send(player);
 

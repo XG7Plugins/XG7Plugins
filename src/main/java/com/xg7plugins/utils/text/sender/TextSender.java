@@ -30,21 +30,23 @@ public interface TextSender {
     default void defaultSend(CommandSender sender, Text text) {
         if (text == null || text.getText() == null || text.getText().isEmpty()) return;
 
-        if (MinecraftVersion.isOlderThan(8)) {
-            sender.sendMessage(text.getText());
-            return;
-        }
+        text.split("<br>").forEach(line -> {
+            if (MinecraftVersion.isOlderThan(8)) {
+                sender.sendMessage(text.getText());
+                return;
+            }
 
-        if (MinecraftVersion.is(8) && !(sender instanceof Player)) {
-            sender.sendMessage(text.getText());
-            return;
-        }
-        if (!(sender instanceof Player)) {
-            sender.spigot().sendMessage(text.getComponent());
-            return;
-        }
+            if (MinecraftVersion.is(8) && !(sender instanceof Player)) {
+                sender.sendMessage(text.getText());
+                return;
+            }
+            if (!(sender instanceof Player)) {
+                sender.spigot().sendMessage(text.getComponent());
+                return;
+            }
 
-        ((Player) sender).spigot().sendMessage(text.getComponent());
+            ((Player) sender).spigot().sendMessage(text.getComponent());
+        });
     }
 
     /**

@@ -61,12 +61,7 @@ public class Dependency {
             }
 
             try {
-                InputStream in = HTTP.makeRequest(
-                        downloadLink,
-                        HTTPMethod.GET,
-                        null,
-                        null
-                ).getInputStream();
+                InputStream in = HTTP.get(downloadLink).getInputStream();
                 FileOutputStream out = new FileOutputStream(file);
 
 

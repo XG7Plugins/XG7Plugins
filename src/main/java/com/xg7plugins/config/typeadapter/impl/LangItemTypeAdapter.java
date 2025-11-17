@@ -3,14 +3,15 @@ package com.xg7plugins.config.typeadapter.impl;
 import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.config.typeadapter.ConfigTypeAdapter;
 import com.xg7plugins.menus.lang.LangItem;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
+import com.xg7plugins.utils.item.Item;
 
 import java.util.ArrayList;
 
-public class LangItemTypeAdapter implements ConfigTypeAdapter<Item> {
+public class LangItemTypeAdapter implements ConfigTypeAdapter<InventoryItem> {
 
     @Override
-    public Item fromConfig(ConfigSection config, String path, Object... args) {
+    public InventoryItem fromConfig(ConfigSection config, String path, Object... args) {
 
         if (args.length != 2 && !(args[0] instanceof String) && !(args[1] instanceof Boolean)) throw new IllegalArgumentException("Invalid arguments");
 
@@ -31,7 +32,7 @@ public class LangItemTypeAdapter implements ConfigTypeAdapter<Item> {
     }
 
     @Override
-    public Class<Item> getTargetType() {
-        return Item.class;
+    public Class<InventoryItem> getTargetType() {
+        return InventoryItem.class;
     }
 }

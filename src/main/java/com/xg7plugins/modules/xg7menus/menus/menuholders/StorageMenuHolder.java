@@ -1,7 +1,7 @@
 package com.xg7plugins.modules.xg7menus.menus.menuholders;
 
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.StorageMenu;
 import org.bukkit.entity.Player;
 
@@ -19,9 +19,9 @@ public class StorageMenuHolder extends MenuHolder {
         return (StorageMenu) super.getMenu();
     }
 
-    public List<Item> retrieveItems() {
+    public List<InventoryItem> retrieveItems() {
 
-        List<Item> items = new ArrayList<>();
+        List<InventoryItem> items = new ArrayList<>();
 
         StorageMenu menu = getMenu();
 
@@ -30,7 +30,7 @@ public class StorageMenuHolder extends MenuHolder {
 
         for (int x = pos1.getRow(); x <= pos2.getRow(); x++) {
             for (int y = pos1.getColumn(); y <= pos2.getColumn(); y++) {
-                Item item = getInventoryUpdater().getItem(Slot.of(x, y));
+                InventoryItem item = getInventoryUpdater().getItem(Slot.of(x, y));
                 if (!item.isAir()) items.add(item);
             }
         }

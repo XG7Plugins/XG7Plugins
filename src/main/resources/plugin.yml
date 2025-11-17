@@ -47,6 +47,3 @@ permissions:
 
     children:
         xg7plugins.command.lang.other: true
-
-
-

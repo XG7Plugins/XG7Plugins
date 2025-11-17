@@ -3,7 +3,7 @@ package com.xg7plugins.modules.xg7menus.builders;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenuConfigs;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
@@ -19,7 +19,7 @@ public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extend
 
     protected BasicMenuConfigs menuConfigs;
 
-    protected List<Item> items = new ArrayList<>();
+    protected List<InventoryItem> items = new ArrayList<>();
 
     protected Consumer<ActionEvent> clickConsumer = e -> {};
     protected Consumer<DragEvent> dragConsumer = e -> {};
@@ -32,12 +32,12 @@ public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extend
     }
 
     @SuppressWarnings("unchecked")
-    public B items(List<Item> items) {
+    public B items(List<InventoryItem> items) {
         this.items = items;
         return (B) this;
     }
 
-    public B items(Item... items) {
+    public B items(InventoryItem... items) {
         return items(Arrays.asList(items));
     }
 

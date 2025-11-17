@@ -1,11 +1,12 @@
 package com.xg7plugins.modules.xg7menus.item.clickable.impl;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.ClickableItem;
-import com.xg7plugins.modules.xg7menus.item.impl.BookItem;
+import com.xg7plugins.utils.item.Item;
+import com.xg7plugins.utils.item.impl.BookItem;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -18,8 +19,8 @@ public class OpenBookClickableItem extends ClickableItem {
     private final List<String> book;
     private final Player player;
 
-    public OpenBookClickableItem(ItemStack stack, Player player, List<String> book) {
-        super(stack);
+    public OpenBookClickableItem(Slot slot, ItemStack stack, Player player, List<String> book) {
+        super(stack, slot);
 
         this.player = player;
         this.book = book;
@@ -57,7 +58,7 @@ public class OpenBookClickableItem extends ClickableItem {
         bookItem.openBook(player.getPlayer());
     }
 
-    public static OpenBookClickableItem get(Item item, Player player, List<String> book) {
-        return new OpenBookClickableItem(item.getItemStack(), player, book);
+    public static OpenBookClickableItem get(Slot slot, Item item, Player player, List<String> book) {
+        return new OpenBookClickableItem(slot, item.getItemStack(), player, book);
     }
 }

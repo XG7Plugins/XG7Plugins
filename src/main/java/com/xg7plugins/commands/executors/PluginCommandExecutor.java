@@ -2,10 +2,11 @@ package com.xg7plugins.commands.executors;
 
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.setup.PluginSetup;
+import com.xg7plugins.commands.node.CommandConfig;
+import com.xg7plugins.commands.utils.CommandState;
 import com.xg7plugins.commands.CommandManager;
-import com.xg7plugins.commands.CommandState;
-import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.commands.setup.CommandArgs;
+import com.xg7plugins.commands.node.CommandNode;
+import com.xg7plugins.commands.utils.CommandArgs;
 import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.tasks.tasks.AsyncTask;
 import lombok.AllArgsConstructor;
@@ -33,147 +34,125 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
     private CommandManager manager;
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull org.bukkit.command.Command cmd, @NotNull String s, @NotNull String[] strings) {
+    public boolean onCommand(@NotNull CommandSender sender,
+                             @NotNull org.bukkit.command.Command cmd,
+                             @NotNull String label,
+                             @NotNull String[] args) {
 
         PluginSetup plConfig = manager.getPlugin().getPluginSetup();
+        CommandNode commandNode = manager.getRootCommandNode(cmd.getName());
 
-        Command command = manager.getCommand(cmd.getName());
-
-        CommandSetup commandConfig = command.getCommandSetup();
-
-        if (command instanceof MainCommand) {
-            if (!sender.hasPermission(commandConfig.permission()) && !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
-                CommandState.COMMAND_NOT_FOUND.send(sender);
-                return true;
-            }
-            if (!sender.hasPermission(commandConfig.permission())) {
-                CommandState.NO_PERMISSION.send(sender);
-                return true;
-            }
-            if (strings.length == 0) {
-                CommandState.syntaxError(commandConfig.syntax()).send(sender);
-                return true;
-            }
-
-            if (strings[0].equalsIgnoreCase("help")) {
-                command.onCommand(sender,new CommandArgs(strings));
-                return true;
-            }
-            command = manager.getCommand(plConfig.mainCommandName() + strings[0]);
-            if (command == null) {
-                CommandState.COMMAND_NOT_FOUND.send(sender);
-                return true;
-            }
-            strings = Arrays.copyOfRange(strings, 1, strings.length);
+        if (commandNode == null) {
+            CommandState.COMMAND_NOT_FOUND.send(sender);
+            return true;
         }
 
-        if (!sender.hasPermission(commandConfig.permission()) && !sender.hasPermission("xg7plugins.command.anti-tab-bypass")) {
+        CommandSetup commandConfig = commandNode.getCommand().getCommandSetup();
+
+        if (!sender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
             CommandState.NO_PERMISSION.send(sender);
             return true;
         }
 
-        processCommand(command, sender, strings);
-
-        return true;
-    }
-
-    /**
-     * Recursively processes subcommands of a given command.
-     * Traverses through the command hierarchy to find and execute the appropriate subcommand.
-     *
-     * @param command Parent command
-     * @param sender  Command sender
-     * @param args    Command arguments
-     * @param index   Current argument index
-     * @return true if a subcommand was processed, false otherwise
-     */
-    public boolean processSubCommands(Command command, CommandSender sender, String[] args, int index) {
-        if (command == null) return false;
-        if (args.length == index) return false;
-
-        List<Command> subCommands = command.getSubCommands();
-
-        if (subCommands.isEmpty()) return false;
-
-        Command subCommandChosen = null;
-
-        for (Command subCommand : subCommands) {
-            if (subCommand.getCommandSetup().name().equalsIgnoreCase(args[index])) {
-                subCommandChosen = subCommand;
-                break;
+        if (commandNode.getCommand() instanceof MainCommand) {
+            if (args.length == 0) {
+                CommandState.syntaxError(commandConfig.syntax()).send(sender);
+                return true;
             }
+
+            if (args[0].equalsIgnoreCase("help")) {
+                commandNode.execute(sender, new CommandArgs(args));
+                return true;
+            }
+
+            commandNode = manager.getRootCommandNode(plConfig.mainCommandName() + args[0]);
+            if (commandNode == null) {
+                CommandState.COMMAND_NOT_FOUND.send(sender);
+                return true;
+            }
+
+            args = Arrays.copyOfRange(args, 1, args.length);
         }
 
-        if (subCommandChosen == null) return false;
+        CommandNode chosen = commandNode;
+        int depth = -1;
 
-        if (!subCommandChosen.getSubCommands().isEmpty() && processSubCommands(subCommandChosen, sender, args, index + 1)) return true;
+        for (int i = 0; i < args.length; i++) {
+            String sub = args[i];
+            CommandNode child = chosen.getChild(sub);
 
-        processCommand(subCommandChosen, sender, Arrays.copyOfRange(args, index + 1, args.length));
+            if (child == null) break;
 
-        return true;
-    }
+            chosen = child;
+            depth = i;
+        }
 
-    /**
-     * Processes a command execution with permission checks and sender validations.
-     * Handles async execution if configured and manages command error handling.
-     *
-     * @param command Command to process
-     * @param sender  Command sender
-     * @param strings Command arguments
-     */
-    private void processCommand(Command command, CommandSender sender, String[] strings) {
-        if (processSubCommands(command, sender, strings, 0)) return;
+        String[] remaining = depth + 1 >= args.length ? new String[0] : Arrays.copyOfRange(args, depth + 1, args.length);
+        CommandArgs commandArgs = new CommandArgs(remaining);
 
+        CommandConfig nodeConfig =
+                chosen.getCommandMethod().getAnnotation(CommandConfig.class);
 
-        CommandSetup commandConfig = command.getCommandSetup();
-
-        if (!sender.hasPermission(commandConfig.permission()) && !commandConfig.permission().isEmpty()) {
+        if (!sender.hasPermission(nodeConfig.permission()) && !nodeConfig.permission().isEmpty()) {
             CommandState.NO_PERMISSION.send(sender);
-            return;
+            return true;
         }
-        if (commandConfig.isPlayerOnly() && !(sender instanceof Player)) {
+
+        if (nodeConfig.isPlayerOnly() && !(sender instanceof Player)) {
             CommandState.NOT_A_PLAYER.send(sender);
-            return;
+            return true;
         }
-        if (commandConfig.isConsoleOnly() && sender instanceof Player) {
+
+        if (nodeConfig.isConsoleOnly() && sender instanceof Player) {
             CommandState.IS_A_PLAYER.send(sender);
-            return;
+            return true;
         }
+
         if (sender instanceof Player) {
-            if (commandConfig.isInEnabledWorldOnly() && !XG7PluginsAPI.isInAnEnabledWorld(manager.getPlugin(), ((Player) sender))) {
+            if (nodeConfig.isInEnabledWorldOnly() &&
+                    !XG7PluginsAPI.isInAnEnabledWorld(manager.getPlugin(), ((Player) sender))) {
                 CommandState.DISABLED_WORLD.send(sender);
-                return;
+                return true;
             }
         }
 
-        CommandArgs commandArgs = new CommandArgs(strings);
+        CommandNode finalChosen = chosen;
 
-        if (commandConfig.isAsync()) {
 
-            final Command finalCommand = command;
+        Runnable commandRun = () -> {
 
-            XG7PluginsAPI.taskManager().runAsync(AsyncTask.of("commands", () -> {
-                CommandState state = finalCommand.onCommand(sender,commandArgs);
+            manager.getPlugin().getDebug().info("Executing /" +
+                    finalChosen.getCommand().getCommandSetup().name() +
+                    " (" + finalChosen.getName() + ") by " + sender.getName());
+
+            try {
+
+                CommandState state = finalChosen.execute(sender, commandArgs);
+
+                if (state.equals(CommandState.SYNTAX_ERROR)) {
+                    state = CommandState.syntaxError(finalChosen.getCommandMethod() == null ?
+                            finalChosen.getCommand().getCommandSetup().syntax() :
+                            finalChosen.getCommandMethod().getAnnotation(CommandConfig.class).syntax()
+                    );
+                }
+
                 state.send(sender);
 
-                command.getPlugin().getDebug().info("Returned state: " + state);
-            }));
+                manager.getPlugin().getDebug().info("Returned state: " + state);
 
-            return;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+
+        if (nodeConfig.isAsync()) {
+            XG7PluginsAPI.taskManager().runAsync(AsyncTask.of("commands", commandRun));
+            return true;
         }
 
-        try {
+        commandRun.run();
 
-            command.getPlugin().getDebug().info(sender.getName() + " is executing: /" + command.getCommandSetup().name());
-
-            CommandState state = command.onCommand(sender,commandArgs);
-            
-            state.send(sender);
-
-            command.getPlugin().getDebug().info("Returned state: " + state);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return true;
     }
 
     @Nullable
@@ -182,20 +161,20 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
 
         PluginSetup plConfig = manager.getPlugin().getPluginSetup();
 
-        Command command = manager.getCommand(cmd.getName());
+        CommandNode commandNode = manager.getRootCommandNode(cmd.getName());
 
-        CommandSetup commandConfig = command.getCommandSetup();
+        CommandSetup commandConfig = commandNode.getCommand().getCommandSetup();
 
-        if (command instanceof MainCommand) {
+        if (commandNode.getCommand() instanceof MainCommand) {
             if (strings.length == 0 || !sender.hasPermission("xg7plugins.command")) return Collections.emptyList();
 
             if (strings.length > 1) {
 
-                if (strings[0].equalsIgnoreCase("help")) return command.onTabComplete(sender,new CommandArgs(strings));
+                if (strings[0].equalsIgnoreCase("help")) return commandNode.getCommand().onTabComplete(sender,new CommandArgs(strings));
 
-                command = manager.getCommand(plConfig.mainCommandName() + strings[0]);
+                commandNode = manager.getRootCommandNode(plConfig.mainCommandName() + strings[0]);
 
-                if (command == null) return Collections.emptyList();
+                if (commandNode == null) return Collections.emptyList();
 
                 strings = Arrays.copyOfRange(strings, 1, strings.length);
             }
@@ -206,7 +185,7 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
             return Collections.emptyList();
         }
 
-        return command.onTabComplete(sender,new CommandArgs(strings));
+        return commandNode.getCommand().onTabComplete(sender,new CommandArgs(strings));
     }
 
 }

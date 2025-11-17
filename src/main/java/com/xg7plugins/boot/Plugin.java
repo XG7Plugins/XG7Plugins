@@ -16,6 +16,11 @@ import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.help.HelpMessenger;
 import com.xg7plugins.managers.ManagerRegistry;
+import com.xg7plugins.modules.xg7geyserforms.forms.Form;
+import com.xg7plugins.modules.xg7holograms.hologram.Hologram;
+import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
+import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
+import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
 import lombok.*;
@@ -76,6 +81,7 @@ public abstract class Plugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        debug.loading("Enabling " + environmentConfig.getCustomPrefix() + "...");
         if (pluginSetup.onEnableDraw().length != 0) {
             Arrays.stream(pluginSetup.onEnableDraw()).forEach(Bukkit.getConsoleSender()::sendMessage);
             Bukkit.getConsoleSender().sendMessage("Plugin version: " + this.getDescription().getVersion());
@@ -94,7 +100,7 @@ public abstract class Plugin extends JavaPlugin {
         Bukkit.getScheduler().runTask(this, () -> {
             if (!ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("anti-tab", false)) return;
 
-            debug.loading("Loading anti-tab feature...");
+            debug.info("Loading anti-tab feature...");
 
             XG7PluginsAPI.packetEventManager().registerListeners(this, XG7PluginsAPI.commandManager(this).getAntiTab());
         });
@@ -152,7 +158,6 @@ public abstract class Plugin extends JavaPlugin {
     @Override
     public void onDisable() {
         debug.loading("Disabling " + environmentConfig.getCustomPrefix() + "...");
-
     }
 
     public <T extends EnvironmentConfig> T getEnvironmentConfig() {
@@ -243,6 +248,20 @@ public abstract class Plugin extends JavaPlugin {
      * @return The plugin's PlaceholderAPI expansion
      */
     public Object loadPlaceholderExpansion() {
+        return null;
+    }
+
+
+    public List<BasicMenu> loadMenus() {
+        return null;
+    }
+    public List<Form<?,?>> loadForms() {
+        return null;
+    }
+    public List<Score> loadScores() {
+        return null;
+    }
+    public List<Hologram<?>> loadHolograms() {
         return null;
     }
 

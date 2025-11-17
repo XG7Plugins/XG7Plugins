@@ -4,6 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.modules.Module;
+import com.xg7plugins.modules.ModuleManager;
 import com.xg7plugins.modules.xg7scores.organizer.TabListSorter;
 import com.xg7plugins.modules.xg7scores.organizer.TabListRule;
 import com.xg7plugins.modules.xg7scores.organizer.impl.NoPermRule;
@@ -20,8 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 public class XG7Scores implements Module {
 
-    @Getter
-    private static XG7Scores instance;
+    private boolean enabled;
 
     private final ConcurrentHashMap<String, Score> scores = new ConcurrentHashMap<>();
 
@@ -31,8 +31,6 @@ public class XG7Scores implements Module {
 
     @Override
     public void onInit() {
-
-        instance = this;
 
         XG7Plugins.getInstance().getDebug().loading("XG7Scores initialized");
 
@@ -58,7 +56,7 @@ public class XG7Scores implements Module {
 
     @Override
     public List<TimerTask> loadTasks() {
-        return Arrays.asList(new ScoreTimerTask(this), new TabListSorterTask());
+        return Arrays.asList(new ScoreTimerTask(this), new TabListSorterTask(this));
     }
 
     @Override
@@ -71,12 +69,18 @@ public class XG7Scores implements Module {
         return "XG7Scores";
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     public void registerScore(Score score) {
         if (score == null) return;
         scores.put(score.getId(), score);
     }
-    public void registerScores(Score... scores) {
-        Arrays.stream(scores).forEach(this::registerScore);
+    public void registerScores(List<Score> scores) {
+        if (scores == null) return;
+        scores.forEach(this::registerScore);
     }
 
     public void unregisterScore(Score score) {
@@ -104,10 +108,10 @@ public class XG7Scores implements Module {
     }
 
     public static void loadScores(Score... scores) {
-        XG7Scores.getInstance().registerScores(scores);
+        XG7PluginsAPI.scores().registerScores(Arrays.asList(scores));
     }
 
     public static void unloadScore(String id) {
-        XG7Scores.getInstance().unregisterScore(id);
+        XG7PluginsAPI.scores().unregisterScore(id);
     }
 }

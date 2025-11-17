@@ -3,18 +3,24 @@ package com.xg7plugins.commands;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.setup.PluginSetup;
 import com.xg7plugins.commands.executors.MainCommand;
-import com.xg7plugins.commands.executors.PluginCommandExecutor;
-import com.xg7plugins.commands.setup.*;
 import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.managers.Manager;
+import com.xg7plugins.commands.executors.PluginCommandExecutor;
+import com.xg7plugins.commands.node.CommandConfig;
+import com.xg7plugins.commands.node.CommandNode;
+import com.xg7plugins.commands.utils.CommandArgs;
+import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.reflection.ReflectionClass;
+import com.xg7plugins.utils.reflection.ReflectionMethod;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.Getter;
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
-
+import org.bukkit.command.CommandMap;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 
 import java.util.*;
 
@@ -27,7 +33,7 @@ import java.util.*;
 public class CommandManager implements Manager {
 
     private final Plugin plugin;
-    private final Map<String, Command> mappedCommands = new HashMap<>();
+    private final Map<String, CommandNode> commandNodeMap = new HashMap<>();
     private final List<Command> commandList = new ArrayList<>();
     private final PluginCommandExecutor executor;
     private final AntiTab antiTab;
@@ -50,7 +56,6 @@ public class CommandManager implements Manager {
         CommandMap commandMap = ReflectionObject.of(Bukkit.getServer()).getField("commandMap");
         PluginSetup plConfig = plugin.getClass().getAnnotation(PluginSetup.class);
 
-        // Registrar comando principal
         PluginCommand mainCommand = (PluginCommand) ReflectionClass.of(PluginCommand.class)
                 .getConstructor(String.class, org.bukkit.plugin.Plugin.class)
                 .newInstance(plConfig.mainCommandName(), plugin)
@@ -62,75 +67,156 @@ public class CommandManager implements Manager {
         commandMap.register(plConfig.mainCommandName(), mainCommand);
 
         MainCommand mainPluginCommand = new MainCommand(plugin);
+        CommandNode mainCommandNode = new CommandNode(mainPluginCommand, plConfig.mainCommandName());
 
-        this.mappedCommands.put(plConfig.mainCommandName(), mainPluginCommand);
-        for (String alias : plConfig.mainCommandAliases()) this.mappedCommands.put(alias, mainPluginCommand);
+        ReflectionMethod method = ReflectionObject.of(mainPluginCommand).getMethod("onCommand", CommandSender.class, CommandArgs.class);
 
-        commands.forEach(command -> {
-            if (command == null) return;
+        mainCommandNode.setCommandMethod(method);
+
+        this.commandNodeMap.put(plConfig.mainCommandName(), mainCommandNode);
+        for (String alias : plConfig.mainCommandAliases()) this.commandNodeMap.put(alias, mainCommandNode);
+
+        for (Command command : commands) {
+            if (command == null) continue;
 
             if (!command.getClass().isAnnotationPresent(CommandSetup.class)) {
                 plugin.getDebug().severe("Commands must be annotated with @CommandSetup interface!!");
-                return;
+                continue;
             }
 
-            CommandSetup commandSetup = command.getCommandSetup();
+            CommandSetup setup = command.getCommandSetup();
 
-            if (!commandSetup.isEnabled().configName().isEmpty()) {
-                ConfigFile config = ConfigFile.of(commandSetup.isEnabled().configName(), plugin);
-
-                boolean invert = commandSetup.isEnabled().invert();
-                boolean enabled = config != null && config.root().get(commandSetup.isEnabled().path(), false);
-
+            if (!setup.isEnabled().configName().isEmpty()) {
+                ConfigFile config = ConfigFile.of(setup.isEnabled().configName(), plugin);
+                boolean invert = setup.isEnabled().invert();
+                boolean enabled = config != null && config.root().get(setup.isEnabled().path(), false);
                 if (invert == enabled) {
-                    plugin.getDebug().info("Command " + commandSetup.name() + " is disabled by configuration");
-                    return;
+                    plugin.getDebug().info("Command " + setup.name() + " is disabled by configuration");
+                    continue;
                 }
             }
 
+            ConfigSection cfg = ConfigFile.of("commands", plugin).root();
 
-            ConfigSection commandConfig = ConfigFile.of("commands", plugin).root();
-
-            List<String> configAliases = commandConfig
-                    .getList(commandSetup.name(), String.class)
-                    .orElse(new ArrayList<>());
-
-            if (!commandConfig.contains(commandSetup.name())) {
-                plugin.getDebug().warn("Command " + commandSetup.name() + " not found in commands.yml - skipping registration");
-                return;
+            if (!cfg.contains(setup.name())) {
+                plugin.getDebug().warn("Command " + setup.name() + " not found in commands.yml - skipping registration");
+                continue;
             }
 
-            String fullCommandName = plConfig.mainCommandName() + commandSetup.name();
+            List<String> aliases = cfg.getList(setup.name(), String.class).orElse(Collections.emptyList());
 
+            String fullName = plConfig.mainCommandName() + setup.name();
             PluginCommand pluginCommand = (PluginCommand) ReflectionClass.of(PluginCommand.class)
                     .getConstructor(String.class, org.bukkit.plugin.Plugin.class)
-                    .newInstance(fullCommandName, plugin)
+                    .newInstance(fullName, plugin)
                     .getObject();
 
-            pluginCommand.setAliases(configAliases);
+            pluginCommand.setAliases(aliases);
             pluginCommand.setExecutor(executor);
-            pluginCommand.setDescription(commandSetup.description());
-            pluginCommand.setUsage(commandSetup.syntax());
+            pluginCommand.setDescription(setup.description());
+            pluginCommand.setUsage(setup.syntax());
             pluginCommand.setTabCompleter(executor);
-
-            this.mappedCommands.putIfAbsent(fullCommandName, command);
-
             commandMap.register(plConfig.mainCommandName(), pluginCommand);
 
-            for (String alias : configAliases) {
-                if (this.mappedCommands.containsKey(alias)) continue;
-                this.mappedCommands.put(alias, command);
-            }
-
-            this.commandList.add(command);
-
-            plugin.getDebug().info("Registered command: " + fullCommandName + " with aliases: " + configAliases);
-        });
+            plugin.getDebug().info("Registered command: " + fullName + " with aliases: " + aliases);
+            registerCommandNodes(command);
+            commandList.add(command);
+        }
 
         plugin.getDebug().loading("Successfully loaded " + commands.size() + " Commands!");
     }
 
+
+    private void registerCommandNodes(Command command) {
+        CommandSetup setup = command.getCommandSetup();
+
+        String rootName = command.getPlugin().getPluginSetup().mainCommandName() + setup.name();
+        CommandNode root = new CommandNode(command, setup.name());
+        ConfigSection cfg = ConfigFile.of("commands", plugin).root();
+
+
+        List<String> aliases = cfg.getList(setup.name(), String.class).orElse(Collections.emptyList());
+
+        ReflectionObject.of(command).getMethods().stream()
+                .filter(m -> m.hasAnnotation(CommandConfig.class))
+                .forEach(method -> {
+                    CommandConfig exec = method.getAnnotation(CommandConfig.class);
+                    String nodeName = exec.name();
+
+                    if (nodeName.equals("root")) {
+                        root.setCommandMethod(method);
+                        return;
+                    }
+
+                    CommandNode child = new CommandNode(command, nodeName);
+                    child.setCommandMethod(method);
+
+                    if (!exec.parent().isEmpty()) {
+                        Pair<String, CommandNode> parentPair = findNodePathByNameAndDepth(root,
+                                exec.parent(), exec.depth() - 1, 1, "");
+
+                        if (parentPair == null) return;
+
+                        CommandNode parent = parentPair.getSecond();
+
+                        parent.addChild(child);
+
+                        String fullPath = parentPair.getFirst() + "_" + nodeName;
+
+                        if (!cfg.contains(fullPath)) {
+                            plugin.getDebug().warn("Subcommand " + nodeName + " of " + setup.name() + " not found in commands.yml - skipping registration");
+                            return;
+                        }
+
+                        List<String> childAliases = cfg.getList(fullPath, String.class).orElse(Collections.emptyList());
+                        childAliases.forEach(alias -> parent.mapChild(alias, child));
+
+                    } else {
+
+                        if (!cfg.contains(setup.name() + "_" + nodeName)) {
+                            plugin.getDebug().warn("Subcommand " + nodeName + " of " + setup.name() + " not found in commands.yml - skipping registration");
+                            return;
+                        }
+
+                        root.addChild(child);
+                        List<String> childAliases = cfg
+                                .getList(setup.name() + "_" + nodeName, String.class)
+                                .orElse(Collections.emptyList());
+
+                        childAliases.forEach(alias -> root.mapChild(alias, child));
+                    }
+                });
+
+        commandNodeMap.putIfAbsent(rootName, root);
+        for (String alias : aliases)
+            commandNodeMap.putIfAbsent(alias, root);
+    }
+
+
+    private Pair<String, CommandNode> findNodePathByNameAndDepth(
+            CommandNode current, String name, int depth, int currentDepth, String path) {
+
+        String currentPath = path.isEmpty() ? current.getName() : path + "_" + current.getName();
+
+        if (current.getName().equalsIgnoreCase(name) && currentDepth == depth) return Pair.of(currentPath, current);
+
+        for (CommandNode child : current.getChildren()) {
+
+            if (child.getName().equalsIgnoreCase(name)) return Pair.of(currentPath + "_" + child.getName(), child);
+
+            Pair<String, CommandNode> found = findNodePathByNameAndDepth(child, name, depth, currentDepth + 1, currentPath);
+            if (found != null) return found;
+        }
+
+        return null;
+    }
+
+
     public Command getCommand(String name) {
-        return mappedCommands.get(name);
+        return commandList.stream().filter(c -> c.getCommandSetup().name().equals(name)).findFirst().orElse(null);
+    }
+
+    public CommandNode getRootCommandNode(String name) {
+        return commandNodeMap.get(name);
     }
 }

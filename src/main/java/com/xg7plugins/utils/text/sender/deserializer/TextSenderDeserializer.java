@@ -1,12 +1,11 @@
 package com.xg7plugins.utils.text.sender.deserializer;
 
 import com.xg7plugins.utils.Pair;
-import com.xg7plugins.utils.text.sender.ActionBarSender;
-import com.xg7plugins.utils.text.sender.CenterSender;
 import com.xg7plugins.utils.text.sender.TextSender;
 import com.xg7plugins.utils.text.sender.deserializer.tag.ActionTag;
 import com.xg7plugins.utils.text.sender.deserializer.tag.CenterTag;
 import com.xg7plugins.utils.text.sender.deserializer.tag.SenderTag;
+import com.xg7plugins.utils.text.sender.deserializer.tag.TitleTag;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -20,6 +19,7 @@ public class TextSenderDeserializer {
     static {
         registerTag(new CenterTag());
         registerTag(new ActionTag());
+        registerTag(new TitleTag());
     }
 
     public static void registerTag(SenderTag sender) {

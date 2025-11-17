@@ -4,15 +4,13 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.setup.Collaborator;
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.impl.CloseInventoryItem;
-import com.xg7plugins.modules.xg7menus.item.impl.SkullItem;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
-import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.PagedMenu;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.item.impl.SkullItem;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -37,21 +35,21 @@ public class CollaboratorsMenu extends PagedMenu {
     }
 
     @Override
-    public List<Item> pagedItems(Player player) {
+    public List<InventoryItem> pagedItems(Player player) {
 
         Collaborator[] collaborators = plugin.getPluginSetup().collaborators();
 
-        List<Item> items = new ArrayList<>();
+        List<InventoryItem> items = new ArrayList<>();
 
         for (Collaborator collaborator : collaborators) {
-            items.add(SkullItem.newSkull().setSkinByUUID(UUID.fromString(collaborator.uuid())).name(collaborator.name()).lore(collaborator.role()));
+            items.add(SkullItem.newSkull().setSkinByUUID(UUID.fromString(collaborator.uuid())).name(collaborator.name()).lore(collaborator.role()).toInventoryItem(-1, true));
         }
 
         return items;
     }
 
     @Override
-    public List<Item> getItems(Player player) {
-        return Collections.singletonList(CloseInventoryItem.get(guiOrigin.getMenu("index")).slot((getMenuConfigs().getRows() - 1) * 9));
+    public List<InventoryItem> getItems(Player player) {
+        return Collections.singletonList(CloseInventoryItem.get(Slot.fromSlot((getMenuConfigs().getRows() - 1) * 9), guiOrigin.getMenu("index")));
     }
 }

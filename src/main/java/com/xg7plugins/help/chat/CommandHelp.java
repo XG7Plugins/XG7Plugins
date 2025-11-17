@@ -2,8 +2,10 @@ package com.xg7plugins.help.chat;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.commands.node.CommandNode;
 import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
+import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.text.component.ClickEvent;
 import com.xg7plugins.utils.text.component.TextComponentBuilder;
@@ -19,12 +21,12 @@ public class CommandHelp implements HelpChatPage {
     @Getter
     private final Plugin plugin;
 
-    private final List<Command> commands;
+    private final List<CommandNode> commands;
 
     private final int page;
     private final int maxPage;
 
-    public CommandHelp(Plugin plugin, List<Command> commands, int page, int maxPage) {
+    public CommandHelp(Plugin plugin, List<CommandNode> commands, int page, int maxPage) {
         this.plugin = plugin;
         this.commands = commands;
         this.page = page;
@@ -41,8 +43,8 @@ public class CommandHelp implements HelpChatPage {
                 .replace("page", (page + 1) + "")
                 .replace("max_page", maxPage + ""));
 
-        for (Command command : commands) {
-            Item commandIcon = command.getIcon();
+        for (CommandNode command : commands) {
+            Item commandIcon = Item.commandIcon(command.getCommand().getCommandSetup().iconMaterial(), command);
 
             ItemStack itemStack = commandIcon.getItemFor(sender, plugin);
 
@@ -53,7 +55,7 @@ public class CommandHelp implements HelpChatPage {
                                     itemStack.getItemMeta().getLore().get(2) + "\n" +
                                     itemStack.getItemMeta().getLore().get(3)
                     ).clickEvent(
-                            ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, command.getCommandSetup().syntax())
+                            ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, command.getCommand().getCommandSetup().syntax())
                     ).build()
             );
         }

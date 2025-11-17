@@ -1,14 +1,16 @@
 package com.xg7plugins.commands.setup;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.CommandState;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.commands.utils.CommandArgs;
+import com.xg7plugins.commands.CommandManager;
+import com.xg7plugins.commands.node.CommandConfig;
+import com.xg7plugins.commands.node.CommandNode;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -19,26 +21,6 @@ import java.util.stream.Collectors;
 public interface Command {
 
     /**
-     * Gets the list of sub-commands associated with this command.
-     *
-     * @return A list of sub-commands, empty by default
-     */
-    default List<Command> getSubCommands() {
-        return new ArrayList<>();
-    }
-
-    /**
-     * Handles the execution of the command.
-     * By default, sends a syntax error message to the sender.
-     *
-     * @param sender The command sender
-     * @param args   The command arguments
-     */
-    default CommandState onCommand(CommandSender sender, CommandArgs args) {
-        return CommandState.syntaxError(getCommandSetup().syntax());
-    }
-
-    /**
      * Provides tab completion suggestions for the command.
      *
      * @param sender The command sender requesting tab completion
@@ -46,25 +28,25 @@ public interface Command {
      * @return A list of tab completion suggestions, empty by default
      */
     default List<String> onTabComplete(CommandSender sender, CommandArgs args) {
-        if (args.len() == 1 && getSubCommands() != null && !getSubCommands().isEmpty()) {
 
-            return getSubCommands().stream()
-                        .map(Command::getCommandSetup)
-                        .filter(commandConfigurations -> sender.hasPermission(commandConfigurations.permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass"))
-                        .map(CommandSetup::name)
-                        .collect(Collectors.toList()
-                    );
+        CommandManager manager = XG7Plugins.getInstance().getManagerRegistry().getManager(CommandManager.class);
+
+        CommandNode chosen = manager.getRootCommandNode(getPlugin().getPluginSetup().mainCommandName() + getCommandSetup().name());
+
+        for (int i = 0; i < args.len(); i++) {
+            String sub = args.get(i, String.class);
+            CommandNode child = chosen.getChild(sub);
+
+            if (child == null) break;
+
+            chosen = child;
         }
 
-        return Collections.emptyList();
+        return chosen.getMappedChildren().entrySet().stream()
+                .filter(c -> sender.hasPermission(c.getValue().getCommandMethod().getAnnotation(CommandConfig.class).permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass"))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
     }
-
-    /**
-     * Gets the icon representation of this command for help systems.
-     *
-     * @return The item representing this command's icon
-     */
-    Item getIcon();
 
     /**
      * Retrieves the command configuration from the CommandSetup annotation.

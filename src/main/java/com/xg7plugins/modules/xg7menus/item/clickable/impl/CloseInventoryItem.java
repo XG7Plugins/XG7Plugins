@@ -1,6 +1,7 @@
 package com.xg7plugins.modules.xg7menus.item.clickable.impl;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.clickable.ClickableItem;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
@@ -9,11 +10,11 @@ public class CloseInventoryItem extends ClickableItem {
 
     private final Menu backMenu;
 
-    public CloseInventoryItem() {
-        this(null);
+    public CloseInventoryItem(Slot slot) {
+        this(slot, null);
     }
-    public CloseInventoryItem(Menu backMenu) {
-        super(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR).parseItem());
+    public CloseInventoryItem(Slot slot, Menu backMenu) {
+        super(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR).parseItem(), slot);
         this.backMenu = backMenu;
     }
 
@@ -26,11 +27,11 @@ public class CloseInventoryItem extends ClickableItem {
         event.getHolder().getPlayer().closeInventory();
     }
 
-    public static CloseInventoryItem get() {
-        return new CloseInventoryItem();
+    public static CloseInventoryItem get(Slot slot) {
+        return new CloseInventoryItem(slot);
     }
 
-    public static CloseInventoryItem get(Menu backMenu) {
-        return new CloseInventoryItem(backMenu);
+    public static CloseInventoryItem get(Slot slot, Menu backMenu) {
+        return new CloseInventoryItem(slot, backMenu);
     }
 }

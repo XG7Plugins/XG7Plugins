@@ -15,20 +15,20 @@ public class ScoreListener implements Listener {
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
-        XG7Scores.getInstance().removePlayer(event.getPlayer());
+        XG7PluginsAPI.scores().removePlayer(event.getPlayer());
 
         if (!ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("organize-tablist", true)) return;
 
-        XG7Scores.getInstance().getOrganizer().removePlayer(event.getPlayer());
-        XG7Scores.getInstance().getOrganizer().removeFromUpdateList(event.getPlayer().getUniqueId());
+        XG7PluginsAPI.scores().getOrganizer().removePlayer(event.getPlayer());
+        XG7PluginsAPI.scores().getOrganizer().removeFromUpdateList(event.getPlayer().getUniqueId());
     }
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
-        XG7Scores.getInstance().addPlayer(event.getPlayer());
+        XG7PluginsAPI.scores().addPlayer(event.getPlayer());
 
         if (!ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("organize-tablist", true)) return;
 
-        TabListSorter sorter = XG7Scores.getInstance().getOrganizer();
+        TabListSorter sorter = XG7PluginsAPI.scores().getOrganizer();
 
         sorter.createAllTeamsForPlayer(event.getPlayer());
         sorter.addPlayer(event.getPlayer());

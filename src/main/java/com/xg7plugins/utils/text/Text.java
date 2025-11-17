@@ -21,6 +21,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -141,6 +142,19 @@ public class Text {
     public final Text append(Text text) {
         this.text = this.text + text.getText();
         return this;
+    }
+
+    public List<Text> split(String regex) {
+
+        List<Text> texts = new ArrayList<>();
+
+        String[] split = getText().split(regex);
+
+        for (String s : split) {
+            texts.add(new Text(s));
+        }
+
+        return texts;
     }
 
     /**

@@ -4,23 +4,18 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigSection;
-import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.editor.InventoryShaper;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
-import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.impl.ChangePageItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.impl.CloseInventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
-import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.PagedMenu;
 import com.xg7plugins.tasks.plugin_tasks.TPSCalculator;
-import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Pair;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -42,20 +37,20 @@ public class TaskMenu extends PagedMenu {
                 ), Slot.of(2,2), Slot.of(5,8));
     }
     @Override
-    public List<Item> pagedItems(Player player) {
+    public List<InventoryItem> pagedItems(Player player) {
 
         Collection<TimerTask> tasks = XG7PluginsAPI.taskManager().getTimerTaskMap().values();
 
-        return tasks.stream().map(t -> new TaskItem(player, t)).collect(Collectors.toList());
+        return tasks.stream().map(t -> new TaskItem(player, t, null)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Item> getItems(Player player) {
+    public List<InventoryItem> getItems(Player player) {
         InventoryShaper editor = new InventoryShaper(getMenuConfigs());
 
-        editor.setItem(Slot.fromSlot(45), ChangePageItem.nextPageItem().name("lang:[go-back-item]"));
-        editor.setItem(Slot.fromSlot(48), CloseInventoryItem.get().name("lang:[close-item]"));
-        editor.setItem(Slot.fromSlot(53), ChangePageItem.previousPageItem().name("lang:[go-next-item]"));
+        editor.setItem(ChangePageItem.nextPageItem(Slot.fromSlot(45)).name("lang:[go-back-item]"));
+        editor.setItem(CloseInventoryItem.get(Slot.fromSlot(48)).name("lang:[close-item]"));
+        editor.setItem(ChangePageItem.previousPageItem(Slot.fromSlot(53)).name("lang:[go-next-item]"));
 
         return editor.getItems();
     }
@@ -67,7 +62,7 @@ public class TaskMenu extends PagedMenu {
         InventoryUpdater updater = holder.getInventoryUpdater();
 
         updater.setItem(Slot.fromSlot(50),
-                Item.from(Material.PAPER)
+                InventoryItem.from(Material.PAPER)
                         .name(" ")
                         .lore(lang.getList("tasks-menu.notes", String.class).orElse(Collections.emptyList()))
                         .setBuildPlaceholders(

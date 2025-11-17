@@ -3,21 +3,21 @@ package com.xg7plugins.menus.tasks;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
-import com.xg7plugins.commands.CommandState;
+import com.xg7plugins.commands.utils.CommandState;
 import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.ClickableItem;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.PagedMenu;
-import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.MenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
@@ -27,13 +27,13 @@ public class TaskItem extends ClickableItem {
 
     private final TimerTask task;
 
-    public TaskItem(Player player, TimerTask task) {
-        super(null);
+    public TaskItem(Player player, TimerTask task, Slot slot) {
+        super(null, slot);
         this.task = task;
 
         ConfigSection lang = XG7PluginsAPI.langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getSecond().getLangConfiguration();
 
-        Item builder = Item.from(XMaterial.REPEATER.parseMaterial());
+        InventoryItem builder = Item.from(XMaterial.REPEATER).toInventoryItem(slot);
         builder.name("&e" + task.getId());
         builder.lore(lang.getList("tasks-menu.task-item", String.class).orElse(Collections.emptyList()));
 
@@ -62,7 +62,7 @@ public class TaskItem extends ClickableItem {
 
         if (event.getMenuAction().isRightClick()) {
 
-            updater.setItem(event.getClickedSlot(), new TaskItem(player, task));
+            updater.setItem(new TaskItem(player, task, event.getClickedSlot()));
 
             if (task.getTaskState() == TaskState.RUNNING) {
 

@@ -1,8 +1,22 @@
 
 lang: ["xg7pllang", "lang", "7pllang", "langs", "7pllangs"]
 reload: ["xg7plreload", "reloadpl", "7plrl", "7rl", "rlpl"]
-tasks: ["xg7pltasks", "tasks", "7pltasks"]
-
 comment: [ "xg7plcomment", "plcomment", "comment", "7plcomment" ]
 
-config-version: 1.1
+tasks: ["xg7pltasks", "tasks", "7pltasks"]
+
+# /tasks subcommands
+tasks_delete: ["del"]
+tasks_restart: []
+tasks_stop: []
+tasks_see: []
+
+
+test: ["test"]
+test_move: []
+test_teleport: ["tp"]
+test_skin: []
+test_equip: []
+test_look: []
+
+config-version: 1.2

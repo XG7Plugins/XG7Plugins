@@ -1,5 +1,6 @@
 package com.xg7plugins.modules.xg7menus.item.clickable.impl;
 
+import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.clickable.ClickableItem;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
@@ -10,13 +11,13 @@ public class ChangePageItem extends ClickableItem {
 
     private final Orientation orientation;
 
-    public ChangePageItem(ItemStack itemStack, Orientation orientation) {
-        super(itemStack);
+    public ChangePageItem(Slot slot, ItemStack itemStack, Orientation orientation) {
+        super(itemStack, slot);
         this.orientation = orientation;
     }
 
-    public ChangePageItem(Orientation orientation) {
-        super(new ItemStack(Material.ARROW));
+    public ChangePageItem(Slot slot, Orientation orientation) {
+        super(new ItemStack(Material.ARROW), slot);
         this.orientation = orientation;
     }
 
@@ -42,18 +43,18 @@ public class ChangePageItem extends ClickableItem {
         NEXT, PREVIOUS
     }
 
-    public static ChangePageItem nextPageItem() {
-        return new ChangePageItem(Orientation.NEXT);
+    public static ChangePageItem nextPageItem(Slot slot) {
+        return new ChangePageItem(slot, Orientation.NEXT);
     }
-    public static ChangePageItem previousPageItem() {
-        return new ChangePageItem(Orientation.PREVIOUS);
+    public static ChangePageItem previousPageItem(Slot slot) {
+        return new ChangePageItem(slot, Orientation.PREVIOUS);
     }
 
-    public static ChangePageItem nextPageItem(ItemStack itemStack) {
-        return new ChangePageItem(itemStack, Orientation.NEXT);
+    public static ChangePageItem nextPageItem(Slot slot, ItemStack itemStack) {
+        return new ChangePageItem(slot, itemStack, Orientation.NEXT);
     }
-    public static ChangePageItem previousPageItem(ItemStack itemStack) {
-        return new ChangePageItem(itemStack, Orientation.PREVIOUS);
+    public static ChangePageItem previousPageItem(Slot slot, ItemStack itemStack) {
+        return new ChangePageItem(slot, itemStack, Orientation.PREVIOUS);
     }
 
 }

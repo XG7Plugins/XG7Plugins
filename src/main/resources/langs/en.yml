@@ -8,6 +8,7 @@ bedrock-icon: "URL, https://cdn.britannica.com/33/4833-050-F6E415FE/Flag-United-
 plugin-update-available: "&aA new version of &e%plugin% &ais available! New version: &7%version%&r"
 
 command-errors:
+  internal-error: "&cAn internal error was occurred while executing this command!"
   syntax-error: "&cYou are using the command incorrectly! The right way is &7%syntax%"
   player-not-found: "&cThis player hasn't found or never played before!"
   no-permission: "&cYou don't have permission to perform this!"

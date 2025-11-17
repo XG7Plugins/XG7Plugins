@@ -3,7 +3,7 @@ package com.xg7plugins.modules.xg7menus.simple;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 
 public class SimpleMenu extends Menu {
 
-    private List<Item> items = new ArrayList<>();
+    private List<InventoryItem> items = new ArrayList<>();
 
     private Consumer<ActionEvent> clickConsumer = e -> {};
     private Consumer<DragEvent> dragConsumer = e -> {};
@@ -30,7 +30,7 @@ public class SimpleMenu extends Menu {
         super(menuConfigs);
     }
 
-    public SimpleMenu(MenuConfigurations menuConfigs, List<Item> items, Consumer<ActionEvent> clickConsumer, Consumer<DragEvent> dragConsumer, Consumer<MenuEvent> openEventConsumer, Consumer<MenuEvent> closeEventConsumer, BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer, Consumer<BasicMenuHolder> repeatingUpdateConsumer) {
+    public SimpleMenu(MenuConfigurations menuConfigs, List<InventoryItem> items, Consumer<ActionEvent> clickConsumer, Consumer<DragEvent> dragConsumer, Consumer<MenuEvent> openEventConsumer, Consumer<MenuEvent> closeEventConsumer, BiConsumer<BasicMenuHolder, MenuUpdateActions> updateConsumer, Consumer<BasicMenuHolder> repeatingUpdateConsumer) {
         super(menuConfigs);
         this.items = items;
         this.clickConsumer = clickConsumer;
@@ -42,7 +42,7 @@ public class SimpleMenu extends Menu {
     }
 
     @Override
-    public List<Item> getItems(Player player) {
+    public List<InventoryItem> getItems(Player player) {
         return items;
     }
 

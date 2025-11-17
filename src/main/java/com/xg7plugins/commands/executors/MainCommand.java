@@ -3,13 +3,12 @@ package com.xg7plugins.commands.executors;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.CommandState;
-import com.xg7plugins.commands.setup.CommandArgs;
+import com.xg7plugins.commands.utils.CommandState;
 import com.xg7plugins.commands.setup.Command;
+import com.xg7plugins.commands.utils.CommandArgs;
 import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.config.file.ConfigFile;
-import com.xg7plugins.config.file.ConfigSection;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.commands.node.CommandConfig;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
 
@@ -39,6 +38,7 @@ public class MainCommand implements Command {
 
     private final Plugin plugin;
 
+    @CommandConfig
     public CommandState onCommand(CommandSender sender, CommandArgs args) {
         if (args.len() > 1){
             plugin.getHelpMessenger().sendChat(sender, args.get(1, String.class));
@@ -47,11 +47,6 @@ public class MainCommand implements Command {
         plugin.getHelpMessenger().send(sender);
 
         return CommandState.FINE;
-    }
-
-    @Override
-    public Item getIcon() {
-        return null;
     }
 
     @Override

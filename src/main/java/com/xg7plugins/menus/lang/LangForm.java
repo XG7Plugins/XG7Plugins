@@ -114,8 +114,8 @@ public class LangForm extends SimpleForm {
 
             Text.sendTextFromLang(player, plugin, "lang-menu.toggle-success");
 
-            XG7Scores.getInstance().removePlayer(player);
-            XG7Scores.getInstance().addPlayer(player);
+            XG7PluginsAPI.scores().removePlayer(player);
+            XG7PluginsAPI.scores().addPlayer(player);
 
             send(player);
 

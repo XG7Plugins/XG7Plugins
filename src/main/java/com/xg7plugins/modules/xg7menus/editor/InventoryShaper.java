@@ -1,8 +1,9 @@
 package com.xg7plugins.modules.xg7menus.editor;
 
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
+import com.xg7plugins.utils.item.Item;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.stream.IntStream;
 public class InventoryShaper implements InventoryEditor {
 
     private final MenuConfigurations menuConfigurations;
-    private final HashMap<Slot, Item> items = new HashMap<>();
+    private final HashMap<Slot, InventoryItem> items = new HashMap<>();
 
     @Override
     public void setItem(Slot slot, Item item) {
@@ -23,7 +24,7 @@ public class InventoryShaper implements InventoryEditor {
             items.remove(slot);
         } else {
             try {
-                items.put(slot, item.clone().slot(slot));
+                items.put(slot, item.clone().toInventoryItem(slot));
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
@@ -31,17 +32,19 @@ public class InventoryShaper implements InventoryEditor {
     }
 
     @Override
-    public void addItem(Item item) {
+    public void setItem(InventoryItem item) {
         if (item == null) return;
-        if (item.getSlot() >= 0) {
-            setItem(Slot.fromSlot(item.getSlot()), item);
-            return;
-        }
-        items.put(Slot.fromSlot(items.size()), item);
+        items.put(item.getSlot(), item);
     }
 
     @Override
-    public Item getItem(Slot slot) {
+    public void addItem(Item item) {
+        if (item == null) return;
+        items.put(Slot.fromSlot(items.size()), item.toInventoryItem(items.size()));
+    }
+
+    @Override
+    public InventoryItem getItem(Slot slot) {
         return items.get(slot);
     }
 
@@ -85,7 +88,7 @@ public class InventoryShaper implements InventoryEditor {
 
     @Override
     public void fillRow(int row, Item item) {
-        IntStream.range(0, 9).forEach(i -> items.put(Slot.of(row, i + 1), item));
+        IntStream.range(0, 9).forEach(i -> setItem(Slot.of(row, i + 1), item));
     }
 
     @Override
@@ -108,7 +111,7 @@ public class InventoryShaper implements InventoryEditor {
 
     @Override
     public void fillCol(int col, Item item) {
-        IntStream.range(0, menuConfigurations.getRows()).forEach(i -> items.put(Slot.of(i + 1, col), item));
+        IntStream.range(0, menuConfigurations.getRows()).forEach(i -> setItem(Slot.of(i + 1, col), item));
     }
 
     @Override
@@ -190,7 +193,7 @@ public class InventoryShaper implements InventoryEditor {
     }
 
     @Override
-    public List<Item> getItems() {
+    public List<InventoryItem> getItems() {
         return new ArrayList<>(items.values());
     }
 }

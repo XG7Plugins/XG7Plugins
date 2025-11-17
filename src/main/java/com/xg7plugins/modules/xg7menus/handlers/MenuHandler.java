@@ -7,10 +7,9 @@ import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.events.DragEvent;
 import com.xg7plugins.modules.xg7menus.events.MenuEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.MenuAction;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.MenuHolder;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
@@ -41,7 +40,6 @@ public class MenuHandler implements Listener {
         holder.getMenu().onOpen(menuEvent);
 
         event.setCancelled(menuEvent.isCancelled());
-
 
     }
 
@@ -74,7 +72,7 @@ public class MenuHandler implements Listener {
 
         if (holder.getMenu().getMenuConfigs().allowedActions() != null) event.setCancelled(!holder.getMenu().getMenuConfigs().allowedActions().contains(menuAction));
 
-        ActionEvent actionEvent = new ActionEvent(holder, menuAction, event.getRawSlot(), slotClicked, Item.from(event.getCurrentItem()).slot(slotClicked), event.isCancelled());
+        ActionEvent actionEvent = new ActionEvent(holder, menuAction, event.getRawSlot(), slotClicked, InventoryItem.from(event.getCurrentItem()).toInventoryItem(slotClicked), event.isCancelled());
 
         holder.getMenu().onClick(actionEvent);
 
@@ -90,7 +88,7 @@ public class MenuHandler implements Listener {
 
         MenuHolder holder = (MenuHolder) inventory.getHolder();
 
-        List<Item> draggedItems = event.getNewItems().entrySet().stream().map((e) -> Item.from(e.getValue()).slot(e.getKey())).collect(Collectors.toList());
+        List<InventoryItem> draggedItems = event.getNewItems().entrySet().stream().map((e) -> InventoryItem.from(e.getValue()).toInventoryItem(e.getKey())).collect(Collectors.toList());
 
         Set<Slot> slotsClicked = event.getInventorySlots().stream().map(Slot::fromSlot).collect(Collectors.toSet());
         Set<Integer> rawSlots = event.getRawSlots();

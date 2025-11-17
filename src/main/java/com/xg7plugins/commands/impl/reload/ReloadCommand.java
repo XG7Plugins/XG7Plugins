@@ -4,11 +4,11 @@ import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.commands.node.CommandConfig;
 import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.commands.setup.CommandArgs;
+import com.xg7plugins.commands.utils.CommandArgs;
 import com.xg7plugins.commands.setup.CommandSetup;
-import com.xg7plugins.commands.CommandState;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.commands.utils.CommandState;
 import com.xg7plugins.utils.Debug;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
         description = "Reloads a plugin",
         permission = "xg7plugins.command.reload",
         syntax = "/xg7plugins reload (plugin) (cause)",
+        iconMaterial = XMaterial.FEATHER,
         pluginClass = XG7Plugins.class
 )
 public class ReloadCommand implements Command {
@@ -34,7 +35,7 @@ public class ReloadCommand implements Command {
         return XG7Plugins.getInstance();
     }
 
-    @Override
+    @CommandConfig
     public CommandState onCommand(CommandSender sender, CommandArgs args) {
 
         if (args.len() == 0) {
@@ -102,8 +103,4 @@ public class ReloadCommand implements Command {
         return Command.super.onTabComplete(sender, args);
     }
 
-    @Override
-    public Item getIcon() {
-        return Item.commandIcon(XMaterial.FEATHER, this);
-    }
 }

@@ -7,16 +7,11 @@ import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.modules.xg7menus.Slot;
-import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.Item;
+import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.impl.ChangePageItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.impl.CloseInventoryItem;
-import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.PagedMenu;
-import com.xg7plugins.modules.xg7scores.XG7Scores;
-import com.xg7plugins.utils.Pair;
-import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -34,7 +29,7 @@ public class LangMenu extends PagedMenu {
     }
 
     @Override
-    public List<Item> pagedItems(Player player) {
+    public List<InventoryItem> pagedItems(Player player) {
 
         LangManager manager = XG7PluginsAPI.langManager();
 
@@ -42,23 +37,23 @@ public class LangMenu extends PagedMenu {
 
         PlayerData language = XG7PluginsAPI.getRepository(PlayerDataRepository.class).get(player.getUniqueId());
 
-        List<Item> pagedItems = new ArrayList<>();
+        List<InventoryItem> pagedItems = new ArrayList<>();
 
         manager.getLangs().asMap().join().entrySet().stream().filter(entry -> entry.getKey().contains("XG7Plugins")).forEach((map)-> {
             boolean selected = language != null && language.getLangId().equals(map.getKey().contains(":") ? map.getKey().split(":")[1] : map.getKey());
 
-            pagedItems.add(map.getValue().getLangConfiguration().get("", Item.air(), map.getKey(), selected));
+            pagedItems.add(map.getValue().getLangConfiguration().get("", InventoryItem.air().toInventoryItem(null), map.getKey(), selected));
         });
 
         return pagedItems;
     }
 
     @Override
-    public List<Item> getItems(Player player) {
+    public List<InventoryItem> getItems(Player player) {
         return Arrays.asList(
-                ChangePageItem.nextPageItem().name("lang:[go-back-item]").slot(45),
-                CloseInventoryItem.get().name("lang:[close-item]").slot(49),
-                ChangePageItem.previousPageItem().name("lang:[go-next-item]").slot(53)
+                ChangePageItem.nextPageItem(Slot.fromSlot(45)).name("lang:[go-back-item]"),
+                CloseInventoryItem.get(Slot.fromSlot(49)).name("lang:[close-item]"),
+                ChangePageItem.previousPageItem(Slot.fromSlot(53)).name("lang:[go-next-item]")
         );
     }
 }

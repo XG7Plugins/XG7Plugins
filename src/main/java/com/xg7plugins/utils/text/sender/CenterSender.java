@@ -14,8 +14,11 @@ public class CenterSender implements TextSender {
 
     @Override
     public void send(CommandSender sender, Text text) {
-        apply(sender, text);
-        defaultSend(sender, text);
+
+        text.split("<br>").forEach(line -> {
+            apply(sender, line);
+            defaultSend(sender, line);
+        });
     }
 
     @Override

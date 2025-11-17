@@ -1,5 +1,6 @@
 package com.xg7plugins.commands.setup;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.utils.ConfigCheck;
 
@@ -41,6 +42,8 @@ public @interface CommandSetup {
      */
     Class<? extends Plugin> pluginClass();
 
+    XMaterial iconMaterial() default XMaterial.STONE;
+
     /**
      * Configuration for enabling/disabling the command
      */
@@ -48,25 +51,5 @@ public @interface CommandSetup {
             configName = "",
             path = ""
     );
-
-    /**
-     * Whether the command should be executed asynchronously
-     */
-    boolean isAsync() default false;
-
-    /**
-     * Whether the command can only be executed by players
-     */
-    boolean isPlayerOnly() default false;
-
-    /**
-     * Whether the command can only be executed by console
-     */
-    boolean isConsoleOnly() default false;
-
-    /**
-     * Whether the command can only be executed in enabled worlds
-     */
-    boolean isInEnabledWorldOnly() default false;
 
 }
