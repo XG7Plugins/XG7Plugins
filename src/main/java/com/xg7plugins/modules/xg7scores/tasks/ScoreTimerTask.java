@@ -1,7 +1,6 @@
 package com.xg7plugins.modules.xg7scores.tasks;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.tasks.tasks.BukkitTask;
@@ -44,7 +43,7 @@ public class ScoreTimerTask extends TimerTask {
                         score.addPlayer(p);
                     else if (score.getPlayers().contains(p.getUniqueId())) {
                         if (!XG7Plugins.getInstance().isEnabled()) return;
-                        XG7PluginsAPI.taskManager().runSync(BukkitTask.of( () -> score.removePlayer(p)));
+                        XG7Plugins.getAPI().taskManager().runSync(BukkitTask.of( () -> score.removePlayer(p)));
                     }
 
                 } catch (Exception e) {

@@ -1,14 +1,13 @@
 package com.xg7plugins.commands.impl;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.node.CommandConfig;
 import com.xg7plugins.commands.utils.CommandState;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.utils.CommandArgs;
 import com.xg7plugins.commands.setup.CommandSetup;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.http.HTTP;
 import com.xg7plugins.utils.text.Text;
@@ -74,9 +73,9 @@ public class CommentCommand implements Command {
                 "}";
 
         jsonBody = jsonBody.replace("%name%", sender.getName());
-        jsonBody = jsonBody.replace("%plugin%", plugin.getName() + " v" + plugin.getDescription().getVersion());
+        jsonBody = jsonBody.replace("%plugin%", plugin.getName() + " v" + plugin.getVersion());
         jsonBody = jsonBody.replace("%message%", message);
-        jsonBody = jsonBody.replace("%ip%", XG7PluginsAPI.getServerInfo().getAddress() + ":" + XG7PluginsAPI.getServerInfo().getPort());
+        jsonBody = jsonBody.replace("%ip%", XG7Plugins.getAPI().getServerInfo().getAddress() + ":" + XG7Plugins.getAPI().getServerInfo().getPort());
 
         try {
             HTTP.post(
@@ -100,7 +99,7 @@ public class CommentCommand implements Command {
 
     public List<String> onTabComplete(CommandSender sender, CommandArgs args) {
 
-        if (args.len() == 1) return new ArrayList<>(XG7PluginsAPI.getAllXG7PluginsNames());
+        if (args.len() == 1) return new ArrayList<>(XG7Plugins.getAPI().getAllXG7PluginsNames());
 
         return Collections.singletonList("Message");
     }

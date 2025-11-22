@@ -3,12 +3,11 @@ package com.xg7plugins.data;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.config.file.ConfigFile;
-import com.xg7plugins.managers.Manager;
+
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.FileUtil;
 
 import java.io.*;
@@ -22,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
  * Provides functionality for serializing/deserializing objects to/from the JSON format
  * with support for type adapters and caching mechanism.
  */
-public class JsonManager implements Manager {
+public class JsonManager {
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -68,7 +67,7 @@ public class JsonManager implements Manager {
      */
     public <T> CompletableFuture<Void> saveJson(Plugin plugin, String path, T object) {
         return CompletableFuture.runAsync(() -> {
-            plugin.getDebug().info("Saving " + path + "...");
+            plugin.getDebug().info("json", "Saving " + path + "...");
 
             File file = FileUtil.createFile(plugin, path);
 
@@ -80,8 +79,8 @@ public class JsonManager implements Manager {
 
             cache.put(plugin + ":" + path, object);
 
-            plugin.getDebug().info("Saved!");
-        }, XG7PluginsAPI.taskManager().getExecutor("files"));
+            plugin.getDebug().info("json", "Saved!");
+        }, XG7Plugins.getAPI().taskManager().getExecutor("files"));
 
     }
 
@@ -96,7 +95,7 @@ public class JsonManager implements Manager {
      */
     public <T> CompletableFuture<Void> saveEntry(Plugin plugin, String path, String key, T value) {
         return CompletableFuture.runAsync(() -> {
-            File file = new File(plugin.getDataFolder(), path);
+            File file = new File(plugin.getJavaPlugin().getDataFolder(), path);
             if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
             if (!file.exists()) {
                 try {
@@ -122,7 +121,7 @@ public class JsonManager implements Manager {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, XG7PluginsAPI.taskManager().getExecutor("files"));
+        }, XG7Plugins.getAPI().taskManager().getExecutor("files"));
     }
 
     /**
@@ -140,8 +139,8 @@ public class JsonManager implements Manager {
             if (cache.containsKey(path).join()) {
                 return cache.get(path).join();
             }
-            File file = new File(plugin.getDataFolder(), path);
-            if (!file.exists()) plugin.saveResource(path, false);
+            File file = FileUtil.createOrSaveResource(plugin, path);
+
             T t;
             try {
                 t = gson.fromJson(new FileReader(file), clazz);
@@ -150,7 +149,7 @@ public class JsonManager implements Manager {
             }
             cache.put(plugin.getName() + ":" + path, t);
             return t;
-        }, XG7PluginsAPI.taskManager().getExecutor("files"));
+        }, XG7Plugins.getAPI().taskManager().getExecutor("files"));
     }
 
     /**
@@ -169,8 +168,7 @@ public class JsonManager implements Manager {
             if (cache.containsKey(path).join()) {
                 return cache.get(path).join();
             }
-            File file = new File(plugin.getDataFolder(), path);
-            if (!file.exists()) plugin.saveResource(path, false);
+            File file = FileUtil.createOrSaveResource(plugin, path);
             T t;
             try {
                 t = gson.fromJson(new FileReader(file), type.getType());
@@ -179,12 +177,12 @@ public class JsonManager implements Manager {
             }
             cache.put(plugin.getName() + ":" + path, t);
             return t;
-        }, XG7PluginsAPI.taskManager().getExecutor("files"));
+        }, XG7Plugins.getAPI().taskManager().getExecutor("files"));
     }
 
     public <T> CompletableFuture<T> loadEntry(Plugin plugin, String path, String key, Class<T> clazz) {
         return CompletableFuture.supplyAsync(() -> {
-            File file = new File(plugin.getDataFolder(), path);
+            File file = new File(plugin.getJavaPlugin().getDataFolder(), path);
             if (!file.exists()) return null;
 
             try (FileReader reader = new FileReader(file)) {

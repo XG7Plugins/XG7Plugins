@@ -1,7 +1,7 @@
 package com.xg7plugins.data.playerdata;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.database.dao.Repository;
 
 import java.util.UUID;

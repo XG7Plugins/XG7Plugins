@@ -1,6 +1,6 @@
 package com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl;
 
-import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
@@ -51,7 +51,7 @@ public abstract class PagedMenu extends Menu {
         List<InventoryItem> itemsToAdd = pagedItems.subList(page * (Slot.areaOf(pos1, pos2)), pagedItems.size());
 
 
-        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of( () -> {
+        XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of( () -> {
             int index = 0;
 
             InventoryUpdater inventory = menuHolder.getInventoryUpdater();

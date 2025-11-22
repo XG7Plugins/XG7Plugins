@@ -1,6 +1,6 @@
 name: XG7Plugins
 version: '${version}'
-main: com.xg7plugins.XG7Plugins
+main: com.xg7plugins.loader.XG7PluginsLoader
 api-version: '1.13'
 loadbefore:
   - XG7Lobby
@@ -29,6 +29,7 @@ permissions:
       xg7plugins.command.help: true
       xg7plugins.command.lang: true
       xg7plugins.command.tasks: true
+      xg7plugins.command.update: true
       xg7plugins.command.anti-tab-bypass: true
 
   xg7plugins.command.tasks:

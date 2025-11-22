@@ -3,8 +3,6 @@ package com.xg7plugins.help.chat;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.node.CommandNode;
-import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.text.Text;
 import com.xg7plugins.utils.text.component.ClickEvent;

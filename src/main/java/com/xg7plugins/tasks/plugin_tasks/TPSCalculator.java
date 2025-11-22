@@ -2,13 +2,8 @@ package com.xg7plugins.tasks.plugin_tasks;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.tasks.TaskState;
-import com.xg7plugins.tasks.tasks.BukkitTask;
-import com.xg7plugins.tasks.tasks.Task;
 import com.xg7plugins.tasks.tasks.TimerTask;
-import lombok.Getter;
-import org.bukkit.Bukkit;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

@@ -34,7 +34,7 @@ public class Conversation {
      * @param plugin The plugin instance that owns this conversation
      */
     public Conversation(Plugin plugin) {
-        factory = new ConversationFactory(plugin);
+        factory = new ConversationFactory(plugin.getJavaPlugin());
         this.plugin = plugin;
 
         factory.withLocalEcho(false)

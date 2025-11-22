@@ -4,7 +4,7 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.*;
 import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.managers.Manager;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import java.util.List;
  * and reloading of packet event handlers. This manager integrates with PacketEvents API
  * to process network packets and related events.
  */
-public class PacketEventManager implements Manager {
+public class PacketEventManager {
 
     private final HashMap<String, List<PacketListenerCommon>> packetListeners = new HashMap<>();
 

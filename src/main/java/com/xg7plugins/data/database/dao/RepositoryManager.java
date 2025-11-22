@@ -2,7 +2,7 @@ package com.xg7plugins.data.database.dao;
 
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.database.entity.Entity;
-import com.xg7plugins.managers.Manager;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 /**
  * Manages database repositories for entities.
  * This class handles registration and retrieval of repositories that interact with the database.
- * Implements Manager interface as part of the plugin's management system.
+ * interface as part of the plugin's management system.
  */
-public class RepositoryManager implements Manager {
+public class RepositoryManager {
 
     /**
      * Map storing repository instances mapped to their class types

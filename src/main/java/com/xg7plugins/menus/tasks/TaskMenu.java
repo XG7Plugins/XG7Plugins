@@ -1,9 +1,8 @@
 package com.xg7plugins.menus.tasks;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.editor.InventoryShaper;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
@@ -39,7 +38,7 @@ public class TaskMenu extends PagedMenu {
     @Override
     public List<InventoryItem> pagedItems(Player player) {
 
-        Collection<TimerTask> tasks = XG7PluginsAPI.taskManager().getTimerTaskMap().values();
+        Collection<TimerTask> tasks = XG7Plugins.getAPI().taskManager().getTimerTaskMap().values();
 
         return tasks.stream().map(t -> new TaskItem(player, t, null)).collect(Collectors.toList());
     }
@@ -57,7 +56,7 @@ public class TaskMenu extends PagedMenu {
 
     @Override
     public void onRepeatingUpdate(BasicMenuHolder holder) {
-        ConfigSection lang = XG7PluginsAPI.langManager().getLangByPlayer(XG7Plugins.getInstance(), holder.getPlayer()).join().getSecond().getLangConfiguration();
+        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(XG7Plugins.getInstance(), holder.getPlayer()).join().getSecond().getLangConfiguration();
 
         InventoryUpdater updater = holder.getInventoryUpdater();
 
@@ -66,9 +65,9 @@ public class TaskMenu extends PagedMenu {
                         .name(" ")
                         .lore(lang.getList("tasks-menu.notes", String.class).orElse(Collections.emptyList()))
                         .setBuildPlaceholders(
-                                Pair.of("tasks", String.valueOf(XG7PluginsAPI.taskManager().getTimerTaskMap().size())),
+                                Pair.of("tasks", String.valueOf(XG7Plugins.getAPI().taskManager().getTimerTaskMap().size())),
                                 Pair.of("ram", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + " / " + Runtime.getRuntime().totalMemory() / 1024 / 1024),
-                                Pair.of("tps", String.format("%.2f", ((TPSCalculator) XG7PluginsAPI.taskManager().getTimerTask(XG7Plugins.getInstance(), "tps-calculator")).getTPS()))
+                                Pair.of("tps", String.format("%.2f", ((TPSCalculator) XG7Plugins.getAPI().taskManager().getTimerTask(XG7Plugins.getInstance(), "tps-calculator")).getTPS()))
                         ));
     }
 }

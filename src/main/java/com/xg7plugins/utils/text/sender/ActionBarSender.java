@@ -1,6 +1,6 @@
 package com.xg7plugins.utils.text.sender;
 
-import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7scores.scores.ActionBar;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.tasks.tasks.BukkitTask;
@@ -26,7 +26,7 @@ public class ActionBarSender implements TextSender {
 
         if (MinecraftVersion.isNewerThan(8)) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, text.getComponent());
-            XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of( () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 3000L);
+            XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of( () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 3000L);
             return;
         }
 
@@ -47,7 +47,7 @@ public class ActionBarSender implements TextSender {
                 .getMethod("sendPacket", ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".Packet").getAClass())
                 .invoke(packet.getObject());
 
-        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of( () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 3000L);
+        XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of( () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 3000L);
 
     }
 

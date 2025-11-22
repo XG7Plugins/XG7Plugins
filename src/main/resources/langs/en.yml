@@ -1,4 +1,4 @@
-config-version: 3
+config-version: 4
 
 locale: en_US
 formated-name: "English"
@@ -19,6 +19,9 @@ command-errors:
   command-not-found: "&cCommand not found!"
   illegal-type: "&cYour entered value isn't a(n) %type%"
 
+  plugin-not-found: "%prefix% &cPlugin not found!"
+  unknown-reload-cause: "%prefix% &cUnknow reload cause for this plugin!"
+
 reload-message:
   all-plugins: "%prefix% &aAll plugins reloaded!"
   without-cause: "%prefix% %plugin% &areloaded!"
@@ -26,11 +29,16 @@ reload-message:
 
 #Plugin defaults
 
-plugin-not-found: "%prefix% &cPlugin not found!"
 comment-message-sent: "%prefix% &aYour message has been sent to the creator!"
 comment-cooldown: "%prefix% &aYou are in cooldown to send a comment! Wait @MINUTES_SECONDS:%time%@ to send another comment!"
 
-unknown-cause: "%prefix% &cUnknow reload cause for this plugin!"
+plugin-checking-updates: "%prefix% &eChecking updates for plugin &b%plugin%..."
+plugin-checking-updates-all: "%prefix% &eChecking updates for all plugins..."
+
+plugin-no-updates: "%prefix% &aNo plugins need to be updated!"
+
+plugin-update-success: "%prefix% &aPlugin updated successfully to version &b%version%&a! Please, <click:RUN_COMMAND:/stop><hover:SHOW_TEXT:Restart the server>&e&nrestart the server to apply the update</hover></click>&a!"
+plugin-update-failed: "%prefix% &cPlugin update failed! Check the console for more information."
 
 go-back-item: "Back"
 go-next-item: "Next"

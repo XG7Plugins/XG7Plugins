@@ -1,18 +1,15 @@
 package com.xg7plugins.data.database.query;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.database.entity.*;
 import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
 /**
@@ -348,7 +345,7 @@ public class Query {
 
         this.query = query.toString();
 
-        return XG7PluginsAPI.dbProcessor().processQuery(this);
+        return XG7Plugins.getAPI().dbProcessor().processQuery(this);
     }
 
 

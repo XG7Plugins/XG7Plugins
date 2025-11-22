@@ -2,7 +2,6 @@ package com.xg7plugins.dependencies;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.Debug;
-import com.xg7plugins.utils.http.HTTPMethod;
 import com.xg7plugins.utils.http.HTTP;
 import lombok.Data;
 import lombok.Getter;
@@ -24,6 +23,7 @@ public class Dependency {
 
     private final String name;
     private final String downloadLink;
+    private final boolean required;
 
 
     /**
@@ -33,8 +33,8 @@ public class Dependency {
      * @param downloadLink The URL from where the dependency can be downloaded
      * @return A new Dependency instance
      */
-    public static Dependency of(String name, String downloadLink) {
-        return new Dependency(name,downloadLink);
+    public static Dependency of(String name, String downloadLink, boolean required) {
+        return new Dependency(name,downloadLink, required);
     }
 
     /**
@@ -48,22 +48,19 @@ public class Dependency {
         Debug debug = Debug.of(XG7Plugins.getInstance());
         try {
 
-            debug.info("Downloading dependency: " + name);
+            debug.info("dependencies", "Downloading dependency: " + name);
 
-            File pluginsFolder = new File(XG7Plugins.getInstance().getDataFolder().getParent());
-            if (!pluginsFolder.exists()) pluginsFolder.mkdirs();
-
+            File pluginsFolder = new File(XG7Plugins.getInstance().getJavaPlugin().getDataFolder().getParent());
 
             File file = new File(pluginsFolder, name + ".jar");
             if (file.exists()) {
-                debug.info("&aDependency '" + name + "' is already installed.");
+                debug.info("dependencies", "§aDependency '" + name + "' is already installed.");
                 return;
             }
 
             try {
                 InputStream in = HTTP.get(downloadLink).getInputStream();
                 FileOutputStream out = new FileOutputStream(file);
-
 
                 byte[] buffer = new byte[8192];
                 int bytesRead;
@@ -75,7 +72,7 @@ public class Dependency {
                 throw new RuntimeException();
             }
 
-            debug.info("&aDependency '" + name + "' downloaded with success.");
+            debug.info("dependencies", "&aDependency '" + name + "' downloaded with success.");
 
         } catch (Exception e) {
             debug.severe("Error on install dependency " + name);

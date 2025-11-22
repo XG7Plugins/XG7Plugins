@@ -1,8 +1,6 @@
 package com.xg7plugins.modules;
 
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.events.Listener;
-import com.xg7plugins.tasks.tasks.Task;
 import com.xg7plugins.tasks.tasks.TimerTask;
 
 import java.util.Collections;

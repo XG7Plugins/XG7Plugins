@@ -1,12 +1,9 @@
 package com.xg7plugins.cooldowns;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.config.file.ConfigFile;
-import com.xg7plugins.config.file.ConfigSection;
-import com.xg7plugins.managers.Manager;
+
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.Debug;
-import com.xg7plugins.utils.time.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +20,7 @@ import java.util.function.Consumer;
  * Handles creation, tracking and removal of cooldown periods for various player actions.
  */
 @Getter
-public class CooldownManager implements Manager {
+public class CooldownManager {
 
     private final ConcurrentHashMap<UUID, Map<String, CooldownTask>> cooldowns = new ConcurrentHashMap<>();
     private final CooldownManagerTask task;
@@ -40,9 +37,9 @@ public class CooldownManager implements Manager {
      */
     public void addCooldown(Player player, CooldownTask task) {
 
-        Debug.of(XG7Plugins.getInstance()).info("Adding " + player.getName() + " to cooldown " + task.getId() + " with time " + task.getTime() + "ms.");
+        Debug.of(XG7Plugins.getInstance()).info("cooldown", "Adding " + player.getName() + " to cooldown " + task.getId() + " with time " + task.getTime() + "ms.");
 
-        XG7PluginsAPI.taskManager().runTimerTask(this.task);
+        XG7Plugins.getAPI().taskManager().runTimerTask(this.task);
         cooldowns.putIfAbsent(player.getUniqueId(), new HashMap<>());
         cooldowns.get(player.getUniqueId()).put(task.getId(), task);
     }
@@ -89,7 +86,7 @@ public class CooldownManager implements Manager {
      */
     public void removeCooldown(String cooldownId, UUID playerID, boolean error) {
 
-        Debug.of(XG7Plugins.getInstance()).info("Removing " + playerID + " from cooldown " + cooldownId + ". Errors? " + error);
+        Debug.of(XG7Plugins.getInstance()).info("cooldown", "Removing " + playerID + " from cooldown " + cooldownId + ". Errors? " + error);
 
         CooldownTask task = cooldowns.get(playerID).get(cooldownId);
 
@@ -119,7 +116,7 @@ public class CooldownManager implements Manager {
      * Cancels the cooldown manager task
      */
     public void cancelTask() {
-        XG7PluginsAPI.taskManager().cancelRepeatingTask(task);
+        XG7Plugins.getAPI().taskManager().cancelRepeatingTask(task);
     }
 
 

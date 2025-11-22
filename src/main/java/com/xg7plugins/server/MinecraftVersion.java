@@ -1,6 +1,6 @@
 package com.xg7plugins.server;
 
-import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.XG7Plugins;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 
@@ -119,7 +119,7 @@ public class MinecraftVersion {
      * @throws UnsupportedOperationException if running Paper 1.17+
      */
     public static String getPackageName() {
-        if (isNewerThan(16) && XG7PluginsAPI.getServerSoftware().isPaper()) throw new UnsupportedOperationException("This method is not supported on versions newer than 1.16 on paper");
+        if (isNewerThan(16) && XG7Plugins.getAPI().getServerSoftware().isPaper()) throw new UnsupportedOperationException("This method is not supported on versions newer than 1.16 on paper");
         return packageName;
     }
 

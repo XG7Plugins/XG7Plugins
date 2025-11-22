@@ -1,10 +1,8 @@
 package com.xg7plugins.modules.xg7scores;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.modules.Module;
-import com.xg7plugins.modules.ModuleManager;
 import com.xg7plugins.modules.xg7scores.organizer.TabListSorter;
 import com.xg7plugins.modules.xg7scores.organizer.TabListRule;
 import com.xg7plugins.modules.xg7scores.organizer.impl.NoPermRule;
@@ -32,17 +30,17 @@ public class XG7Scores implements Module {
     @Override
     public void onInit() {
 
-        XG7Plugins.getInstance().getDebug().loading("XG7Scores initialized");
+        XG7Plugins.getInstance().getDebug().info("scores", "XG7Scores initialized");
 
         organizer.addRule(new NoPermRule());
     }
 
     @Override
     public void onDisable() {
-        XG7Plugins.getInstance().getDebug().loading("Disabling XG7Scores");
+        XG7Plugins.getInstance().getDebug().info("scores", "Disabling XG7Scores");
         scores.values().forEach(Score::removeAllPlayers);
-        XG7PluginsAPI.taskManager().cancelRepeatingTask(XG7Plugins.getInstance(), "score-task");
-        XG7Plugins.getInstance().getDebug().loading("XG7Scores disabled");
+        XG7Plugins.getAPI().taskManager().cancelRepeatingTask(XG7Plugins.getInstance(), "score-task");
+        XG7Plugins.getInstance().getDebug().info("scores", "XG7Scores disabled");
     }
 
     @Override
@@ -108,10 +106,10 @@ public class XG7Scores implements Module {
     }
 
     public static void loadScores(Score... scores) {
-        XG7PluginsAPI.scores().registerScores(Arrays.asList(scores));
+        XG7Plugins.getAPI().scores().registerScores(Arrays.asList(scores));
     }
 
     public static void unloadScore(String id) {
-        XG7PluginsAPI.scores().unregisterScore(id);
+        XG7Plugins.getAPI().scores().unregisterScore(id);
     }
 }

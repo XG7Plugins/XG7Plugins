@@ -1,8 +1,8 @@
 package com.xg7plugins.help.menu;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.boot.setup.Collaborator;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.impl.CloseInventoryItem;

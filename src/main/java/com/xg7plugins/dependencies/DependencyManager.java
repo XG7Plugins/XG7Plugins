@@ -1,11 +1,9 @@
 package com.xg7plugins.dependencies;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.managers.Manager;
 import com.xg7plugins.utils.Debug;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidDescriptionException;
@@ -21,10 +19,7 @@ import java.util.*;
  * and properly loaded before plugin initialization.
  */
 @Getter
-public class DependencyManager implements Manager {
-
-    @Setter
-    private boolean needRestart = false;
+public class DependencyManager {
 
     private final HashMap<String, Dependency> loadedDependencies = new HashMap<>();
 
@@ -53,31 +48,29 @@ public class DependencyManager implements Manager {
 
         Debug debug = Debug.of(XG7Plugins.getInstance());
 
-        debug.loading("Loading dependency: " + dependency.getName());
-        if (Bukkit.getPluginManager().isPluginEnabled(dependency.getName())) {
-            debug.loading("Dependency already loaded");
+        debug.info("dependencies", "Loading dependency: " + dependency.getName());
+        if (Bukkit.getPluginManager().getPlugin(dependency.getName()) != null) {
+            debug.info("dependencies", "Dependency already loaded");
             loadedDependencies.put(dependency.getName(), dependency);
 
             return true;
         }
-        debug.loading("Loading from file");
-        File file = new File(XG7Plugins.getInstance().getDataFolder().getParentFile(), dependency.getName() + ".jar");
+        debug.info("dependencies", "Loading from file");
+        File file = new File(XG7Plugins.getInstance().getJavaPlugin().getDataFolder().getParentFile(), dependency.getName() + ".jar");
 
         try {
             if (file.exists()) {
                 return loadPl(dependency, debug, file);
             }
             try {
-                debug.loading("Plugin not found, downloading!");
+                debug.info("dependencies", "Plugin not found, downloading!");
                 dependency.downloadDependency();
-                needRestart = true;
-                debug.loading("Plugin downloaded!");
+                debug.info("dependencies", "Plugin downloaded!");
 
-                return true;
+                return loadPl(dependency, debug, file);
 
             } catch (Exception e) {
                 debug.severe("Error on loading dependency " + dependency.getName() + " " + Arrays.toString(e.getStackTrace()));
-
                 return false;
             }
 
@@ -101,12 +94,8 @@ public class DependencyManager implements Manager {
     private boolean loadPl(Dependency dependency, Debug debug, File file) throws InvalidPluginException, InvalidDescriptionException {
         Plugin loaded = Bukkit.getPluginManager().loadPlugin(file);
 
-        if (loaded != null) {
-            Bukkit.getPluginManager().enablePlugin(loaded);
-            debug.loading("Loaded!");
-            loadedDependencies.put(dependency.getName(), dependency);
-            return true;
-        }
+        if (loaded != null) return true;
+
         debug.severe("Error on loading dependency " + dependency.getName());
         return false;
     }

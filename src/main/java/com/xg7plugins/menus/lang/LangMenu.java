@@ -1,8 +1,7 @@
 package com.xg7plugins.menus.lang;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.lang.LangManager;
@@ -31,11 +30,11 @@ public class LangMenu extends PagedMenu {
     @Override
     public List<InventoryItem> pagedItems(Player player) {
 
-        LangManager manager = XG7PluginsAPI.langManager();
+        LangManager manager = XG7Plugins.getAPI().langManager();
 
         manager.loadLangsFrom(XG7Plugins.getInstance()).join();
 
-        PlayerData language = XG7PluginsAPI.getRepository(PlayerDataRepository.class).get(player.getUniqueId());
+        PlayerData language = XG7Plugins.getAPI().getRepository(PlayerDataRepository.class).get(player.getUniqueId());
 
         List<InventoryItem> pagedItems = new ArrayList<>();
 

@@ -1,7 +1,7 @@
 package com.xg7plugins.utils.text;
 
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.lang.Lang;
 import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.Pair;
@@ -72,7 +72,7 @@ public class Text {
      */
     public Text textFor(Player player) {
 
-        if (XG7PluginsAPI.isDependencyEnabled("PlaceholderAPI")) this.text = ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, this.text));
+        if (XG7Plugins.getAPI().isDependencyEnabled("PlaceholderAPI")) this.text = ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, this.text));
 
         this.text = Condition.processConditions(this.text, player);
 
@@ -230,7 +230,7 @@ public class Text {
 
             String text = rawText;
 
-            text = text.replace("%prefix%", plugin.getEnvironmentConfig().getCustomPrefix())
+            text = text.replace("%prefix%", plugin.getCustomPrefix())
                     .replace("%player%", sender == null ? "No name" : sender.getName());
 
             Matcher langMatch = LANG_PATTERN.matcher(text);
@@ -259,7 +259,7 @@ public class Text {
         return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
             String text = lang.getSecond().get(path);
 
-            text = text.replace("%prefix%", plugin.getEnvironmentConfig().getCustomPrefix())
+            text = text.replace("%prefix%", plugin.getCustomPrefix())
                     .replace("%player%", sender == null ? "No name" : sender.getName());
 
             Text objectText = new Text(text);

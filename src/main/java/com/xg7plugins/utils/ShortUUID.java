@@ -1,4 +1,4 @@
-package com.xg7plugins.utils.uuid;
+package com.xg7plugins.utils;
 
 import java.security.SecureRandom;
 

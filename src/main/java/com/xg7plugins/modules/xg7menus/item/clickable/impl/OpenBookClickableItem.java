@@ -3,7 +3,6 @@ package com.xg7plugins.modules.xg7menus.item.clickable.impl;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
-import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.ClickableItem;
 import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.item.impl.BookItem;
@@ -39,7 +38,7 @@ public class OpenBookClickableItem extends ClickableItem {
                     .replace("discord", "discord.gg/jfrn8w92kF")
                     .replace("github", "github.com/DaviXG7")
                     .replace("website", "xg7plugins.com")
-                    .replace("version", XG7Plugins.getInstance().getDescription().getVersion())
+                    .replace("version", XG7Plugins.getInstance().getVersion())
                     .getText());
             if (currentPage.size() == 10) {
                 pages.add(new ArrayList<>(currentPage));

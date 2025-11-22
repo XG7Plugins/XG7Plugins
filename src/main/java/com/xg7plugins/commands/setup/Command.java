@@ -1,12 +1,11 @@
 package com.xg7plugins.commands.setup;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.utils.CommandArgs;
 import com.xg7plugins.commands.CommandManager;
 import com.xg7plugins.commands.node.CommandConfig;
 import com.xg7plugins.commands.node.CommandNode;
+import com.xg7plugins.XG7Plugins;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public interface Command {
      */
     default List<String> onTabComplete(CommandSender sender, CommandArgs args) {
 
-        CommandManager manager = XG7Plugins.getInstance().getManagerRegistry().getManager(CommandManager.class);
+        CommandManager manager = XG7Plugins.getAPI().commandManager(XG7Plugins.getInstance());
 
         CommandNode chosen = manager.getRootCommandNode(getPlugin().getPluginSetup().mainCommandName() + getCommandSetup().name());
 
@@ -63,6 +62,6 @@ public interface Command {
      * @return The plugin instance
      */
     default Plugin getPlugin() {
-        return XG7PluginsAPI.getXG7Plugin(getCommandSetup().pluginClass());
+        return XG7Plugins.getAPI().getXG7Plugin(getCommandSetup().pluginClass());
     }
 }

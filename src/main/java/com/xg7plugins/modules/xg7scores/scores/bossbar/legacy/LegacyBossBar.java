@@ -3,12 +3,11 @@ package com.xg7plugins.modules.xg7scores.scores.bossbar.legacy;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
-import com.github.retrooper.packetevents.protocol.entity.data.EntityMetadataProvider;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.play.server.*;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.location.Location;
@@ -41,7 +40,7 @@ public class LegacyBossBar extends Score {
     public synchronized void addPlayer(Player player) {
         if (super.getPlayers().contains(player.getUniqueId())) return;
 
-        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of( () -> {
+        XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of( () -> {
 
             super.addPlayer(player);
 

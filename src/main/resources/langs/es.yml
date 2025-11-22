@@ -1,4 +1,4 @@
-config-version: 3
+config-version: 4
 
 locale: es_ES
 formated-name: "Español"
@@ -18,6 +18,9 @@ command-errors:
   command-not-found: "&c¡Comando no encontrado!"
   illegal-type: "&cEl valor que ingresaste no es un(a) %type%"
 
+  plugin-not-found: "%prefix% &c¡Plugin no encontrado!"
+  unknown-reload-cause: "%prefix% &c¡Causa de recarga desconocida para este plugin!"
+
 reload-message:
   all-plugins: "%prefix% &a¡Todos los plugins han sido recargados!"
   without-cause: "%prefix% %plugin% &arecargado correctamente."
@@ -25,11 +28,8 @@ reload-message:
 
 # Plugin defaults
 
-plugin-not-found: "%prefix% &c¡Plugin no encontrado!"
 comment-message-sent: "%prefix% &aTu mensaje ha sido enviado al creador!"
-
-unknown-cause: "%prefix% &c¡Causa de recarga desconocida para este plugin!"
-
+comment-cooldown: "%prefix% &a¡Estás en cooldown para enviar un mensaje! ¡Espera @MINUTES_SECONDS:%time%@ para enviar otro!"
 
 go-back-item: "Atrás"
 go-next-item: "Siguiente"

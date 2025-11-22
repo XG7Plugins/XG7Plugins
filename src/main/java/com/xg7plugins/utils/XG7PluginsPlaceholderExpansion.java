@@ -1,6 +1,6 @@
 package com.xg7plugins.utils;
 
-import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.tasks.TaskState;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -41,19 +41,19 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
 
         switch (identifier) {
             case "tasks_running":
-                return XG7PluginsAPI.taskManager().getTimerTaskMap().values().stream().filter(task -> task.getTaskState() == TaskState.RUNNING).count() + "";
+                return XG7Plugins.getAPI().taskManager().getTimerTaskMap().values().stream().filter(task -> task.getTaskState() == TaskState.RUNNING).count() + "";
             case "tasks_idle":
-                return XG7PluginsAPI.taskManager().getTimerTaskMap().values().stream().filter(task -> task.getTaskState() == TaskState.IDLE).count() + "";
+                return XG7Plugins.getAPI().taskManager().getTimerTaskMap().values().stream().filter(task -> task.getTaskState() == TaskState.IDLE).count() + "";
             case "tasks_total":
-                    return XG7PluginsAPI.taskManager().getTimerTaskMap().values().size() + "";
+                    return XG7Plugins.getAPI().taskManager().getTimerTaskMap().values().size() + "";
             case "is_bedrock_player":
-                return (XG7PluginsAPI.dependencyManager().exists("floodgate") && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) + "";
+                return (XG7Plugins.getAPI().dependencyManager().exists("floodgate") && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) + "";
             case "geyser_forms_enabled":
-                return XG7PluginsAPI.isGeyserFormsEnabled() + "";
+                return XG7Plugins.getAPI().isGeyserFormsEnabled() + "";
         }
 
         if (identifier.startsWith("player_")) {
-            PlayerData playerData = XG7PluginsAPI.getPlayerData(player.getUniqueId());
+            PlayerData playerData = XG7Plugins.getAPI().getPlayerData(player.getUniqueId());
 
             if (playerData == null) return null;
 

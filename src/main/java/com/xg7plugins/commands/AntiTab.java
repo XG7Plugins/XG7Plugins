@@ -2,8 +2,8 @@ package com.xg7plugins.commands;
 
 import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTabComplete;
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.events.packetevents.PacketEventType;
 import com.xg7plugins.events.packetevents.PacketListenerSetup;

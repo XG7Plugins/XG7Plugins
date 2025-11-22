@@ -2,9 +2,6 @@ package com.xg7plugins.modules.xg7menus.task;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
-import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
-import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
-import com.xg7plugins.modules.xg7menus.menus.interfaces.player.PlayerMenu;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.tasks.tasks.TimerTask;
@@ -13,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class MenuUpdaterTimerTask extends TimerTask {
 

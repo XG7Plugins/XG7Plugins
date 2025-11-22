@@ -1,8 +1,8 @@
 package com.xg7plugins.server;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import lombok.Data;
 import org.bukkit.Bukkit;
@@ -13,7 +13,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Represents server information and handles server-to-server communication.
@@ -43,7 +42,7 @@ public class ServerInfo {
         this.address = serverConfig.get("ip");
         this.port = serverConfig.get("port", 25565);
 
-        if (bungeecord) XG7Plugins.getInstance().getServer().getMessenger().registerOutgoingPluginChannel(XG7Plugins.getInstance(), "BungeeCord");
+        if (bungeecord) XG7Plugins.getInstance().getJavaPlugin().getServer().getMessenger().registerOutgoingPluginChannel(XG7Plugins.getInstance().getJavaPlugin(), "BungeeCord");
 
         this.software = Software.getSoftware();
     }
@@ -74,7 +73,7 @@ public class ServerInfo {
         out.writeUTF(serverName);
         out.flush();
 
-        player.sendPluginMessage(XG7Plugins.getInstance(), "BungeeCord", byteArray.toByteArray());
+        player.sendPluginMessage(XG7Plugins.getInstance().getJavaPlugin(), "BungeeCord", byteArray.toByteArray());
 
         out.close();
     }

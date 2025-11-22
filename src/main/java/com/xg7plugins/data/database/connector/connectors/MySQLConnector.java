@@ -18,13 +18,13 @@ public class MySQLConnector implements Connector {
     public void connect(Plugin plugin, SQLConfigs sqlConfigs) {
         if (!ConnectionType.MYSQL.isDriverLoaded()) return;
 
-        plugin.getDebug().info("Connecting " + plugin.getName() + " to MySQL database...");
+        plugin.getDebug().info("database", "Connecting " + plugin.getName() + " to MySQL database...");
 
         HikariConfig hikariConfig = setupHikariConfig(plugin, "jdbc:mysql://", ConnectionType.MYSQL, sqlConfigs);
 
         connections.put(plugin.getName(), new HikariDataSource(hikariConfig));
 
-        plugin.getDebug().info("Success!");
+        plugin.getDebug().info("database", "Success!");
     }
 
 
@@ -32,12 +32,12 @@ public class MySQLConnector implements Connector {
     public void disconnect(Plugin plugin) {
         if (!connections.containsKey(plugin.getName())) return;
 
-        plugin.getDebug().info("Disconnecting " + plugin.getName() + " from SQL database...");
+        plugin.getDebug().info("database", "Disconnecting " + plugin.getName() + " from SQL database...");
 
         connections.get(plugin.getName()).close();
         connections.remove(plugin.getName());
 
-        plugin.getDebug().info("Success!");
+        plugin.getDebug().info("database", "Success!");
     }
 
     @Override
@@ -52,7 +52,7 @@ public class MySQLConnector implements Connector {
 
     protected HikariConfig setupHikariConfig(Plugin plugin, String sqlUrl, ConnectionType type, SQLConfigs sqlConfigs) {
 
-        plugin.getDebug().info("Setting up HikariCP configuration for " + plugin.getName() + "...");
+        plugin.getDebug().info("database", "Setting up HikariCP configuration for " + plugin.getName() + "...");
 
         HikariConfig hikariConfig = new HikariConfig();
 

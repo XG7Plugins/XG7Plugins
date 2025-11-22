@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 /**
@@ -20,6 +21,8 @@ public class HTTPResponse {
      * The raw content of the HTTP response
      */
     private final String content;
+    private final byte[] contentBytes;
+
     /**
      * The HTTP status code of the response
      */
@@ -29,8 +32,6 @@ public class HTTPResponse {
      */
     private final String statusMessage;
 
-    private final InputStream inputStream;
-
     /**
      * Converts the response content to a JsonObject.
      *
@@ -38,6 +39,10 @@ public class HTTPResponse {
      */
     public JsonObject getJson() {
         return new JsonParser().parse(content).getAsJsonObject();
+    }
+
+    public InputStream getInputStream() {
+        return new ByteArrayInputStream(contentBytes);
     }
 
     /**

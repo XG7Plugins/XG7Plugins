@@ -26,7 +26,25 @@ server:
 
 
 #Debug mode
-debug-enabled: false
+debug:
+  enabled: false
+
+  database: true
+  load: true
+  commands: true
+  http-requests: true
+  text: true
+  tasks: true
+  config: true
+  cooldown: true
+  json: true
+  lang: true
+  dependencies: true
+  menus: true
+  scores: true
+  extensions: true
+
+
 
 #When disabled, the plugin will choose
 #the main language from the server
@@ -63,6 +81,8 @@ http-requests-timeout: 10s
 scheduled-tasks-threads: 8
 
 disable-version-check: false
+
+holograms-levitating-interval: 100ms
 
 #Delay sending a message or
 #make an action while is in cooldown
@@ -159,4 +179,4 @@ time-placeholders:
 
 #DO NOT CHANGE
 #THIS IS FOR VERSION CONTROL
-config-version: 6
+config-version: 7

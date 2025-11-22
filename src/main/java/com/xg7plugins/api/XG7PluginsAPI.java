@@ -1,5 +1,6 @@
-package com.xg7plugins;
+package com.xg7plugins.api;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.CacheManager;
 import com.xg7plugins.commands.CommandManager;
@@ -17,8 +18,9 @@ import com.xg7plugins.data.playerdata.PlayerDataRepository;
 import com.xg7plugins.dependencies.DependencyManager;
 import com.xg7plugins.events.bukkitevents.EventManager;
 import com.xg7plugins.events.packetevents.PacketEventManager;
+import com.xg7plugins.extensions.ExtensionManager;
 import com.xg7plugins.lang.LangManager;
-import com.xg7plugins.managers.ManagerRegistry;
+import com.xg7plugins.loader.VersionChecker;
 import com.xg7plugins.modules.ModuleManager;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7holograms.XG7Holograms;
@@ -28,9 +30,12 @@ import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.server.ServerInfo;
 import com.xg7plugins.cooldowns.CooldownManager;
 import com.xg7plugins.tasks.TaskManager;
+import com.xg7plugins.tasks.tasks.TimerTask;
+import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -46,7 +51,10 @@ import java.util.stream.Collectors;
  *
  * @author DaviXG7
  */
-public class XG7PluginsAPI {
+@AllArgsConstructor
+public class XG7PluginsAPI implements API<XG7Plugins> {
+
+    private XG7Plugins plugin;
 
     /**
      * Gets an instance of a specific XG7 plugin by its class type.
@@ -55,8 +63,8 @@ public class XG7PluginsAPI {
      * @param pluginClass The class of the desired plugin
      * @return The requested plugin instance, or null if not found
      */
-    public static <T extends Plugin> T getXG7Plugin(Class<T> pluginClass) {
-        return (T) XG7Plugins.getInstance().getPlugins().values().stream().filter(plugin -> pluginClass == plugin.getClass()).findFirst().orElse(null);
+    public <T extends Plugin> T getXG7Plugin(Class<T> pluginClass) {
+        return (T) plugin.getPlugins().values().stream().filter(plugin -> pluginClass == plugin.getClass()).findFirst().orElse(null);
     }
 
     /**
@@ -66,8 +74,12 @@ public class XG7PluginsAPI {
      * @param name The name of the plugin
      * @return The requested plugin instance, or null if not found
      */
-    public static <T extends Plugin> T getXG7Plugin(String name) {
-        return (T) XG7Plugins.getInstance().getPlugins().get(name);
+    public <T extends Plugin> T getXG7Plugin(String name) {
+        return (T) plugin.getPlugins().values().stream().filter(plugin -> name.equals(plugin.getName())).findFirst().orElse(null);
+    }
+
+    public <T extends Plugin> T getXG7Plugin(JavaPlugin plugin) {
+        return (T) this.plugin.getPlugins().get(plugin);
     }
 
     /**
@@ -75,8 +87,8 @@ public class XG7PluginsAPI {
      *
      * @return A set of all XG7 plugin instances
      */
-    public static Set<Plugin> getAllXG7Plugins() {
-        return new HashSet<>(XG7Plugins.getInstance().getPlugins().values());
+    public Set<Plugin> getAllXG7Plugins() {
+        return new HashSet<>(this.plugin.getPlugins().values());
     }
 
     /**
@@ -84,8 +96,8 @@ public class XG7PluginsAPI {
      *
      * @return A set with all XG7 plugin names
      */
-    public static Set<String> getAllXG7PluginsNames() {
-        return XG7Plugins.getInstance().getPlugins().values().stream().map(Plugin::getName).collect(Collectors.toSet());
+    public Set<String> getAllXG7PluginsNames() {
+        return plugin.getPlugins().values().stream().map(Plugin::getName).collect(Collectors.toSet());
     }
 
     /**
@@ -93,8 +105,15 @@ public class XG7PluginsAPI {
      *
      * @return The global TaskManager instance
      */
-    public static TaskManager taskManager() {
-        return ManagerRegistry.get(XG7Plugins.getInstance(), TaskManager.class);
+    public TaskManager taskManager() {
+        return plugin.getTaskManager();
+    }
+
+    public TimerTask getTimerTask(String id) {
+        return taskManager().getTimerTask(id);
+    }
+    public TimerTask getTimerTask(Plugin plugin, String id) {
+        return taskManager().getTimerTask(plugin, id);
     }
 
     /**
@@ -102,8 +121,8 @@ public class XG7PluginsAPI {
      *
      * @return The global DatabaseManager instance
      */
-    public static DatabaseManager database() {
-        return ManagerRegistry.get(XG7Plugins.getInstance(), DatabaseManager.class);
+    public DatabaseManager database() {
+        return plugin.getDatabaseManager();
     }
 
     /**
@@ -111,8 +130,8 @@ public class XG7PluginsAPI {
      *
      * @return The global CacheManager instance
      */
-    public static CacheManager cacheManager() {
-        return ManagerRegistry.get(XG7Plugins.getInstance(), CacheManager.class);
+    public CacheManager cacheManager() {
+        return plugin.getCacheManager();
     }
 
     /**
@@ -120,8 +139,8 @@ public class XG7PluginsAPI {
      *
      * @return The global EventManager instance
      */
-    public static EventManager eventManager() {
-        return ManagerRegistry.get(XG7Plugins.getInstance(), EventManager.class);
+    public EventManager eventManager() {
+        return plugin.getEventManager();
     }
 
     /**
@@ -129,8 +148,8 @@ public class XG7PluginsAPI {
      *
      * @return The global PacketEventManager instance
      */
-    public static PacketEventManager packetEventManager() {
-        return ManagerRegistry.get(XG7Plugins.getInstance(), PacketEventManager.class);
+    public PacketEventManager packetEventManager() {
+        return plugin.getPacketEventManager();
     }
 
     /**
@@ -138,8 +157,8 @@ public class XG7PluginsAPI {
      *
      * @return The global CooldownManager instance
      */
-    public static CooldownManager cooldowns() {
-        return ManagerRegistry.get(XG7Plugins.getInstance(), CooldownManager.class);
+    public CooldownManager cooldowns() {
+        return plugin.getCooldownManager();
     }
 
     /**
@@ -147,8 +166,8 @@ public class XG7PluginsAPI {
      *
      * @return The global LangManager instance
      */
-    public static LangManager langManager() {
-        return ManagerRegistry.get(XG7Plugins.getInstance(), LangManager.class);
+    public LangManager langManager() {
+        return plugin.getLangManager();
     }
 
     /**
@@ -156,27 +175,27 @@ public class XG7PluginsAPI {
      *
      * @return The global ModuleManager instance
      */
-    public static ModuleManager moduleManager() {
-        return ManagerRegistry.get(XG7Plugins.getInstance(), ModuleManager.class);
+    public ModuleManager moduleManager() {
+        return plugin.getModuleManager();
     }
 
-    public static XG7Menus menus() {
+    public XG7Menus menus() {
         return moduleManager().getModule(XG7Menus.class);
     }
 
-    public static XG7Scores scores() {
+    public XG7Scores scores() {
         return moduleManager().getModule(XG7Scores.class);
     }
 
-    public static XG7GeyserForms geyserForms() {
+    public XG7GeyserForms geyserForms() {
         return moduleManager().getModule(XG7GeyserForms.class);
     }
 
-    public static XG7Holograms holograms() {
+    public XG7Holograms holograms() {
         return moduleManager().getModule(XG7Holograms.class);
     }
 
-    public static XG7NPCs npcs() {
+    public XG7NPCs npcs() {
         return moduleManager().getModule(XG7NPCs.class);
     }
 
@@ -186,8 +205,8 @@ public class XG7PluginsAPI {
      * @param plugin The plugin to get the configuration manager for
      * @return The ConfigManager associated with the specified plugin
      */
-    public static ConfigManager configManager(Plugin plugin) {
-        return ManagerRegistry.get(plugin, ConfigManager.class);
+    public ConfigManager configManager(Plugin plugin) {
+        return plugin.getConfigManager();
     }
 
     /**
@@ -196,8 +215,12 @@ public class XG7PluginsAPI {
      * @param plugin The plugin to get the command manager for
      * @return The CommandManager associated with the specified plugin
      */
-    public static CommandManager commandManager(Plugin plugin) {
-        return ManagerRegistry.get(plugin, CommandManager.class);
+    public CommandManager commandManager(Plugin plugin) {
+        return plugin.getCommandManager();
+    }
+
+    public ExtensionManager extensionManager(Plugin plugin) {
+        return plugin.getExtensionManager();
     }
 
     /**
@@ -206,7 +229,7 @@ public class XG7PluginsAPI {
      * @param plugin The plugin to get commands for
      * @return A list containing all registered Command instances
      */
-    public static List<Command> commandListOf(Plugin plugin) {
+    public List<Command> commandListOf(Plugin plugin) {
         return commandManager(plugin).getCommandList();
     }
 
@@ -217,12 +240,12 @@ public class XG7PluginsAPI {
      * @param plugin The plugin to get commands for
      * @return A map containing command names/aliases mapped to Command instances
      */
-    public static Map<String, CommandNode> commandNodesOf(Plugin plugin) {
+    public Map<String, CommandNode> commandNodesOf(Plugin plugin) {
         return commandManager(plugin).getCommandNodeMap();
     }
 
-    public static Set<CommandNode> rootCommandNodesOf(Plugin plugin) {
-        return new HashSet<>(XG7PluginsAPI.commandNodesOf(plugin).values());
+    public Set<CommandNode> rootCommandNodesOf(Plugin plugin) {
+        return new HashSet<>(XG7Plugins.getAPI().commandNodesOf(plugin).values());
     }
 
     /**
@@ -230,8 +253,8 @@ public class XG7PluginsAPI {
      *
      * @return The global JsonManager instance
      */
-    public static JsonManager jsonManager() {
-        return ManagerRegistry.get(XG7Plugins.getInstance(), JsonManager.class);
+    public JsonManager jsonManager() {
+        return plugin.getJsonManager();
     }
 
     /**
@@ -239,8 +262,8 @@ public class XG7PluginsAPI {
      *
      * @return The global DependencyManager instance
      */
-    public static DependencyManager dependencyManager() {
-        return ManagerRegistry.get(XG7Plugins.getInstance(), DependencyManager.class);
+    public DependencyManager dependencyManager() {
+        return plugin.getDependencyManager();
     }
 
     /**
@@ -248,7 +271,7 @@ public class XG7PluginsAPI {
      *
      * @return The DatabaseProcessor instance
      */
-    public static DatabaseProcessor dbProcessor() {
+    public DatabaseProcessor dbProcessor() {
         return database().getProcessor();
     }
 
@@ -258,7 +281,7 @@ public class XG7PluginsAPI {
      * @param name The name of the dependency to check
      * @return true if the dependency is enabled, false otherwise
      */
-    public static boolean isDependencyEnabled(String name) {
+    public boolean isDependencyEnabled(String name) {
         return dependencyManager().isLoaded(name);
     }
 
@@ -268,7 +291,7 @@ public class XG7PluginsAPI {
      *
      * @return true if Geyser forms support is enabled, false otherwise
      */
-    public static boolean isGeyserFormsEnabled() {
+    public boolean isGeyserFormsEnabled() {
         return dependencyManager().exists("floodgate") && ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("geyser-forms-enabled", false);
     }
 
@@ -279,8 +302,8 @@ public class XG7PluginsAPI {
      * @param world  The name of the world to check
      * @return true if the world is enabled for the plugin, false otherwise
      */
-    public static boolean isEnabledWorld(Plugin plugin, String world) {
-        return plugin.getEnvironmentConfig().getEnabledWorlds().contains(world);
+    public boolean isEnabledWorld(Plugin plugin, String world) {
+        return plugin.getEnabledWorlds().contains(world);
     }
 
     /**
@@ -290,7 +313,7 @@ public class XG7PluginsAPI {
      * @param world  The World object to check
      * @return true if the world is enabled for the plugin, false otherwise
      */
-    public static boolean isEnabledWorld(Plugin plugin, World world) {
+    public boolean isEnabledWorld(Plugin plugin, World world) {
         return isEnabledWorld(plugin, world.getName());
     }
 
@@ -301,7 +324,7 @@ public class XG7PluginsAPI {
      * @param player The player whose world will be checked
      * @return true if the player's world is enabled for the plugin, false otherwise
      */
-    public static boolean isInAnEnabledWorld(Plugin plugin, Player player) {
+    public boolean isInAnEnabledWorld(Plugin plugin, Player player) {
         return isEnabledWorld(plugin, player.getWorld());
     }
 
@@ -311,8 +334,8 @@ public class XG7PluginsAPI {
      * @param plugin The plugin to get enabled worlds for
      * @return A list of enabled world names
      */
-    public static List<String> getEnabledWorldsOf(Plugin plugin) {
-        return plugin.getEnvironmentConfig().getEnabledWorlds();
+    public List<String> getEnabledWorldsOf(Plugin plugin) {
+        return plugin.getEnabledWorlds();
     }
 
     /**
@@ -324,7 +347,7 @@ public class XG7PluginsAPI {
      * @param clazz The repository class to get
      * @return The requested repository instance
      */
-    public static <ID,T extends Entity<?, ?>, U extends Repository<ID,T>> U getRepository(Class<U> clazz) {
+    public <ID,T extends Entity<?, ?>, U extends Repository<ID,T>> U getRepository(Class<U> clazz) {
         return database().getDaoManager().getRepository(clazz);
     }
 
@@ -333,7 +356,7 @@ public class XG7PluginsAPI {
      *
      * @return A list containing all repository instances
      */
-    public static List<Repository> getRepositories() {
+    public List<Repository> getRepositories() {
         return database().getDaoManager().getAllRepositories();
     }
 
@@ -343,7 +366,7 @@ public class XG7PluginsAPI {
      * @param plugin The plugin to get repositories for
      * @return A list of repositories associated with the plugin
      */
-    public static List<Repository> getRepositoriesByPlugin(Plugin plugin) {
+    public List<Repository> getRepositoriesByPlugin(Plugin plugin) {
         return database().getDaoManager().getAllRepositoriesByPlugin(plugin);
     }
 
@@ -353,7 +376,7 @@ public class XG7PluginsAPI {
      * @param uuid The player's UUID
      * @return A CompletableFuture that will contain the player data when available
      */
-    public static CompletableFuture<PlayerData> requestPlayerData(UUID uuid) {
+    public CompletableFuture<PlayerData> requestPlayerData(UUID uuid) {
         return getRepository(PlayerDataRepository.class).getAsync(uuid);
     }
 
@@ -363,7 +386,7 @@ public class XG7PluginsAPI {
      * @param player The player to get data for
      * @return A CompletableFuture that will contain the player data when available
      */
-    public static CompletableFuture<PlayerData> requestPlayerData(Player player) {
+    public CompletableFuture<PlayerData> requestPlayerData(Player player) {
         return requestPlayerData(player.getUniqueId());
     }
 
@@ -373,7 +396,7 @@ public class XG7PluginsAPI {
      * @param uuid The player's UUID
      * @return The player data associated with the UUID
      */
-    public static PlayerData getPlayerData(UUID uuid) {
+    public PlayerData getPlayerData(UUID uuid) {
         return getRepository(PlayerDataRepository.class).get(uuid);
     }
 
@@ -383,7 +406,7 @@ public class XG7PluginsAPI {
      * @param player The player to get data for
      * @return The player data associated with the player
      */
-    public static PlayerData getPlayerData(Player player) {
+    public PlayerData getPlayerData(Player player) {
         return getRepository(PlayerDataRepository.class).get(player.getUniqueId());
     }
 
@@ -392,7 +415,7 @@ public class XG7PluginsAPI {
      *
      * @return A set containing the names of all online players
      */
-    public static Set<String> getAllPlayerNames() {
+    public Set<String> getAllPlayerNames() {
         return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toSet());
     }
 
@@ -401,7 +424,7 @@ public class XG7PluginsAPI {
      *
      * @return A set containing the UUIDs of all online players
      */
-    public static Set<UUID> getAllPlayerUUIDs() {
+    public Set<UUID> getAllPlayerUUIDs() {
         return Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).collect(Collectors.toSet());
     }
 
@@ -410,7 +433,7 @@ public class XG7PluginsAPI {
      *
      * @return A set containing instances of all online players
      */
-    public static Set<Player> getAllPlayers() {
+    public Set<Player> getAllPlayers() {
         return new HashSet<>(Bukkit.getOnlinePlayers());
     }
 
@@ -419,7 +442,7 @@ public class XG7PluginsAPI {
      *
      * @return The ServerInfo.Software enum representing the server type
      */
-    public static ServerInfo.Software getServerSoftware() {
+    public ServerInfo.Software getServerSoftware() {
         return XG7Plugins.getInstance().getServerInfo().getSoftware();
     }
 
@@ -428,7 +451,16 @@ public class XG7PluginsAPI {
      *
      * @return The ServerInfo instance containing information about the server
      */
-    public static ServerInfo getServerInfo() {
+    public ServerInfo getServerInfo() {
         return XG7Plugins.getInstance().getServerInfo();
+    }
+
+    public VersionChecker getVersionChecker() {
+        return plugin.getVersionChecker();
+    }
+
+    @Override
+    public XG7Plugins getPlugin() {
+        return plugin;
     }
 }

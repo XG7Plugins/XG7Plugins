@@ -1,0 +1,35 @@
+package com.xg7plugins.modules.xg7holograms.task;
+
+import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.modules.xg7holograms.XG7Holograms;
+import com.xg7plugins.modules.xg7holograms.hologram.LivingHologram;
+import com.xg7plugins.tasks.TaskState;
+import com.xg7plugins.tasks.tasks.TimerTask;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class HologramTask extends TimerTask {
+
+    private final XG7Holograms holograms;
+
+    public HologramTask(XG7Holograms holograms) {
+        super(
+                XG7Plugins.getInstance(),
+                "holograms-task",
+                0,
+                1,
+                TaskState.IDLE,
+                null
+        );
+
+        this.holograms = holograms;
+    }
+
+    @Override
+    public void run() {
+
+        for (LivingHologram spawner : holograms.getAllLivingHolograms()) {
+            spawner.update();
+        }
+    }
+}

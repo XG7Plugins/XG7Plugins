@@ -3,7 +3,7 @@ package com.xg7plugins.config;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.typeadapter.ConfigTypeAdapter;
-import com.xg7plugins.managers.Manager;
+
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import java.util.logging.Level;
  * Also provides type adaptation support for configuration values.
  */
 @Getter
-public class ConfigManager implements Manager {
+public class ConfigManager {
 
     private final HashMap<String, ConfigFile> configs = new HashMap<>();
     private final HashMap<Class<?>, ConfigTypeAdapter<?>> adapters = new HashMap<>();
@@ -31,7 +31,7 @@ public class ConfigManager implements Manager {
      */
     public ConfigManager(Plugin plugin, String[] configs) {
 
-        plugin.getLogger().log(Level.CONFIG, "Loading configs of " + plugin.getName());
+        plugin.getJavaPlugin().getLogger().log(Level.CONFIG, "Loading configs of " + plugin.getName());
 
         this.plugin = plugin;
 
@@ -77,7 +77,7 @@ public class ConfigManager implements Manager {
      * @param <T>     The type parameter for the adapter
      */
     public <T> void registerAdapter(ConfigTypeAdapter<T> adapter) {
-        plugin.getDebug().info("Registering type adapter for: " + adapter.getTargetType().getSimpleName());
+        plugin.getDebug().info("load", "Registering type adapter for: " + adapter.getTargetType().getSimpleName());
         adapters.put(adapter.getTargetType(), adapter);
     }
 

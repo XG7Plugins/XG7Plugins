@@ -1,6 +1,6 @@
 package com.xg7plugins.help.form;
 
-import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.help.HelpComponent;
 import com.xg7plugins.help.form.command.CommandForm;
 import com.xg7plugins.modules.xg7geyserforms.forms.Form;
@@ -16,7 +16,7 @@ public class HelpForm implements HelpComponent {
 
     public HelpForm(Form<?,?> index) {
         this.forms.put("index", index);
-        this.forms.put("commands", new CommandForm(new ArrayList<>(XG7PluginsAPI.rootCommandNodesOf(index.getPlugin())), null, null, this));
+        this.forms.put("commands", new CommandForm(new ArrayList<>(XG7Plugins.getAPI().rootCommandNodesOf(index.getPlugin())), null, null, this));
 
     }
 

@@ -1,5 +1,6 @@
 package com.xg7plugins.utils.text.sender.deserializer;
 
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.sender.TextSender;
 import com.xg7plugins.utils.text.sender.deserializer.tag.ActionTag;
@@ -38,11 +39,16 @@ public class TextSenderDeserializer {
         Matcher senderMatcher = SENDER_TAG_PATTERN.matcher(text);
         if (!senderMatcher.find()) return Pair.of(TextSender.defaultSender(), text);
 
-        SenderTagMatch tagMatch = new SenderTagMatch(senderMatcher);
+        try {
+            SenderTagMatch tagMatch = new SenderTagMatch(senderMatcher);
 
-        TextSender textSender = tagMatch.resolve();
+            TextSender textSender = tagMatch.resolve();
 
-        return Pair.of(textSender, text.replaceFirst(SENDER_TAG_PATTERN.pattern(), "")) ;
+            return Pair.of(textSender, text.replaceFirst(SENDER_TAG_PATTERN.pattern(), "")) ;
+        } catch (Exception e) {
+            XG7Plugins.getInstance().getDebug().warn("text", "Failed to parse sender tag in text: " + text + ". Error: " + e.getMessage());
+            return Pair.of(TextSender.defaultSender(), text);
+        }
     }
 
 

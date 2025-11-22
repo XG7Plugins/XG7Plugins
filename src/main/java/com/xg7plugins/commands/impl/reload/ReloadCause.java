@@ -21,6 +21,7 @@ public class ReloadCause {
     public static final ReloadCause EVENTS = new ReloadCause("events");
     public static final ReloadCause LANGS = new ReloadCause("langs");
     public static final ReloadCause TASKS = new ReloadCause("tasks");
+    public static final ReloadCause EXTENSIONS = new ReloadCause("extensions");
 
     private final String name;
 
@@ -41,7 +42,7 @@ public class ReloadCause {
     }
 
     public static void registerCause(Plugin plugin, ReloadCause cause) {
-        plugin.getDebug().info("Registering reload cause: " + cause);
+        plugin.getDebug().info("load", "Registering reload cause: " + cause.getName() + " for plugin: " + plugin.getName());
         customCauses.putIfAbsent(plugin.getName(), new ArrayList<>());
         customCauses.get(plugin.getName()).add(cause);
     }
@@ -69,6 +70,8 @@ public class ReloadCause {
                 return ReloadCause.LANGS;
             case "TASKS":
                 return ReloadCause.TASKS;
+            case "EXTENSIONS":
+                return ReloadCause.EXTENSIONS;
             default:
                 return customCauses.get(plugin.getName()).stream().filter(cause -> cause.getName().toUpperCase().equals(name.toUpperCase())).findFirst().orElse(null);
         }

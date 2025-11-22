@@ -4,10 +4,9 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.gson.Gson;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
-import com.xg7plugins.managers.Manager;
+
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -23,7 +22,7 @@ import java.util.stream.Collectors;
  * This class handles cache registration, object storage, retrieval, and cache invalidation.
  * It supports both local memory caching and distributed Redis caching based on configuration.
  */
-public class CacheManager implements Manager {
+public class CacheManager {
 
     /**
      * Redis connection pool for distributed caching
@@ -120,7 +119,7 @@ public class CacheManager implements Manager {
                     if (cacheExpires) jedis.hexpire(cache.getPlugin().getName() + ":" + cache.getName(), cache.getExpireTime() / 1000, key.toString());
                 }
 
-            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
+            }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
         }
         caches.get(cache.getPlugin().getName() + ":" + cache.getName()).put(key, value);
         return CompletableFuture.completedFuture(null);
@@ -143,7 +142,7 @@ public class CacheManager implements Manager {
                     e.printStackTrace();
                     return null;
                 }
-            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
+            }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
 
         }
 
@@ -164,7 +163,7 @@ public class CacheManager implements Manager {
                     jedis.hdel(cache.getPlugin().getName() + ":" + cache.getName(), gson.toJson(key));
                     if (jedis.hlen(cache.getPlugin().getName() + ":" + cache.getName()) == 0) clearCache(cache);
                 }
-            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
+            }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
         }
 
         caches.get(cache.getPlugin().getName() + ":" + cache.getName()).invalidate(key);
@@ -183,7 +182,7 @@ public class CacheManager implements Manager {
                 try (Jedis jedis = pool.getResource()) {
                     jedis.del(cache.getPlugin().getName() + ":" + cache.getName());
                 }
-            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
+            }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
         }
 
         caches.get(cache.getPlugin().getName() + ":" + cache.getName()).invalidateAll();
@@ -206,7 +205,7 @@ public class CacheManager implements Manager {
                     e.printStackTrace();
                     return false;
                 }
-            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
+            }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
         }
 
         return CompletableFuture.completedFuture(caches.get(cache.getPlugin().getName() + ":" + cache.getName()).getIfPresent(key) != null);
@@ -235,7 +234,7 @@ public class CacheManager implements Manager {
                     e.printStackTrace();
                     return null;
                 }
-            }, XG7PluginsAPI.taskManager().getExecutor("cache"));
+            }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
         }
 
         return CompletableFuture.completedFuture((Map<K, V>) caches.get(cache.getPlugin().getName() + ":" + cache.getName()).asMap());

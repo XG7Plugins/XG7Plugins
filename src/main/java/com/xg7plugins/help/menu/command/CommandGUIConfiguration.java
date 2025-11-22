@@ -1,7 +1,7 @@
 package com.xg7plugins.help.menu.command;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;

@@ -1,9 +1,9 @@
 package com.xg7plugins.data.database.connector;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.database.ConnectionType;
 import lombok.Data;
 

@@ -7,7 +7,7 @@ import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
-import com.xg7plugins.managers.Manager;
+
 import com.xg7plugins.commands.executors.PluginCommandExecutor;
 import com.xg7plugins.commands.node.CommandConfig;
 import com.xg7plugins.commands.node.CommandNode;
@@ -30,7 +30,7 @@ import java.util.*;
  * command configurations, and async execution capabilities.
  */
 @Getter
-public class CommandManager implements Manager {
+public class CommandManager {
 
     private final Plugin plugin;
     private final Map<String, CommandNode> commandNodeMap = new HashMap<>();
@@ -58,7 +58,7 @@ public class CommandManager implements Manager {
 
         PluginCommand mainCommand = (PluginCommand) ReflectionClass.of(PluginCommand.class)
                 .getConstructor(String.class, org.bukkit.plugin.Plugin.class)
-                .newInstance(plConfig.mainCommandName(), plugin)
+                .newInstance(plConfig.mainCommandName(), plugin.getJavaPlugin())
                 .getObject();
 
         mainCommand.setExecutor(executor);
@@ -91,7 +91,7 @@ public class CommandManager implements Manager {
                 boolean invert = setup.isEnabled().invert();
                 boolean enabled = config != null && config.root().get(setup.isEnabled().path(), false);
                 if (invert == enabled) {
-                    plugin.getDebug().info("Command " + setup.name() + " is disabled by configuration");
+                    plugin.getDebug().info("load", "Command " + setup.name() + " is disabled by configuration");
                     continue;
                 }
             }
@@ -99,7 +99,7 @@ public class CommandManager implements Manager {
             ConfigSection cfg = ConfigFile.of("commands", plugin).root();
 
             if (!cfg.contains(setup.name())) {
-                plugin.getDebug().warn("Command " + setup.name() + " not found in commands.yml - skipping registration");
+                plugin.getDebug().warn("load", "Command " + setup.name() + " not found in commands.yml - skipping registration");
                 continue;
             }
 
@@ -108,7 +108,7 @@ public class CommandManager implements Manager {
             String fullName = plConfig.mainCommandName() + setup.name();
             PluginCommand pluginCommand = (PluginCommand) ReflectionClass.of(PluginCommand.class)
                     .getConstructor(String.class, org.bukkit.plugin.Plugin.class)
-                    .newInstance(fullName, plugin)
+                    .newInstance(fullName, plugin.getJavaPlugin())
                     .getObject();
 
             pluginCommand.setAliases(aliases);
@@ -118,12 +118,12 @@ public class CommandManager implements Manager {
             pluginCommand.setTabCompleter(executor);
             commandMap.register(plConfig.mainCommandName(), pluginCommand);
 
-            plugin.getDebug().info("Registered command: " + fullName + " with aliases: " + aliases);
+            plugin.getDebug().info("load", "Registered command: " + fullName + " with aliases: " + aliases);
             registerCommandNodes(command);
             commandList.add(command);
         }
 
-        plugin.getDebug().loading("Successfully loaded " + commands.size() + " Commands!");
+        plugin.getDebug().info("load", "Successfully loaded " + commands.size() + " Commands!");
     }
 
 
@@ -164,7 +164,7 @@ public class CommandManager implements Manager {
                         String fullPath = parentPair.getFirst() + "_" + nodeName;
 
                         if (!cfg.contains(fullPath)) {
-                            plugin.getDebug().warn("Subcommand " + nodeName + " of " + setup.name() + " not found in commands.yml - skipping registration");
+                            plugin.getDebug().warn("load", "Subcommand " + nodeName + " of " + setup.name() + " not found in commands.yml - skipping registration");
                             return;
                         }
 
@@ -174,7 +174,7 @@ public class CommandManager implements Manager {
                     } else {
 
                         if (!cfg.contains(setup.name() + "_" + nodeName)) {
-                            plugin.getDebug().warn("Subcommand " + nodeName + " of " + setup.name() + " not found in commands.yml - skipping registration");
+                            plugin.getDebug().warn("load", "Subcommand " + nodeName + " of " + setup.name() + " not found in commands.yml - skipping registration");
                             return;
                         }
 

@@ -1,9 +1,9 @@
 package com.xg7plugins.help.xg7pluginshelp;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.item.clickable.impl.OpenBookClickableItem;
 import com.xg7plugins.modules.xg7menus.item.InventoryItem;
@@ -29,7 +29,7 @@ public class XG7PluginsHelpGUI extends Menu {
     @Override
     public List<InventoryItem> getItems(Player player) {
 
-        ConfigSection lang = XG7PluginsAPI.langManager().getLangByPlayer(plugin, player).join().getSecond().getLangConfiguration();
+        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(plugin, player).join().getSecond().getLangConfiguration();
 
         List<String> about = lang.getList("help-menu.about", String.class).orElse(new ArrayList<>());
 

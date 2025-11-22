@@ -22,7 +22,7 @@ public class HTTP {
      * @return A configured HTTPRequest object ready to be sent
      * @throws IOException If there's an error creating the request
      */
-    public static HTTPRequest makeRequest(String url, HTTPMethod method, List<Pair<String,String>> headers, String body) throws IOException {
+    public static HTTPRequest makeRequest(String url, HTTPMethod method, List<Pair<String,String>> headers, String body) {
         return HTTPRequest.builder().
                 url(url).
                 method(method).

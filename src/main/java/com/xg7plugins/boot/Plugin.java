@@ -1,31 +1,28 @@
 package com.xg7plugins.boot;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.api.API;
 import com.xg7plugins.boot.setup.PluginSetup;
 import com.xg7plugins.commands.CommandManager;
 import com.xg7plugins.commands.impl.reload.ReloadCause;
 import com.xg7plugins.commands.setup.Command;
-import com.xg7plugins.config.file.ConfigFile;
-import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.config.ConfigManager;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.database.dao.Repository;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.dependencies.Dependency;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
+import com.xg7plugins.extensions.ExtensionManager;
 import com.xg7plugins.help.HelpMessenger;
-import com.xg7plugins.managers.ManagerRegistry;
 import com.xg7plugins.modules.xg7geyserforms.forms.Form;
 import com.xg7plugins.modules.xg7holograms.hologram.Hologram;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
-import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
 import lombok.*;
 import org.apache.commons.lang.IllegalClassException;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -41,70 +38,45 @@ import java.util.*;
  * @author DaviXG7
  */
 @Getter
-public abstract class Plugin extends JavaPlugin {
+public abstract class Plugin {
+
+    protected final JavaPlugin javaPlugin;
 
     private final PluginSetup pluginSetup;
 
-    protected EnvironmentConfig environmentConfig;
+    protected final CommandManager commandManager;
+    protected final ConfigManager configManager;
+    private final ExtensionManager extensionManager;
 
-    protected ManagerRegistry managerRegistry;
-    protected Debug debug;
-
+    @Setter
     protected HelpMessenger helpMessenger;
 
-    public Plugin() {
+    protected Debug debug;
+
+
+    protected API<?> api;
+
+    @Setter
+    private boolean enabled = false;
+
+
+    public Plugin(JavaPlugin plugin) {
+        this.javaPlugin = plugin;
         pluginSetup = getClass().getAnnotation(PluginSetup.class);
         if (pluginSetup == null) throw new IllegalClassException("PluginSetup annotation not found in " + getClass().getName());
 
-        managerRegistry = new ManagerRegistry(this);
-        this.environmentConfig = new EnvironmentConfig();
+        this.commandManager = new CommandManager(this);
+        this.configManager = new ConfigManager(this, pluginSetup.configs());
+        this.extensionManager = new ExtensionManager(this);
+
+        this.debug = new Debug(this);
     }
 
-    @Override
-    public void onLoad() {
-        environmentConfig.setPrefix(ChatColor.translateAlternateColorCodes('&', pluginSetup.prefix()));
-        environmentConfig.setCustomPrefix(environmentConfig.getPrefix());
+    public abstract void onLoad();
 
-        managerRegistry.registerManagers(new ConfigManager(this, pluginSetup.configs()));
-        managerRegistry.registerManagers(new CommandManager(this));
+    public abstract void onEnable();
 
-        environmentConfig.setEnabledWorlds(ConfigFile.mainConfigOf(this).root().getList("enabled-worlds", String.class).orElse(Collections.emptyList()));
-
-        debug = new Debug(this);
-
-        debug.loading("Loading " + environmentConfig.getCustomPrefix() + "...");
-
-        for (String cause : pluginSetup.reloadCauses()) ReloadCause.registerCause(this, new ReloadCause(cause));
-
-        XG7Plugins.register(this);
-    }
-
-    @Override
-    public void onEnable() {
-        debug.loading("Enabling " + environmentConfig.getCustomPrefix() + "...");
-        if (pluginSetup.onEnableDraw().length != 0) {
-            Arrays.stream(pluginSetup.onEnableDraw()).forEach(Bukkit.getConsoleSender()::sendMessage);
-            Bukkit.getConsoleSender().sendMessage("Plugin version: " + this.getDescription().getVersion());
-            Bukkit.getConsoleSender().sendMessage("Found bug? Report us: https://discord.gg/yghhDAaCED");
-            Bukkit.getConsoleSender().sendMessage("Consider donating <3: https://ko-fi.com/davixg7");
-        }
-
-        ConfigSection config = ConfigFile.mainConfigOf(this).root();
-
-        environmentConfig.setCustomPrefix(ChatColor.translateAlternateColorCodes('&', config.get("prefix", environmentConfig.getPrefix())));
-
-        environmentConfig.setEnabledWorlds(config.getList("enabled-worlds", String.class).orElse(Collections.emptyList()));
-
-        debug.loading("Custom prefix: " + environmentConfig.getCustomPrefix());
-
-        Bukkit.getScheduler().runTask(this, () -> {
-            if (!ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("anti-tab", false)) return;
-
-            debug.info("Loading anti-tab feature...");
-
-            XG7PluginsAPI.packetEventManager().registerListeners(this, XG7PluginsAPI.commandManager(this).getAntiTab());
-        });
-    }
+    public abstract void onDisable();
 
     /**
      * Handles plugin reloading based on the specific cause provided.
@@ -129,39 +101,33 @@ public abstract class Plugin extends JavaPlugin {
     public void onReload(ReloadCause cause) {
 
         if (cause.equals(ReloadCause.CONFIG)) {
-            XG7PluginsAPI.configManager(this).reloadConfigs();
+            XG7Plugins.getAPI().configManager(this).reloadConfigs();
             debug = new Debug(this);
         }
 
         debug = new Debug(this);
 
         if (cause.equals(ReloadCause.EVENTS)) {
-            XG7PluginsAPI.eventManager().reloadEvents(this);
-            XG7PluginsAPI.packetEventManager().reloadListeners(this);
+            XG7Plugins.getAPI().eventManager().reloadEvents(this);
+            XG7Plugins.getAPI().packetEventManager().reloadListeners(this);
         }
         if (cause.equals(ReloadCause.DATABASE)) {
-            XG7PluginsAPI.database().reloadConnection(this);
+            XG7Plugins.getAPI().database().reloadConnection(this);
         }
         if (cause.equals(ReloadCause.LANGS)) {
-            XG7PluginsAPI.langManager().clearCache();
-            XG7PluginsAPI.langManager().loadLangsFrom(this);
+            XG7Plugins.getAPI().langManager().clearCache();
+            XG7Plugins.getAPI().langManager().loadLangsFrom(this);
         }
         if (cause.equals(ReloadCause.TASKS)) {
-            XG7PluginsAPI.taskManager().cancelAllRegisteredTasks(this);
-            XG7PluginsAPI.cooldowns().removeAll();
-            XG7PluginsAPI.cooldowns().cancelTask();
-            XG7PluginsAPI.taskManager().reloadTasks(this);
+            XG7Plugins.getAPI().taskManager().cancelAllRegisteredTasks(this);
+            XG7Plugins.getAPI().cooldowns().removeAll();
+            XG7Plugins.getAPI().cooldowns().cancelTask();
+            XG7Plugins.getAPI().taskManager().reloadTasks(this);
+        }
+        if (cause.equals(ReloadCause.EXTENSIONS)) {
+            XG7Plugins.getAPI().extensionManager(this).reloadExtensions();
         }
 
-    }
-
-    @Override
-    public void onDisable() {
-        debug.loading("Disabling " + environmentConfig.getCustomPrefix() + "...");
-    }
-
-    public <T extends EnvironmentConfig> T getEnvironmentConfig() {
-        return (T) environmentConfig;
     }
 
     /**
@@ -169,7 +135,7 @@ public abstract class Plugin extends JavaPlugin {
      *
      * @return An array of classes extending Entity, used for database table creation
      */
-    public Class<? extends Entity<?,?>>[] loadEntities() {
+    public Class<? extends Entity<?,?>>[] loadDBEntities() {
         return null;
     }
 
@@ -222,7 +188,7 @@ public abstract class Plugin extends JavaPlugin {
      * Sets up the plugin's help system.
      * This method must be implemented to register help messages.
      */
-    public abstract void loadHelp();
+    public abstract HelpMessenger loadHelp();
 
     /**
      * Loads the plugin's optional dependencies.
@@ -251,7 +217,6 @@ public abstract class Plugin extends JavaPlugin {
         return null;
     }
 
-
     public List<BasicMenu> loadMenus() {
         return null;
     }
@@ -261,8 +226,28 @@ public abstract class Plugin extends JavaPlugin {
     public List<Score> loadScores() {
         return null;
     }
-    public List<Hologram<?>> loadHolograms() {
+    public List<Hologram> loadHolograms() {
         return null;
     }
 
+
+
+    public String getPrefix() {
+        return ChatColor.translateAlternateColorCodes('&', pluginSetup.prefix());
+    }
+    public String getCustomPrefix() {
+        return ConfigFile.mainConfigOf(this).root().get("prefix", getPrefix());
+    }
+    public List<String> getEnabledWorlds() {
+        return ConfigFile.mainConfigOf(this).root().getList("enabled-worlds", String.class).orElse(Collections.emptyList());
+    }
+    public List<String> getEnabledRegions() {
+        return ConfigFile.mainConfigOf(this).root().getList("enabled-regions", String.class).orElse(Collections.emptyList());
+    }
+    public String getName() {
+        return javaPlugin.getDescription().getName();
+    }
+    public String getVersion() {
+        return javaPlugin.getDescription().getVersion();
+    }
 }

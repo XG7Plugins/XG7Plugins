@@ -1,8 +1,7 @@
 package com.xg7plugins.cache;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.XG7Plugins;
 import lombok.Getter;
 
 import java.util.Map;
@@ -43,7 +42,7 @@ public class ObjectCache<K,V> {
         this.expireTime = expireTime;
         this.expiresAfterWrite = expiresAfterWrite;
         this.name = name;
-        this.cacheManager = XG7PluginsAPI.cacheManager();
+        this.cacheManager = XG7Plugins.getAPI().cacheManager();
 
         this.useLocalCache = useLocalCache;
         this.keyType = keyType;

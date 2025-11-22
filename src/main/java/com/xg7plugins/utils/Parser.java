@@ -1,5 +1,9 @@
 package com.xg7plugins.utils;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+import me.clip.placeholderapi.PlaceholderAPIPlugin;
+import org.bukkit.Bukkit;
+
 import java.util.function.Function;
 
 /**
@@ -9,7 +13,7 @@ import java.util.function.Function;
 public enum Parser {
     INTEGER(Integer::parseInt),
     STRING(s -> s),
-    BOOLEAN(Boolean::parseBoolean),
+    BOOLEAN(s -> s.equalsIgnoreCase("true") || (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null && s.equals(PlaceholderAPIPlugin.booleanTrue()))),
     LONG(Long::parseLong),
     DOUBLE(Double::parseDouble),
     FLOAT(Float::parseFloat),

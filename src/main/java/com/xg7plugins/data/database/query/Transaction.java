@@ -1,7 +1,6 @@
 package com.xg7plugins.data.database.query;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.data.database.entity.*;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.data.database.processor.TableCreator;
@@ -11,9 +10,7 @@ import lombok.Getter;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * Represents a database transaction that can handle multiple database operations (INSERT, UPDATE, DELETE)
@@ -380,7 +377,7 @@ public class Transaction {
      * Queues this transaction for execution
      */
     public Transaction process() throws Exception {
-        XG7PluginsAPI.database().getProcessor().processTransaction(this);
+        XG7Plugins.getAPI().database().getProcessor().processTransaction(this);
         return this;
     }
 

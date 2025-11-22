@@ -1,7 +1,6 @@
 package com.xg7plugins.tasks.plugin_tasks;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.data.database.ConnectionType;
 import com.xg7plugins.data.database.DatabaseManager;
@@ -25,7 +24,7 @@ public class DatabaseKeepAlive extends TimerTask {
 
     @Override
     public void run() {
-        DatabaseManager databaseManager = XG7PluginsAPI.database();
+        DatabaseManager databaseManager = XG7Plugins.getAPI().database();
 
         SQLiteConnector sqLiteConnector = (SQLiteConnector) databaseManager.getConnectorRegistry().getConnector(ConnectionType.SQLITE);
 

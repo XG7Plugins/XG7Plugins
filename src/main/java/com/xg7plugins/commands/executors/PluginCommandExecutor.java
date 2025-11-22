@@ -1,6 +1,5 @@
 package com.xg7plugins.commands.executors;
 
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.setup.PluginSetup;
 import com.xg7plugins.commands.node.CommandConfig;
 import com.xg7plugins.commands.utils.CommandState;
@@ -8,6 +7,7 @@ import com.xg7plugins.commands.CommandManager;
 import com.xg7plugins.commands.node.CommandNode;
 import com.xg7plugins.commands.utils.CommandArgs;
 import com.xg7plugins.commands.setup.CommandSetup;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.tasks.tasks.AsyncTask;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandExecutor;
@@ -110,49 +110,50 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
 
         if (sender instanceof Player) {
             if (nodeConfig.isInEnabledWorldOnly() &&
-                    !XG7PluginsAPI.isInAnEnabledWorld(manager.getPlugin(), ((Player) sender))) {
+                    !XG7Plugins.getAPI().isInAnEnabledWorld(manager.getPlugin(), ((Player) sender))) {
                 CommandState.DISABLED_WORLD.send(sender);
                 return true;
             }
         }
 
-        CommandNode finalChosen = chosen;
-
-
-        Runnable commandRun = () -> {
-
-            manager.getPlugin().getDebug().info("Executing /" +
-                    finalChosen.getCommand().getCommandSetup().name() +
-                    " (" + finalChosen.getName() + ") by " + sender.getName());
-
-            try {
-
-                CommandState state = finalChosen.execute(sender, commandArgs);
-
-                if (state.equals(CommandState.SYNTAX_ERROR)) {
-                    state = CommandState.syntaxError(finalChosen.getCommandMethod() == null ?
-                            finalChosen.getCommand().getCommandSetup().syntax() :
-                            finalChosen.getCommandMethod().getAnnotation(CommandConfig.class).syntax()
-                    );
-                }
-
-                state.send(sender);
-
-                manager.getPlugin().getDebug().info("Returned state: " + state);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        };
+        Runnable commandRun = getCommandRun(sender, chosen, commandArgs);
 
         if (nodeConfig.isAsync()) {
-            XG7PluginsAPI.taskManager().runAsync(AsyncTask.of("commands", commandRun));
+            XG7Plugins.getAPI().taskManager().runAsync(AsyncTask.of("commands", commandRun));
             return true;
         }
 
         commandRun.run();
 
         return true;
+    }
+
+    private @NotNull Runnable getCommandRun(@NotNull CommandSender sender, CommandNode chosen, CommandArgs commandArgs) {
+        return () -> {
+
+            manager.getPlugin().getDebug().info("commands", "Executing /" +
+                    chosen.getCommand().getCommandSetup().name() +
+                    " (" + chosen.getName() + ") by " + sender.getName());
+
+            try {
+
+                CommandState state = chosen.execute(sender, commandArgs);
+
+                if (state.equals(CommandState.SYNTAX_ERROR)) {
+                    state = CommandState.syntaxError(chosen.getCommandMethod() == null || chosen.getCommand().getCommandSetup().syntax().isEmpty() ?
+                            chosen.getCommand().getCommandSetup().syntax() :
+                            chosen.getCommandMethod().getAnnotation(CommandConfig.class).syntax()
+                    );
+                }
+
+                state.send(sender);
+
+                manager.getPlugin().getDebug().info("command", "Returned state: " + state);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
     }
 
     @Nullable

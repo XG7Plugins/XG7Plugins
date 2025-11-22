@@ -1,7 +1,7 @@
 package com.xg7plugins.modules.xg7menus.handlers;
 
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.cooldowns.CooldownManager;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import com.xg7plugins.modules.xg7menus.Slot;
@@ -66,7 +66,7 @@ public class PlayerMenuHandler implements Listener {
         if (!(XG7Menus.hasPlayerMenuHolder(event.getWhoClicked().getUniqueId()) && event.getInventory().getHolder().equals(event.getWhoClicked())))
             return;
 
-        CooldownManager cooldownManager = XG7PluginsAPI.cooldowns();
+        CooldownManager cooldownManager = XG7Plugins.getAPI().cooldowns();
 
         if (cooldownManager.containsPlayer("xg7menus_click_cooldown", (Player) event.getWhoClicked())) {
             event.setCancelled(true);

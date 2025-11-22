@@ -3,7 +3,7 @@ package com.xg7plugins.tasks;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigFile;
-import com.xg7plugins.managers.Manager;
+
 import com.xg7plugins.tasks.tasks.AsyncTask;
 import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.tasks.tasks.TimerTask;
@@ -22,7 +22,7 @@ import java.util.concurrent.*;
  * with support for different executor services.
  */
 @Getter
-public class TaskManager implements Manager {
+public class TaskManager {
 
 
     private final Map<String, TimerTask> timerTaskMap = new ConcurrentHashMap<>();
@@ -76,7 +76,7 @@ public class TaskManager implements Manager {
         if (tasks == null) return;
         tasks.forEach(timerTask -> {
             if (timerTask == null) return;
-            XG7Plugins.getInstance().getDebug().info("Registering task: " + timerTask.getId());
+            XG7Plugins.getInstance().getDebug().info("tasks", "Registering task: " + timerTask.getId());
             if (timerTask.getTaskState() == TaskState.RUNNING) {
                 timerTask.setTaskState(TaskState.IDLE);
                 runTimerTask(timerTask);
@@ -98,7 +98,7 @@ public class TaskManager implements Manager {
     public void runSync(BukkitTask bukkitTask) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTask(XG7Plugins.getInstance(), bukkitTask::run).getTaskId();
+        int taskID = Bukkit.getScheduler().runTask(XG7Plugins.getInstance().getJavaPlugin(), bukkitTask::run).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -131,7 +131,7 @@ public class TaskManager implements Manager {
     public void runAsyncBukkitTask(BukkitTask bukkitTask) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTaskAsynchronously(XG7Plugins.getInstance(), bukkitTask::run).getTaskId();
+        int taskID = Bukkit.getScheduler().runTaskAsynchronously(XG7Plugins.getInstance().getJavaPlugin(), bukkitTask::run).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -146,7 +146,7 @@ public class TaskManager implements Manager {
     public void scheduleSync(BukkitTask bukkitTask, long delay) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance(), bukkitTask::run, TimeParser.convertMillisToTicks(delay)).getTaskId();
+        int taskID = Bukkit.getScheduler().runTaskLater(XG7Plugins.getInstance().getJavaPlugin(), bukkitTask::run, TimeParser.convertMillisToTicks(delay)).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -181,7 +181,7 @@ public class TaskManager implements Manager {
     public void scheduleAsyncBukkitTask(BukkitTask bukkitTask, long delay) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTaskLaterAsynchronously(XG7Plugins.getInstance(), bukkitTask::run, TimeParser.convertMillisToTicks(delay)).getTaskId();
+        int taskID = Bukkit.getScheduler().runTaskLaterAsynchronously(XG7Plugins.getInstance().getJavaPlugin(), bukkitTask::run, TimeParser.convertMillisToTicks(delay)).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -197,7 +197,7 @@ public class TaskManager implements Manager {
     public void scheduleSyncRepeating(Plugin plugin, BukkitTask bukkitTask, long delay, long period) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTaskTimer(plugin, bukkitTask::run, TimeParser.convertMillisToTicks(delay), TimeParser.convertMillisToTicks(period)).getTaskId();
+        int taskID = Bukkit.getScheduler().runTaskTimer(plugin.getJavaPlugin(), bukkitTask::run, TimeParser.convertMillisToTicks(delay), TimeParser.convertMillisToTicks(period)).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }
@@ -235,7 +235,7 @@ public class TaskManager implements Manager {
     public void scheduleAsyncRepeatingBukkitTask(Plugin plugin, BukkitTask bukkitTask, long delay, long period) {
         if (bukkitTask == null) return;
 
-        int taskID = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, bukkitTask::run, TimeParser.convertMillisToTicks(delay), TimeParser.convertMillisToTicks(period)).getTaskId();
+        int taskID = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin.getJavaPlugin(), bukkitTask::run, TimeParser.convertMillisToTicks(delay), TimeParser.convertMillisToTicks(period)).getTaskId();
 
         bukkitTask.setBukkitTaskId(taskID);
     }

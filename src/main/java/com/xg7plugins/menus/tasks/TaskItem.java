@@ -1,10 +1,9 @@
 package com.xg7plugins.menus.tasks;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.commands.utils.CommandState;
 import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
@@ -31,7 +30,7 @@ public class TaskItem extends ClickableItem {
         super(null, slot);
         this.task = task;
 
-        ConfigSection lang = XG7PluginsAPI.langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getSecond().getLangConfiguration();
+        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getSecond().getLangConfiguration();
 
         InventoryItem builder = Item.from(XMaterial.REPEATER).toInventoryItem(slot);
         builder.name("&e" + task.getId());
@@ -71,7 +70,7 @@ public class TaskItem extends ClickableItem {
                     return;
                 }
 
-                XG7PluginsAPI.taskManager().cancelRepeatingTask(task);
+                XG7Plugins.getAPI().taskManager().cancelRepeatingTask(task);
                 Text.sendTextFromLang(player, XG7Plugins.getInstance(),"task-command.stopped");
                 if (holder instanceof PagedMenuHolder) {
                     PagedMenu.refresh((PagedMenuHolder) holder);
@@ -86,7 +85,7 @@ public class TaskItem extends ClickableItem {
                 return;
             }
 
-            XG7PluginsAPI.taskManager().runTimerTask(task);
+            XG7Plugins.getAPI().taskManager().runTimerTask(task);
             Text.sendTextFromLang(player, XG7Plugins.getInstance(),"task-command.restarted");
 
             if (holder instanceof PagedMenuHolder) {

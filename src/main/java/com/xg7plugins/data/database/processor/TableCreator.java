@@ -1,6 +1,6 @@
 package com.xg7plugins.data.database.processor;
 
-import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.database.ConnectionType;
 import com.xg7plugins.data.database.connector.SQLConfigs;
 import com.xg7plugins.data.database.entity.*;
@@ -82,7 +82,7 @@ public class TableCreator {
      */
     public CompletableFuture<Void> createTableOf(Plugin plugin, Class<? extends Entity> clazz) {
 
-        plugin.getDebug().info("Checking table for entity " + clazz.getSimpleName() + " ...");
+        plugin.getDebug().info("database", "Checking table for entity " + clazz.getSimpleName() + " ...");
 
         try {
             clazz.getDeclaredConstructor();
@@ -90,7 +90,7 @@ public class TableCreator {
             throw new IllegalEntityException(clazz);
         }
 
-        DatabaseManager databaseManager = XG7PluginsAPI.database();
+        DatabaseManager databaseManager = XG7Plugins.getAPI().database();
 
         return CompletableFuture.runAsync(() -> {
             try {
@@ -167,7 +167,7 @@ public class TableCreator {
                     }
                 }
 
-                plugin.getDebug().info("Table for entity " + clazz.getSimpleName() + " created successfully.");
+                plugin.getDebug().info("database", "Table for entity " + clazz.getSimpleName() + " created successfully.");
 
                 childs.forEach(child -> createTableOf(plugin, child).join());
 
@@ -175,7 +175,7 @@ public class TableCreator {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
-        }, XG7PluginsAPI.taskManager().getExecutor("database"));
+        }, XG7Plugins.getAPI().taskManager().getExecutor("database"));
     }
 
 }

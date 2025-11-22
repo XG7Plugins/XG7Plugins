@@ -1,9 +1,9 @@
 package com.xg7plugins.lang;
 
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +20,7 @@ public class Lang {
     private final String langId;
 
     public static CompletableFuture<Pair<Boolean, Lang>> of(Plugin plugin, Player player) {
-        return XG7PluginsAPI.langManager().getLangByPlayer(plugin, player);
+        return XG7Plugins.getAPI().langManager().getLangByPlayer(plugin, player);
     }
 
     public String get(String path) {

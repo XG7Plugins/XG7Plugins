@@ -27,15 +27,29 @@ public class HTTPRequest {
     public HTTPResponse send() throws IOException {
         HttpURLConnection conn = request();
 
-        BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
-        StringBuilder sb = new StringBuilder();
-        String output;
-        while ((output = br.readLine()) != null) {
-            sb.append(output);
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        try (InputStream in = conn.getInputStream()) {
+            byte[] data = new byte[8192];
+            int n;
+            while ((n = in.read(data)) != -1) {
+                buffer.write(data, 0, n);
+            }
         }
-        br.close();
+
+        int code = conn.getResponseCode();
+        String message = conn.getResponseMessage();
         conn.disconnect();
-        return new HTTPResponse(sb.toString(), conn.getResponseCode(), conn.getResponseMessage(), conn.getInputStream());
+
+        byte[] bytes = buffer.toByteArray();
+
+        String content = new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
+
+        return new HTTPResponse(
+                content,
+                bytes,
+                code,
+                message
+        );
     }
 
     /**
@@ -51,7 +65,7 @@ public class HTTPRequest {
 
         Debug debug = Debug.of(XG7Plugins.getInstance());
 
-        debug.info("Making request to: " + this.url);
+        debug.info("http-requests", "Making request to: " + this.url);
 
         URL url = new URL(this.url);
 

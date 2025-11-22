@@ -1,9 +1,9 @@
 package com.xg7plugins.help.chat;
 
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.executors.MainCommand;
 import com.xg7plugins.commands.node.CommandNode;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.help.HelpComponent;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
@@ -20,7 +20,7 @@ public class HelpChat implements HelpComponent {
     public HelpChat(Plugin plugin, HelpChatPage index) {
         this.pages.put("index", index);
 
-        List<CommandNode> commands = XG7PluginsAPI.rootCommandNodesOf(plugin).stream().filter(cmd -> !(cmd.getCommand() instanceof MainCommand)).collect(Collectors.toList());
+        List<CommandNode> commands = XG7Plugins.getAPI().rootCommandNodesOf(plugin).stream().filter(cmd -> !(cmd.getCommand() instanceof MainCommand)).collect(Collectors.toList());
 
         int maxPage = (int) Math.ceil(commands.size() / 7.0);
         for (int i = 0; i < maxPage; i++) {

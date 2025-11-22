@@ -4,9 +4,8 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDisplayScoreboard;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateScore;
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.utils.Parser;
 import com.xg7plugins.utils.text.Text;
@@ -58,7 +57,7 @@ public class BelowNameScore extends Score {
 
                 Bukkit.getOnlinePlayers().forEach(p -> PacketEvents.getAPI().getPlayerManager().sendPacket(p, updateScore));
             } catch (Exception ignored) {
-                XG7Plugins.getInstance().getDebug().warn("Invalid score format for below name scoreboard");
+                XG7Plugins.getInstance().getDebug().warn("scores", "Invalid score format for below name scoreboard");
             }
 
         }

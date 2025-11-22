@@ -4,7 +4,8 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigFile;
-import lombok.Setter;
+import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.utils.text.AnsiParser;
 import org.bukkit.Bukkit;
 
 /**
@@ -14,8 +15,9 @@ import org.bukkit.Bukkit;
 public class Debug {
 
     private final Plugin plugin;
-    @Setter
-    private boolean debugEnabled;
+
+    private boolean debugEnabled = false;
+    private ConfigSection debugSection;
 
     /**
      * Creates a new Debug instance for the specified plugin.
@@ -25,8 +27,15 @@ public class Debug {
      */
     public Debug(Plugin plugin) {
         this.plugin = plugin;
-        debugEnabled = ConfigFile.mainConfigOf(plugin).root().get("debug-enabled");
-        PacketEvents.getAPI().getSettings().debug(plugin instanceof XG7Plugins && debugEnabled);
+    }
+
+    public void setupDebugMode() {
+        debugSection = ConfigFile.mainConfigOf(plugin).section("debug");
+
+        debugEnabled = debugSection.get("enabled");
+        if (plugin instanceof XG7Plugins && PacketEvents.getAPI() != null) {
+            PacketEvents.getAPI().getSettings().debug(debugEnabled && ConfigFile.mainConfigOf(plugin).root().get("debug.packet-events", false));
+        }
     }
 
     /**
@@ -35,8 +44,8 @@ public class Debug {
      *
      * @param message The message to display
      */
-    public void loading(String message) {
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getPrefix() + "§8]§r " + message);
+    public void log(String message) {
+        sendConsole("§8[§r" + plugin.getCustomPrefix() + "§8]§r " + message);
     }
 
     /**
@@ -45,9 +54,10 @@ public class Debug {
      *
      * @param message The message to display
      */
-    public void info(String message) {
+    public void info(String logStream, String message) {
         if (!debugEnabled) return;
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getPrefix()+ " INFO§8]§r " + message);
+        if (!debugSection.get(logStream, false)) return;
+        sendConsole("§8[§r" + plugin.getCustomPrefix() + " INFO§8]§r " + message);
     }
 
     /**
@@ -56,9 +66,10 @@ public class Debug {
      *
      * @param message The message to display
      */
-    public void warn(String message) {
+    public void warn(String logStream, String message) {
         if (!debugEnabled) return;
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getPrefix() + " §eWARNING§8]§e " + message);
+        if (!debugSection.get(logStream, false)) return;
+        sendConsole("§8[§r" + plugin.getCustomPrefix() + " §eWARNING§8]§e " + message);
     }
 
     /**
@@ -69,18 +80,7 @@ public class Debug {
      * @param message The message to display
      */
     public void severe(String message) {
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getPrefix() + " §cERROR§8]§c " + message);
-    }
-
-    /**
-     * Logs a general message to the console.
-     * This message type is always shown regardless of debug mode.
-     * Uses the plugin's prefix with LOG level indicator.
-     *
-     * @param message The message to display
-     */
-    public void log(String message) {
-        Bukkit.getConsoleSender().sendMessage("§8[§r" + plugin.getEnvironmentConfig().getPrefix() + " LOG§8]§r " + message);
+        sendConsole("§8[§r" + plugin.getCustomPrefix() + " §cERROR§8]§c " + message);
     }
 
     /**
@@ -91,6 +91,11 @@ public class Debug {
      */
     public static Debug of(Plugin plugin) {
         return plugin.getDebug();
+    }
+
+
+    private void sendConsole(String msg) {
+        Bukkit.getConsoleSender().sendMessage(AnsiParser.parse(msg + "§r"));
     }
 
 }

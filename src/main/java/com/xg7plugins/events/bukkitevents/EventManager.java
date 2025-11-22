@@ -1,13 +1,14 @@
 package com.xg7plugins.events.bukkitevents;
 
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
-import com.xg7plugins.managers.Manager;
+
 import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.entity.EntityEvent;
@@ -25,7 +26,7 @@ import java.util.List;
  * This class provides functionality to register, unregister, and reload event listeners
  * while supporting world-specific event handling and conditional event enabling.
  */
-public class EventManager implements Manager {
+public class EventManager {
 
     private final HashMap<String, org.bukkit.event.Listener> listeners = new HashMap<>();
 
@@ -61,8 +62,8 @@ public class EventManager implements Manager {
                     if (invert == enabled) continue;
                 }
 
-                plugin.getServer().getPluginManager().registerEvent(
-                        (Class<? extends org.bukkit.event.Event>) method.getParameterTypes()[0],
+                plugin.getJavaPlugin().getServer().getPluginManager().registerEvent(
+                        (Class<? extends Event>) method.getParameterTypes()[0],
                         listeners.get(plugin.getName()),
                         eventHandler.priority(),
                         (listener, event2) -> {
@@ -72,27 +73,27 @@ public class EventManager implements Manager {
                             if (eventHandler.isOnlyInWorld()) {
                                 if (event2 instanceof PlayerEvent) {
                                     PlayerEvent playerEvent = (PlayerEvent) event2;
-                                    if (!XG7PluginsAPI.isInAnEnabledWorld(plugin, playerEvent.getPlayer()))
+                                    if (!XG7Plugins.getAPI().isInAnEnabledWorld(plugin, playerEvent.getPlayer()))
                                         return;
                                 }
                                 if (event2 instanceof EntityEvent) {
                                     EntityEvent entityEvent = (EntityEvent) event2;
-                                    if (!XG7PluginsAPI.isEnabledWorld(plugin, entityEvent.getEntity().getWorld()))
+                                    if (!XG7Plugins.getAPI().isEnabledWorld(plugin, entityEvent.getEntity().getWorld()))
                                         return;
                                 }
                                 if (event2 instanceof WorldEvent) {
                                     WorldEvent worldEvent = (WorldEvent) event2;
-                                    if (!XG7PluginsAPI.isEnabledWorld(plugin, worldEvent.getWorld()))
+                                    if (!XG7Plugins.getAPI().isEnabledWorld(plugin, worldEvent.getWorld()))
                                         return;
                                 }
                                 if (event2 instanceof BlockEvent) {
                                     BlockEvent blockEvent = (BlockEvent) event2;
-                                    if (!XG7PluginsAPI.isEnabledWorld(plugin, blockEvent.getBlock().getWorld()))
+                                    if (!XG7Plugins.getAPI().isEnabledWorld(plugin, blockEvent.getBlock().getWorld()))
                                         return;
                                 }
                                 if (event2 instanceof InventoryInteractEvent) {
                                     InventoryInteractEvent inventoryEvent = (InventoryInteractEvent) event2;
-                                    if (!XG7PluginsAPI.isEnabledWorld(plugin, inventoryEvent.getWhoClicked().getWorld()))
+                                    if (!XG7Plugins.getAPI().isEnabledWorld(plugin, inventoryEvent.getWhoClicked().getWorld()))
                                         return;
                                 }
                             }
@@ -103,7 +104,7 @@ public class EventManager implements Manager {
                                 throw new RuntimeException(e);
                             }
                         },
-                        plugin
+                        plugin.getJavaPlugin()
                 );
             }
 

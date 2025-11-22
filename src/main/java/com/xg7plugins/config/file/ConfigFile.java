@@ -1,8 +1,7 @@
 package com.xg7plugins.config.file;
 
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.config.ConfigManager;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.FileUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -32,30 +31,29 @@ public class ConfigFile {
         this.plugin = plugin;
         this.name = name;
 
-        if (plugin.getDebug() != null) plugin.getDebug().info("Loading " + name + ".yml...");
-        else plugin.getLogger().info("Loading " + name + ".yml...");
+        if (plugin.getDebug() != null) plugin.getDebug().info("config", "Loading " + name + ".yml...");
+        else plugin.getJavaPlugin().getLogger().info("Loading " + name + ".yml...");
 
-        File configFile = new File(plugin.getDataFolder(), name + ".yml");
+        File configFile = new File(plugin.getJavaPlugin().getDataFolder(), name + ".yml");
 
-        if (!configFile.exists()) plugin.saveResource(name + ".yml", false);
+        if (!configFile.exists()) plugin.getJavaPlugin().saveResource(name + ".yml", false);
 
         YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
 
-        if (plugin.getResource(name + ".yml") != null) {
+        if (plugin.getJavaPlugin().getResource(name + ".yml") != null) {
 
             YamlConfiguration resourceConfig = YamlConfiguration.loadConfiguration(FileUtil.reader(FileUtil.fromResource(plugin, name + ".yml")));
             if (!resourceConfig.getString("config-version").equals(config.getString("config-version"))) {
 
-                File backupFile = new File(plugin.getDataFolder(), name + "-old.yml");
-                configFile.renameTo(backupFile);
+                FileUtil.renameFile(configFile,name + "-old.yml");
 
-                plugin.saveResource(name + ".yml", true);
+                FileUtil.saveResource(plugin, name + ".yml");
 
-                this.configFile = new File(plugin.getDataFolder(), name + ".yml");
+                this.configFile = new File(plugin.getJavaPlugin().getDataFolder(), name + ".yml");
 
                 this.config = YamlConfiguration.loadConfiguration(configFile);
 
-                plugin.getLogger().info("Loaded!");
+                plugin.getJavaPlugin().getLogger().info("Loaded!");
 
                 return;
             }
@@ -65,15 +63,14 @@ public class ConfigFile {
         this.configFile = configFile;
         this.config = config;
 
-        if (plugin.getManagerRegistry().getManager(ConfigManager.class) != null)
-            plugin.getManagerRegistry().getManager(ConfigManager.class).putConfig(this);
+        if (plugin.getConfigManager() != null) plugin.getConfigManager().putConfig(this);
     }
 
     public ConfigFile(Plugin plugin, YamlConfiguration config, String name, boolean createFile) throws IOException {
         this.plugin = plugin;
         this.name = name;
         this.config = config;
-        this.configFile = new File(plugin.getDataFolder(), name + ".yml");
+        this.configFile = new File(plugin.getJavaPlugin().getDataFolder(), name + ".yml");
 
         if (!configFile.exists() && createFile) configFile.createNewFile();
     }
@@ -99,8 +96,8 @@ public class ConfigFile {
      * @return The Config instance
      */
     public static ConfigFile of(String name, Plugin plugin) {
-        if (XG7PluginsAPI.configManager(plugin).getConfigs().containsKey(name)) {
-            return XG7PluginsAPI.configManager(plugin).getConfigs().get(name);
+        if (XG7Plugins.getAPI().configManager(plugin).getConfigs().containsKey(name)) {
+            return XG7Plugins.getAPI().configManager(plugin).getConfigs().get(name);
         }
         return new ConfigFile(plugin, name);
     }
@@ -121,9 +118,9 @@ public class ConfigFile {
      */
     @SneakyThrows
     public void save() {
-        plugin.getDebug().info("Saving " + name + ".yml...");
+        plugin.getDebug().info("config", "Saving " + name + ".yml...");
         config.save(configFile);
-        plugin.getDebug().info("Saved!");
+        plugin.getDebug().info("config", "Saved!");
     }
 
     /**
@@ -131,13 +128,13 @@ public class ConfigFile {
      * Updates the config manager with the reloaded instance.
      */
     public void reload() {
-        plugin.getDebug().info("Reloading " + name + ".yml...");
+        plugin.getDebug().info("load", "Reloading " + name + ".yml...");
 
         this.config = YamlConfiguration.loadConfiguration(configFile);
 
-        XG7PluginsAPI.configManager(plugin).putConfig(this);
+        XG7Plugins.getAPI().configManager(plugin).putConfig(this);
 
-        plugin.getDebug().info("Reloaded");
+        plugin.getDebug().info("load", "Reloaded");
     }
 
     public boolean exists() {

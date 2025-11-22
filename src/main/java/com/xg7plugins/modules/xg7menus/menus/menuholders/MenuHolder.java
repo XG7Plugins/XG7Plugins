@@ -1,7 +1,6 @@
 package com.xg7plugins.modules.xg7menus.menus.menuholders;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7menus.editor.InventoryUpdater;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
@@ -36,7 +35,7 @@ public class MenuHolder extends BasicMenuHolder implements InventoryHolder {
 
         player.openInventory(inventory);
 
-        XG7PluginsAPI.taskManager().scheduleSync(BukkitTask.of(() -> BasicMenu.refresh(this)), 100L);
+        XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of(() -> BasicMenu.refresh(this)), 100L);
     }
 
 

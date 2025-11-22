@@ -1,9 +1,8 @@
 package com.xg7plugins.config.file;
 
 import com.cryptomorin.xseries.XMaterial;
-import com.google.common.reflect.TypeToken;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.config.typeadapter.ConfigTypeAdapter;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.time.Time;
 import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
@@ -15,7 +14,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
 /**
@@ -103,6 +101,10 @@ public class ConfigSection {
             }
         }
 
+        if (type == Time.class) {
+            return (T) getTime(path);
+        }
+
         if (OfflinePlayer.class.isAssignableFrom(type)) {
             return (T) Bukkit.getOfflinePlayer(config.getString(this.currentPath + path));
         }
@@ -112,10 +114,10 @@ public class ConfigSection {
         }
 
         ConfigTypeAdapter<T> adapter =
-                (ConfigTypeAdapter<T>) XG7PluginsAPI.configManager(file.getPlugin()).getAdapters().get(type);
+                (ConfigTypeAdapter<T>) XG7Plugins.getAPI().configManager(file.getPlugin()).getAdapters().get(type);
 
         if (adapter == null) {
-            file.getPlugin().getDebug().warn("Adapter not found for " + type.getName());
+            file.getPlugin().getDebug().warn("config", "Adapter not found for " + type.getName());
             return defaultValue;
         }
 
@@ -134,11 +136,11 @@ public class ConfigSection {
      */
     private boolean verifyExists(String path, boolean ignoreNonexistent) {
         if (!contains(path)) {
-            if (!ignoreNonexistent) file.getPlugin().getLogger().warning(this.currentPath + path + " not found in " + file.getName() + ".yml");
+            if (!ignoreNonexistent) file.getPlugin().getJavaPlugin().getLogger().warning(this.currentPath + path + " not found in " + file.getName() + ".yml");
             return false;
         }
         if (config.get(this.currentPath + path) == null) {
-            if (!ignoreNonexistent) file.getPlugin().getLogger().warning(this.currentPath + path + " in " + file.getName() + " is empty");
+            if (!ignoreNonexistent) file.getPlugin().getJavaPlugin().getLogger().warning(this.currentPath + path + " in " + file.getName() + " is empty");
             return false;
         }
         return true;
@@ -224,7 +226,7 @@ public class ConfigSection {
     public Time getTimeOrDefault(String path, Time defaultTime, boolean ignoreNonexistent) {
         String time = config.getString(this.currentPath + path);
         if (time == null) {
-            if (!ignoreNonexistent) file.getPlugin().getDebug().warn(this.currentPath + path + " not found in " + file.getName() + ".yml");
+            if (!ignoreNonexistent) file.getPlugin().getDebug().warn("config", this.currentPath + path + " not found in " + file.getName() + ".yml");
             return defaultTime;
         }
         long milliseconds;

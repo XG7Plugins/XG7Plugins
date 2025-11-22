@@ -1,7 +1,6 @@
 package com.xg7plugins.commands.executors;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.utils.CommandState;
 import com.xg7plugins.commands.setup.Command;
@@ -56,7 +55,7 @@ public class MainCommand implements Command {
 
         List<String> suggestions = new ArrayList<>();
         if (args.len() == 1) {
-            suggestions.addAll(XG7PluginsAPI.commandManager(plugin)
+            suggestions.addAll(XG7Plugins.getAPI().commandManager(plugin)
                     .getCommandList().stream()
                     .filter(cmd -> sender.hasPermission(cmd.getCommandSetup().permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass") && antiTab)
                     .map(cmd -> cmd.getCommandSetup().name())

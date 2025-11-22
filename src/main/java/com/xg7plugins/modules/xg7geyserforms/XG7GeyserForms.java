@@ -1,6 +1,6 @@
 package com.xg7plugins.modules.xg7geyserforms;
 
-import com.xg7plugins.XG7PluginsAPI;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.Module;
 import com.xg7plugins.modules.xg7geyserforms.forms.Form;
 import lombok.Getter;
@@ -63,6 +63,6 @@ public class XG7GeyserForms implements Module {
 
     @Override
     public boolean canBeEnabled() {
-        return XG7PluginsAPI.isGeyserFormsEnabled();
+        return XG7Plugins.getAPI().isGeyserFormsEnabled();
     }
 }

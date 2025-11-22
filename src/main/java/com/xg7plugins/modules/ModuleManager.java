@@ -1,13 +1,12 @@
 package com.xg7plugins.modules;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
-import com.xg7plugins.managers.Manager;
+
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
  * Handles registration of tasks, executors, and event listeners for each module.
  */
 @Getter
-public class ModuleManager implements Manager {
+public class ModuleManager {
 
     private final HashMap<String, Module> modules = new HashMap<>();
     private final Plugin plugin;
@@ -56,8 +55,8 @@ public class ModuleManager implements Manager {
     }
 
     public void disableModule(Module module) {
-        module.loadTasks().forEach(task -> XG7PluginsAPI.taskManager().deleteRepeatingTask(XG7Plugins.getInstance(), task.getId()));
-        module.getExecutors().forEach((n, e) -> XG7PluginsAPI.taskManager().removeExecutor(n));
+        module.loadTasks().forEach(task -> XG7Plugins.getAPI().taskManager().deleteRepeatingTask(XG7Plugins.getInstance(), task.getId()));
+        module.getExecutors().forEach((n, e) -> XG7Plugins.getAPI().taskManager().removeExecutor(n));
 
         module.onDisable();
         module.setEnabled(false);
@@ -71,14 +70,14 @@ public class ModuleManager implements Manager {
      * Loads and registers all tasks from the registered modules.
      */
     public void loadTasks(Module module) {
-        XG7PluginsAPI.taskManager().registerTimerTasks(module.loadTasks());
+        XG7Plugins.getAPI().taskManager().registerTimerTasks(module.loadTasks());
     }
 
     /**
      * Loads and registers all executors from the registered modules.
      */
     public void loadExecutors(Module module) {
-        module.getExecutors().forEach(XG7PluginsAPI.taskManager()::registerExecutor);
+        module.getExecutors().forEach(XG7Plugins.getAPI().taskManager()::registerExecutor);
     }
 
     /**
@@ -88,8 +87,8 @@ public class ModuleManager implements Manager {
     public void loadListeners(Module module) {
         List<Listener> listeners = module.loadListeners();
 
-        XG7PluginsAPI.packetEventManager().registerListeners(XG7Plugins.getInstance(), listeners.stream().filter(l -> l instanceof PacketListener).map(l -> (PacketListener) l).collect(Collectors.toList()));
-        XG7PluginsAPI.eventManager().registerListeners(XG7Plugins.getInstance(), listeners);
+        XG7Plugins.getAPI().packetEventManager().registerListeners(XG7Plugins.getInstance(), listeners.stream().filter(l -> l instanceof PacketListener).map(l -> (PacketListener) l).collect(Collectors.toList()));
+        XG7Plugins.getAPI().eventManager().registerListeners(XG7Plugins.getInstance(), listeners);
     }
 
     public boolean isModuleEnabled(String moduleName) {

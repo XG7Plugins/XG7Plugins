@@ -1,9 +1,8 @@
 package com.xg7plugins.help.xg7pluginshelp;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7geyserforms.forms.SimpleForm;
 import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.text.Text;
@@ -24,7 +23,7 @@ public class XG7PluginsHelpForm extends SimpleForm {
     @Override
     public String content(Player player) {
 
-        ConfigSection lang = XG7PluginsAPI.langManager().getLangByPlayer(plugin, player).join().getSecond().getLangConfiguration();
+        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(plugin, player).join().getSecond().getLangConfiguration();
 
         String about = String.join("\n", lang.getList("help-menu.about", String.class).orElse(new ArrayList<>()));
 
@@ -32,7 +31,7 @@ public class XG7PluginsHelpForm extends SimpleForm {
                 .replace("discord", "discord.gg/jfrn8w92kF")
                 .replace("github", "github.com/DaviXG7")
                 .replace("website", "xg7plugins.com")
-                .replace("version", XG7Plugins.getInstance().getDescription().getVersion())
+                .replace("version", XG7Plugins.getInstance().getVersion())
                 .getText();
     }
 
@@ -56,10 +55,10 @@ public class XG7PluginsHelpForm extends SimpleForm {
     public void onFinish(org.geysermc.cumulus.form.SimpleForm form, SimpleFormResponse result, Player player) {
         switch (result.clickedButtonId()) {
             case 0:
-                XG7PluginsAPI.taskManager().runSync(BukkitTask.of(() -> player.performCommand("lang")));
+                XG7Plugins.getAPI().taskManager().runSync(BukkitTask.of(() -> player.performCommand("lang")));
                 break;
             case 1:
-                XG7PluginsAPI.taskManager().runSync(BukkitTask.of(() -> player.performCommand("tasks")));
+                XG7Plugins.getAPI().taskManager().runSync(BukkitTask.of(() -> player.performCommand("tasks")));
                 break;
             case 2:
                 plugin.getHelpMessenger().getForm().getForm("commands").send(player);

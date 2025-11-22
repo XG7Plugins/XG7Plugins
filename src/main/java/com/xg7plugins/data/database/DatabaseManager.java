@@ -1,10 +1,9 @@
 package com.xg7plugins.data.database;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.database.dao.Repository;
 import com.xg7plugins.data.database.dao.RepositoryManager;
 import com.xg7plugins.data.database.connector.Connector;
@@ -16,7 +15,7 @@ import com.xg7plugins.data.database.connector.connectors.SQLiteConnector;
 import com.xg7plugins.data.database.entity.Entity;
 import com.xg7plugins.data.database.processor.TableCreator;
 import com.xg7plugins.data.database.processor.DatabaseProcessor;
-import com.xg7plugins.managers.Manager;
+
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +31,7 @@ import java.util.concurrent.CompletableFuture;
  * entity caching, and table creation.
  */
 @Getter
-public class DatabaseManager implements Manager {
+public class DatabaseManager {
 
     private final DatabaseProcessor processor = new DatabaseProcessor(this);
     private final RepositoryManager daoManager = new RepositoryManager();
@@ -58,7 +57,6 @@ public class DatabaseManager implements Manager {
      * @param plugin The XG7Plugins instance
      */
     public DatabaseManager(XG7Plugins plugin) {
-        plugin.getManagerRegistry().registerManager(daoManager);
 
         cachedEntities = new ObjectCache<>(
                 plugin,
@@ -88,7 +86,7 @@ public class DatabaseManager implements Manager {
 
         if (entityClasses == null) return;
 
-        plugin.getDebug().info("Connecting " + plugin.getName() + " to database...");
+        plugin.getDebug().log("Connecting " + plugin.getName() + " to database...");
 
         ConfigFile pluginConfig = ConfigFile.mainConfigOf(plugin);
         ConfigFile xg7PluginsConfig = ConfigFile.mainConfigOf(XG7Plugins.getInstance());
@@ -100,7 +98,7 @@ public class DatabaseManager implements Manager {
 
         SQLConfigs sqlConfigs = SQLConfigs.of(pluginConfig, xg7PluginsConfig);
 
-        plugin.getDebug().info("Connection type: " + sqlConfigs.getConnectionType());
+        plugin.getDebug().info("database", "Connection type: " + sqlConfigs.getConnectionType());
 
         Connector connector = connectorRegistry.getConnector(sqlConfigs.getConnectionType());
 
@@ -118,13 +116,13 @@ public class DatabaseManager implements Manager {
             return;
         }
 
-        plugin.getDebug().loading("Successfully connected to database!");
+        plugin.getDebug().log("Successfully connected to database!");
 
-        plugin.getDebug().loading("Checking tables...");
+        plugin.getDebug().log("Checking tables...");
 
         Arrays.stream(entityClasses).forEach(aClass -> tableCreator.createTableOf(plugin, aClass));
 
-        plugin.getDebug().loading("Successfully checked tables!");
+        plugin.getDebug().log("Successfully checked tables!");
 
     }
 
@@ -140,9 +138,9 @@ public class DatabaseManager implements Manager {
      */
     @SneakyThrows
     public void disconnectPlugin(Plugin plugin) {
-        plugin.getDebug().loading("Disconnecting database...");
+        plugin.getDebug().log("Disconnecting database...");
         connectorRegistry.getConnector(plugin).disconnect(plugin);
-        plugin.getDebug().loading("Disconnected database!");
+        plugin.getDebug().log("Disconnected database!");
     }
 
     /**
@@ -152,7 +150,7 @@ public class DatabaseManager implements Manager {
      * @throws Exception If an error occurs during shutdown
      */
     public void shutdown() throws Exception {
-        XG7PluginsAPI.getAllXG7Plugins().forEach(plugin -> {
+        XG7Plugins.getAPI().getAllXG7Plugins().forEach(plugin -> {
             try {
                 disconnectPlugin(plugin);
             } catch (Exception e) {
@@ -212,12 +210,12 @@ public class DatabaseManager implements Manager {
      * @param plugin The plugin whose connection should be reloaded
      */
     public void reloadConnection(Plugin plugin) {
-        plugin.getDebug().loading("Reloading database connection...");
+        plugin.getDebug().log("Reloading database connection...");
 
         disconnectPlugin(plugin);
         connectPlugin(plugin);
 
-        plugin.getDebug().loading("Reloaded database connection!");
+        plugin.getDebug().log("Reloaded database connection!");
     }
 
 }

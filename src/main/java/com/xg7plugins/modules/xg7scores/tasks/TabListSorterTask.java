@@ -1,7 +1,6 @@
 package com.xg7plugins.modules.xg7scores.tasks;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.modules.xg7scores.XG7Scores;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.tasks.tasks.TimerTask;

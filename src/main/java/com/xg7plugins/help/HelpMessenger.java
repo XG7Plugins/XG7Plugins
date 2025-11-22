@@ -1,10 +1,9 @@
 package com.xg7plugins.help;
 
-import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.help.chat.HelpChat;
 import com.xg7plugins.help.chat.HelpChatPage;
 import com.xg7plugins.help.form.HelpForm;
@@ -36,7 +35,7 @@ public class HelpMessenger {
 
         ConfigSection config = ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root();
 
-        if (XG7PluginsAPI.isGeyserFormsEnabled() && config.get("send-help-command-form", false) && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
+        if (XG7Plugins.getAPI().isGeyserFormsEnabled() && config.get("send-help-command-form", false) && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
                 sendForm(player);
                 return;
         }

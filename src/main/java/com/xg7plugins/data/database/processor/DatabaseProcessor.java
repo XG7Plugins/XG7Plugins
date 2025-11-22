@@ -1,8 +1,8 @@
 package com.xg7plugins.data.database.processor;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.data.database.ConnectionType;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.data.database.connector.SQLConfigs;
@@ -52,7 +52,7 @@ public class DatabaseProcessor {
      * @throws Exception If an error occurs during transaction processing
      */
     public void processTransaction(Transaction transaction) throws Exception {
-        Debug.of(XG7Plugins.getInstance()).info("Processing transaction");
+        Debug.of(XG7Plugins.getInstance()).info("database", "Processing transaction");
 
         if (databaseManager == null) {
             NullPointerException ex = new NullPointerException("Database manager is null");
@@ -75,11 +75,11 @@ public class DatabaseProcessor {
             String currentQuery = "";
 
             try {
-                Debug.of(XG7Plugins.getInstance()).info("Starting transaction with " + transaction.getQueries().size() + " queries");
+                Debug.of(XG7Plugins.getInstance()).info("database", "Starting transaction with " + transaction.getQueries().size() + " queries");
 
                 for (Pair<String, List<Object>> query : transaction.getQueries()) {
                     currentQuery = query.getFirst();
-                    Debug.of(XG7Plugins.getInstance()).info("Executing query: " + currentQuery);
+                    Debug.of(XG7Plugins.getInstance()).info("database", "Executing query: " + currentQuery);
 
                     ps = connection.prepareStatement(currentQuery);
                     ps.setQueryTimeout((int) (timeout() / 1000));
@@ -91,16 +91,16 @@ public class DatabaseProcessor {
                     }
 
                     ps.executeUpdate();
-                    Debug.of(XG7Plugins.getInstance()).info("Query executed successfully");
+                    Debug.of(XG7Plugins.getInstance()).info("database", "Query executed successfully");
                     ps.close();
                 }
 
                 connection.commit();
-                Debug.of(XG7Plugins.getInstance()).info("Transaction committed");
+                Debug.of(XG7Plugins.getInstance()).info("database", "Transaction committed");
 
                 if (transaction.getSuccess() != null) {
                     transaction.getSuccess().run();
-                    Debug.of(XG7Plugins.getInstance()).info("Success callback executed");
+                    Debug.of(XG7Plugins.getInstance()).info("database", "Success callback executed");
                 }
 
             } catch (SQLException e) {
@@ -110,13 +110,13 @@ public class DatabaseProcessor {
 
                 try {
                     connection.rollback();
-                    Debug.of(XG7Plugins.getInstance()).info("Transaction rolled back");
+                    Debug.of(XG7Plugins.getInstance()).info("database", "Transaction rolled back");
 
                     if (ps != null) ps.close();
 
                     if (transaction.getError() != null) {
                         transaction.getError().accept(e);
-                        Debug.of(XG7Plugins.getInstance()).info("Error callback executed");
+                        Debug.of(XG7Plugins.getInstance()).info("database", "Error callback executed");
                     }
                 } catch (SQLException ex) {
                     Debug.of(XG7Plugins.getInstance()).severe("Error in rollback: " + ex.getMessage());
@@ -145,7 +145,7 @@ public class DatabaseProcessor {
      * @throws Exception If an error occurs during query processing
      */
     public QueryResult processQuery(Query query) throws Exception {
-        Debug.of(XG7Plugins.getInstance()).info("Starting query processing");
+        Debug.of(XG7Plugins.getInstance()).info("database", "Starting query processing");
 
         if (databaseManager == null) {
             NullPointerException ex = new NullPointerException("Database manager is null");
@@ -153,14 +153,14 @@ public class DatabaseProcessor {
             query.getError().accept(ex);
             throw ex;
         }
-        Debug.of(XG7Plugins.getInstance()).info("Processing query: " + query.getQuery());
+        Debug.of(XG7Plugins.getInstance()).info("database", "Processing query: " + query.getQuery());
 
         Connection connection = null;
 
         try {
             connection = databaseManager.getConnection(query.getPlugin());
 
-            Debug.of(XG7Plugins.getInstance()).info("Connection: " + connection);
+            Debug.of(XG7Plugins.getInstance()).info("database", "Connection: " + connection);
 
             if (connection == null) {
                 RuntimeException ex = new RuntimeException("Failed to get a database connection for plugin:" + query.getPlugin());
@@ -171,7 +171,7 @@ public class DatabaseProcessor {
 
             try (PreparedStatement ps = connection.prepareStatement(query.getQuery())) {
                 ps.setQueryTimeout((int) (timeout() / 1000));
-                Debug.of(XG7Plugins.getInstance()).info("Setting " + query.getParams().size() + " parameters");
+                Debug.of(XG7Plugins.getInstance()).info("database", "Setting " + query.getParams().size() + " parameters");
 
                 for (int i = 0; i < query.getParams().size(); i++) {
                     Object o = query.getParams().get(i);
@@ -179,7 +179,7 @@ public class DatabaseProcessor {
                     else ps.setObject(i + 1, o);
                 }
 
-                Debug.of(XG7Plugins.getInstance()).info("Executing query: " + query.getQuery());
+                Debug.of(XG7Plugins.getInstance()).info("database", "Executing query: " + query.getQuery());
                 try (ResultSet rs = ps.executeQuery()) {
                     List<Map<String, Object>> results = new ArrayList<>();
 
@@ -193,9 +193,9 @@ public class DatabaseProcessor {
                         results.add(map);
                     }
 
-                    Debug.of(XG7Plugins.getInstance()).info("Query executed successfully: " + query.getQuery());
-                    Debug.of(XG7Plugins.getInstance()).info("Results: " + results);
-                    Debug.of(XG7Plugins.getInstance()).info("Making QueryResult");
+                    Debug.of(XG7Plugins.getInstance()).info("database", "Query executed successfully: " + query.getQuery());
+                    Debug.of(XG7Plugins.getInstance()).info("database", "Results: " + results);
+                    Debug.of(XG7Plugins.getInstance()).info("database", "Making QueryResult");
 
                     return new QueryResult(query.getPlugin(), results.iterator());
                 }
@@ -229,10 +229,10 @@ public class DatabaseProcessor {
      * @return true if the entity exists, false otherwise
      */
     public boolean exists(Plugin plugin, Class<? extends Entity> table, Object id) {
-        Debug.of(XG7Plugins.getInstance()).info("Checking existence for " + table.getSimpleName() + " with ID " + id);
+        Debug.of(XG7Plugins.getInstance()).info("database", "Checking existence for " + table.getSimpleName() + " with ID " + id);
 
         if (databaseManager.containsCachedEntity(plugin, id.toString()).join()) {
-            Debug.of(XG7Plugins.getInstance()).info("Entity found in cache");
+            Debug.of(XG7Plugins.getInstance()).info("database", "Entity found in cache");
             return true;
         }
 
@@ -265,7 +265,7 @@ public class DatabaseProcessor {
             if (!SQLConfigs.of(plugin).getConnectionType().equals(ConnectionType.SQLITE)) {
                 connection.close();
             }
-            Debug.of(XG7Plugins.getInstance()).info("Entity exists: " + exists);
+            Debug.of(XG7Plugins.getInstance()).info("database", "Entity exists: " + exists);
             return exists;
 
         } catch (SQLException e) {

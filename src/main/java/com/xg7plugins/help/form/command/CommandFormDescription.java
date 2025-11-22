@@ -1,7 +1,7 @@
 package com.xg7plugins.help.form.command;
 
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.commands.node.CommandNode;
+import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.help.form.HelpForm;
 import com.xg7plugins.modules.xg7geyserforms.forms.ModalForm;
 import org.bukkit.entity.Player;
