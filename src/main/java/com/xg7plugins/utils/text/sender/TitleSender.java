@@ -1,6 +1,7 @@
 package com.xg7plugins.utils.text.sender;
 
-import com.xg7plugins.server.MinecraftVersion;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
@@ -35,7 +36,7 @@ public class TitleSender implements TextSender {
             subTitle = textSplit[1];
         }
 
-        if (MinecraftVersion.isOlderThan(13)) {
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_13)) {
             player.sendTitle(title, subTitle);
             return;
         }

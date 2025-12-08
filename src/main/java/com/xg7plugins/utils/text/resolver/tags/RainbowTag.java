@@ -1,9 +1,9 @@
 package com.xg7plugins.utils.text.resolver.tags;
 
-import com.xg7plugins.server.MinecraftVersion;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.text.resolver.Tag;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class RainbowTag implements Tag {
         component.setText("");
         component.getExtra().clear();
 
-        if (MinecraftVersion.isOlderThan(16)) {
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_16)) {
             // Cores padrões de arco-íris (limitadas ao ChatColor)
             ChatColor[] rainbowColors = new ChatColor[]{
                     ChatColor.RED,

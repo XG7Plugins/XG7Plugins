@@ -5,12 +5,15 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTa
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.PacketListener;
-import com.xg7plugins.events.packetevents.PacketEventType;
 import com.xg7plugins.events.packetevents.PacketListenerSetup;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -20,10 +23,15 @@ import java.util.stream.Collectors;
  * based on their permissions
  */
 @AllArgsConstructor
-@PacketListenerSetup(packet = PacketEventType.PLAY_SERVER_TAB_COMPLETE)
+@PacketListenerSetup
 public class AntiTab implements PacketListener {
 
     private final CommandManager commandManager;
+
+    @Override
+    public Set<PacketTypeCommon> getHandledEvents() {
+        return Collections.singleton(PacketType.Play.Server.TAB_COMPLETE);
+    }
 
     @Override
     public void onPacketSend(PacketSendEvent event) {

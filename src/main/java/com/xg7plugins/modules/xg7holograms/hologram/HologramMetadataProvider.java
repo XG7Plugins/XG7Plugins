@@ -1,5 +1,7 @@
 package com.xg7plugins.modules.xg7holograms.hologram;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
@@ -13,19 +15,19 @@ import java.util.Optional;
 
 public class HologramMetadataProvider {
 
-    public static List<EntityData<?>> armorStandData(ClientVersion version) {
+    public static List<EntityData<?>> armorStandData() {
 
-        List<EntityData<?>> data = new ArrayList<>();
+        ServerVersion version = PacketEvents.getAPI().getServerManager().getVersion();
 
-        data.add(new EntityData<>(0, EntityDataTypes.BYTE, (byte) 0x20));
+        List<EntityData<?>> data = triggerArmorStandData();
 
-        if (version.isOlderThan(ClientVersion.V_1_13)) {
+        if (version.isOlderThan(ServerVersion.V_1_13)) {
             data.add(new EntityData<>(2, EntityDataTypes.STRING, " "));
         } else {
             data.add(new EntityData<>(2, EntityDataTypes.OPTIONAL_ADV_COMPONENT, Optional.of(Component.text(" "))));
         }
 
-        if (version.isNewerThanOrEquals(ClientVersion.V_1_9)) {
+        if (version.isNewerThanOrEquals(ServerVersion.V_1_9)) {
             data.add(new EntityData<>(3, EntityDataTypes.BOOLEAN, true));
             data.add(new EntityData<>(5, EntityDataTypes.BOOLEAN, true));
             return data;
@@ -44,16 +46,19 @@ public class HologramMetadataProvider {
         return data;
     }
 
-    public static List<EntityData<?>> updateArmorStandData(ClientVersion version, Text text) {
+    public static List<EntityData<?>> updateArmorStandData(Text text) {
+
+        ServerVersion version = PacketEvents.getAPI().getServerManager().getVersion();
+
         List<EntityData<?>> data = new ArrayList<>();
 
-        if (version.isOlderThan(ClientVersion.V_1_13)) {
+        if (version.isOlderThan(ServerVersion.V_1_13)) {
             data.add(new EntityData<>(2, EntityDataTypes.STRING, text.getText()));
         } else {
             data.add(new EntityData<>(2, EntityDataTypes.OPTIONAL_ADV_COMPONENT, Optional.of(text.toAdventureComponent())));
         }
 
-        if (version.isNewerThanOrEquals(ClientVersion.V_1_9)) {
+        if (version.isNewerThanOrEquals(ServerVersion.V_1_9)) {
             data.add(new EntityData<>(3, EntityDataTypes.BOOLEAN, true));
         } else {
             data.add(new EntityData<>(3, EntityDataTypes.BYTE, (byte) 1));

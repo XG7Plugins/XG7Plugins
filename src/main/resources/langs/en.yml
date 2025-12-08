@@ -29,7 +29,7 @@ reload-message:
 
 #Plugin defaults
 
-comment-message-sent: "%prefix% &aYour message has been sent to the creator!"
+comment-message-sent: "[TITLE] &aYour message has been sent to the creator!"
 comment-cooldown: "%prefix% &aYou are in cooldown to send a comment! Wait @MINUTES_SECONDS:%time%@ to send another comment!"
 
 plugin-checking-updates: "%prefix% &eChecking updates for plugin &b%plugin%..."
@@ -97,9 +97,9 @@ tasks-menu:
 
 task-command:
   not-found: "%prefix% &cTask not found!"
-  deleted: "%prefix% &aTask deleted!"
-  stopped: "%prefix% &aTask stopped!"
-  restarted: "%prefix% &aTask restarted!"
+  deleted: "[TITLE] &aTask deleted!"
+  stopped: "[TITLE] &aTask stopped!"
+  restarted: "[TITLE] &aTask restarted!"
 
   already-running: "%prefix% &cTask already running!"
   already-stopped: "%prefix% &aTask already stopped!"

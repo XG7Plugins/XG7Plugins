@@ -1,5 +1,7 @@
 package com.xg7plugins.lang;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.xg7plugins.XG7Plugins;
 
 import com.xg7plugins.boot.Plugin;
@@ -9,7 +11,6 @@ import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.data.playerdata.PlayerData;
 import com.xg7plugins.data.playerdata.PlayerDataRepository;
 
-import com.xg7plugins.server.MinecraftVersion;
 import com.xg7plugins.utils.FileUtil;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.reflection.ReflectionObject;
@@ -131,7 +132,7 @@ public class LangManager {
 
             List<Lang> langs = this.langs.asMap().join().entrySet().stream().filter(e -> e.getKey().startsWith(XG7Plugins.getInstance().getName() + ":")).map(Map.Entry::getValue).collect(Collectors.toList());
 
-            String locale = MinecraftVersion.isNewerOrEqual(12) ? player.getLocale() : ReflectionObject.of(player).getMethod("getHandle").invokeToRObject().getField("locale");
+            String locale = PacketEvents.getAPI().getServerManager().getVersion().isOlderThan(ServerVersion.V_1_13) ? player.getLocale() : ReflectionObject.of(player).getMethod("getHandle").invokeToRObject().getField("locale");
 
             return langs.stream().filter(lang -> lang.get("locale").equalsIgnoreCase(locale)).findFirst().map(lang -> lang.getLangConfigFile().getName().replace("langs/", "")).orElse(mainLang);
         }, XG7Plugins.getAPI().taskManager().getExecutor("langs"));

@@ -46,7 +46,7 @@ public class CacheManager {
 
     public CacheManager(XG7Plugins plugin) {
 
-        ConfigSection config = ConfigFile.mainConfigOf(plugin).section("redis");
+        ConfigSection config = ConfigFile.mainConfigOf(plugin).section("redis-cache");
 
         this.caches = new HashMap<>();
 

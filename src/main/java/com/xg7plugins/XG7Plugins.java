@@ -2,6 +2,7 @@ package com.xg7plugins;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.xg7plugins.commands.impl.*;
+import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.loader.XG7PluginsLoader;
 import com.xg7plugins.api.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
@@ -61,6 +62,7 @@ import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.loader.VersionChecker;
 import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
+import com.xg7plugins.modules.xg7dialogs.listeners.DialogListener;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -270,6 +272,10 @@ public class XG7Plugins extends Plugin {
     @Override
     public List<Listener> loadEvents() {
         return Collections.singletonList(new JoinListener());
+    }
+
+    public List<PacketListener> loadPacketEvents() {
+        return Collections.singletonList(new DialogListener());
     }
 
     @Override

@@ -1,11 +1,12 @@
 package com.xg7plugins.utils.skin;
 
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.player.TextureProperty;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import lombok.AllArgsConstructor;
@@ -61,9 +62,9 @@ public class Skin {
 
     public static ReflectionObject getProfileBySoftwareAndVersion(Skin skin) {
 
-        if (MinecraftVersion.isOlderThan(8)) return ReflectionObject.of(skin.toBaseProfile());
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) return ReflectionObject.of(skin.toBaseProfile());
 
-        if (MinecraftVersion.isNewerThan(16) && XG7Plugins.getAPI().getServerSoftware().isPaper()) {
+        if (MinecraftServerVersion.isNewerThan(ServerVersion.V_1_8_8) && XG7Plugins.getAPI().getServerSoftware().isPaper()) {
             ReflectionObject paperProfile = ReflectionClass.of(Bukkit.class).getMethod("createProfile", UUID.class).invokeToRObject(UUID.randomUUID());
 
             paperProfile.getMethod(

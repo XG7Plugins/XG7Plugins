@@ -1,0 +1,34 @@
+package com.xg7plugins.modules.xg7dialogs.dialogs;
+
+import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.modules.xg7dialogs.button.DialogActionButton;
+import com.xg7plugins.modules.xg7dialogs.components.DialogBodyElement;
+import com.xg7plugins.modules.xg7dialogs.inputs.DialogInput;
+import lombok.Getter;
+import org.bukkit.entity.Player;
+
+import java.util.List;
+
+@Getter
+public class NoticeDialog extends Dialog {
+
+    private final DialogActionButton actionButton;
+
+    public NoticeDialog(Plugin plugin, String title, boolean canCloseWithEscape, List<DialogBodyElement> dialogBodyElements, List<DialogInput> dialogInputs, Dialog.ActionType afterResponse, DialogActionButton actionButton) {
+        super(plugin, title, canCloseWithEscape, dialogBodyElements, dialogInputs, afterResponse);
+        this.actionButton = actionButton;
+    }
+
+    @Override
+    public com.github.retrooper.packetevents.protocol.dialog.Dialog build(Player player) {
+        return new com.github.retrooper.packetevents.protocol.dialog.NoticeDialog(
+                buildCommonData(player),
+                actionButton.build(this, player)
+        );
+    }
+
+    @Override
+    public void onResponse() {
+
+    }
+}

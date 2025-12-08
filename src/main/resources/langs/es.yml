@@ -28,7 +28,7 @@ reload-message:
 
 # Plugin defaults
 
-comment-message-sent: "%prefix% &aTu mensaje ha sido enviado al creador!"
+comment-message-sent: "[TITLE] &aTu mensaje ha sido enviado al creador!"
 comment-cooldown: "%prefix% &a¡Estás en cooldown para enviar un mensaje! ¡Espera @MINUTES_SECONDS:%time%@ para enviar otro!"
 
 go-back-item: "Atrás"
@@ -88,9 +88,9 @@ tasks-menu:
 
 task-command:
   not-found: "%prefix% &c¡Tarea no encontrada!"
-  deleted: "%prefix% &a¡Tarea eliminada!"
-  stopped: "%prefix% &a¡Tarea detenida!"
-  restarted: "%prefix% &a¡Tarea reiniciada!"
+  deleted: "[TITLE] &a¡Tarea eliminada!"
+  stopped: "[TITLE] &a¡Tarea detenida!"
+  restarted: "[TITLE] &a¡Tarea reiniciada!"
 
   already-running: "%prefix% &c¡La tarea ya está en ejecución!"
   already-stopped: "%prefix% &a¡La tarea ya está detenida!"

@@ -1,11 +1,15 @@
 package com.xg7plugins.modules.xg7holograms.hologram.line.impl;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.util.Vector3d;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnLivingEntity;
 import com.xg7plugins.modules.xg7holograms.event.HologramClickEvent;
 import com.xg7plugins.modules.xg7holograms.hologram.HologramMetadataProvider;
 import com.xg7plugins.modules.xg7holograms.hologram.LivingHologram;
@@ -14,6 +18,7 @@ import com.xg7plugins.utils.location.Location;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -34,17 +39,25 @@ public class EntityLine implements HologramLine {
 
         int entityID = SpigotReflectionUtil.generateEntityId();
 
-        WrapperPlayServerSpawnEntity spawnEntityPacket = new WrapperPlayServerSpawnEntity(
+        PacketWrapper<?> packet = PacketEvents.getAPI().getServerManager().getVersion().isOlderThan(ServerVersion.V_1_17) ? new WrapperPlayServerSpawnLivingEntity(
                 entityID,
                 UUID.randomUUID(),
                 entityType,
                 location.getProtocolLocation(),
-                location.getYaw(),
-                0,
-                null
-        );
+                location.getPitch(),
+                Vector3d.zero(),
+                new ArrayList<>()
+        ) :
+                new WrapperPlayServerSpawnEntity(
+                        entityID,
+                        UUID.randomUUID(),
+                        entityType,
+                        location.getProtocolLocation(),
+                        0,0,
+                        Vector3d.zero()
+                );
 
-        PacketEvents.getAPI().getPlayerManager().sendPacket(livingHologram.getPlayer(), spawnEntityPacket);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(livingHologram.getPlayer(), packet);
 
         return entityID;
     }

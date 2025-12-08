@@ -6,9 +6,14 @@ import com.xg7plugins.utils.FileUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.yaml.snakeyaml.LoaderOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Map;
 
 @Getter
 public class ConfigFile {
@@ -16,7 +21,8 @@ public class ConfigFile {
     private final Plugin plugin;
     private final String name;
     private final File configFile;
-    private YamlConfiguration config;
+
+    private Map<String, Object> data;
 
     /**
      * Creates a new Config instance with version control.
@@ -38,12 +44,13 @@ public class ConfigFile {
 
         if (!configFile.exists()) plugin.getJavaPlugin().saveResource(name + ".yml", false);
 
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+        Yaml yaml = new Yaml();
+        Map<String, Object> data = yaml.load(FileUtil.reader(configFile));
 
         if (plugin.getJavaPlugin().getResource(name + ".yml") != null) {
 
-            YamlConfiguration resourceConfig = YamlConfiguration.loadConfiguration(FileUtil.reader(FileUtil.fromResource(plugin, name + ".yml")));
-            if (!resourceConfig.getString("config-version").equals(config.getString("config-version"))) {
+            Map<String, Object> resourceData = yaml.load(FileUtil.fromResource(plugin, name + ".yml"));
+            if (!resourceData.get("config-version").equals(data.get("config-version"))) {
 
                 FileUtil.renameFile(configFile,name + "-old.yml");
 
@@ -51,7 +58,7 @@ public class ConfigFile {
 
                 this.configFile = new File(plugin.getJavaPlugin().getDataFolder(), name + ".yml");
 
-                this.config = YamlConfiguration.loadConfiguration(configFile);
+                this.data = yaml.load(FileUtil.reader(this.configFile));
 
                 plugin.getJavaPlugin().getLogger().info("Loaded!");
 
@@ -61,15 +68,15 @@ public class ConfigFile {
         }
 
         this.configFile = configFile;
-        this.config = config;
+        this.data = data;
 
         if (plugin.getConfigManager() != null) plugin.getConfigManager().putConfig(this);
     }
 
-    public ConfigFile(Plugin plugin, YamlConfiguration config, String name, boolean createFile) throws IOException {
+    public ConfigFile(Plugin plugin, Map<String, Object> data, String name, boolean createFile) throws IOException {
         this.plugin = plugin;
         this.name = name;
-        this.config = config;
+        this.data = data;
         this.configFile = new File(plugin.getJavaPlugin().getDataFolder(), name + ".yml");
 
         if (!configFile.exists() && createFile) configFile.createNewFile();
@@ -83,8 +90,8 @@ public class ConfigFile {
      * @param name   The name of the configuration file without extension
      * @throws IOException if unable to create the config file
      */
-    public ConfigFile(Plugin plugin, YamlConfiguration config, String name) throws IOException {
-        this(plugin,config,name,true);
+    public ConfigFile(Plugin plugin, Map<String, Object> data, String name) throws IOException {
+        this(plugin, data, name,true);
     }
 
     /**
@@ -112,6 +119,14 @@ public class ConfigFile {
         return ConfigFile.of("config", plugin);
     }
 
+    public <T> T getFromRoot(Class<T> type) {
+        Yaml yaml = new Yaml(new Constructor(type, new LoaderOptions()));
+
+        String dumped = new Yaml().dump(data);
+
+        return yaml.load(dumped);
+    }
+
     /**
      * Saves the configuration to file.
      * Logs the save operation in debug mode.
@@ -119,7 +134,8 @@ public class ConfigFile {
     @SneakyThrows
     public void save() {
         plugin.getDebug().info("config", "Saving " + name + ".yml...");
-        config.save(configFile);
+        Yaml yaml = new Yaml();
+        yaml.dump(data, new FileWriter(this.configFile));
         plugin.getDebug().info("config", "Saved!");
     }
 
@@ -127,10 +143,11 @@ public class ConfigFile {
      * Reloads the configuration from the file.
      * Updates the config manager with the reloaded instance.
      */
-    public void reload() {
+    public void reload() throws IOException {
         plugin.getDebug().info("load", "Reloading " + name + ".yml...");
 
-        this.config = YamlConfiguration.loadConfiguration(configFile);
+        Yaml yaml = new Yaml();
+        this.data = yaml.load(FileUtil.reader(configFile));
 
         XG7Plugins.getAPI().configManager(plugin).putConfig(this);
 
@@ -142,7 +159,7 @@ public class ConfigFile {
     }
 
     public ConfigSection section(String path) {
-        return new ConfigSection(this, path, config);
+        return new ConfigSection(this, path, data);
     }
 
     public ConfigSection root() {

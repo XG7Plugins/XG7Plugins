@@ -1,6 +1,7 @@
 package com.xg7plugins.utils.item.impl;
 
-import com.xg7plugins.server.MinecraftVersion;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
@@ -57,7 +58,7 @@ public class BookItem extends Item {
     @SneakyThrows
     public void openBook(Player player) {
 
-        if (MinecraftVersion.isNewerThan(13)) {
+        if (MinecraftServerVersion.isNewerThan(ServerVersion.V_1_13)) {
             player.openBook(this.itemStack);
             return;
         }
@@ -66,26 +67,26 @@ public class BookItem extends Item {
         ItemStack old = player.getInventory().getItem(slot);
         player.getInventory().setItem(slot, this.itemStack);
 
-        ReflectionClass packetDataSerializerClass = ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".PacketDataSerializer");
+        ReflectionClass packetDataSerializerClass = ReflectionClass.of("net.minecraft.server." + MinecraftServerVersion.getPackageName() + ".PacketDataSerializer");
 
-        ReflectionObject byteBuf = MinecraftVersion.isOlderOrEqual(7) ? ReflectionClass.of("net.minecraft.util.io.netty.buffer")
+        ReflectionObject byteBuf = MinecraftServerVersion.isOlderOrEqual(ServerVersion.V_1_7_10) ? ReflectionClass.of("net.minecraft.util.io.netty.buffer")
                 .getMethod("buffer", int.class).invoke(256) : ReflectionObject.of(Unpooled.buffer(256));
 
         byteBuf.getMethod("setByte", int.class, int.class).invoke(0, 0);
         byteBuf.getMethod("writerIndex", int.class).invoke(1);
 
-        ReflectionObject packetPlayOutCustomPayloadClass = ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".PacketPlayOutCustomPayload")
+        ReflectionObject packetPlayOutCustomPayloadClass = ReflectionClass.of("net.minecraft.server." + MinecraftServerVersion.getPackageName() + ".PacketPlayOutCustomPayload")
                 .getConstructor(String.class, packetDataSerializerClass.getAClass())
                 .newInstance(
                         "MC|BOpen",
                         packetDataSerializerClass
-                        .getConstructor(MinecraftVersion.isOlderOrEqual(7) ? ReflectionClass.of("net.minecraft.util.io.netty.buffer.ByteBuf").getAClass() : ByteBuf.class)
+                        .getConstructor(MinecraftServerVersion.isOlderOrEqual(ServerVersion.V_1_7_10) ? ReflectionClass.of("net.minecraft.util.io.netty.buffer.ByteBuf").getAClass() : ByteBuf.class)
                         .newInstance(byteBuf.getObject()).getObject()
                 );
 
         ReflectionObject nmsPlayer = ReflectionObject.of(player);
 
-        ReflectionObject.of(nmsPlayer.getMethod("getHandle").invokeToRObject().getField("playerConnection")).getMethod("sendPacket", ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".Packet").getAClass()).invoke(packetPlayOutCustomPayloadClass.getObject());
+        ReflectionObject.of(nmsPlayer.getMethod("getHandle").invokeToRObject().getField("playerConnection")).getMethod("sendPacket", ReflectionClass.of("net.minecraft.server." + MinecraftServerVersion.getPackageName() + ".Packet").getAClass()).invoke(packetPlayOutCustomPayloadClass.getObject());
 
         player.getInventory().setItem(slot, old);
     }

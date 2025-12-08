@@ -35,16 +35,26 @@ public class SQLConfigs {
      */
     public SQLConfigs(ConfigFile pluginConfig) {
 
-        ConfigSection config = pluginConfig.root();
+        ConfigSection config = pluginConfig.section("sql");
+        if (!config.exists()) {
+            connectionType = ConnectionType.SQLITE;
+            host = null;
+            port = 0;
+            database = null;
+            username = null;
+            password = null;
+            connectionString = null;
+            return;
+        }
 
-        host = config.get("sql.host");
-        port = config.get("sql.port", 0);
-        database = config.get("sql.database");
-        username = config.get("sql.username");
-        password = config.get("sql.password");
+        host = config.get("host");
+        port = config.get("port", 0);
+        database = config.get("database");
+        username = config.get("username");
+        password = config.get("password");
 
-        connectionString = config.get("sql.url");
-        connectionType = config.get("sql.type", ConnectionType.SQLITE);
+        connectionString = config.get("url");
+        connectionType = config.get("type", ConnectionType.SQLITE);
     }
 
     /**
@@ -56,19 +66,19 @@ public class SQLConfigs {
     public SQLConfigs(ConfigFile pluginConfig, ConfigFile mainConfig) {
         this(pluginConfig);
 
-        ConfigSection config = mainConfig.root();
+        ConfigSection config = mainConfig.section("sql");
 
-        this.cacheExpires = config.getTimeInMilliseconds("sql.cache-expires", 0L);
+        this.cacheExpires = config.getTimeInMilliseconds("cache-expires", 0L);
 
-        this.connectionTimeout = config.getTimeInMilliseconds("sql.connection-timeout", 0L);
+        this.connectionTimeout = config.getTimeInMilliseconds("connection-timeout", 0L);
 
-        this.idleTimeout = config.getTimeInMilliseconds("sql.idle-timeout", 0L);
+        this.idleTimeout = config.getTimeInMilliseconds("idle-timeout", 0L);
 
-        this.maxPoolSize = config.get("sql.max-pool-size", 10);
+        this.maxPoolSize = config.get("max-pool-size", 10);
 
-        this.minIdle = config.get("sql.min-idle-connections", 5);
+        this.minIdle = config.get("min-idle-connections", 5);
 
-        this.keepAliveTime = config.getTimeInMilliseconds("sql.keep-alive-delay", 0L);
+        this.keepAliveTime = config.getTimeInMilliseconds("keep-alive-delay", 0L);
     }
 
     /**

@@ -2,12 +2,17 @@ package com.xg7plugins.events;
 
 
 import com.github.retrooper.packetevents.event.*;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
+
+import java.util.Set;
 
 /**
  * Interface for handling various packet-related events in the system.
  * Provides default implementations for packet event handling methods.
  */
 public interface PacketListener extends Listener {
+
+    Set<PacketTypeCommon> getHandledEvents();
 
     /**
      * Called when a user attempts to connect to the server.

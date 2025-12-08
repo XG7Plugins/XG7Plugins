@@ -45,7 +45,7 @@ public class Debug {
      * @param message The message to display
      */
     public void log(String message) {
-        sendConsole("§8[§r" + plugin.getCustomPrefix() + "§8]§r " + message);
+        sendConsole("§8[§r" + plugin.getPrefix() + "§8]§r " + message);
     }
 
     /**
@@ -57,7 +57,7 @@ public class Debug {
     public void info(String logStream, String message) {
         if (!debugEnabled) return;
         if (!debugSection.get(logStream, false)) return;
-        sendConsole("§8[§r" + plugin.getCustomPrefix() + " INFO§8]§r " + message);
+        sendConsole("§8[§r" + plugin.getPrefix() + " INFO§8]§r " + message);
     }
 
     /**
@@ -69,7 +69,7 @@ public class Debug {
     public void warn(String logStream, String message) {
         if (!debugEnabled) return;
         if (!debugSection.get(logStream, false)) return;
-        sendConsole("§8[§r" + plugin.getCustomPrefix() + " §eWARNING§8]§e " + message);
+        sendConsole("§8[§r" + plugin.getPrefix() + " §eWARNING§8]§e " + message);
     }
 
     /**
@@ -80,7 +80,7 @@ public class Debug {
      * @param message The message to display
      */
     public void severe(String message) {
-        sendConsole("§8[§r" + plugin.getCustomPrefix() + " §cERROR§8]§c " + message);
+        sendConsole("§8[§r" + plugin.getPrefix() + " §cERROR§8]§c " + message);
     }
 
     /**

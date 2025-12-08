@@ -34,6 +34,9 @@ public class LivingHologram {
         float lastSpacing = 0;
 
         for (HologramLine line : lines) {
+
+            System.out.println("LINE: " + line);
+
             int entityID = line.spawn(this, location.add(0, lastSpacing, 0));
 
             lastSpacing = line.getSpacing();
@@ -55,8 +58,9 @@ public class LivingHologram {
         }
     }
 
-    public void levitate(float yaw, double deltaY) {
+    public void levitate(double offsetY) {
         if (spawnedEntitiesID.isEmpty()) return;
+
 
         for (int i = hologram.getLines().size() - 1; i >= 0; i--) {
             int entityID = spawnedEntitiesID.get(hologram.getLines().size() - 1 - i);
@@ -64,17 +68,19 @@ public class LivingHologram {
 
             if (!line.levitate()) continue;
 
-            WrapperPlayServerEntityRelativeMoveAndRotation packet =
-                    new WrapperPlayServerEntityRelativeMoveAndRotation(
+            WrapperPlayServerEntityRelativeMove packet =
+                    new WrapperPlayServerEntityRelativeMove(
                             entityID,
-                            0, deltaY * 0.05, 0,
-                            yaw, 0,
+                            0,
+                            offsetY * 0.07,
+                            0,
                             false
                     );
-            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
 
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
         }
     }
+
 
     public void kill() {
         List<Integer> spawnedEntitiesID = getSpawnedEntitiesID();
@@ -94,6 +100,8 @@ public class LivingHologram {
 
         int entityID = spawnedEntitiesID.get(hologram.getLines().size() - 1 - lineIndex);
         HologramLine line = hologram.getLines().get(lineIndex);
+
+        System.out.println(line);
 
         line.equip(this, entityID, slot, item);
     }

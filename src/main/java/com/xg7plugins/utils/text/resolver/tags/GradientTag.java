@@ -1,8 +1,8 @@
 package com.xg7plugins.utils.text.resolver.tags;
 
-import com.xg7plugins.server.MinecraftVersion;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.text.resolver.Tag;
-import com.xg7plugins.utils.text.resolver.TagResolver;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 
@@ -19,7 +19,7 @@ public class GradientTag implements Tag {
     @Override
     public void resolve(TextComponent component, List<String> openArgs) {
 
-        if (MinecraftVersion.isOlderThan(16)) return;
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_16)) return;
 
         if (openArgs.size() < 2) {
             throw new IllegalArgumentException("Gradient tag must have at least 2 colors");

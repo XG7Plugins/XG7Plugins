@@ -134,6 +134,9 @@ public class FileUtil {
     public static Reader reader(InputStream inputStream) throws IOException {
         return new InputStreamReader(inputStream, StandardCharsets.UTF_8);
     }
+    public static Reader reader(File file) throws IOException {
+        return new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8);
+    }
 
     public static <T> Class<? extends T> findClass(@NotNull final File file, @NotNull final Class<T> clazz) throws IOException, ClassNotFoundException {
         if (!file.exists()) {

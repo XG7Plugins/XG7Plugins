@@ -29,7 +29,7 @@ reload-message:
 
 #Plugin defaults
 
-comment-message-sent: "%prefix% &aSua mensagem foi enviada ao criador!"
+comment-message-sent: "[TITLE] &aSua mensagem foi enviada ao criador!"
 comment-cooldown: "%prefix% &aVocê está em cooldown para mandar uma mensagem! Espere @MINUTES_SECONDS:%time%@ para mandar novamente!"
 
 go-back-item: "Voltar"
@@ -89,9 +89,9 @@ tasks-menu:
 
 task-command:
   not-found: "%prefix% &cTarefa não encontrada!"
-  deleted: "%prefix% &aTarefa deletada!"
-  stopped: "%prefix% &aTarefa parada!"
-  restarted: "%prefix% &aTarefa reiniciada!"
+  deleted: "[TITLE] &aTarefa deletada!"
+  stopped: "[TITLE] &aTarefa parada!"
+  restarted: "[TITLE] &aTarefa reiniciada!"
 
   already-running: "%prefix% &cTarefa já está em execução!"
   already-stopped: "%prefix% &aTarefa já está parada!"

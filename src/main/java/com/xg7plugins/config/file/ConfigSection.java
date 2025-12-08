@@ -13,8 +13,10 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.yaml.snakeyaml.Yaml;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Configuration manager class that handles YAML configuration files.
@@ -26,16 +28,14 @@ public class ConfigSection {
 
     private final ConfigFile file;
     private final String currentPath;
-    private final YamlConfiguration config;
+    private final Map<String, Object> rootData;
+    private final Map<String, Object> data;
 
-    public ConfigSection(ConfigFile file, String path, YamlConfiguration config) {
+    public ConfigSection(ConfigFile file, String path, Map<String, Object> data) {
         this.file = file;
-        this.currentPath = path.isEmpty() ? "" : path + ".";
-        this.config = config;
-    }
-
-    public boolean contains(String path) {
-        return config.contains(this.currentPath + path);
+        this.currentPath = path;
+        this.rootData = data;
+        this.data = getDataOfCurrent();
     }
 
     /**
@@ -55,39 +55,28 @@ public class ConfigSection {
     public <T> T get(String path, Class<T> type, T defaultValue, boolean ignoreNonexistent, Object... optionalTypeArgs) {
         if (!verifyExists(path, ignoreNonexistent)) return defaultValue;
 
-        if (type == Object.class) return (T) config.get(this.currentPath + path);
+        Object object = data.get(path);
 
-        if (type == String.class) {
-            return (T) config.getString(this.currentPath + path);
+        if (
+                type == Object.class || type == String.class || type == Integer.class || type == int.class ||
+                type == Boolean.class || type == boolean.class || type == Double.class || type == double.class ||
+                type == Long.class || type == long.class || type == Float.class || type == float.class ||
+                type == Short.class || type == short.class
+        ) {
+            return (T) object;
         }
-        if (type == Integer.class || type == int.class) {
-            return (T) Integer.valueOf(config.getInt(this.currentPath + path));
-        }
-        if (type == Boolean.class || type == boolean.class) {
-            return (T) Boolean.valueOf(config.getBoolean(this.currentPath + path));
-        }
-        if (type == Double.class || type == double.class) {
-            return (T) Double.valueOf(config.getDouble(this.currentPath + path));
-        }
-        if (type == Long.class || type == long.class) {
-            return (T) Long.valueOf(config.getLong(this.currentPath + path));
-        }
-        if (type == Float.class || type == float.class) {
-            return (T) Float.valueOf((float) config.getDouble(this.currentPath + path));
-        }
-        if (type == Short.class || type == short.class) {
-            return (T) Short.valueOf((short) config.getInt(this.currentPath + path));
-        }
+
+        String objectAsString = object.toString();
+
         if (type == XMaterial.class) {
-            return (T) XMaterial.matchXMaterial(config.getString(this.currentPath + path)).orElse((XMaterial) defaultValue);
+            return (T) XMaterial.matchXMaterial(objectAsString).orElse((XMaterial) defaultValue);
         }
 
         if (type.isEnum()) {
             try {
                 @SuppressWarnings("unchecked")
                 Class<? extends Enum<?>> enumClass = (Class<? extends Enum<?>>) type;
-                return (T) Enum.valueOf((Class<? extends Enum>) enumClass,
-                        config.getString(this.currentPath + path).toUpperCase());
+                return (T) Enum.valueOf((Class<? extends Enum>) enumClass, objectAsString.toUpperCase());
             } catch (Exception e) {
                 return defaultValue;
             }
@@ -95,7 +84,7 @@ public class ConfigSection {
 
         if (type == UUID.class) {
             try {
-                return (T) UUID.fromString(config.getString(this.currentPath + path));
+                return (T) UUID.fromString(objectAsString);
             } catch (Exception e) {
                 return defaultValue;
             }
@@ -106,22 +95,21 @@ public class ConfigSection {
         }
 
         if (OfflinePlayer.class.isAssignableFrom(type)) {
-            return (T) Bukkit.getOfflinePlayer(config.getString(this.currentPath + path));
+            return (T) Bukkit.getOfflinePlayer(objectAsString);
         }
 
         if (World.class.isAssignableFrom(type)) {
-            return (T) Bukkit.getWorld(config.getString(this.currentPath + path));
+            return (T) Bukkit.getWorld(objectAsString);
         }
 
-        ConfigTypeAdapter<T> adapter =
-                (ConfigTypeAdapter<T>) XG7Plugins.getAPI().configManager(file.getPlugin()).getAdapters().get(type);
+        ConfigTypeAdapter<T> adapter = (ConfigTypeAdapter<T>) XG7Plugins.getAPI().configManager(file.getPlugin()).getAdapters().get(type);
 
         if (adapter == null) {
             file.getPlugin().getDebug().warn("config", "Adapter not found for " + type.getName());
             return defaultValue;
         }
 
-        T value = adapter.fromConfig(this, this.currentPath + path, optionalTypeArgs);
+        T value = adapter.fromConfig(this, path, optionalTypeArgs);
         return value != null ? value : defaultValue;
     }
 
@@ -139,7 +127,7 @@ public class ConfigSection {
             if (!ignoreNonexistent) file.getPlugin().getJavaPlugin().getLogger().warning(this.currentPath + path + " not found in " + file.getName() + ".yml");
             return false;
         }
-        if (config.get(this.currentPath + path) == null) {
+        if (data.get(path) == null) {
             if (!ignoreNonexistent) file.getPlugin().getJavaPlugin().getLogger().warning(this.currentPath + path + " in " + file.getName() + " is empty");
             return false;
         }
@@ -157,6 +145,12 @@ public class ConfigSection {
         return (T) get(path, Object.class);
     }
 
+    public <T> T getAs(Class<T> type) {
+        Yaml yaml = new Yaml();
+        String dumped = yaml.dump(this.data);
+        return yaml.loadAs(dumped, type);
+    }
+
     /**
      * Gets a list of values from the configuration with type conversion.
      * Supports primitive types and maps.
@@ -171,18 +165,21 @@ public class ConfigSection {
     public <T> Optional<List<T>> getList(String path, Class<T> type, boolean ignoreNonexistent) {
         if (!verifyExists(path, ignoreNonexistent)) return Optional.empty();
 
-        if (type == String.class) return Optional.of((List<T>) config.getStringList(this.currentPath + path));
-        if (type == Integer.class || type == int.class) return Optional.of((List<T>) config.getIntegerList(this.currentPath + path));
-        if (type == Boolean.class || type == boolean.class) return Optional.of((List<T>) config.getBooleanList(this.currentPath + path));
-        if (type == Double.class || type == double.class) return Optional.of((List<T>) config.getDoubleList(this.currentPath + path));
-        if (type == Long.class || type == long.class) return Optional.of((List<T>) config.getLongList(this.currentPath + path));
-        if (type == Float.class || type == float.class) return Optional.of((List<T>) config.getFloatList(this.currentPath + path));
-        if (type == Map.class) return Optional.of((List<T>) config.getMapList(this.currentPath + path));
-        if (type == Short.class || type == short.class) return Optional.of((List<T>) config.getShortList(this.currentPath + path));
+        List<Object> list = (List<Object>) data.get(path);
+
+        if (
+                type == Object.class || type == String.class || type == Integer.class || type == int.class ||
+                        type == Boolean.class || type == boolean.class || type == Double.class || type == double.class ||
+                        type == Long.class || type == long.class || type == Float.class || type == float.class ||
+                        type == Short.class || type == short.class
+        ) {
+            return Optional.of((List<T>) list);
+        }
+
         if (type.isEnum()) {
             Class<? extends Enum<?>> enumClass = (Class<? extends Enum<?>>) type;
 
-            List<String> enumValues = config.getStringList(this.currentPath + path);
+            List<String> enumValues = list.stream().map(Object::toString).collect(Collectors.toList());
 
             List<T> enumList = new ArrayList<>();
 
@@ -201,9 +198,8 @@ public class ConfigSection {
     }
 
 
-    //Return path with no dots -> config.section -> config.section
     public String getPath() {
-        return currentPath.isEmpty() ? "" : currentPath.substring(0, currentPath.lastIndexOf("."));
+        return currentPath;
     }
 
     //Return the last path -> config.section -> section
@@ -224,7 +220,7 @@ public class ConfigSection {
      */
     @NotNull
     public Time getTimeOrDefault(String path, Time defaultTime, boolean ignoreNonexistent) {
-        String time = config.getString(this.currentPath + path);
+        String time = data.get(path).toString();
         if (time == null) {
             if (!ignoreNonexistent) file.getPlugin().getDebug().warn("config", this.currentPath + path + " not found in " + file.getName() + ".yml");
             return defaultTime;
@@ -270,14 +266,32 @@ public class ConfigSection {
      * @param value The value to set at the specified path
      */
     public void set(String path, Object value) {
-        config.set(path, value);
+        data.put(path, value);
     }
 
+    public void remove(String path) {
+        data.remove(path);
+    }
+
+    @SuppressWarnings("unchecked")
     public Set<String> getKeys(boolean deep) {
+        Set<String> keys = new LinkedHashSet<>();
 
-        String realPath = currentPath.isEmpty() ? "" : currentPath.substring(0, currentPath.lastIndexOf("."));
+        for (Map.Entry<String, Object> entry : data.entrySet()) {
+            String key = entry.getKey();
+            keys.add(key);
 
-        return config.getConfigurationSection(realPath).getKeys(deep);
+            if (deep && entry.getValue() instanceof Map) {
+                addDeepKeys(key, (Map<String, Object>) entry.getValue(), keys);
+            }
+        }
+
+        return keys;
+    }
+
+
+    public boolean contains(String path) {
+        return data.containsKey(path);
     }
 
     /**
@@ -291,18 +305,51 @@ public class ConfigSection {
      */
     @SneakyThrows
     public <T> boolean is(String path, Class<T> type) {
-        return (boolean) config.getClass().getMethod("is" + type.getSimpleName(), String.class).invoke(config, this.currentPath + path);
+        return data.get(path) != null && type.isAssignableFrom(data.get(path).getClass());
     }
 
     public boolean exists() {
-        return file.exists() && config.contains(currentPath);
+        return file.exists() && data != null;
     }
 
     public ConfigSection parent() {
         return currentPath.contains(".") ? file.section(currentPath.substring(0, currentPath.lastIndexOf("."))) : file.root();
     }
     public ConfigSection child(String path) {
-        return file.section(this.currentPath + path);
+        return file.section(this.currentPath + "." + path);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getDataOfCurrent() {
+        if (currentPath == null || currentPath.isEmpty()) return rootData;
+
+        String[] parts = currentPath.split("\\.");
+        Map<String, Object> current = rootData;
+
+        for (String part : parts) {
+            Object next = current.get(part);
+
+            if (!(next instanceof Map)) {
+                return null;
+            }
+
+            current = (Map<String, Object>) next;
+        }
+
+        return current;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void addDeepKeys(String parent, Map<String, Object> map, Set<String> keys) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            String key = parent + "." + entry.getKey();
+            keys.add(key);
+
+            if (entry.getValue() instanceof Map) {
+                addDeepKeys(key, (Map<String, Object>) entry.getValue(), keys);
+            }
+        }
     }
 
 }

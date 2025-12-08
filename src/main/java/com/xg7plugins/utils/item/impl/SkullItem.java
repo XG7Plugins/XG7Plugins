@@ -1,11 +1,12 @@
 package com.xg7plugins.utils.item.impl;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
@@ -51,13 +52,13 @@ public class SkullItem extends Item {
      * @return This InventoryItem
      */
     public SkullItem setValue(String value) {
-        if (MinecraftVersion.isOlderThan(8)) {
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) {
             return this;
         }
 
         SkullMeta skullMeta = (SkullMeta) this.itemStack.getItemMeta();
 
-        if (MinecraftVersion.isNewerOrEqual(18, 2) && !XG7Plugins.getAPI().getServerSoftware().isPaper()) {
+        if (MinecraftServerVersion.isNewerOrEqual(ServerVersion.V_1_18_2) && !XG7Plugins.getAPI().getServerSoftware().isPaper()) {
             try {
                 setByURL(new URL(value));
                 return this;
@@ -70,7 +71,7 @@ public class SkullItem extends Item {
 
         ReflectionObject profile = skin.getProfileBySoftwareAndVersion();
 
-        if (MinecraftVersion.isNewerThan(16) && XG7Plugins.getAPI().getServerSoftware().isPaper()) {
+        if (MinecraftServerVersion.isNewerThan(ServerVersion.V_1_16_5) && XG7Plugins.getAPI().getServerSoftware().isPaper()) {
 
             ReflectionObject.of(skullMeta)
                     .getMethod("setPlayerProfile", ReflectionClass.of("com.destroystokyo.paper.profile.PlayerProfile").getAClass())
@@ -99,7 +100,7 @@ public class SkullItem extends Item {
      * @return This InventoryItem
      */
     public SkullItem setOwner(String owner) {
-        if (MinecraftVersion.isOlderThan(8)) {
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) {
             return this;
         }
 
@@ -125,7 +126,7 @@ public class SkullItem extends Item {
     }
 
     public SkullItem setSkinByPlayer(Player player) {
-        if (MinecraftVersion.isOlderThan(8)) {
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) {
             return this;
         }
 
@@ -135,7 +136,7 @@ public class SkullItem extends Item {
 
         SkullMeta meta = (SkullMeta) this.itemStack.getItemMeta();
 
-        if (MinecraftVersion.isNewerOrEqual(18, 2)) {
+        if (MinecraftServerVersion.isNewerOrEqual(ServerVersion.V_1_18_2)) {
             ReflectionObject playerProfile = ReflectionObject.of(player)
                     .getMethod("getPlayerProfile")
                     .invokeToRObject();
@@ -157,7 +158,7 @@ public class SkullItem extends Item {
      * @return This InventoryItem
      */
     public SkullItem setSkinByUUID(UUID uuid) {
-        if (MinecraftVersion.isOlderThan(8)) {
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) {
             return this;
         }
         return setValue(SkinRequest.requestSkinByUUID(uuid).join().getValue());
@@ -178,7 +179,7 @@ public class SkullItem extends Item {
 
     }
     public void setByURL(URL url) {
-        if (MinecraftVersion.isOlderThan(18, 2)) return;
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_18_2)) return;
         if (XG7Plugins.getAPI().getServerSoftware().isPaper()) return;
 
         ReflectionObject playerProfile = ReflectionClass.of(Bukkit.class)

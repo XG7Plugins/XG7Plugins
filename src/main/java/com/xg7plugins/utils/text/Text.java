@@ -1,9 +1,10 @@
 package com.xg7plugins.utils.text;
 
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.lang.Lang;
-import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.Pair;
 
 import com.xg7plugins.utils.text.resolver.TagResolver;
@@ -198,7 +199,7 @@ public class Text {
      * @return Text formatted for the current MC version
      */
     public String getText() {
-        if (MinecraftVersion.isOlderThan(8)) return TagResolver.removeTags(this.text);
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) return TagResolver.removeTags(this.text);
         return new TextComponent(getComponent()).toLegacyText();
     }
 

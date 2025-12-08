@@ -1,10 +1,11 @@
 package com.xg7plugins.modules.xg7scores.scores;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerPlayerListHeaderAndFooter;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
-import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.text.Text;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -28,7 +29,7 @@ public class TabList extends Score {
 
     public TabList(long delay, List<String> header, List<String> footer, String playerPrefix, String playerSuffix, String id, Function<Player, Boolean> condition, Plugin plugin) {
         super(delay, header.size() > footer.size() ? header : footer, id, condition, plugin);
-        if (MinecraftVersion.isOlderThan(8)) throw new RuntimeException("This version doesn't support Tablist");
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) throw new RuntimeException("This version doesn't support Tablist");
         this.header = header;
         this.footer = footer;
         this.playerPrefix = playerPrefix;
@@ -58,7 +59,7 @@ public class TabList extends Score {
         if (header == null) header = "";
         if (footer == null) footer = "";
 
-        if (MinecraftVersion.isNewerOrEqual(13)) {
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_13)) {
             player.setPlayerListHeader(header);
             player.setPlayerListFooter(footer);
             return;
@@ -73,7 +74,7 @@ public class TabList extends Score {
     public void removePlayer(Player player) {
         super.removePlayer(player);
         send(player,"","");
-        if (MinecraftVersion.isNewerThan(7)) player.setPlayerListName(player.getName());
+        if (MinecraftServerVersion.isNewerThan(ServerVersion.V_1_7_10)) player.setPlayerListName(player.getName());
 
     }
 

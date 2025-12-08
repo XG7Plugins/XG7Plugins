@@ -5,7 +5,9 @@ import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.typeadapter.ConfigTypeAdapter;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -47,8 +49,10 @@ public class ConfigManager {
     /**
      * Reloads all registered configurations from their files.
      */
-    public void reloadConfigs() {
-        configs.values().forEach(ConfigFile::reload);
+    public void reloadConfigs() throws IOException {
+        for (ConfigFile configFile : configs.values()) {
+            configFile.reload();
+        }
     }
 
     /**

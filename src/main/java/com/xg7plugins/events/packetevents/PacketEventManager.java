@@ -2,13 +2,11 @@ package com.xg7plugins.events.packetevents;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.event.*;
-import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.xg7plugins.boot.Plugin;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Manages packet event listeners for plugins, handling registration, unregistration,
@@ -61,41 +59,30 @@ public class PacketEventManager {
 
                 @Override
                 public void onPacketReceive(PacketReceiveEvent event) {
-                    if (packetEventHandler.packet() == PacketEventType.ALL) {
+                    Set<PacketTypeCommon> packetTypes = listener.getHandledEvents();
+
+                    if (packetTypes.isEmpty()) {
                         listener.onPacketReceive(event);
                         return;
                     }
-                    if (packetEventHandler.packet() == PacketEventType.CLIENT_ALL  && event.getPacketType().getSide() == PacketSide.CLIENT) {
-                        if (event.getPacketId() < 0) {
-                            listener.onPacketReceive(event);
-                        }
-                        return;
+
+                    if (packetTypes.stream().anyMatch(type -> type == event.getPacketType())) {
+                        listener.onPacketReceive(event);
                     }
-
-                    String packetType = packetEventHandler.packet().name();
-
-                    String packetName = packetType.substring(packetType.indexOf("_") + 1).replace("CLIENT_", "");
-
-                    if (packetName.equals(event.getPacketType().getName())) listener.onPacketReceive(event);
-
                 }
 
                 @Override
                 public void onPacketSend(PacketSendEvent event) {
-                    if (packetEventHandler.packet() == PacketEventType.ALL) {
+                    Set<PacketTypeCommon> packetTypes = listener.getHandledEvents();
+
+                    if (packetTypes.isEmpty()) {
                         listener.onPacketSend(event);
                         return;
                     }
-                    if (packetEventHandler.packet() == PacketEventType.SERVER_ALL) {
-                        if (event.getPacketId() < 0) listener.onPacketSend(event);
-                        return;
+
+                    if (packetTypes.stream().anyMatch(type -> type == event.getPacketType())) {
+                        listener.onPacketSend(event);
                     }
-
-                    String packetType = packetEventHandler.packet().name();
-
-                    String packetName = packetType.substring(packetType.indexOf("_") + 1).replace("SERVER_", "");
-
-                    if (packetName.equals(event.getPacketType().getName())) listener.onPacketSend(event);
                 }
 
                 @Override

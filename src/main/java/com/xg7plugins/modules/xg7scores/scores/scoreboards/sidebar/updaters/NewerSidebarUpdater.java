@@ -1,21 +1,18 @@
 package com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.updaters;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.protocol.score.ScoreFormat;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateScore;
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.Sidebar;
-import com.xg7plugins.server.MinecraftVersion;
-import com.xg7plugins.utils.Pair;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 @AllArgsConstructor
 public class NewerSidebarUpdater implements SidebarUpdater {
@@ -30,7 +27,7 @@ public class NewerSidebarUpdater implements SidebarUpdater {
 
         ClientVersion clientVersion = user.getClientVersion();
 
-        return clientVersion.isNewerThanOrEquals(ClientVersion.V_1_13) && MinecraftVersion.isNewerOrEqual(13);
+        return clientVersion.isNewerThanOrEquals(ClientVersion.V_1_13) && MinecraftServerVersion.isOlderThan(ServerVersion.V_1_13);
     }
 
     @Override

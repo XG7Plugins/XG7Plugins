@@ -1,26 +1,16 @@
 package com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.player.ClientVersion;
-import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDisplayScoreboard;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerScoreboardObjective;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
-import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateScore;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.updaters.LegacySidebarUpdater;
 import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.updaters.NewerSidebarUpdater;
 import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.updaters.SidebarUpdater;
-import com.xg7plugins.server.MinecraftVersion;
-import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
-import lombok.Getter;
-import lombok.Setter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.*;

@@ -1,8 +1,9 @@
 package com.xg7plugins.modules.xg7scores.scores;
 
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
-import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.text.Text;
@@ -24,7 +25,7 @@ public class ActionBar extends Score {
 
     public ActionBar(long delay, List<String> text, String id, Function<Player, Boolean> condition, Plugin plugin) {
         super(delay, text, id, condition, plugin);
-        if (MinecraftVersion.isOlderThan(8)) throw new RuntimeException("This version doesn't support ActionBar");
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) throw new RuntimeException("This version doesn't support ActionBar");
     }
 
     @Override
@@ -40,26 +41,26 @@ public class ActionBar extends Score {
 
             String message = Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).join().getText();
 
-            if (MinecraftVersion.isNewerThan(8)) {
+            if (MinecraftServerVersion.isNewerThan(ServerVersion.V_1_8_8)) {
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
                 continue;
             }
 
-            ReflectionClass componentClass = ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".ChatComponentText");
+            ReflectionClass componentClass = ReflectionClass.of("net.minecraft.server." + MinecraftServerVersion.getPackageName() + ".ChatComponentText");
 
             ReflectionObject chatComponentOb = componentClass
                     .getConstructor(String.class)
                     .newInstance(message);
 
-            ReflectionObject packet = ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".PacketPlayOutChat")
-                    .getConstructor(ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".IChatBaseComponent").getAClass(), byte.class)
+            ReflectionObject packet = ReflectionClass.of("net.minecraft.server." + MinecraftServerVersion.getPackageName() + ".PacketPlayOutChat")
+                    .getConstructor(ReflectionClass.of("net.minecraft.server." + MinecraftServerVersion.getPackageName() + ".IChatBaseComponent").getAClass(), byte.class)
                     .newInstance(chatComponentOb.getObject(), (byte) 2);
 
             ReflectionObject.of(player)
                     .getMethod("getHandle")
                     .invokeToRObject()
                     .getFieldRObject("playerConnection")
-                    .getMethod("sendPacket", ReflectionClass.of("net.minecraft.server." + MinecraftVersion.getPackageName() + ".Packet").getAClass())
+                    .getMethod("sendPacket", ReflectionClass.of("net.minecraft.server." + MinecraftServerVersion.getPackageName() + ".Packet").getAClass())
                     .invoke(packet.getObject());
 
         }

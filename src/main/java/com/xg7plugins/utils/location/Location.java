@@ -1,5 +1,6 @@
 package com.xg7plugins.utils.location;
 
+import com.github.retrooper.packetevents.util.Vector3d;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -140,6 +141,9 @@ public class Location implements Cloneable {
 
     public Vector toVector() {
         return new Vector(x,y,z);
+    }
+    public Vector3d toVector3d() {
+        return new Vector3d(x,y,z);
     }
 
     /**

@@ -4,7 +4,8 @@ import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.wrapper.play.client.WrapperPlayClientInteractEntity;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.PacketListener;
-import com.xg7plugins.events.packetevents.PacketEventType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.packettype.PacketTypeCommon;
 import com.xg7plugins.events.packetevents.PacketListenerSetup;
 import com.xg7plugins.modules.xg7holograms.event.ClickAction;
 import com.xg7plugins.modules.xg7holograms.event.HologramClickEvent;
@@ -12,11 +13,19 @@ import com.xg7plugins.modules.xg7holograms.hologram.Hologram;
 import com.xg7plugins.modules.xg7holograms.hologram.LivingHologram;
 import org.bukkit.entity.Player;
 
-@PacketListenerSetup(packet = PacketEventType.PLAY_CLIENT_INTERACT_ENTITY)
+import java.util.Collections;
+import java.util.Set;
+
+@PacketListenerSetup
 public class HologramClickListener implements PacketListener {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public Set<PacketTypeCommon> getHandledEvents() {
+        return Collections.singleton(PacketType.Play.Client.INTERACT_ENTITY);
     }
 
     @Override

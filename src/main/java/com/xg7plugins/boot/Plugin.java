@@ -26,6 +26,7 @@ import org.apache.commons.lang.IllegalClassException;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
 import java.util.*;
 /**
  * Abstract base class for XG7 plugins that extends Bukkit's JavaPlugin.
@@ -101,8 +102,11 @@ public abstract class Plugin {
     public void onReload(ReloadCause cause) {
 
         if (cause.equals(ReloadCause.CONFIG)) {
-            XG7Plugins.getAPI().configManager(this).reloadConfigs();
-            debug = new Debug(this);
+            try {
+                XG7Plugins.getAPI().configManager(this).reloadConfigs();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         debug = new Debug(this);

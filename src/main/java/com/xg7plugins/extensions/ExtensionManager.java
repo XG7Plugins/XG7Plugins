@@ -1,15 +1,12 @@
 package com.xg7plugins.extensions;
 
 import com.xg7plugins.XG7Plugins;
-import com.xg7plugins.api.XG7PluginsAPI;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
-import com.xg7plugins.modules.Module;
-import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.FileUtil;
 import lombok.Data;
 
@@ -143,12 +140,18 @@ public class ExtensionManager {
 
         boolean changed = false;
 
+        int configVersion = configSection.get("config-version", -1);
+
+        configSection.remove("config-version");
+
         for (Command command : commands) {
             if (!configSection.contains(command.getCommandSetup().name())) {
                 changed = true;
                 configSection.set(command.getCommandSetup().name(), Collections.singletonList(command.getCommandSetup().name()));
             }
         }
+
+        configSection.set("config-version", configVersion);
 
         if (changed) configSection.getFile().save();
 

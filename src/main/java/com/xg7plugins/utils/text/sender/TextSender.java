@@ -1,6 +1,7 @@
 package com.xg7plugins.utils.text.sender;
 
-import com.xg7plugins.server.MinecraftVersion;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -31,12 +32,12 @@ public interface TextSender {
         if (text == null || text.getText() == null || text.getText().isEmpty()) return;
 
         text.split("<br>").forEach(line -> {
-            if (MinecraftVersion.isOlderThan(8)) {
+            if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) {
                 sender.sendMessage(text.getText());
                 return;
             }
 
-            if (MinecraftVersion.is(8) && !(sender instanceof Player)) {
+            if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_9) && !(sender instanceof Player)) {
                 sender.sendMessage(text.getText());
                 return;
             }

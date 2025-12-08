@@ -1,12 +1,13 @@
 package com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.updaters;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerUpdateScore;
 import com.xg7plugins.modules.xg7scores.scores.scoreboards.sidebar.Sidebar;
-import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
 import lombok.AllArgsConstructor;
@@ -30,11 +31,11 @@ public class LegacySidebarUpdater implements SidebarUpdater {
 
         User user = PacketEvents.getAPI().getPlayerManager().getUser(player);
 
-        if (user == null) return MinecraftVersion.isOlderThan(13);
+        if (user == null) return MinecraftServerVersion.isOlderThan(ServerVersion.V_1_13);
 
         ClientVersion clientVersion = user.getClientVersion();
 
-        return clientVersion.isOlderThan(ClientVersion.V_1_13) || MinecraftVersion.isOlderThan(13);
+        return clientVersion.isOlderThan(ClientVersion.V_1_13) || MinecraftServerVersion.isOlderThan(ServerVersion.V_1_13);
     }
 
     @Override

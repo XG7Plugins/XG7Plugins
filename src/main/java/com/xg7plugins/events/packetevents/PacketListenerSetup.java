@@ -32,11 +32,4 @@ public @interface PacketListenerSetup {
      * @return The priority level for this handler
      */
     PacketListenerPriority priority() default PacketListenerPriority.NORMAL;
-
-    /**
-     * Defines which type of packets this handler will process.
-     *
-     * @return The type of packets to handle
-     */
-    PacketEventType packet() default PacketEventType.ALL;
 }

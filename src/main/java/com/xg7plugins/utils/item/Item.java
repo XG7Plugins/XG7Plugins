@@ -1,6 +1,7 @@
 package com.xg7plugins.utils.item;
 
 import com.cryptomorin.xseries.XMaterial;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTString;
 import com.google.gson.Gson;
@@ -16,12 +17,13 @@ import com.xg7plugins.modules.xg7menus.Slot;
 import com.xg7plugins.modules.xg7menus.events.ActionEvent;
 import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.ClickableItem;
-import com.xg7plugins.server.MinecraftVersion;
+import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.item.parser.ItemParser;
 import com.xg7plugins.utils.item.parser.impl.*;
 import com.xg7plugins.utils.text.Text;
 import dev.lone.itemsadder.api.CustomStack;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -277,7 +279,7 @@ public class Item implements Cloneable {
 
 
         if (this.itemStack.getType().equals(Material.AIR)) return (I) this;
-        if (MinecraftVersion.isNewerThan(13)) {
+        if (MinecraftServerVersion.isNewerThan(ServerVersion.V_1_13)) {
 
             NamespacedKey namespacedKey = new NamespacedKey(XG7Plugins.getInstance().getJavaPlugin(), key);
 
@@ -309,7 +311,7 @@ public class Item implements Cloneable {
 
         if (item.getType().equals(Material.AIR)) return Optional.empty();
 
-        if (MinecraftVersion.isNewerThan(13)) {
+        if (MinecraftServerVersion.isNewerThan(ServerVersion.V_1_13)) {
 
             NamespacedKey namespacedKey = new NamespacedKey(XG7Plugins.getInstance().getJavaPlugin(), key);
 
@@ -394,11 +396,11 @@ public class Item implements Cloneable {
     }
 
     public com.github.retrooper.packetevents.protocol.item.ItemStack toProtocolItemStack() {
-        return SpigotReflectionUtil.decodeBukkitItemStack(this.itemStack);
+        return SpigotConversionUtil.fromBukkitItemStack(this.itemStack);
     }
 
     public com.github.retrooper.packetevents.protocol.item.ItemStack toProtocolItemStack(CommandSender player, Plugin plugin) {
-        return SpigotReflectionUtil.decodeBukkitItemStack(getItemFor(player, plugin));
+        return SpigotConversionUtil.fromBukkitItemStack(getItemFor(player, plugin));
     }
 
     public boolean isAir() {

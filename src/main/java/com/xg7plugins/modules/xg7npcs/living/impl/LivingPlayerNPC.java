@@ -1,7 +1,12 @@
 package com.xg7plugins.modules.xg7npcs.living.impl;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
+import com.github.retrooper.packetevents.util.Vector3d;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.*;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7holograms.hologram.LivingHologram;
@@ -12,6 +17,7 @@ import com.xg7plugins.modules.xg7npcs.npc.impl.PlayerNPC;
 import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.location.Location;
 import com.xg7plugins.utils.skin.Skin;
+import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Data;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -75,14 +81,25 @@ public class LivingPlayerNPC implements LivingNPC {
             profile.setTextureProperties(playerProfile.getTextureProperties());
         }
 
-        WrapperPlayServerPlayerInfoUpdate addInfo = new WrapperPlayServerPlayerInfoUpdate(
-                WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER,
-                new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(profile)
-        );
+        ServerVersion version = PacketEvents.getAPI().getServerManager().getVersion();
+
+        PacketWrapper<?> addInfo = version.isOlderThan(ServerVersion.V_1_19_3) ? new WrapperPlayServerPlayerInfo(
+                WrapperPlayServerPlayerInfo.Action.ADD_PLAYER,
+                new WrapperPlayServerPlayerInfo.PlayerData(
+                        Component.text(" "), profile, GameMode.SURVIVAL, 0
+                )
+        ) :
+                new WrapperPlayServerPlayerInfoUpdate(
+                        WrapperPlayServerPlayerInfoUpdate.Action.ADD_PLAYER,
+                        new WrapperPlayServerPlayerInfoUpdate.PlayerInfo(profile)
+                );
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, addInfo);
 
-        defaultSpawn(profile.getUUID(), NPCMetaProvider.getPlayerNPCData(PacketEvents.getAPI().getPlayerManager().getClientVersion(player)));
+        System.out.println("Pacote de info: " + addInfo);
+
+        teams.setTeamName("npc_hidden_name_" + spawnedEntityID);
+        teams.setTeamMode(WrapperPlayServerTeams.TeamMode.CREATE);
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, teams);
 
@@ -95,8 +112,13 @@ public class LivingPlayerNPC implements LivingNPC {
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, addNpcToTeam);
 
+        defaultSpawn(profile.getUUID(), NPCMetaProvider.getPlayerNPCData());
+
         XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of(() -> {
-            WrapperPlayServerPlayerInfoRemove remove = new WrapperPlayServerPlayerInfoRemove(profile.getUUID());
+            PacketWrapper<?> remove = version.isOlderThan(ServerVersion.V_1_19_3) ? new WrapperPlayServerPlayerInfo(
+                    WrapperPlayServerPlayerInfo.Action.REMOVE_PLAYER,
+                    new WrapperPlayServerPlayerInfo.PlayerData(Component.text(" "), profile, GameMode.SURVIVAL, 0)
+            ) : new WrapperPlayServerPlayerInfoRemove(profile.getUUID());
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, remove);
         }), 1000L);
     }
@@ -109,5 +131,17 @@ public class LivingPlayerNPC implements LivingNPC {
         kill();
         XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of(this::spawn), 300L);
 
+    }
+
+    @Override
+    public void kill() {
+        if (getSpawnedEntityID() < 0) return;
+
+        LivingNPC.super.kill();
+
+        teams.setTeamName("npc_hidden_name_" + spawnedEntityID);
+        teams.setTeamMode(WrapperPlayServerTeams.TeamMode.REMOVE);
+
+        PacketEvents.getAPI().getPlayerManager().sendPacket(player, teams);
     }
 }

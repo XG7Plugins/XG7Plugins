@@ -34,11 +34,10 @@ public class HologramLevitateTask extends TimerTask {
         int index = counter.getAndIncrement();
 
         double angle = index * 0.1;
-        float yaw = (float) ((angle * 180.0 / Math.PI) % 360.0);
         double deltaY = 0.5 * Math.sin(angle);
 
         for (LivingHologram spawner : holograms.getAllLivingHolograms()) {
-            spawner.levitate(yaw, deltaY);
+            spawner.levitate(deltaY);
         }
     }
 }
