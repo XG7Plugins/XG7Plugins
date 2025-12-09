@@ -22,6 +22,7 @@ import com.xg7plugins.extensions.ExtensionManager;
 import com.xg7plugins.lang.LangManager;
 import com.xg7plugins.loader.VersionChecker;
 import com.xg7plugins.modules.ModuleManager;
+import com.xg7plugins.modules.xg7dialogs.XG7Dialogs;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7holograms.XG7Holograms;
 import com.xg7plugins.modules.xg7menus.XG7Menus;
@@ -75,7 +76,7 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
      * @return The requested plugin instance, or null if not found
      */
     public <T extends Plugin> T getXG7Plugin(String name) {
-        return (T) plugin.getPlugins().values().stream().filter(plugin -> name.equals(plugin.getName())).findFirst().orElse(null);
+        return (T) plugin.getPlugins().values().stream().filter(plugin -> name.equalsIgnoreCase(plugin.getName())).findFirst().orElse(null);
     }
 
     public <T extends Plugin> T getXG7Plugin(JavaPlugin plugin) {
@@ -199,6 +200,10 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
         return moduleManager().getModule(XG7NPCs.class);
     }
 
+    public XG7Dialogs dialogs() {
+        return moduleManager().getModule(XG7Dialogs.class);
+    }
+
     /**
      * Gets the configuration manager for a specific plugin.
      *
@@ -292,7 +297,7 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
      * @return true if Geyser forms support is enabled, false otherwise
      */
     public boolean isGeyserFormsEnabled() {
-        return dependencyManager().exists("floodgate") && ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("geyser-forms-enabled", false);
+        return dependencyManager().exists("floodgate") && moduleManager().isModuleEnabled("XG7GeyserForms");
     }
 
     /**

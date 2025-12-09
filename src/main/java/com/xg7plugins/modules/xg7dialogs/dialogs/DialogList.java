@@ -1,9 +1,10 @@
 package com.xg7plugins.modules.xg7dialogs.dialogs;
 
+import com.github.retrooper.packetevents.protocol.dialog.DialogAction;
 import com.github.retrooper.packetevents.protocol.dialog.DialogListDialog;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntitySet;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.modules.xg7dialogs.button.DialogActionButton;
+import com.xg7plugins.modules.xg7dialogs.button.DialogButton;
 import com.xg7plugins.modules.xg7dialogs.components.DialogBodyElement;
 import com.xg7plugins.modules.xg7dialogs.inputs.DialogInput;
 import org.bukkit.entity.Player;
@@ -13,13 +14,13 @@ import java.util.stream.Collectors;
 
 public class DialogList extends Dialog {
 
-    private final DialogActionButton exitButton;
+    private final DialogButton exitButton;
     private final List<Dialog> dialogs;
     private final int columns;
     private final int buttonWidth;
 
-    public DialogList(Plugin plugin, String title, boolean canCloseWithEscape, List<DialogBodyElement> dialogBodyElements, List<DialogInput> dialogInputs, ActionType afterResponse, DialogActionButton exitButton, List<Dialog> dialogs, int columns, int buttonWidth) {
-        super(plugin, title, canCloseWithEscape, dialogBodyElements, dialogInputs, afterResponse);
+    public DialogList(Plugin plugin, String id, String title, boolean canCloseWithEscape, List<DialogBodyElement> dialogBodyElements, List<DialogInput> dialogInputs, DialogAction afterResponse, DialogButton exitButton, List<Dialog> dialogs, int columns, int buttonWidth) {
+        super(plugin, id, title, canCloseWithEscape, dialogBodyElements, dialogInputs, afterResponse);
         this.exitButton = exitButton;
         this.dialogs = dialogs;
         this.columns = columns;
@@ -36,10 +37,5 @@ public class DialogList extends Dialog {
                 columns,
                 buttonWidth
         );
-    }
-
-    @Override
-    public void onResponse() {
-
     }
 }

@@ -1,7 +1,8 @@
 package com.xg7plugins.modules.xg7dialogs.dialogs;
 
+import com.github.retrooper.packetevents.protocol.dialog.DialogAction;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.modules.xg7dialogs.button.DialogActionButton;
+import com.xg7plugins.modules.xg7dialogs.button.DialogButton;
 import com.xg7plugins.modules.xg7dialogs.components.DialogBodyElement;
 import com.xg7plugins.modules.xg7dialogs.inputs.DialogInput;
 import lombok.Getter;
@@ -12,10 +13,10 @@ import java.util.List;
 @Getter
 public class NoticeDialog extends Dialog {
 
-    private final DialogActionButton actionButton;
+    private final DialogButton actionButton;
 
-    public NoticeDialog(Plugin plugin, String title, boolean canCloseWithEscape, List<DialogBodyElement> dialogBodyElements, List<DialogInput> dialogInputs, Dialog.ActionType afterResponse, DialogActionButton actionButton) {
-        super(plugin, title, canCloseWithEscape, dialogBodyElements, dialogInputs, afterResponse);
+    public NoticeDialog(Plugin plugin, String id, String title, boolean canCloseWithEscape, List<DialogBodyElement> dialogBodyElements, List<DialogInput> dialogInputs, DialogAction afterResponse, DialogButton actionButton) {
+        super(plugin, id, title, canCloseWithEscape, dialogBodyElements, dialogInputs, afterResponse);
         this.actionButton = actionButton;
     }
 
@@ -27,8 +28,4 @@ public class NoticeDialog extends Dialog {
         );
     }
 
-    @Override
-    public void onResponse() {
-
-    }
 }

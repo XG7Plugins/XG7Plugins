@@ -13,18 +13,16 @@ public class DialogTextInput extends DialogInput {
     private final boolean labelVisible;
     private final int height;
     private final int width;
-    private final int lines;
     private final int maxLines;
     private final String initialValue;
     private final int maxLength;
 
 
-    public DialogTextInput(String key, String label, boolean labelVisible, int width, int height, int lines, int maxLines, String initialValue, int maxLength) {
+    public DialogTextInput(String key, String label, boolean labelVisible, int width, int height, int maxLines, String initialValue, int maxLength) {
         super(key, label);
         this.labelVisible = labelVisible;
         this.width = width;
         this.height = height;
-        this.lines = lines;
         this.maxLines = maxLines;
         this.initialValue = initialValue;
         this.maxLength = maxLength;

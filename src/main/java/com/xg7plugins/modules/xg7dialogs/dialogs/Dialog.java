@@ -6,6 +6,7 @@ import com.github.retrooper.packetevents.protocol.dialog.CommonDialogData;
 import com.github.retrooper.packetevents.protocol.dialog.DialogAction;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerShowDialog;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.modules.xg7dialogs.builder.*;
 import com.xg7plugins.modules.xg7dialogs.components.DialogBodyElement;
 import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.modules.xg7dialogs.inputs.DialogInput;
@@ -20,13 +21,13 @@ import java.util.stream.Collectors;
 public abstract class Dialog {
 
     protected final Plugin plugin;
-
     protected final String id;
+
     protected final String title;
     protected final boolean canCloseWithEscape;
     protected final List<DialogBodyElement> dialogBodyElements;
     protected final List<DialogInput> dialogInputs;
-    protected final ActionType afterResponse;
+    protected final DialogAction afterResponse;
 
     public CommonDialogData buildCommonData(Player player) {
         return new CommonDialogData(
@@ -34,7 +35,7 @@ public abstract class Dialog {
                 Text.detectLangs(player, plugin, title).join().toAdventureComponent(),
                 canCloseWithEscape,
                 false,
-                afterResponse.build(),
+                afterResponse,
                 dialogBodyElements.stream().map(element -> element.build(this, player)).collect(Collectors.toList()),
                 dialogInputs.stream().map(input -> input.build(this, player)).collect(Collectors.toList())
         );
@@ -46,24 +47,6 @@ public abstract class Dialog {
 
     public abstract com.github.retrooper.packetevents.protocol.dialog.Dialog build(Player player);
 
-
-    public enum ActionType {
-        CLOSE,
-        NONE,
-        WAIT_FOR_RESPONSE;
-
-        public DialogAction build() {
-            switch (this) {
-                case CLOSE:
-                    return DialogAction.CLOSE;
-                case WAIT_FOR_RESPONSE:
-                    return DialogAction.WAIT_FOR_RESPONSE;
-                default:
-                    return DialogAction.NONE;
-            }
-        }
-    }
-
     public void send(Player player) {
         if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_21_6)) return;
 
@@ -73,8 +56,23 @@ public abstract class Dialog {
     }
 
 
+    public static NoticeDialogBuilder notice(Plugin plugin, String id) {
+        return new NoticeDialogBuilder(plugin, id);
+    }
 
+    public static ConfirmationDialogBuilder confirmation(Plugin plugin, String id) {
+        return new ConfirmationDialogBuilder(plugin, id);
+    }
 
+    public static DialogListBuilder dialogList(Plugin plugin, String id) {
+        return new DialogListBuilder(plugin, id);
+    }
 
+    public static MultiActionDialogBuilder multiAction(Plugin plugin, String id) {
+        return new MultiActionDialogBuilder(plugin, id);
+    }
 
+    public static ServerLinksDialogBuilder serverLinks(Plugin plugin, String id) {
+        return new ServerLinksDialogBuilder(plugin, id);
+    }
 }

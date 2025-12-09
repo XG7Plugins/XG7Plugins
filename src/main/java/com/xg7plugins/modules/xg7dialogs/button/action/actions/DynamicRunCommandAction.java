@@ -2,14 +2,14 @@ package com.xg7plugins.modules.xg7dialogs.button.action.actions;
 
 import com.github.retrooper.packetevents.protocol.dialog.action.Action;
 import com.github.retrooper.packetevents.protocol.dialog.action.DialogTemplate;
-import com.xg7plugins.modules.xg7dialogs.button.action.DialogAction;
+import com.xg7plugins.modules.xg7dialogs.button.action.DialogButtonAction;
 import com.xg7plugins.modules.xg7dialogs.dialogs.Dialog;
 import com.xg7plugins.utils.text.Text;
 import lombok.Data;
 import org.bukkit.entity.Player;
 
 @Data
-public class DynamicRunCommandAction implements DialogAction {
+public class DynamicRunCommandAction implements DialogButtonAction {
 
     private final String command;
 

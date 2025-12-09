@@ -8,7 +8,7 @@ import com.xg7plugins.modules.xg7dialogs.button.action.actions.*;
 import com.xg7plugins.modules.xg7dialogs.dialogs.Dialog;
 import org.bukkit.entity.Player;
 
-public interface DialogAction {
+public interface DialogButtonAction {
 
     Action build(Dialog dialog, Player player);
 

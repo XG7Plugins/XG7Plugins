@@ -88,16 +88,15 @@ holograms-levitating-interval: 100ms
 #make an action while is in cooldown
 player-cooldown-task-delay: 1s
 
+#Microsystems in XG7Plugins that
 modules-enabled:
   xg7menus: true
   xg7geyserforms: true
   xg7scores: true
   xg7holograms: true
   xg7npcs: true
+  xg7dialogs: true
 
-#This plugin can use Floodgate
-#forms, makes it enabled if you have
-geyser-forms-enabled: true
 lang-form-enabled: true
 
 #Cache expires of menus

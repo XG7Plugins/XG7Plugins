@@ -24,10 +24,10 @@ public class DialogSingleOption extends DialogInput {
     }
 
     @Data
-    static class Option {
-        private String id;
-        private String displayName;
-        private boolean firstSelected;
+    public static class Option {
+        private final String id;
+        private final String displayName;
+        private final boolean firstSelected;
 
         public SingleOptionInputControl.Entry build(Dialog dialog, Player player) {
             return new SingleOptionInputControl.Entry(
@@ -35,6 +35,14 @@ public class DialogSingleOption extends DialogInput {
                     Text.detectLangs(player, dialog.getPlugin(), displayName).join().toAdventureComponent(),
                     firstSelected
             );
+        }
+
+        public static Option of(String id, String displayName, boolean firstSelected) {
+            return new Option(id, displayName, firstSelected);
+        }
+
+        public static Option of(String id, String displayName) {
+            return of(id, displayName, false);
         }
     }
 

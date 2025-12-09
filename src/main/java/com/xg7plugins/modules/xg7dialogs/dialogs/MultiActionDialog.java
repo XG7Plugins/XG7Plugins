@@ -1,7 +1,8 @@
 package com.xg7plugins.modules.xg7dialogs.dialogs;
 
+import com.github.retrooper.packetevents.protocol.dialog.DialogAction;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.modules.xg7dialogs.button.DialogActionButton;
+import com.xg7plugins.modules.xg7dialogs.button.DialogButton;
 import com.xg7plugins.modules.xg7dialogs.components.DialogBodyElement;
 import com.xg7plugins.modules.xg7dialogs.inputs.DialogInput;
 import org.bukkit.entity.Player;
@@ -12,11 +13,11 @@ import java.util.stream.Collectors;
 public class MultiActionDialog extends Dialog {
 
     private final int columns;
-    private final List<DialogActionButton> actionButtons;
-    private final DialogActionButton exitButton;
+    private final List<DialogButton> actionButtons;
+    private final DialogButton exitButton;
 
-    public MultiActionDialog(Plugin plugin, String title, boolean canCloseWithEscape, List<DialogBodyElement> dialogBodyElements, List<DialogInput> dialogInputs, ActionType afterResponse, int columns, List<DialogActionButton> actionButtons, DialogActionButton exitButton) {
-        super(plugin, title, canCloseWithEscape, dialogBodyElements, dialogInputs, afterResponse);
+    public MultiActionDialog(Plugin plugin, String id, String title, boolean canCloseWithEscape, List<DialogBodyElement> dialogBodyElements, List<DialogInput> dialogInputs, DialogAction afterResponse, int columns, List<DialogButton> actionButtons, DialogButton exitButton) {
+        super(plugin, id, title, canCloseWithEscape, dialogBodyElements, dialogInputs, afterResponse);
         this.columns = columns;
         this.actionButtons = actionButtons;
         this.exitButton = exitButton;
@@ -30,10 +31,5 @@ public class MultiActionDialog extends Dialog {
                 exitButton.build(this, player),
                 columns
         );
-    }
-
-    @Override
-    public void onResponse() {
-
     }
 }

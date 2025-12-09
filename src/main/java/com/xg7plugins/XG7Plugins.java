@@ -43,6 +43,7 @@ import com.xg7plugins.menus.lang.LangMenu;
 import com.xg7plugins.menus.tasks.TaskMenu;
 import com.xg7plugins.modules.Module;
 import com.xg7plugins.modules.ModuleManager;
+import com.xg7plugins.modules.xg7dialogs.XG7Dialogs;
 import com.xg7plugins.modules.xg7geyserforms.XG7GeyserForms;
 import com.xg7plugins.modules.xg7geyserforms.forms.Form;
 import com.xg7plugins.modules.xg7holograms.XG7Holograms;
@@ -62,7 +63,7 @@ import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.loader.VersionChecker;
 import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
-import com.xg7plugins.modules.xg7dialogs.listeners.DialogListener;
+import com.xg7plugins.modules.xg7dialogs.event.listener.DialogListener;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -168,7 +169,7 @@ public class XG7Plugins extends Plugin {
         this.eventManager = new EventManager();
         this.packetEventManager = new PacketEventManager();
         this.cooldownManager = new CooldownManager(this);
-        this.moduleManager = new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores(), new XG7Holograms(), new XG7NPCs());
+        this.moduleManager = new ModuleManager(new XG7GeyserForms(), new XG7Menus(), new XG7Scores(), new XG7Holograms(), new XG7NPCs(), new XG7Dialogs());
 
 
         debug.info("load","Loading server info...");

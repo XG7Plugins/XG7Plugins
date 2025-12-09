@@ -1,4 +1,4 @@
-package com.xg7plugins.modules.xg7dialogs.listeners;
+package com.xg7plugins.modules.xg7dialogs.event.listener;
 
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
