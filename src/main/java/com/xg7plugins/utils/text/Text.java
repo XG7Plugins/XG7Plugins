@@ -21,6 +21,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,6 +108,11 @@ public class Text {
         return replace(placeholder, replacement, true);
     }
 
+    public Text replaceLiteral(String s, String replacement) {
+        this.text = this.text.replace(s, replacement);
+        return this;
+    }
+
     @SafeVarargs
     public final Text replaceAll(Pair<String, String>... replacements) {
         if (replacements == null) return this;
@@ -118,7 +124,7 @@ public class Text {
         replacements.forEach(replacement -> this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond()));
         return this;
     }
-    public final Text centralize(TextCentralizer.PixelsSize size) {
+    public final Text centralize(Text.PixelsSize size) {
         this.text = "[CENTER:" + size.name() + "]";
         return Text.format(text);
     }
@@ -149,11 +155,13 @@ public class Text {
 
         List<Text> texts = new ArrayList<>();
 
-        String[] split = getText().split(regex);
+        String[] split = getTextRaw().split(regex);
 
         for (String s : split) {
             texts.add(new Text(s));
         }
+
+        System.out.println("Texts: " + texts);
 
         return texts;
     }
@@ -225,70 +233,69 @@ public class Text {
      * @param textForSender Whether to process the text specifically for the sender
      * @return CompletableFuture containing the processed Text
      */
-    public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText, boolean textForSender) {
+    public static Text detectLangs(CommandSender sender, Plugin plugin, String rawText, boolean textForSender) {
 
-        return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
+        if (rawText == null) rawText = "null";
 
-            String text = rawText;
+        Lang lang = Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).getSecond();
 
-            text = text.replace("%prefix%", plugin.getCustomPrefix())
-                    .replace("%player%", sender == null ? "No name" : sender.getName());
+        String text = rawText;
 
-            Matcher langMatch = LANG_PATTERN.matcher(text);
+        text = text.replace("%prefix%", plugin.getCustomPrefix())
+                .replace("%player%", sender == null ? "No name" : sender.getName());
 
-            StringBuilder result = new StringBuilder(text);
+        Matcher langMatch = LANG_PATTERN.matcher(text);
 
-            while (langMatch.find()) {
-                String path = langMatch.group(1);
-                result.replace(langMatch.start(), langMatch.end(), lang.getSecond().get(path));
-            }
+        StringBuilder result = new StringBuilder(text);
 
-            Text objectText = new Text(result.toString());
+        while (langMatch.find()) {
+            String path = langMatch.group(1);
+            result.replace(langMatch.start(), langMatch.end(), lang.get(path));
+        }
 
-            if (sender instanceof Player && textForSender) objectText.textFor((Player) sender);
+        Text objectText = new Text(result.toString());
 
-            return objectText;
-        }).exceptionally(throwable -> {
-            throwable.printStackTrace();
-            return new Text("Error: " + throwable.getMessage());
-        });
+        if (sender instanceof Player && textForSender) objectText.textFor((Player) sender);
+
+        return objectText;
+
     }
-    public static CompletableFuture<Text> detectLangs(CommandSender sender, Plugin plugin, String rawText) {
+
+    public static Text detectLangs(CommandSender sender, Plugin plugin, String rawText) {
         return detectLangs(sender, plugin, rawText, true);
     }
-    public static CompletableFuture<Text> fromLang(CommandSender sender, Plugin plugin, String path, boolean textForSender) {
-        return Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).thenApply(lang -> {
-            String text = lang.getSecond().get(path);
+    public static Text fromLang(CommandSender sender, Plugin plugin, @NotNull String path, boolean textForSender) {
 
-            text = text.replace("%prefix%", plugin.getCustomPrefix())
-                    .replace("%player%", sender == null ? "No name" : sender.getName());
+        Lang lang = Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).getSecond();
 
-            Text objectText = new Text(text);
+        String text = lang.get(path);
 
-            if (sender instanceof Player && textForSender) objectText.textFor((Player) sender);
+        text = text.replace("%prefix%", plugin.getCustomPrefix())
+                .replace("%player%", sender == null ? "No name" : sender.getName());
 
-            return objectText;
-        }).exceptionally(throwable -> {
-            throwable.printStackTrace();
-            return new Text("Error: " + throwable.getMessage());
-        });
+        Text objectText = new Text(text);
+
+        if (sender instanceof Player && textForSender) objectText.textFor((Player) sender);
+
+        return objectText;
     }
-    public static CompletableFuture<Text> fromLang(CommandSender sender, Plugin plugin, String path) {
+
+    public static Text fromLang(CommandSender sender, Plugin plugin, String path) {
         return fromLang(sender, plugin, path, true);
     }
-    public static CompletableFuture<Void> sendTextFromLang(CommandSender sender, Plugin plugin, String path) {
-        return fromLang(sender, plugin, path).thenAccept(text -> text.send(sender));
+    public static void sendTextFromLang(CommandSender sender, Plugin plugin, String path) {
+        fromLang(sender, plugin, path).send(sender);
     }
     @SafeVarargs
-    public static CompletableFuture<Void> sendTextFromLang(CommandSender sender, Plugin plugin, String path, Pair<String, String>... replacements) {
-        return fromLang(sender, plugin, path).thenAccept(text -> text.replaceAll(replacements).send(sender));
+    public static void sendTextFromLang(CommandSender sender, Plugin plugin, String path, Pair<String, String>... replacements) {
+        fromLang(sender, plugin, path).replaceAll(replacements).send(sender);
     }
-    public static CompletableFuture<Void> detectLangsAndSend(CommandSender sender, Plugin plugin, String rawText) {
-        return detectLangs(sender, plugin, rawText).thenAccept(text -> text.send(sender));
+    public static void detectLangsAndSend(CommandSender sender, Plugin plugin, String rawText) {
+        detectLangs(sender, plugin, rawText).send(sender);
     }
     @SafeVarargs
-    public static CompletableFuture<Void> detectLangsAndSend(CommandSender sender, Plugin plugin, String rawText, Pair<String, String>... replacements) {
-        return detectLangs(sender, plugin, rawText).thenAccept(text -> text.replaceAll(replacements).send(sender));
+    public static void detectLangsAndSend(CommandSender sender, Plugin plugin, String rawText, Pair<String, String>... replacements) {
+        detectLangs(sender, plugin, rawText).replaceAll(replacements).send(sender);
     }
 
     /**
@@ -304,5 +311,96 @@ public class Text {
     public static Text format(BaseComponent[] text) {
         return new Text(text);
     }
+
+    /**
+     * Enum representing different contexts where a text can be centralized,
+     * with their corresponding pixel widths.
+     */
+    @Getter
+    public enum PixelsSize {
+
+        CHAT(157), // Chat message width
+        MOTD(127), // Server MOTD width
+        INV(75),   // Inventory name width
+        BOOK_LINE(114);
+
+        final int pixels;
+
+        PixelsSize(int pixels) {
+            this.pixels = pixels;
+        }
+
+    }
+
+    /**
+     * Gets the pixel width of a character, accounting for bold formatting.
+     * Characters are grouped by their width in pixels.
+     *
+     * @param c      The character to measure
+     * @param isBold Whether the character is boldly formatted
+     * @return The pixel width of the character
+     */
+    public static int getCharSize(char c, boolean isBold) {
+        String[] chars = new String[]{
+                "~@", //7px bold -> 8px
+                "1234567890ABCDEFGHJKLMNOPQRSTUVWXYZabcedjhmnopqrsuvxwyz/\\+=-_^?&%$#", //6px bold -> 7px
+                "{}fk*\"<>()", //5px bold -> 6px
+                "It[] ", //4px bold -> 5px
+                "'l`", //3px bold -> 4px
+                "!|:;,.i", //2px bold -> 3px
+                "¨´" //1px bold -> 2px
+        };
+        for (int i = 0; i < chars.length; i++) {
+            if (chars[i].contains(String.valueOf(c))) {
+                return isBold && c != ' ' ? 8 - i : 7 - i;
+            }
+        }
+
+        return 4;
+    }
+
+    //Text width in Minecraft pixels
+    public static int getTextWidth(String text) {
+        int textWidth = 0;
+        boolean isBold = false;
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (c == '§' || c == '&') {
+                if (i + 1 >= text.length()) continue;
+                char next = text.charAt(i + 1);
+
+                if (next == 'x' && i + 13 < text.length()) {
+                    i += 13;
+                    continue;
+                }
+
+                if (next == '#' && i + 7 < text.length()) {
+                    i += 7;
+                    continue;
+                }
+
+                if (next == 'l' || next == 'L') {
+                    isBold = true;
+                } else if (next == 'r' || next == 'R') {
+                    isBold = false;
+                }
+
+                i++;
+                continue;
+            }
+
+            textWidth += Text.getCharSize(c, isBold);
+        }
+
+        return textWidth;
+    }
+
+    @Override
+    public String toString() {
+        return this.text;
+    }
+
 
 }

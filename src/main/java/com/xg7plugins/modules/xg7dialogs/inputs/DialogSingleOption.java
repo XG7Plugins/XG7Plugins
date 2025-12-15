@@ -32,7 +32,7 @@ public class DialogSingleOption extends DialogInput {
         public SingleOptionInputControl.Entry build(Dialog dialog, Player player) {
             return new SingleOptionInputControl.Entry(
                     id,
-                    Text.detectLangs(player, dialog.getPlugin(), displayName).join().toAdventureComponent(),
+                    Text.detectLangs(player, dialog.getPlugin(), displayName).replaceAll(dialog.getBuildPlaceholders()).toAdventureComponent(),
                     firstSelected
             );
         }
@@ -51,7 +51,7 @@ public class DialogSingleOption extends DialogInput {
         return new SingleOptionInputControl(
                 width,
                 options.stream().map(option -> option.build(dialog, player)).collect(Collectors.toList()),
-                Text.detectLangs(player, dialog.getPlugin(), this.label).join().toAdventureComponent(),
+                Text.detectLangs(player, dialog.getPlugin(), this.label).replaceAll(dialog.getBuildPlaceholders()).toAdventureComponent(),
                 labelVisible
         );
     }

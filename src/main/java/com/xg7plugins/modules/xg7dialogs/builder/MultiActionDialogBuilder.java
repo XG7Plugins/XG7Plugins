@@ -56,12 +56,14 @@ public class MultiActionDialogBuilder extends DialogBuilder<MultiActionDialogBui
                 id,
                 title,
                 canCloseWithEscape,
-                elements,
+                body,
                 inputs,
                 afterResponse,
                 columns,
                 actionButtons,
-                exitButton
+                exitButton,
+                placeholders,
+                responseHandler
         );
     }
 }

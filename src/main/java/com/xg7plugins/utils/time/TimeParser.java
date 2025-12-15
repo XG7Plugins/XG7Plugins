@@ -18,6 +18,10 @@ public class TimeParser {
 
     private static final Pattern REMAINING_TIME_PATTERN = Pattern.compile("@(\\w+):\\s*(\\d+)@");
 
+    public static boolean isTime(String timeStr) {
+        Matcher matcher = TIME_PATTERN.matcher(timeStr);
+        return matcher.matches();
+    }
 
     /**
      * Converts a time string to milliseconds.

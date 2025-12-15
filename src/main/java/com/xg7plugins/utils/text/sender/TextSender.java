@@ -33,20 +33,20 @@ public interface TextSender {
 
         text.split("<br>").forEach(line -> {
             if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) {
-                sender.sendMessage(text.getText());
+                sender.sendMessage(line.getText());
                 return;
             }
 
             if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_9) && !(sender instanceof Player)) {
-                sender.sendMessage(text.getText());
+                sender.sendMessage(line.getText());
                 return;
             }
             if (!(sender instanceof Player)) {
-                sender.spigot().sendMessage(text.getComponent());
+                sender.spigot().sendMessage(line.getComponent());
                 return;
             }
 
-            ((Player) sender).spigot().sendMessage(text.getComponent());
+            ((Player) sender).spigot().sendMessage(line.getComponent());
         });
     }
 

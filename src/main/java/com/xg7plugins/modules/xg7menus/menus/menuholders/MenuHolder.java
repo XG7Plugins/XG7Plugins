@@ -25,9 +25,9 @@ public class MenuHolder extends BasicMenuHolder implements InventoryHolder {
         MenuConfigurations menuConfigurations = menu.getMenuConfigs();
 
         this.inventory = menuConfigurations.getInventoryType() == null ?
-                Bukkit.createInventory(this, menuConfigurations.getRows() * 9, Text.detectLangs(player, menuConfigurations.getPlugin(), menuConfigurations.getTitle()).join().replaceAll(menuConfigurations.getPlaceholders()).getText())
+                Bukkit.createInventory(this, menuConfigurations.getRows() * 9, Text.detectLangs(player, menuConfigurations.getPlugin(), menuConfigurations.getTitle()).replaceAll(menuConfigurations.getPlaceholders()).getText())
                 :
-                Bukkit.createInventory(this, menuConfigurations.getInventoryType(), Text.detectLangs(player, menuConfigurations.getPlugin(), menuConfigurations.getTitle()).join().replaceAll(menuConfigurations.getPlaceholders()).getText());
+                Bukkit.createInventory(this, menuConfigurations.getInventoryType(), Text.detectLangs(player, menuConfigurations.getPlugin(), menuConfigurations.getTitle()).replaceAll(menuConfigurations.getPlaceholders()).getText());
 
         this.inventoryUpdater = new InventoryUpdater(this);
 

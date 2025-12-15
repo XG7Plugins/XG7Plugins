@@ -33,10 +33,12 @@ public class NoticeDialogBuilder extends DialogBuilder<NoticeDialogBuilder, Noti
                 id,
                 title,
                 canCloseWithEscape,
-                elements,
+                body,
                 inputs,
                 afterResponse,
-                button
+                button,
+                placeholders,
+                responseHandler
         );
     }
 }

@@ -75,7 +75,7 @@ public class ArmorStandLine implements HologramLine {
 
         WrapperPlayServerEntityMetadata metadata = new WrapperPlayServerEntityMetadata(
                 entityID,
-                HologramMetadataProvider.updateArmorStandData(Text.detectLangs(livingHologram.getPlayer(), livingHologram.getHologram().getPlugin(), line, true).join())
+                HologramMetadataProvider.updateArmorStandData(Text.detectLangs(livingHologram.getPlayer(), livingHologram.getHologram().getPlugin(), line, true))
         );
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(livingHologram.getPlayer(), metadata);

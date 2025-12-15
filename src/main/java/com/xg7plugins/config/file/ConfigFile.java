@@ -6,11 +6,14 @@ import com.xg7plugins.utils.FileUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -42,7 +45,16 @@ public class ConfigFile {
 
         File configFile = new File(plugin.getJavaPlugin().getDataFolder(), name + ".yml");
 
-        if (!configFile.exists()) plugin.getJavaPlugin().saveResource(name + ".yml", false);
+        if (!configFile.exists()) {
+            try {
+                plugin.getJavaPlugin().saveResource(name + ".yml", false);
+            } catch (IllegalArgumentException ignored) {
+                if (!configFile.createNewFile()) {
+                    throw new IOException(ignored.getMessage());
+                }
+                //Doesn't exists in resources
+            }
+        }
 
         Yaml yaml = new Yaml();
         Map<String, Object> data = yaml.load(FileUtil.reader(configFile));
@@ -58,7 +70,9 @@ public class ConfigFile {
 
                 this.configFile = new File(plugin.getJavaPlugin().getDataFolder(), name + ".yml");
 
-                this.data = yaml.load(FileUtil.reader(this.configFile));
+                this.data =  ConfigVersionMigration.migrate(data, resourceData);
+
+                save();
 
                 plugin.getJavaPlugin().getLogger().info("Loaded!");
 
@@ -69,29 +83,18 @@ public class ConfigFile {
 
         this.configFile = configFile;
         this.data = data;
-
-        if (plugin.getConfigManager() != null) plugin.getConfigManager().putConfig(this);
     }
 
-    public ConfigFile(Plugin plugin, Map<String, Object> data, String name, boolean createFile) throws IOException {
+    public ConfigFile(Plugin plugin, File configFile) throws IOException {
+        this.configFile = configFile;
         this.plugin = plugin;
-        this.name = name;
-        this.data = data;
-        this.configFile = new File(plugin.getJavaPlugin().getDataFolder(), name + ".yml");
+        this.name = configFile.getName().replace(".yml", "");
 
-        if (!configFile.exists() && createFile) configFile.createNewFile();
-    }
+        if (!configFile.exists()) throw new FileNotFoundException("File doesn't exist!");
 
-    /**
-     * Creates a new Config instance with an existing YamlConfiguration.
-     *
-     * @param plugin The plugin instance
-     * @param config The existing YamlConfiguration to use
-     * @param name   The name of the configuration file without extension
-     * @throws IOException if unable to create the config file
-     */
-    public ConfigFile(Plugin plugin, Map<String, Object> data, String name) throws IOException {
-        this(plugin, data, name,true);
+        Yaml yaml = new Yaml();
+        this.data = yaml.load(FileUtil.reader(configFile));
+
     }
 
     /**
@@ -107,6 +110,10 @@ public class ConfigFile {
             return XG7Plugins.getAPI().configManager(plugin).getConfigs().get(name);
         }
         return new ConfigFile(plugin, name);
+    }
+
+    public static ConfigFile of(File file, Plugin plugin) throws IOException {
+        return new ConfigFile(plugin, file);
     }
 
     /**
@@ -134,8 +141,16 @@ public class ConfigFile {
     @SneakyThrows
     public void save() {
         plugin.getDebug().info("config", "Saving " + name + ".yml...");
-        Yaml yaml = new Yaml();
+
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setPrettyFlow(true);
+        options.setIndent(2);
+        options.setIndicatorIndent(1);
+
+        Yaml yaml = new Yaml(options);
         yaml.dump(data, new FileWriter(this.configFile));
+
         plugin.getDebug().info("config", "Saved!");
     }
 

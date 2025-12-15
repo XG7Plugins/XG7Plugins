@@ -56,13 +56,15 @@ public class DialogListBuilder extends DialogBuilder<DialogListBuilder, DialogLi
                 id,
                 title,
                 canCloseWithEscape,
-                elements,
+                body,
                 inputs,
                 afterResponse,
                 exitButton,
                 dialogs,
                 columns,
-                buttonWidth
+                buttonWidth,
+                placeholders,
+                responseHandler
         );
     }
 }

@@ -22,15 +22,12 @@ public class AboutPage implements HelpChatPage {
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"));
 
-        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(XG7Plugins.getInstance(), sender instanceof Player ? ((Player) sender) : null).join().getSecond().getLangConfiguration();
-
-        String about = lang.getList("help-menu.about", String.class).orElse(new ArrayList<>()).stream().collect(Collectors.joining("\n"));
-
-        components.add(Text.detectLangs(sender, XG7Plugins.getInstance(),about).join()
+        components.add(Text.fromLang(sender, XG7Plugins.getInstance(), "help-menu.about")
                 .replace("discord", "discord.gg/jfrn8w92kF")
                 .replace("github", "github.com/DaviXG7")
                 .replace("website", "xg7plugins.com")
                 .replace("version", XG7Plugins.getInstance().getVersion())
+                .replaceLiteral("<endp>", "<br>")
         );
 
         components.add(Text.format(" "));
@@ -38,7 +35,7 @@ public class AboutPage implements HelpChatPage {
 
         components.add(
                 TextComponentBuilder.of(
-                        Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.back").join()
+                        Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.back")
                                 .replace("command", "/xg7plugins help").getText()
                 ).clickEvent(ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help"))
                         .build()

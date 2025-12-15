@@ -10,7 +10,9 @@ import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.MenuConfigurations;
 import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.Menu;
 import com.xg7plugins.utils.item.Item;
+import com.xg7plugins.utils.item.impl.BookItem;
 import com.xg7plugins.utils.item.impl.SkullItem;
+import com.xg7plugins.utils.text.Text;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -29,9 +31,7 @@ public class XG7PluginsHelpGUI extends Menu {
     @Override
     public List<InventoryItem> getItems(Player player) {
 
-        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(plugin, player).join().getSecond().getLangConfiguration();
-
-        List<String> about = lang.getList("help-menu.about", String.class).orElse(new ArrayList<>());
+        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(plugin, player).getSecond().getLangConfiguration();
 
         return Arrays.asList(
 
@@ -55,12 +55,17 @@ public class XG7PluginsHelpGUI extends Menu {
 
                 OpenBookClickableItem.get(
                         Slot.fromSlot(31),
-                                Item.from(XMaterial.WRITABLE_BOOK)
-                                        .name("lang:[help-menu.index.about-item.name]")
-                                        .lore("lang:[help-menu.index.about-item.lore]"),
-                                player,
-                                about
-                        ),
+                        Item.from(XMaterial.WRITABLE_BOOK)
+                                .name("lang:[help-menu.index.about-item.name]")
+                                .lore("lang:[help-menu.index.about-item.lore]"),
+                        player,
+                        BookItem.convertTextToBookPages(Text.fromLang(player, XG7Plugins.getInstance(), "help-menu.about")
+                                .replace("discord", "discord.gg/jfrn8w92kF")
+                                .replace("github", "github.com/DaviXG7")
+                                .replace("website", "xg7plugins.com")
+                                .replace("version", XG7Plugins.getInstance().getVersion())
+                        )
+                ),
 
                 Item.from(XMaterial.matchXMaterial("COMMAND_BLOCK").orElse(XMaterial.ENDER_PEARL))
                         .name("lang:[help-menu.index.commands-item.name]")

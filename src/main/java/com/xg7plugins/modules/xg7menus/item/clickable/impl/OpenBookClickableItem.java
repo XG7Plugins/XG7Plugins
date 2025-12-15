@@ -15,10 +15,10 @@ import java.util.List;
 
 public class OpenBookClickableItem extends ClickableItem {
 
-    private final List<String> book;
+    private final List<List<String>> book;
     private final Player player;
 
-    public OpenBookClickableItem(Slot slot, ItemStack stack, Player player, List<String> book) {
+    public OpenBookClickableItem(Slot slot, ItemStack stack, Player player, List<List<String>> book) {
         super(stack, slot);
 
         this.player = player;
@@ -29,35 +29,15 @@ public class OpenBookClickableItem extends ClickableItem {
     public void onClick(ActionEvent event) {
         BookItem bookItem = BookItem.newBook();
 
-        List<List<String>> pages = new ArrayList<>();
-        List<String> currentPage = new ArrayList<>();
-
-        for (String line : book) {
-
-            currentPage.add(Text.detectLangs(player, XG7Plugins.getInstance(),line).join()
-                    .replace("discord", "discord.gg/jfrn8w92kF")
-                    .replace("github", "github.com/DaviXG7")
-                    .replace("website", "xg7plugins.com")
-                    .replace("version", XG7Plugins.getInstance().getVersion())
-                    .getText());
-            if (currentPage.size() == 10) {
-                pages.add(new ArrayList<>(currentPage));
-                currentPage.clear();
-            }
-        }
-        if (!currentPage.isEmpty()) {
-            pages.add(currentPage);
-        }
-
-        for (List<String> page : pages) {
-            bookItem.addPage(String.join("\n", page));
+        for (List<String> lines : book) {
+            bookItem.addPage(String.join("", lines));
         }
 
         player.closeInventory();
         bookItem.openBook(player.getPlayer());
     }
 
-    public static OpenBookClickableItem get(Slot slot, Item item, Player player, List<String> book) {
+    public static OpenBookClickableItem get(Slot slot, Item item, Player player, List<List<String>> book) {
         return new OpenBookClickableItem(slot, item.getItemStack(), player, book);
     }
 }

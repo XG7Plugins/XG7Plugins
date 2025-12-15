@@ -99,7 +99,7 @@ public class TextDisplayLine implements HologramLine {
     public void update(LivingHologram livingHologram, int entityID) {
         WrapperPlayServerEntityMetadata metadata = new WrapperPlayServerEntityMetadata(
                 entityID,
-                HologramMetadataProvider.textDisplayUpdateData(Text.detectLangs(livingHologram.getPlayer(), livingHologram.getHologram().getPlugin(), this.line, true).join()));
+                HologramMetadataProvider.textDisplayUpdateData(Text.detectLangs(livingHologram.getPlayer(), livingHologram.getHologram().getPlugin(), this.line, true)));
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(livingHologram.getPlayer(), metadata);
     }

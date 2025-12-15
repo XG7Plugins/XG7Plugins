@@ -42,7 +42,7 @@ public class LegacySidebarUpdater implements SidebarUpdater {
     public void setLine(Player player, int score, String text) {
         UUID uuid = player.getUniqueId();
 
-        String translatedText = Text.detectLangs(player, sidebar.getPlugin(), text).join().getText();
+        String translatedText = Text.detectLangs(player, sidebar.getPlugin(), text).getText();
 
         Map<Integer, Pair<String, String>> lastLines = playerLastLines.computeIfAbsent(uuid, k -> new HashMap<>());
         List<String> usedEntries = playerUsedEntries.computeIfAbsent(uuid, k -> new ArrayList<>());

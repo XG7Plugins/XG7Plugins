@@ -23,14 +23,14 @@ public class ModuleManager {
     private final HashMap<String, Module> modules = new HashMap<>();
     private final Plugin plugin;
 
-    /**
-     * Creates a new ModuleManager and initializes the provided modules.
-     *
-     * @param extensions The modules to be managed
-     */
-    public ModuleManager(Module... extensions) {
+    public ModuleManager() {
         this.plugin = XG7Plugins.getInstance();
+    }
 
+    public void registerModules(Module... extensions) {
+        for (Module extension : extensions) {
+            this.modules.put(extension.getName(), extension);
+        }
         for (Module extension : extensions) {
             this.modules.put(extension.getName(), extension);
         }

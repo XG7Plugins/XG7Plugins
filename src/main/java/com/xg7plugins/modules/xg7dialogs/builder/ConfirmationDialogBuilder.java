@@ -39,11 +39,13 @@ public class ConfirmationDialogBuilder extends DialogBuilder<ConfirmationDialogB
                 id,
                 title,
                 canCloseWithEscape,
-                elements,
+                body,
                 inputs,
                 afterResponse,
                 yesButton,
-                noButton
+                noButton,
+                placeholders,
+                responseHandler
         );
     }
 }

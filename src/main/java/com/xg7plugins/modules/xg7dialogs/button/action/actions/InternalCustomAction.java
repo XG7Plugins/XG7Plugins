@@ -17,7 +17,7 @@ public class InternalCustomAction implements DialogButtonAction {
     @Override
     public Action build(Dialog dialog, Player player) {
         return new com.github.retrooper.packetevents.protocol.dialog.action.DynamicCustomAction(
-                new ResourceLocation(dialog.getNamespace() + "/" + channel),
+                new ResourceLocation(dialog.getNamespace() + ":" + channel),
                 additions
         );
     }

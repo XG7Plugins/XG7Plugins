@@ -6,8 +6,6 @@ import lombok.Setter;
 import org.bukkit.entity.Entity;
 
 @Getter
-@Setter
-
 /**
  * Represents a 3D rectangular region in a Minecraft world defined by two corner points.
  * This class provides functionality to check if locations are within the region and
@@ -23,12 +21,16 @@ public class Region implements Cloneable {
      * The points are automatically sorted so that startPoint contains the minimum coordinates
      * and endPoint contains the maximum coordinates.
      *
-     * @param startPoint The first corner point of the region
-     * @param endPoint   The second corner point of the region
+     * @param location1 The first corner point of the region
+     * @param location2   The second corner point of the region
      * @throws IllegalArgumentException if the points are not in the same world
      */
-    public Region(Location startPoint, Location endPoint) {
-        if (!startPoint.getWorldName().equals(endPoint.getWorldName())) {
+    public Region(Location location1, Location location2) {
+        setPoints(location1, location2);
+    }
+
+    public Region setPoints(Location location1, Location location2) {
+        if (!location1.getWorldName().equals(location2.getWorldName())) {
             throw new IllegalArgumentException("Both locations must be in the same world");
         }
         this.startPoint = new Location(
@@ -43,6 +45,7 @@ public class Region implements Cloneable {
                 Math.max(startPoint.getY(), endPoint.getY()),
                 Math.max(startPoint.getZ(), endPoint.getZ())
         );
+        return this;
     }
 
     /**

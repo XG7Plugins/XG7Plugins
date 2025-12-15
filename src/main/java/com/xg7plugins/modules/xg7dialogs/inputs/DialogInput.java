@@ -42,11 +42,11 @@ public abstract class DialogInput {
     }
 
     public static DialogTextInput textInput(String key, String label,  boolean labelVisible, int width) {
-        return textInput(key, label, labelVisible, width, 16, 1, 32, null);
+        return textInput(key, label, labelVisible, width, 16, 1, 256, "");
     }
 
     public static DialogTextInput textInput(String key, String label, int width) {
-        return textInput(key, label, true, width, 16, 1, 32, null);
+        return textInput(key, label, true, width);
     }
 
     public static DialogTextInput textInput(String key, String label, boolean labelVisible) {

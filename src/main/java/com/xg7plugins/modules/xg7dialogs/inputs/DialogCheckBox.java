@@ -23,10 +23,10 @@ public class DialogCheckBox extends DialogInput {
     @Override
     public InputControl buildControl(Dialog dialog, Player player) {
         return new BooleanInputControl(
-                Text.detectLangs(player, dialog.getPlugin(), this.label).join().toAdventureComponent(),
+                Text.detectLangs(player, dialog.getPlugin(), this.label).replaceAll(dialog.getBuildPlaceholders()).toAdventureComponent(),
                 initialValue,
-                Text.detectLangs(player, dialog.getPlugin(), this.onTrue).join().getText(),
-                Text.detectLangs(player, dialog.getPlugin(), this.onFalse).join().getText()
+                Text.detectLangs(player, dialog.getPlugin(), this.onTrue).replaceAll(dialog.getBuildPlaceholders()).getText(),
+                Text.detectLangs(player, dialog.getPlugin(), this.onFalse).replaceAll(dialog.getBuildPlaceholders()).getText()
         );
     }
 }

@@ -37,7 +37,7 @@ public class CommandHelp implements HelpChatPage {
         List<Text> components = new ArrayList<>();
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"));
-        components.add(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands-title").join()
+        components.add(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands-title")
                 .replace("page", (page + 1) + "")
                 .replace("max_page", maxPage + ""));
 

@@ -182,9 +182,6 @@ public class Time {
         return new Timestamp(milliseconds);
     }
 
-    private Time() {
-    }
-
     public long toMilliseconds() {
         return milliseconds;
     }
@@ -202,6 +199,11 @@ public class Time {
     }
     public long toTicks() {
         return milliseconds / 50;
+    }
+
+    @Override
+    public String toString() {
+        return TimeFormat.DAYS_HOURS_MINUTES_SECONDS_MILLISECONDS.format(milliseconds);
     }
 
     /**
@@ -232,4 +234,6 @@ public class Time {
         return new SimpleDateFormat(format).format(new Date(milliseconds));
     }
 
+    private Time() {
+    }
 }

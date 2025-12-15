@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public interface IComponent {
-    Component build(Player player, Plugin plugin);
+    Component build(CustomForm form, Player player, Plugin plugin);
 
     @AllArgsConstructor
     @Getter
@@ -21,11 +21,11 @@ public interface IComponent {
         private final String defText;
 
         @Override
-        public Component build(Player player, Plugin plugin) {
+        public Component build(CustomForm form, Player player, Plugin plugin) {
             return InputComponent.of(
-                    Text.detectLangs(player, plugin,label).join().getText(),
-                    Text.detectLangs(player, plugin,placeholder).join().getText(),
-                    Text.detectLangs(player, plugin,defText).join().getText()
+                    Text.detectLangs(player, plugin,label).replaceAll(form.getBuildPlaceholders()).getText(),
+                    Text.detectLangs(player, plugin,placeholder).getText(),
+                    Text.detectLangs(player, plugin,defText).getText()
             );
         }
     }
@@ -38,12 +38,11 @@ public interface IComponent {
         private final int defOption;
 
         @Override
-        public Component build(Player player, Plugin plugin) {
-
+        public Component build(CustomForm form, Player player, Plugin plugin) {
 
             return DropdownComponent.of(
-                    Text.detectLangs(player, plugin,label).join().getText(),
-                    options.stream().map(option -> Text.detectLangs(player, plugin,option).join().getText()).collect(Collectors.toList()),
+                    Text.detectLangs(player, plugin,label).replaceAll(form.getBuildPlaceholders()).getText(),
+                    options.stream().map(option -> Text.detectLangs(player, plugin,option).replaceAll(form.getBuildPlaceholders()).getText()).collect(Collectors.toList()),
                     defOption
             );
         }
@@ -59,9 +58,9 @@ public interface IComponent {
         private final int defaultVal;
 
         @Override
-        public Component build(Player player, Plugin plugin) {
+        public Component build(CustomForm form, Player player, Plugin plugin) {
             return SliderComponent.of(
-                    Text.detectLangs(player, plugin,label).join().getText(),
+                    Text.detectLangs(player, plugin,label).replaceAll(form.getBuildPlaceholders()).getText(),
                     min,
                     max,
                     step,
@@ -77,9 +76,9 @@ public interface IComponent {
         private final boolean defaultVal;
 
         @Override
-        public Component build(Player player, Plugin plugin) {
+        public Component build(CustomForm form, Player player, Plugin plugin) {
             return ToggleComponent.of(
-                    Text.detectLangs(player, plugin,text).join().getText(),
+                    Text.detectLangs(player, plugin,text).replaceAll(form.getBuildPlaceholders()).getText(),
                     defaultVal
             );
         }

@@ -21,6 +21,11 @@ public class PlainMessageElement implements DialogBodyElement<PlainMessageDialog
 
     @Override
     public PlainMessageDialogBody build(Dialog dialog, Player player) {
-        return new PlainMessageDialogBody(new PlainMessage(Text.detectLangs(player, dialog.getPlugin(), message).join().toAdventureComponent(), width));
+        return new PlainMessageDialogBody(new PlainMessage(
+                Text.detectLangs(player, dialog.getPlugin(), message)
+                        .replaceAll(dialog.getBuildPlaceholders())
+                        .toAdventureComponent(),
+                width
+        ));
     }
 }

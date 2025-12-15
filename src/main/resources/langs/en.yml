@@ -1,4 +1,4 @@
-config-version: 4
+config-version: 5
 
 locale: en_US
 formated-name: "English"
@@ -146,27 +146,21 @@ help-menu:
       name: "&bCommands"
       lore: "&5Click here to see the commands"
 
-  about:
-    - "&0About &9XG7Plugins"
-    - ""
-    - "&0Version: &a%version%&r"
-    - "&0Website: &a&n%website%&r"
-    - "&0GitHub: &a&n%github%&r"
-    - "&0Discord: &a&n%discord%&r"
-    - ""
-    - "&0This plugin was made"
-    - "&0for creating other"
-    - "&0plugins for XG7."
-    - "&0Its goal is to manage"
-    - "&0tasks, include libraries"
-    - "&0(such as menus, scores,"
-    - "&0etc.) and facilitate"
-    - "&0the creation of plugins."
-    - "&0It also has a language"
-    - "&0system for the inclusion"
-    - "&0of new languages."
-    - ""
-    - "&oDeveloped by DaviXG7"
+  about: |
+    &rAbout &9XG7Plugins<br>
+    <br>
+    &rVersion: &a%version%&r<br>
+    &rWebsite: &a&n%website%&r<br>
+    &rGitHub: &a&n%github%&r<br>
+    &rDiscord: &a&n%discord%&r
+    <endp>
+    &rThis plugin was made for creating other plugins for XG7.<br>
+    &rIts goal is to manage tasks, include libraries (such as menus, scores, etc.) 
+    and facilitate<br> the creation of plugins.<br>
+    &rIt also has a language system for the inclusion of new languages.
+    <endp>
+    &5&oDeveloped by DaviXG7
+  
 
   command-help:
     title: "Commands of &e%plugin_name%"
@@ -187,3 +181,133 @@ help-in-chat:
   commands: "&aCommands&f: &1click here to see the commands"
 
   commands-title: "&7Commands of &6XG7Plugins &8(&7%page%&8/&7%max_page%&8)"
+
+config-editor:
+  title: "&0Editing: %path%"
+
+  previous-page: "Back"
+  next-page: "Next"
+  close: "Close"
+  config-saved: "&fConfig-saved: &b%saved%"
+  save: "Save"
+  back-to-previous-section: "Back to previous section"
+
+  insert-value: "&aInsert a &e%type% &avalue. <br>Type \"cancel\" to cancel the action"
+  value-error: "&bCannot convert value to %type%"
+
+  list-editor: "&aYou are in list editor! <br>Type \"cancel\" to cancel the edit, \"exit\" to finish the edit and \"remove\" to remove the last item."
+  list-state: "&fList state: &e%list%"
+  list-remove: "&aYou removed %line% from the list"
+  list-empty: "&cThe list is empty"
+
+  saved: "&aConfig saved!"
+
+  key:
+    value: "&fValue: &b%value%"
+    type: "&fType: &b%type%"
+
+    click-to-see: "&aClick to see section"
+    click-to-edit: "&aClick to edit"
+    click-to-toggle: "&aClick to toggle"
+    click-to-delete: "&cRight click to delete this line"
+
+  add:
+    item: "&aAdd value"
+
+    insert-key: "&aInsert a valid key. <br>Type \"cancel\" to cancel the action"
+    insert-value-type: "&aInsert value type. <br>Type \"cancel\" to cancel the action. <br>&bAvailable types: <br>&e%types%"
+
+    invalid-key: "&cKey cannot be empty, have symbols (except \"-\") and start with a number"
+    invalid-type: "&cThis value type is invalid!"
+    key-exists: "&cThis key already exists!"
+
+    dialog-title: "Insert a new value to section"
+
+    dialog-insert-key: "Insert a valid key."
+    dialog-insert-value-type: "Insert value type"
+
+    dialog-confirm: "&aConfirm"
+    dialog-confirm-hover: "The value will be added"
+    dialog-cancel: "&cCancel"
+    dialog-cancel-hover: "Back to config editor"
+
+  confirm:
+    close-title: "&cClose confirmation"
+    confirm: "&aYes"
+    sure-to-close: "Are you sure to close with out saving?"
+    back: "&cNo"
+
+  confirm-delete:
+    title: "&cDelete confirmation"
+    confirm: "&aYes"
+    sure-to-delete: "Are you sure to delete this line?"
+    back: "&cNo"
+
+  #+1.21.6
+  dialog:
+    title: "&fEditing: %path%"
+
+    confirm-edit: "&aConfirm changes"
+    confirm-hover: "The input value will be applied"
+
+    back: "&cBack"
+    back-hover: "Back to config editor GUI"
+
+    description: "Edit %path% inserting a &b%type% &rvalue"
+    input-label: "Value:"
+
+    list-description: "Edit list: %path%. Leave blank to remove the line"
+    list-label: "Line %index%"
+
+config-form-editor:
+  title: "&0Editing: %path%"
+
+  content: "Chose an action to continue"
+
+  add: "&aAdd value"
+  save: "&aSave"
+  back: "&rBack to previous section"
+  delete: "&6Delete"
+  close: "&cClose. &aSaved = &b%saved%"
+
+  close-confirmation:
+    title: "&cClose confirmation"
+    confirm: "&aYes"
+    sure-to-close: "Are you sure to close with out saving?"
+    back: "&cNo"
+
+  delete-form:
+    title: "Delete from %path%"
+    content: "Chose a section to delete"
+
+  delete-confirmation:
+    title: "&cDelete confirmation"
+    confirm: "&aYes"
+    sure-to-delete: "Are you sure to delete this line?"
+    back: "&cNo"
+
+  value-editor:
+    title: "&0Editing: %path%"
+    list-title: "&0Editing list on: %path%"
+
+    value-toggle: "Enable/Disable"
+    value-placeholder: "Insert here..."
+    value-input: "Insert a %type% value"
+
+    list-label: "Line %index%"
+    list-placeholder: "Leave blank to remove this line"
+    new-line-label: "New line"
+    new-line-placeholder: "Leave blank to do nothing"
+
+  add-form:
+    title: "&rInsert a valid key and value"
+
+    key-label: "Key:"
+    key-placeholder: "It can't be empty and matches \"^[a-zA-Z][a-zA-Z0-9-]*$\""
+
+    type-label: "Type:"
+
+
+
+
+

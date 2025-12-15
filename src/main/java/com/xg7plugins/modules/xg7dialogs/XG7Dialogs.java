@@ -2,16 +2,18 @@ package com.xg7plugins.modules.xg7dialogs;
 
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.cache.ObjectCache;
+import com.xg7plugins.config.file.ConfigFile;
+import com.xg7plugins.events.Listener;
 import com.xg7plugins.modules.Module;
+import com.xg7plugins.modules.xg7dialogs.listener.DialogListener;
 import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.modules.xg7dialogs.dialogs.Dialog;
 import com.xg7plugins.utils.PluginKey;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 public class XG7Dialogs implements Module {
@@ -21,7 +23,15 @@ public class XG7Dialogs implements Module {
 
     private final Map<PluginKey, Dialog> registeredDialogs = new HashMap<>();
 
-    private final Map<UUID, Dialog> waitingForResponse = new HashMap<>();
+    private final ObjectCache<UUID, Dialog> waitingForResponse = new ObjectCache<>(
+            XG7Plugins.getInstance(),
+            ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().getTimeInMilliseconds("dialog-response-expires"),
+            true,
+            "dialog-cache",
+            true,
+            UUID.class,
+            Dialog.class
+    );
 
     @Override
     public void onInit() {
@@ -36,6 +46,11 @@ public class XG7Dialogs implements Module {
     @Override
     public void onReload() {
 
+    }
+
+    @Override
+    public List<Listener> loadListeners() {
+        return Collections.singletonList(new DialogListener());
     }
 
     public void registerDialogs(Dialog... dialogs) {
@@ -67,7 +82,7 @@ public class XG7Dialogs implements Module {
     }
 
     public static Dialog getWaitingDialog(UUID uuid) {
-        return XG7Plugins.getAPI().dialogs().getWaitingForResponse().get(uuid);
+        return XG7Plugins.getAPI().dialogs().getWaitingForResponse().get(uuid).join();
     }
 
     public static void unregisterWaitingDialog(UUID uuid) {

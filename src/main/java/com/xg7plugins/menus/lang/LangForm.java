@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class LangForm extends SimpleForm {
 
     public LangForm() {
-        super("lang-form", "lang:[lang-menu.title]", XG7Plugins.getInstance());
+        super("lang-form", "lang:[lang-menu.title]", XG7Plugins.getInstance(), new ArrayList<>());
     }
 
     @Override
@@ -89,7 +89,7 @@ public class LangForm extends SimpleForm {
 
             String lang = langsSet.stream().filter(l -> l.contains("XG7Plugins")).collect(Collectors.toList()).get(result.clickedButtonId());
             if (data.getLangId().equals(lang)) {
-                Text.fromLang(player, plugin, "lang-menu.already-selected").thenAccept(text -> text.send(player));
+                Text.sendTextFromLang(player, plugin, "lang-menu.already-selected");
                 return;
             }
             if (XG7Plugins.getAPI().cooldowns().containsPlayer("lang-change", player)) {

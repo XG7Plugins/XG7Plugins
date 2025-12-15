@@ -6,14 +6,17 @@ import com.github.retrooper.packetevents.protocol.dialog.CommonDialogData;
 import com.github.retrooper.packetevents.protocol.dialog.DialogAction;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerShowDialog;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.modules.xg7dialogs.XG7Dialogs;
 import com.xg7plugins.modules.xg7dialogs.builder.*;
 import com.xg7plugins.modules.xg7dialogs.components.DialogBodyElement;
 import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.modules.xg7dialogs.inputs.DialogInput;
+import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.text.Text;
 import lombok.Data;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +32,14 @@ public abstract class Dialog {
     protected final List<DialogInput> dialogInputs;
     protected final DialogAction afterResponse;
 
+    protected final List<Pair<String, String>> buildPlaceholders;
+
+    protected final DialogResponseHandler responseHandler;
+
     public CommonDialogData buildCommonData(Player player) {
         return new CommonDialogData(
-                Text.detectLangs(player, plugin, title).join().toAdventureComponent(),
-                Text.detectLangs(player, plugin, title).join().toAdventureComponent(),
+                Text.detectLangs(player, plugin, title).replaceAll(buildPlaceholders).toAdventureComponent(),
+                Text.detectLangs(player, plugin, title).replaceAll(buildPlaceholders).toAdventureComponent(),
                 canCloseWithEscape,
                 false,
                 afterResponse,
@@ -53,6 +60,8 @@ public abstract class Dialog {
         WrapperPlayServerShowDialog packet = new WrapperPlayServerShowDialog(build(player));
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
+
+        XG7Dialogs.registerWaitingDialog(player, this);
     }
 
 

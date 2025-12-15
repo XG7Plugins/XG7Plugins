@@ -17,7 +17,7 @@ public class CopyToClipboardAction implements DialogButtonAction {
     @Override
     public Action build(Dialog dialog, Player player) {
         return new StaticAction(new CopyToClipboardClickEvent(
-                Text.detectLangs(player, dialog.getPlugin(), text).join().getText()
+                Text.detectLangs(player, dialog.getPlugin(), text).getText()
         ));
     }
 }

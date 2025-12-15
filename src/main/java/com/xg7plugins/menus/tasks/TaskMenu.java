@@ -56,7 +56,7 @@ public class TaskMenu extends PagedMenu {
 
     @Override
     public void onRepeatingUpdate(BasicMenuHolder holder) {
-        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(XG7Plugins.getInstance(), holder.getPlayer()).join().getSecond().getLangConfiguration();
+        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(XG7Plugins.getInstance(), holder.getPlayer()).getSecond().getLangConfiguration();
 
         InventoryUpdater updater = holder.getInventoryUpdater();
 

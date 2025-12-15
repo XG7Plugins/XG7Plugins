@@ -20,11 +20,15 @@ import java.util.function.Consumer;
 public class Conversation {
 
     private HashMap<Integer, ?> results = new HashMap<>();
+    private String loopPromptUntil = null;
     private ConversationFactory factory;
     private Plugin plugin;
-    private String errorMessage;
 
+    private List<Pair<String, String>> listPlaceholders = new ArrayList<>();
+
+    private Consumer<Exception> onError;
     private Consumer<HashMap<Integer, ?>> onConversationFinish;
+    private Consumer<Object> onLoop;
 
     private List<Prompt> prompts = new ArrayList<>();
 
@@ -51,14 +55,23 @@ public class Conversation {
         return new Conversation(plugin);
     }
 
-    /**
-     * Sets the error message to be displayed when input validation fails.
-     *
-     * @param errorMessage The error message to display
-     * @return This conversation instance for method chaining
-     */
-    public Conversation errorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public Conversation exitLoopWord(String word) {
+        this.loopPromptUntil = word;
+        return this;
+    }
+
+    public Conversation onLoop(Consumer<Object> onLoop) {
+        this.onLoop = onLoop;
+        return this;
+    }
+
+    public Conversation onError(Consumer<Exception> onError) {
+        this.onError = onError;
+        return this;
+    }
+
+    public Conversation addBuildPlaceholders(List<Pair<String, String>> list) {
+        this.listPlaceholders = list;
         return this;
     }
 
@@ -89,7 +102,7 @@ public class Conversation {
             @NotNull
             @Override
             public String getPromptText(@NotNull ConversationContext conversationContext) {
-                return Text.detectLangs((CommandSender) conversationContext.getForWhom(),plugin, prompt).join().textFor((Player) conversationContext.getForWhom()).getText();
+                return Text.detectLangs((CommandSender) conversationContext.getForWhom(),plugin, prompt).replaceAll(listPlaceholders).textFor((Player) conversationContext.getForWhom()).getText();
             }
 
             @Override
@@ -104,7 +117,16 @@ public class Conversation {
                     results.put(id, result.convert(s));
                 } catch (Exception e) {
                     Player player = (Player) conversationContext.getForWhom();
-                    Text.detectLangs(player,plugin, errorMessage).join().send(player);
+                    if (onError != null) {
+                        onError.accept(e);
+                    }
+                    return this;
+                }
+
+                if (loopPromptUntil != null && !s.equalsIgnoreCase(loopPromptUntil)) {
+                    if (onLoop != null) {
+                        onLoop.accept(results.get(id));
+                    }
                     return this;
                 }
 

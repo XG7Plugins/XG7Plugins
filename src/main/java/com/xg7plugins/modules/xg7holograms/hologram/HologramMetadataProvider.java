@@ -75,7 +75,7 @@ public class HologramMetadataProvider {
         data.add(new EntityData<>(23, EntityDataTypes.ADV_COMPONENT,
                 Text.detectLangs(textDisplayHologram.getPlayer(),
                         textDisplayHologram.getHologram().getPlugin(),
-                        line.getLine()).join().toAdventureComponent()));
+                        line.getLine()).toAdventureComponent()));
 
         data.add(new EntityData<>(15, EntityDataTypes.BYTE, (byte) line.getBillboard().ordinal()));
 

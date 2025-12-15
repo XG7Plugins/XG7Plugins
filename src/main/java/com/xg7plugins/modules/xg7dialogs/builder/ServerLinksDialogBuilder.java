@@ -46,12 +46,14 @@ public class ServerLinksDialogBuilder extends DialogBuilder<ServerLinksDialogBui
                 id,
                 title,
                 canCloseWithEscape,
-                elements,
+                body,
                 inputs,
                 afterResponse,
                 exitButton,
                 columns,
-                buttonWidth
+                buttonWidth,
+                placeholders,
+                responseHandler
         );
     }
 }

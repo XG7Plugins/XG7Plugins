@@ -17,7 +17,7 @@ public class SuggestCommandAction implements DialogButtonAction {
     @Override
     public Action build(Dialog dialog, Player player) {
         return new StaticAction(new SuggestCommandClickEvent(
-                Text.detectLangs(player, dialog.getPlugin(), command).join().getText()
+                Text.detectLangs(player, dialog.getPlugin(), command).getText()
         ));
     }
 }

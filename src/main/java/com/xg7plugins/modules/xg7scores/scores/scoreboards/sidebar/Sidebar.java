@@ -46,7 +46,7 @@ public class Sidebar extends Score {
             WrapperPlayServerScoreboardObjective objective = new WrapperPlayServerScoreboardObjective(
                     "sb-" + getId(),
                     WrapperPlayServerScoreboardObjective.ObjectiveMode.UPDATE,
-                    Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).join().textFor(player).toAdventureComponent(),
+                    Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).textFor(player).toAdventureComponent(),
                     WrapperPlayServerScoreboardObjective.RenderType.INTEGER
             );
 
@@ -75,7 +75,7 @@ public class Sidebar extends Score {
         WrapperPlayServerScoreboardObjective objective = new WrapperPlayServerScoreboardObjective(
                 "sb-" + getId(),
                 WrapperPlayServerScoreboardObjective.ObjectiveMode.CREATE,
-                Text.detectLangs(player, plugin, super.updateText.get(0)).join().textFor(player).toAdventureComponent(),
+                Text.detectLangs(player, plugin, super.updateText.get(0)).textFor(player).toAdventureComponent(),
                 WrapperPlayServerScoreboardObjective.RenderType.INTEGER
         );
 

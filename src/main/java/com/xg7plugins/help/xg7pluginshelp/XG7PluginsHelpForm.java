@@ -17,17 +17,17 @@ import java.util.List;
 
 public class XG7PluginsHelpForm extends SimpleForm {
     public XG7PluginsHelpForm(Plugin plugin) {
-        super("help-command-index", "lang:[help-menu.index.title]", plugin);
+        super("help-command-index", "lang:[help-menu.index.title]", plugin, new ArrayList<>());
     }
 
     @Override
     public String content(Player player) {
 
-        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(plugin, player).join().getSecond().getLangConfiguration();
+        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(plugin, player).getSecond().getLangConfiguration();
 
         String about = String.join("\n", lang.getList("help-menu.about", String.class).orElse(new ArrayList<>()));
 
-        return Text.detectLangs(player, XG7Plugins.getInstance(),about).join()
+        return Text.detectLangs(player, XG7Plugins.getInstance(),about)
                 .replace("discord", "discord.gg/jfrn8w92kF")
                 .replace("github", "github.com/DaviXG7")
                 .replace("website", "xg7plugins.com")
@@ -39,9 +39,9 @@ public class XG7PluginsHelpForm extends SimpleForm {
     public List<ButtonComponent> buttons(Player player) {
 
         List<ButtonComponent> buttons = new ArrayList<>();
-        buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"help-menu.index.lang-item.name").join().getText()));
-        buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"help-menu.index.tasks-item.name").join().getText()));
-        buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"help-menu.index.commands-item.name").join().getText()));
+        buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"help-menu.index.lang-item.name").getText()));
+        buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"help-menu.index.tasks-item.name").getText()));
+        buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"help-menu.index.commands-item.name").getText()));
 
         return buttons;
     }

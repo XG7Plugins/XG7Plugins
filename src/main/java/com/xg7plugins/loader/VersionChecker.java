@@ -73,7 +73,7 @@ public class VersionChecker {
                     }
 
                     Text.format(" ").send(sender);
-                    Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "plugin-update-available", Pair.of("plugin", version.getPlugin().getName()), Pair.of("version", "<hover:SHOW_TEXT:Download><click:RUN_COMMAND:/xg7plugins update>§n" + version.getNewVersion() + "</click></hover>")).join();
+                    Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "plugin-update-available", Pair.of("plugin", version.getPlugin().getName()), Pair.of("version", "<hover:SHOW_TEXT:Download><click:RUN_COMMAND:/xg7plugins update>§n" + version.getNewVersion() + "</click></hover>"));
                     Text.format(" ").send(sender);
                 }
 

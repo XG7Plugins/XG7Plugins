@@ -3,8 +3,10 @@ package com.xg7plugins.config.file;
 import com.cryptomorin.xseries.XMaterial;
 import com.xg7plugins.config.typeadapter.ConfigTypeAdapter;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.time.Time;
 import com.xg7plugins.utils.time.TimeParser;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class ConfigSection {
 
     private final ConfigFile file;
+    @Getter(AccessLevel.NONE)
     private final String currentPath;
     private final Map<String, Object> rootData;
     private final Map<String, Object> data;
@@ -55,7 +58,7 @@ public class ConfigSection {
     public <T> T get(String path, Class<T> type, T defaultValue, boolean ignoreNonexistent, Object... optionalTypeArgs) {
         if (!verifyExists(path, ignoreNonexistent)) return defaultValue;
 
-        Object object = data.get(path);
+        Object object = getByPath(path);
 
         if (
                 type == Object.class || type == String.class || type == Integer.class || type == int.class ||
@@ -64,6 +67,10 @@ public class ConfigSection {
                 type == Short.class || type == short.class
         ) {
             return (T) object;
+        }
+
+        if (type == List.class) {
+            return (T) getList(path, Object.class).orElse(new ArrayList<>());
         }
 
         String objectAsString = object.toString();
@@ -127,7 +134,7 @@ public class ConfigSection {
             if (!ignoreNonexistent) file.getPlugin().getJavaPlugin().getLogger().warning(this.currentPath + path + " not found in " + file.getName() + ".yml");
             return false;
         }
-        if (data.get(path) == null) {
+        if (getByPath(path) == null) {
             if (!ignoreNonexistent) file.getPlugin().getJavaPlugin().getLogger().warning(this.currentPath + path + " in " + file.getName() + " is empty");
             return false;
         }
@@ -145,12 +152,52 @@ public class ConfigSection {
         return (T) get(path, Object.class);
     }
 
+    @SuppressWarnings("unchecked")
+    private  <T> T getByPath(String path) {
+        if (path == null || path.isEmpty()) return null;
+
+        String[] parts = path.split("\\.");
+        Map<String, Object> current = data;
+
+        for (int i = 0; i < parts.length; i++) {
+            String key = parts[i];
+            Object value = current.get(key);
+
+            if (i == parts.length - 1) {
+                return (T) value;
+            }
+
+            if (!(value instanceof Map)) {
+                return null;
+            }
+
+            current = (Map<String, Object>) value;
+        }
+
+        return null;
+    }
+
+    public Class<?> getType(String key) {
+        Object object = data.get(key);
+        String objectAsString = object.toString();
+
+        if (TimeParser.isTime(objectAsString)) {
+            return Time.class;
+        }
+
+        try {
+            UUID.fromString(objectAsString);
+            return UUID.class;
+        } catch (Exception ignored) {}
+
+        return object.getClass();
+    }
+
     public <T> T getAs(Class<T> type) {
         Yaml yaml = new Yaml();
         String dumped = yaml.dump(this.data);
         return yaml.loadAs(dumped, type);
     }
-
     /**
      * Gets a list of values from the configuration with type conversion.
      * Supports primitive types and maps.
@@ -165,7 +212,7 @@ public class ConfigSection {
     public <T> Optional<List<T>> getList(String path, Class<T> type, boolean ignoreNonexistent) {
         if (!verifyExists(path, ignoreNonexistent)) return Optional.empty();
 
-        List<Object> list = (List<Object>) data.get(path);
+        List<Object> list = getByPath(path);
 
         if (
                 type == Object.class || type == String.class || type == Integer.class || type == int.class ||
@@ -291,7 +338,27 @@ public class ConfigSection {
 
 
     public boolean contains(String path) {
-        return data.containsKey(path);
+        if (path == null || path.isEmpty()) return false;
+
+        String[] parts = path.split("\\.");
+        Map<String, Object> current = data;
+
+        for (int i = 0; i < parts.length; i++) {
+            String key = parts[i];
+            Object value = current.get(key);
+
+            if (i == parts.length - 1 && current.containsKey(key)) {
+                return true;
+            }
+
+            if (!(value instanceof Map)) {
+                return false;
+            }
+
+            current = (Map<String, Object>) value;
+        }
+
+        return true;
     }
 
     /**
@@ -316,9 +383,8 @@ public class ConfigSection {
         return currentPath.contains(".") ? file.section(currentPath.substring(0, currentPath.lastIndexOf("."))) : file.root();
     }
     public ConfigSection child(String path) {
-        return file.section(this.currentPath + "." + path);
+        return currentPath.isEmpty() ? file.section(path) : file.section(this.currentPath + "." + path);
     }
-
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> getDataOfCurrent() {

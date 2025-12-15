@@ -15,6 +15,7 @@ import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.PacketListener;
 import com.xg7plugins.extensions.ExtensionManager;
 import com.xg7plugins.help.HelpMessenger;
+import com.xg7plugins.modules.xg7dialogs.dialogs.Dialog;
 import com.xg7plugins.modules.xg7geyserforms.forms.Form;
 import com.xg7plugins.modules.xg7holograms.hologram.Hologram;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
@@ -66,11 +67,12 @@ public abstract class Plugin {
         pluginSetup = getClass().getAnnotation(PluginSetup.class);
         if (pluginSetup == null) throw new IllegalClassException("PluginSetup annotation not found in " + getClass().getName());
 
+        this.debug = new Debug(this);
+
         this.commandManager = new CommandManager(this);
         this.configManager = new ConfigManager(this, pluginSetup.configs());
         this.extensionManager = new ExtensionManager(this);
 
-        this.debug = new Debug(this);
     }
 
     public abstract void onLoad();
@@ -231,6 +233,9 @@ public abstract class Plugin {
         return null;
     }
     public List<Hologram> loadHolograms() {
+        return null;
+    }
+    public List<Dialog> loadDialogs() {
         return null;
     }
 

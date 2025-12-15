@@ -27,6 +27,7 @@ public abstract class BasicMenuBuilder<B extends BasicMenuBuilder<B,M>, M extend
     protected Consumer<MenuEvent> closeEventConsumer = e -> {};
     protected BiConsumer<BasicMenuHolder, MenuUpdateActions> updateAction = (h, a) -> {};
     protected Consumer<BasicMenuHolder> repeatingUpdateAction = h -> {};
+
     public BasicMenuBuilder(BasicMenuConfigs configs) {
         this.menuConfigs = configs;
     }

@@ -10,6 +10,7 @@ import org.geysermc.cumulus.response.ModalFormResponse;
 import org.geysermc.cumulus.response.result.InvalidFormResponseResult;
 import org.geysermc.floodgate.api.FloodgateApi;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class CommandFormDescription extends ModalForm {
@@ -30,7 +31,8 @@ public class CommandFormDescription extends ModalForm {
                         commandIcon.getItemMeta().getLore().get(3),
 
                 command.getChildren().isEmpty() ? "lang:[commands-form.no-subcommands]" : "lang:[commands-form.subcommands-label]",
-                "lang:[commands-form.subcommands-back]"
+                "lang:[commands-form.subcommands-back]",
+                new ArrayList<>()
         );
         this.origin = origin;
         this.command = command;

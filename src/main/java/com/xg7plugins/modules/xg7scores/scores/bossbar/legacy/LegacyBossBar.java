@@ -101,7 +101,7 @@ public class LegacyBossBar extends Score {
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
 
 
-            String name = Text.detectLangs(player, plugin,updateText.get(indexUpdating)).join().getText();
+            String name = Text.detectLangs(player, plugin,updateText.get(indexUpdating)).getText();
 
             WrapperPlayServerEntityMetadata packetPlayOutEntityMetadata = new WrapperPlayServerEntityMetadata(
                     entities.get(player.getUniqueId()),

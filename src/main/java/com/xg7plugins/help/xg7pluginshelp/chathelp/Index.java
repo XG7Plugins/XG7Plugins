@@ -21,11 +21,11 @@ public class Index implements HelpChatPage {
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"));
 
-        components.add(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.title").join());
+        components.add(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.title"));
 
         components.add(Text.format(" "));
 
-        Text content = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.content").join().getText())
+        Text content = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.content").getText())
                 .clickEvent(ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help about"))
                 .hoverEvent(HoverEvent.of(HoverEvent.Action.SHOW_TEXT, "Click to see about the plugins"))
                 .build();
@@ -33,17 +33,17 @@ public class Index implements HelpChatPage {
 
         components.add(Text.format(" "));
 
-        Text lang = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.lang").join().getText())
+        Text lang = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.lang").getText())
                 .clickEvent(ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins lang"))
                 .build();
         components.add(lang);
 
-        Text tasks = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.tasks").join().getText())
+        Text tasks = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.tasks").getText())
                 .clickEvent(ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins tasks"))
                 .build();
         components.add(tasks);
 
-        Text commands = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands").join().getText())
+        Text commands = TextComponentBuilder.of(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.commands").getText())
                 .clickEvent(ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help command-page1"))
                 .build();
         components.add(commands);

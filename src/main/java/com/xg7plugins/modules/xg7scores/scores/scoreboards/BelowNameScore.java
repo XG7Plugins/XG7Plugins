@@ -43,7 +43,7 @@ public class BelowNameScore extends Score {
                 WrapperPlayServerScoreboardObjective updateObjective = new WrapperPlayServerScoreboardObjective(
                         "bn-" + getId(),
                         WrapperPlayServerScoreboardObjective.ObjectiveMode.UPDATE,
-                        Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).join().textFor(player).toAdventureComponent(),
+                        Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).textFor(player).toAdventureComponent(),
                         WrapperPlayServerScoreboardObjective.RenderType.INTEGER
                 );
                 PacketEvents.getAPI().getPlayerManager().sendPacket(player, updateObjective);
@@ -71,7 +71,7 @@ public class BelowNameScore extends Score {
         WrapperPlayServerScoreboardObjective objective = new WrapperPlayServerScoreboardObjective(
                 "bn-" + getId(),
                 WrapperPlayServerScoreboardObjective.ObjectiveMode.CREATE,
-                Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).join().textFor(player).toAdventureComponent(),
+                Text.detectLangs(player, plugin, super.updateText.get(indexUpdating)).textFor(player).toAdventureComponent(),
                 WrapperPlayServerScoreboardObjective.RenderType.INTEGER
         );
 

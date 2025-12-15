@@ -19,7 +19,7 @@ public class Lang {
     private final ConfigFile langConfigFile;
     private final String langId;
 
-    public static CompletableFuture<Pair<Boolean, Lang>> of(Plugin plugin, Player player) {
+    public static Pair<Boolean, Lang> of(Plugin plugin, Player player) {
         return XG7Plugins.getAPI().langManager().getLangByPlayer(plugin, player);
     }
 

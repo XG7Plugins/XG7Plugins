@@ -5,7 +5,7 @@ import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.modules.xg7scores.scores.bossbar.BossBar;
-import com.xg7plugins.modules.xg7scores.scores.bossbar.LegacyBossBar;
+import com.xg7plugins.modules.xg7scores.scores.bossbar.legacy.LegacyBossBar;
 import com.xg7plugins.modules.xg7scores.scores.bossbar.PublicBossBar;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;

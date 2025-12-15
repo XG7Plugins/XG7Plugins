@@ -31,8 +31,13 @@ public class ItemMessageElement implements DialogBodyElement<ItemDialogBody> {
     @Override
     public ItemDialogBody build(Dialog dialog, Player player) {
         return new ItemDialogBody(
-                item.toProtocolItemStack(player, dialog.getPlugin()),
-                new PlainMessage(Text.detectLangs(player, dialog.getPlugin(), description).join().toAdventureComponent(), textWidth),
+                item.setBuildPlaceholders(dialog.getBuildPlaceholders()).toProtocolItemStack(player, dialog.getPlugin()),
+                new PlainMessage(
+                        Text.detectLangs(player, dialog.getPlugin(), description)
+                                .replaceAll(dialog.getBuildPlaceholders())
+                                .toAdventureComponent()
+                        , textWidth
+                ),
                 showDecorations,
                 showTooltip,
                 width,

@@ -42,14 +42,14 @@ public class TabList extends Score {
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
 
-            player.setPlayerListName(Text.detectLangs(player, plugin,playerPrefix).join().getText() + player.getName() + Text.detectLangs(player, plugin,playerSuffix).join().getText());
+            player.setPlayerListName(Text.detectLangs(player, plugin,playerPrefix).getText() + player.getName() + Text.detectLangs(player, plugin,playerSuffix).getText());
             String headerl = header.get(headerIndex.getAndIncrement());
             String footerl = footer.get(footerIndex.getAndIncrement());
 
             if (headerIndex.get() >= header.size()) headerIndex.set(0);
             if (footerIndex.get() >= footer.size()) footerIndex.set(0);
 
-            send(player, Text.detectLangs(player, plugin,headerl).join().getText(), Text.detectLangs(player, plugin,footerl).join().getText());
+            send(player, Text.detectLangs(player, plugin,headerl).getText(), Text.detectLangs(player, plugin,footerl).getText());
         }
     }
 

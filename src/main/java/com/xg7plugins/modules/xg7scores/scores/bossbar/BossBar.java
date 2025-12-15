@@ -55,7 +55,7 @@ public class BossBar extends Score {
             Player player = Bukkit.getPlayer(id);
             if (player == null) continue;
 
-            String name = Text.detectLangs(player, plugin,updateText.get(indexUpdating)).join().getText();
+            String name = Text.detectLangs(player, plugin,updateText.get(indexUpdating)).getText();
 
             if (!bossBars.get(id).getTitle().equals(name)) {
                 bossBars.get(player.getUniqueId()).setTitle(name);

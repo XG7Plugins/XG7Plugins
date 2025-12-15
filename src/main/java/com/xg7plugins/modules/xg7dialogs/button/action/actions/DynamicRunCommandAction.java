@@ -16,7 +16,7 @@ public class DynamicRunCommandAction implements DialogButtonAction {
     @Override
     public Action build(Dialog dialog, Player player) {
         return new com.github.retrooper.packetevents.protocol.dialog.action.DynamicRunCommandAction(
-                new DialogTemplate(Text.detectLangs(player, dialog.getPlugin(), command).join().getText())
+                new DialogTemplate(Text.detectLangs(player, dialog.getPlugin(), command).getText())
         );
     }
 }

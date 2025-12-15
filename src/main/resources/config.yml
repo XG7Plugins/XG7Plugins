@@ -24,57 +24,39 @@ server:
   ip: "0.0.0.0"
   port: 25565
 
-
-#Debug mode
-debug:
-  enabled: false
-
-  database: true
-  load: true
-  commands: true
-  http-requests: true
-  text: true
-  tasks: true
-  config: true
-  cooldown: true
-  json: true
-  lang: true
-  dependencies: true
-  menus: true
-  scores: true
-  extensions: true
-
-
-
-#When disabled, the plugin will choose
-#the main language from the server
-lang-enabled: true
+############################################################
+#                       LANGUAGES                          #
+############################################################
 
 #Main language
 #Must be the name of the file in the lang folder
 main-lang: en
 
-organize-tablist: true
-
-#Anti'tab resource that filters all
-#commands based on player permissions
-anti-tab: true
+#When disabled, the plugin will choose
+#the main language from the server
+lang-enabled: true
 
 #Cache expires of langs
 lang-cache-expires: 30m
 
-#Auto chose lang for player
+lang-form-enabled: true
+
+#Auto chose lang for player by player's locale
 auto-chose-lang: true
 
 #Cooldown to toggle languages when
 #chosed
 cooldown-to-toggle-lang: 5s
 
+############################################################
+#                  THREAD AND CACHING                      #
+############################################################
+
 #Cache expires of JSON
 json-cache-expires: 10m
 
 #Http request timeout
-#for http requests
+#for web requests
 http-requests-timeout: 10s
 
 #Threads for executing scheduled/timer tasks
@@ -82,11 +64,12 @@ scheduled-tasks-threads: 8
 
 disable-version-check: false
 
-holograms-levitating-interval: 100ms
+#Cache expires of menus
+menu-cache-expires: 10m
 
-#Delay sending a message or
-#make an action while is in cooldown
-player-cooldown-task-delay: 1s
+############################################################
+#                        MODULES                           #
+############################################################
 
 #Microsystems in XG7Plugins that
 modules-enabled:
@@ -97,19 +80,32 @@ modules-enabled:
   xg7npcs: true
   xg7dialogs: true
 
-lang-form-enabled: true
+############################################################
+#                     HELP OPTIONS                         #
+############################################################
 
-#Cache expires of menus
-menu-cache-expires: 10m
+help:
+  help-by-gui: true
 
-#Defines if the help command
-#sends the help on an inventory
-#or in a gui
-open-help-command-gui: true
+  #For bedrock players
+  help-by-form: true
 
-#Same as the inventory but with
-#floodgate forms
-send-help-command-form: true
+  #1.21.6+
+  about-in-dialog: true
+
+#Default config value editor is by conversation
+config-editor:
+
+  #+1.21.6, default -> conversation
+  dialog-value-editor: true
+
+  #For bedrock players
+  form-editor: true
+
+
+############################################################
+#                       DATABASES                          #
+############################################################
 
 #Define database values
 sql:
@@ -163,6 +159,50 @@ redis-cache:
   max-connections: 100
 
   max-wait-time: 10s
+
+############################################################
+#                         DEBUG                            #
+############################################################
+
+#Debug mode
+debug:
+  enabled: false
+
+  database: true
+  load: true
+  commands: true
+  http-requests: true
+  text: true
+  tasks: true
+  config: true
+  cooldown: true
+  json: true
+  lang: true
+  dependencies: true
+  menus: true
+  scores: true
+  extensions: true
+
+############################################################
+#                        OTHERS                            #
+############################################################
+
+holograms-levitating-interval: 100ms
+
+#Delay sending a message or
+#make an action while is in cooldown
+player-cooldown-task-delay: 1s
+
+organize-tablist: true
+
+#Anti'tab resource that filters all
+#commands based on player permissions
+anti-tab: true
+
+#+1.21.6
+#Time for unregister a waiting response
+#for a dialog
+dialog-response-expires: 30m
 
 #When using a time placeholder like @TIME_FORMAT:%time_milli%@
 #These placeholders indicate the time units,

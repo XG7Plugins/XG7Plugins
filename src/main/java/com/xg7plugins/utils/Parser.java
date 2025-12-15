@@ -1,9 +1,13 @@
 package com.xg7plugins.utils;
 
+import com.xg7plugins.utils.time.Time;
+import com.xg7plugins.utils.time.TimeFormat;
+import com.xg7plugins.utils.time.TimeParser;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import org.bukkit.Bukkit;
 
+import java.util.UUID;
 import java.util.function.Function;
 
 /**
@@ -19,6 +23,8 @@ public enum Parser {
     FLOAT(Float::parseFloat),
     SHORT(Short::parseShort),
     BYTE(Byte::parseByte),
+    TIME(Time::ofString),
+    UUID(java.util.UUID::fromString),
     CHAR(s -> s.charAt(0));
 
     private final Function<String, ?> converter;
@@ -40,11 +46,23 @@ public enum Parser {
     }
 
     public static <T> Parser getParserOf(Class<T> type) {
+
         try {
-            Parser.valueOf(type.getSimpleName().toUpperCase());
+            return Parser.valueOf(type.getSimpleName().toUpperCase());
         } catch (Exception ig) {
             return null;
         }
-        return null;
+    }
+
+    public boolean isBoolean() {
+        return this == Parser.BOOLEAN;
+    }
+
+    public boolean isNumber() {
+        return this == Parser.INTEGER || this == Parser.LONG ||  this == Parser.DOUBLE || this == Parser.FLOAT ||  this == Parser.SHORT;
+    }
+
+    public boolean isTime() {
+        return this == Parser.TIME;
     }
 }

@@ -373,7 +373,7 @@ public class Item implements Cloneable {
         ItemStack prepared = this.itemStack.clone();
         ItemMeta meta = prepared.getItemMeta();
         if (meta.getDisplayName() != null) {
-            String newName = Text.detectLangs(player, plugin,meta.getDisplayName(), false).join().replaceAll(buildPlaceholders).textFor((Player) player).getText();
+            String newName = Text.detectLangs(player, plugin,meta.getDisplayName(), false).replaceAll(buildPlaceholders).textFor((Player) player).getText();
             meta.setDisplayName(newName.isEmpty() ? " " : newName);
         }
 
@@ -381,7 +381,7 @@ public class Item implements Cloneable {
             List<String> lore = new ArrayList<>();
 
             for (String line : meta.getLore()) {
-                String formatted = Text.detectLangs(player, plugin,line, false).join().replaceAll(buildPlaceholders).textFor((Player) player).getText();
+                String formatted = Text.detectLangs(player, plugin,line, false).replaceAll(buildPlaceholders).textFor((Player) player).getText();
                 if (ChatColor.stripColor(formatted).isEmpty()) continue;
                 lore.add(formatted);
             }

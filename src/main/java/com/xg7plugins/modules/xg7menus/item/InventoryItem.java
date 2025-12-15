@@ -23,4 +23,5 @@ public class InventoryItem extends Item {
     public ClickableItem clickable(Consumer<ActionEvent> clickEvent) {
         return new ClickableItemImpl(this.itemStack, clickEvent, slot).setBuildPlaceholders(buildPlaceholders);
     }
+
 }

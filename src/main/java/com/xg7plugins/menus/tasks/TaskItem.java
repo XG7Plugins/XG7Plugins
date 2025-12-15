@@ -30,7 +30,7 @@ public class TaskItem extends ClickableItem {
         super(null, slot);
         this.task = task;
 
-        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(XG7Plugins.getInstance(), player).join().getSecond().getLangConfiguration();
+        ConfigSection lang = XG7Plugins.getAPI().langManager().getLangByPlayer(XG7Plugins.getInstance(), player).getSecond().getLangConfiguration();
 
         InventoryItem builder = Item.from(XMaterial.REPEATER).toInventoryItem(slot);
         builder.name("&e" + task.getId());
@@ -96,8 +96,7 @@ public class TaskItem extends ClickableItem {
             return;
         }
         if (event.getMenuAction().isLeftClick()) {
-            Text.fromLang(player, XG7Plugins.getInstance(),"tasks-menu.copy-to-clipboard")
-                    .thenAccept(text -> text.replace("id", task.getPlugin().getName() + ":" + taskId).send(player));
+            Text.sendTextFromLang(player, XG7Plugins.getInstance(),"tasks-menu.copy-to-clipboard", Pair.of("id", task.getPlugin().getName() + ":" + taskId));
         }
 
         if (holder instanceof PagedMenuHolder) {

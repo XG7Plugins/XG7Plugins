@@ -14,6 +14,7 @@ import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.response.SimpleFormResponse;
 import org.geysermc.cumulus.response.result.InvalidFormResponseResult;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -28,7 +29,7 @@ public class CommandForm extends SimpleForm {
     private final HelpForm guiOrigin;
 
     public CommandForm(List<CommandNode> commands, String customTitle, CommandForm superForm, HelpForm guiOrigin) {
-        super("command-form" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, XG7Plugins.getInstance());
+        super("command-form" + UUID.randomUUID(), customTitle == null ? "Commands" : customTitle, XG7Plugins.getInstance(), new ArrayList<>());
 
         this.commands = commands.stream().collect(
                 Collectors.toMap(
@@ -53,7 +54,7 @@ public class CommandForm extends SimpleForm {
                 command -> ButtonComponent.of(command.getName())
         ).collect(Collectors.toList());
 
-        buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"commands-form.back").join().getText()));
+        buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"commands-form.back").getText()));
 
         return buttons;
     }

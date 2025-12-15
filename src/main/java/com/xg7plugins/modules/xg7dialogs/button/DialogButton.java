@@ -22,8 +22,8 @@ public class DialogButton {
     public ActionButton build(Dialog dialog, Player player) {
         return new ActionButton(
                 new CommonButtonData(
-                        Text.detectLangs(player, dialog.getPlugin(), label).join().toAdventureComponent(),
-                        hoverText == null ? Component.text("") : Text.detectLangs(player, dialog.getPlugin(), hoverText).join().toAdventureComponent(),
+                        Text.detectLangs(player, dialog.getPlugin(), label).replaceAll(dialog.getBuildPlaceholders()).toAdventureComponent(),
+                        hoverText == null ? Component.text("") : Text.detectLangs(player, dialog.getPlugin(), hoverText).replaceAll(dialog.getBuildPlaceholders()).toAdventureComponent(),
                         width
                 ),
                 action == null? null : action.build(dialog, player)
@@ -35,19 +35,19 @@ public class DialogButton {
     }
 
     public static DialogButton newButton(String label, String hoverText, int width) {
-        return newButton(label, hoverText, width, null);
+        return newButton(label, hoverText, width, DialogButtonAction.sendResponseTo("/response"));
     }
 
     public static DialogButton newButton(String label, String hoverText) {
-        return newButton(label, hoverText, 150);
+        return newButton(label, hoverText, 150, DialogButtonAction.sendResponseTo("/response"));
     }
 
     public static DialogButton newButton(String label) {
-        return new DialogButton(label, null, 150, null);
+        return new DialogButton(label, null, 150, DialogButtonAction.sendResponseTo("/response"));
     }
 
     public static DialogButton newButton(String label, int width) {
-        return newButton(label, null, width, null);
+        return newButton(label, null, width, DialogButtonAction.sendResponseTo("/response"));
     }
 
     public static DialogButton newButton(String label, String hoverText, DialogButtonAction action) {
@@ -57,5 +57,34 @@ public class DialogButton {
     public static DialogButton newButton(String label, DialogButtonAction action) {
         return newButton(label, null, 150, action);
     }
+
+    public static DialogButton newButton(String label, String hoverText, int width, String channel) {
+        return newButton(label, hoverText, width, DialogButtonAction.sendResponseTo(channel));
+    }
+
+    public static DialogButton newButton(String label, String hoverText, String channel) {
+        return newButton(label, hoverText, 150, DialogButtonAction.sendResponseTo(channel));
+    }
+
+    public static DialogButton yes(String label,  String hoverText, int width) {
+        return newButton(label, hoverText, width, DialogButtonAction.sendResponseTo("/yes"));
+    }
+    public static DialogButton yes(String label,  String hoverText) {
+        return yes(label, hoverText, 150);
+    }
+    public static  DialogButton yes(String label) {
+        return yes(label, null);
+    }
+
+    public static DialogButton no(String label,  String hoverText, int width) {
+        return newButton(label, hoverText, width, DialogButtonAction.sendResponseTo("/no"));
+    }
+    public static  DialogButton no(String label,  String hoverText) {
+        return no(label, hoverText, 150);
+    }
+    public static DialogButton no(String label) {
+        return no(label, null);
+    }
+
 
 }

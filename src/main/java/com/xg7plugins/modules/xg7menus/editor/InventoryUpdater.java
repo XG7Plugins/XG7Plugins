@@ -41,6 +41,10 @@ public class InventoryUpdater implements InventoryEditor {
     public void setItem(InventoryItem item) {
         if (item == null) return;
         items.put(item.getSlot(), item);
+
+        holder.getInventory().setItem(item.getSlot().get(), item.getItemFor(holder.getPlayer(), holder.getMenu().getMenuConfigs().getPlugin()));
+
+        holder.getMenu().onUpdate(holder, MenuUpdateActions.ITEM_CHANGED);
     }
 
     @Override

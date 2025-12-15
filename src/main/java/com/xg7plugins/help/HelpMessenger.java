@@ -35,12 +35,12 @@ public class HelpMessenger {
 
         ConfigSection config = ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root();
 
-        if (XG7Plugins.getAPI().isGeyserFormsEnabled() && config.get("send-help-command-form", false) && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
+        if (XG7Plugins.getAPI().isGeyserFormsEnabled() && config.get("help.help-by-form", false) && FloodgateApi.getInstance().isFloodgatePlayer(player.getUniqueId())) {
                 sendForm(player);
                 return;
         }
 
-        if (config.get("open-help-command-gui", false)) {
+        if (config.get("help.help-by-gui", false)) {
             sendGUI(player);
             return;
         }

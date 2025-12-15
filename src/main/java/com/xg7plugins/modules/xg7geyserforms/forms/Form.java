@@ -1,21 +1,25 @@
 package com.xg7plugins.modules.xg7geyserforms.forms;
 
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.utils.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.response.FormResponse;
 import org.geysermc.cumulus.response.result.InvalidFormResponseResult;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Getter
 @AllArgsConstructor
 public abstract class Form<F extends org.geysermc.cumulus.form.Form,R extends FormResponse> {
 
-    protected String id;
-    protected String title;
-    protected Plugin plugin;
+    protected final String id;
+    protected final String title;
+    protected final Plugin plugin;
+
+    protected final List<Pair<String, String>> buildPlaceholders;
 
     public abstract boolean isEnabled();
 

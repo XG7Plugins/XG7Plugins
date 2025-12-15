@@ -17,7 +17,7 @@ public class OpenURLAction implements DialogButtonAction {
     @Override
     public Action build(Dialog dialog, Player player) {
         return new StaticAction(new OpenUrlClickEvent(
-                Text.detectLangs(player, dialog.getPlugin(), url).join().getText()
+                Text.detectLangs(player, dialog.getPlugin(), url).getText()
         ));
     }
 }

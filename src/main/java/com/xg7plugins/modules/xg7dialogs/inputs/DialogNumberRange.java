@@ -31,7 +31,7 @@ public class DialogNumberRange extends DialogInput {
     public InputControl buildControl(Dialog dialog, Player player) {
         return new NumberRangeInputControl(
                 width,
-                Text.detectLangs(player, dialog.getPlugin(), this.label).join().toAdventureComponent(),
+                Text.detectLangs(player, dialog.getPlugin(), this.label).replaceAll(dialog.getBuildPlaceholders()).toAdventureComponent(),
                 labelFormatter,
                 new NumberRangeInputControl.RangeInfo(
                         start,
