@@ -63,6 +63,6 @@ public class XG7GeyserForms implements Module {
 
     @Override
     public boolean canBeEnabled() {
-        return XG7Plugins.getAPI().isGeyserFormsEnabled();
+        return XG7Plugins.getAPI().dependencyManager().exists("floodgate");
     }
 }

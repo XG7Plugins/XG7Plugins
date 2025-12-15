@@ -268,7 +268,7 @@ public class XG7Plugins extends Plugin {
     @Override
     public List<Command> loadCommands() {
         return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new CommentCommand(), new UpdateCommand(),
-        new Test());
+        new Test(), new ConfigCommand());
     }
 
     @Override

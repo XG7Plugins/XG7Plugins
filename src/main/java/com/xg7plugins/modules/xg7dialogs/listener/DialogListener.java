@@ -15,7 +15,6 @@ import com.xg7plugins.modules.xg7dialogs.dialogs.Dialog;
 import com.xg7plugins.modules.xg7dialogs.dialogs.DialogResponseHandler;
 import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.tasks.tasks.BukkitTask;
-import org.bukkit.craftbukkit.libs.org.apache.http.client.ResponseHandler;
 import org.bukkit.entity.Player;
 
 import java.util.Collections;

@@ -97,10 +97,12 @@ help:
 config-editor:
 
   #+1.21.6, default -> conversation
-  dialog-value-editor: true
+  dialog-editor: true
 
   #For bedrock players
   form-editor: true
+
+  form-config-file-list: true
 
 
 ############################################################

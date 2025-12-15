@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @CommandSetup(
         name = "comment",
         description = "Sends a comment of a plugin to creator",
-        syntax = "/comment <plugin> message",
+        syntax = "/comment <plugin> <message>",
         permission = "xg7plugins.comment",
         iconMaterial = XMaterial.DIAMOND,
         pluginClass = XG7Plugins.class

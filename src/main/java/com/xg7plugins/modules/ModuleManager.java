@@ -46,6 +46,9 @@ public class ModuleManager {
      * Initializes all registered modules by calling their onInit method.
      */
     public void initModule(Module module) {
+
+        System.out.println("ModuleManager: Initializing module " + module.getName());
+
         loadExecutors(module);
         loadTasks(module);
         loadListeners(module);

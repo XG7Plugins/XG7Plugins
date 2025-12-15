@@ -21,6 +21,7 @@ command-errors:
 
   plugin-not-found: "%prefix% &cPlugin not found!"
   unknown-reload-cause: "%prefix% &cUnknow reload cause for this plugin!"
+  file-not-found: "%prefix% &cFile not found!"
 
 reload-message:
   all-plugins: "%prefix% &aAll plugins reloaded!"
@@ -182,20 +183,30 @@ help-in-chat:
 
   commands-title: "&7Commands of &6XG7Plugins &8(&7%page%&8/&7%max_page%&8)"
 
+config-files:
+  title: "&rConfig files of %plugin%"
+
+  form-content: "Click on a config file to edit it!"
+
+  config-item:
+      name: "&b%config_name%"
+      lore: "&7Path: &e%config_path%"
+
+  config-reloaded: "%prefix% &aConfig &b%file_name% &areloaded!"
+  config-saved: "%prefix% &aConfig &b%file_name% &asaved!"
+
 config-editor:
   title: "&0Editing: %path%"
 
-  previous-page: "Back"
-  next-page: "Next"
   close: "Close"
   config-saved: "&fConfig-saved: &b%saved%"
   save: "Save"
   back-to-previous-section: "Back to previous section"
 
-  insert-value: "&aInsert a &e%type% &avalue. <br>Type \"cancel\" to cancel the action"
+  insert-value: "&aInsert a &e%type% &avalue. Type \"cancel\" to cancel the action"
   value-error: "&bCannot convert value to %type%"
 
-  list-editor: "&aYou are in list editor! <br>Type \"cancel\" to cancel the edit, \"exit\" to finish the edit and \"remove\" to remove the last item."
+  list-editor: "&aYou are in list editor! Type \"cancel\" to cancel the edit, \"exit\" to finish the edit and \"remove\" to remove the last item."
   list-state: "&fList state: &e%list%"
   list-remove: "&aYou removed %line% from the list"
   list-empty: "&cThe list is empty"
@@ -214,8 +225,8 @@ config-editor:
   add:
     item: "&aAdd value"
 
-    insert-key: "&aInsert a valid key. <br>Type \"cancel\" to cancel the action"
-    insert-value-type: "&aInsert value type. <br>Type \"cancel\" to cancel the action. <br>&bAvailable types: <br>&e%types%"
+    insert-key: "&aInsert a valid key. Type \"cancel\" to cancel the action"
+    insert-value-type: "&aInsert value type. Type \"cancel\" to cancel the action. &bAvailable types: &e%types%"
 
     invalid-key: "&cKey cannot be empty, have symbols (except \"-\") and start with a number"
     invalid-type: "&cThis value type is invalid!"
@@ -306,8 +317,3 @@ config-form-editor:
     key-placeholder: "It can't be empty and matches \"^[a-zA-Z][a-zA-Z0-9-]*$\""
 
     type-label: "Type:"
-
-
-
-
-

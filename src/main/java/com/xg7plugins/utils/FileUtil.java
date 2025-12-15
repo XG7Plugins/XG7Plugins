@@ -173,5 +173,12 @@ public class FileUtil {
         return null;
     }
 
+    public static boolean exists(Plugin plugin, String path) {
+        File file = new File(plugin.getJavaPlugin().getDataFolder(), path);
+        return file.exists();
+    }
+
+
+
 
 }

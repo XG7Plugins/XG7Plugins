@@ -48,9 +48,9 @@ public class ConfigFile {
         if (!configFile.exists()) {
             try {
                 plugin.getJavaPlugin().saveResource(name + ".yml", false);
-            } catch (IllegalArgumentException ignored) {
+            } catch (IllegalArgumentException ex) {
                 if (!configFile.createNewFile()) {
-                    throw new IOException(ignored.getMessage());
+                    throw new IOException(ex.getMessage());
                 }
                 //Doesn't exists in resources
             }

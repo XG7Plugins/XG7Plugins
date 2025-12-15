@@ -56,6 +56,13 @@ public class ConfigSection {
     @Nullable
     @SuppressWarnings("unchecked")
     public <T> T get(String path, Class<T> type, T defaultValue, boolean ignoreNonexistent, Object... optionalTypeArgs) {
+
+        if (path.isEmpty()) {
+            T value = getAs(path, type, optionalTypeArgs);
+
+            return value != null ? value : defaultValue;
+        }
+
         if (!verifyExists(path, ignoreNonexistent)) return defaultValue;
 
         Object object = getByPath(path);
@@ -69,7 +76,7 @@ public class ConfigSection {
             return (T) object;
         }
 
-        if (type == List.class) {
+        if (List.class.isAssignableFrom(type)) {
             return (T) getList(path, Object.class).orElse(new ArrayList<>());
         }
 
@@ -109,14 +116,8 @@ public class ConfigSection {
             return (T) Bukkit.getWorld(objectAsString);
         }
 
-        ConfigTypeAdapter<T> adapter = (ConfigTypeAdapter<T>) XG7Plugins.getAPI().configManager(file.getPlugin()).getAdapters().get(type);
+        T value = getAs(path, type, optionalTypeArgs);
 
-        if (adapter == null) {
-            file.getPlugin().getDebug().warn("config", "Adapter not found for " + type.getName());
-            return defaultValue;
-        }
-
-        T value = adapter.fromConfig(this, path, optionalTypeArgs);
         return value != null ? value : defaultValue;
     }
 
@@ -193,11 +194,19 @@ public class ConfigSection {
         return object.getClass();
     }
 
-    public <T> T getAs(Class<T> type) {
+    public <T> T getAs(String path, Class<T> type, Object... optionalTypeArgs) {
+
+        ConfigTypeAdapter<T> adapter = (ConfigTypeAdapter<T>) XG7Plugins.getAPI().configManager(file.getPlugin()).getAdapters().get(type);
+
+        if (adapter != null) {
+            return adapter.fromConfig(this, path, optionalTypeArgs);
+        }
+
         Yaml yaml = new Yaml();
-        String dumped = yaml.dump(this.data);
+        String dumped = yaml.dump(path.isEmpty() ? this.data : get(path));
         return yaml.loadAs(dumped, type);
     }
+
     /**
      * Gets a list of values from the configuration with type conversion.
      * Supports primitive types and maps.

@@ -297,6 +297,8 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
      * @return true if Geyser forms support is enabled, false otherwise
      */
     public boolean isGeyserFormsEnabled() {
+        System.out.println("Floodgate loaded: " + dependencyManager().exists("floodgate"));
+        System.out.println("XG7GeyserForms enabled: " + moduleManager().isModuleEnabled("XG7GeyserForms"));
         return dependencyManager().exists("floodgate") && moduleManager().isModuleEnabled("XG7GeyserForms");
     }
 

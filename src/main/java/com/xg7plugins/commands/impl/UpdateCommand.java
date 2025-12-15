@@ -21,7 +21,7 @@ import java.util.List;
 @CommandSetup(
         name = "update",
         description = "Updates a plugin",
-        syntax = "/xg7plugins update <check|(plugin)> (check:plugin)",
+        syntax = "/xg7plugins update <<check> <plugin> | plugin>",
         permission = "xg7plugins.command.update",
         iconMaterial = XMaterial.ANVIL,
         pluginClass = XG7Plugins.class

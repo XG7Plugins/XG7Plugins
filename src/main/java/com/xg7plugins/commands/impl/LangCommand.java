@@ -25,7 +25,7 @@ import java.util.List;
 @CommandSetup(
         name = "lang",
         description = "Sets the language of the player",
-        syntax = "/xg7plugins lang (player, lang)",
+        syntax = "/xg7plugins lang [<player> <lang>]",
         permission = "xg7plugins.command.lang",
         pluginClass = XG7Plugins.class,
         iconMaterial = XMaterial.WRITABLE_BOOK,

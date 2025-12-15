@@ -1,57 +1,64 @@
-config-version: 4
+config-version: 5
 
 locale: pt_BR
 formated-name: "Português (Brasil)"
 icon: "PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTY2OGExZmI2YWY4MWIyMzFiYmNjNGRlNWY3Zjk1ODAzYmJkMTk0ZjU4MjdkYTAyN2ZhNzAzMjFjZjQ3YyJ9fX0="
 bedrock-icon: "URL, https://rondonia.ro.gov.br/wp-content/uploads/2020/09/Bandeira-Nacionals%C3%ADmbolo-maior-da-P%C3%A1tria-Brasileira-Foto-Divulga%C3%A7%C3%A3o.jpg"
 
-plugin-update-available: "&aUma nova versão de &e%plugin% &aestá disponível! Nova versão: &7%version%&r"
+plugin-update-available: "&aUma nova versão do &e%plugin% &aestá disponível! Nova versão: &7%version%&r"
 
 command-errors:
+  internal-error: "&cOcorreu um erro interno ao executar este comando!"
   syntax-error: "&cVocê está usando o comando incorretamente! A forma correta é &7%syntax%"
   player-not-found: "&cEste jogador não foi encontrado ou nunca jogou antes!"
   no-permission: "&cVocê não tem permissão para fazer isso!"
-  disabled-world: "&cVocê não pode executar este comando em um mundo desabilitado!"
-  not-a-player: "&cVocê não pode executar este comando no console!"
+  disabled-world: "&cVocê não pode executar este comando em um mundo desativado!"
+  not-a-player: "&cVocê não pode executar este comando pelo console!"
   is-a-player: "&cVocê não pode executar este comando sendo um jogador!"
   not-online: "&cEste jogador não está online!"
   command-not-found: "&cComando não encontrado!"
-  illegal-type: "&cO valor que você digitou não é um(a) %type%"
+  illegal-type: "&cO valor inserido não é do tipo %type%"
 
   plugin-not-found: "%prefix% &cPlugin não encontrado!"
-  unknown-reload-cause: "%prefix% &cCausa desconhecida de recarregamento para este plugin!"
-
+  unknown-reload-cause: "%prefix% &cCausa de recarregamento desconhecida para este plugin!"
 
 reload-message:
   all-plugins: "%prefix% &aTodos os plugins foram recarregados!"
   without-cause: "%prefix% %plugin% &arecarregado!"
   with-cause: "%prefix% %cause% &arecarregado no plugin &r%plugin%"
 
-#Plugin defaults
+# Plugin defaults
 
 comment-message-sent: "[TITLE] &aSua mensagem foi enviada ao criador!"
-comment-cooldown: "%prefix% &aVocê está em cooldown para mandar uma mensagem! Espere @MINUTES_SECONDS:%time%@ para mandar novamente!"
+comment-cooldown: "%prefix% &aVocê está em cooldown para enviar comentários! Aguarde @MINUTES_SECONDS:%time%@ para enviar outro!"
+
+plugin-checking-updates: "%prefix% &eVerificando atualizações para o plugin &b%plugin%..."
+plugin-checking-updates-all: "%prefix% &eVerificando atualizações para todos os plugins..."
+
+plugin-no-updates: "%prefix% &aNenhum plugin precisa ser atualizado!"
+
+plugin-update-success: "%prefix% &aPlugin atualizado com sucesso para a versão &b%version%&a! Por favor, <click:RUN_COMMAND:/stop><hover:SHOW_TEXT:Reinicie o servidor>&e&nreinicie o servidor para aplicar a atualização</hover></click>&a!"
+plugin-update-failed: "%prefix% &cFalha ao atualizar o plugin! Verifique o console para mais informações."
 
 go-back-item: "Voltar"
 go-next-item: "Próximo"
 close-item: "&cFechar"
 refresh-item: "&9Atualizar página"
 
-go-back-to-help: "&6Voltar à ajuda"
-go-back-to-previous-commands: "&cVoltar aos comandos anteriores"
+go-back-to-help: "&6Voltar para a ajuda"
+go-back-to-previous-commands: "&cVoltar para os comandos anteriores"
 
 collaborators-menu:
 
-  title: "&0Colaboradores de %plugin%:"
+  title: "&0Colaboradores do %plugin%:"
 
   collaborators-item:
     name: "&bColaboradores"
     lore: "Clique aqui para ver os colaboradores"
 
-
 lang-not-found: "%prefix% &cIdioma não encontrado!"
 
-lang-other: "%prefix% &aVocê mudou o idioma de %target% para &b%lang%&a!"
+lang-other: "%prefix% &aVocê alterou o idioma de %target% para &b%lang%&a!"
 lang-changed-by-other: "%prefix% &aSeu idioma foi alterado para &b%lang%&a por %target%!"
 
 lang-menu:
@@ -62,11 +69,11 @@ lang-menu:
   item-click:
     - "Clique aqui para mudar o idioma para <rainbow>Português</rainbow>"
 
-  already-selected: "%prefix% &cVocê já está usando esse idioma!"
+  already-selected: "%prefix% &cVocê já está usando este idioma!"
 
   toggle-success: "%prefix% &aVocê mudou o idioma para &bportuguês!"
 
-  cooldown-to-toggle: "%prefix% &cVocê precisa esperar &b@SECONDS:%time%@ &cpara trocar de idioma novamente"
+  cooldown-to-toggle: "%prefix% &cVocê precisa aguardar &b@SECONDS:%time%@ &cpara mudar o idioma novamente"
 
 tasks-menu:
   title: "&rTarefas"
@@ -89,12 +96,12 @@ tasks-menu:
 
 task-command:
   not-found: "%prefix% &cTarefa não encontrada!"
-  deleted: "[TITLE] &aTarefa deletada!"
+  deleted: "[TITLE] &aTarefa removida!"
   stopped: "[TITLE] &aTarefa parada!"
   restarted: "[TITLE] &aTarefa reiniciada!"
 
-  already-running: "%prefix% &cTarefa já está em execução!"
-  already-stopped: "%prefix% &aTarefa já está parada!"
+  already-running: "%prefix% &cA tarefa já está em execução!"
+  already-stopped: "%prefix% &aA tarefa já está parada!"
 
 commands-display:
 
@@ -109,10 +116,10 @@ commands-display:
 commands-form:
   content: "Clique em uma opção para ver sua descrição e uso!"
   subcommands-label: "Clique para ver os subcomandos!"
-  no-subcommands: "Este comando não possui subcomandos!"
+  no-subcommands: "Não há subcomandos para este comando!"
 
-  back: "&cVoltar à ajuda"
-  subcommands-back: "&cVoltar aos comandos anteriores"
+  back: "&cVoltar para a ajuda"
+  subcommands-back: "&cVoltar para os comandos anteriores"
 
 help-menu:
 
@@ -138,27 +145,20 @@ help-menu:
       name: "&bComandos"
       lore: "&5Clique aqui para ver os comandos"
 
-  about:
-    - "&0Sobre o &9XG7Plugins"
-    - ""
-    - "&0Versão: &a%version%&r"
-    - "&0Website: &a&n%website%&r"
-    - "&0GitHub: &a&n%github%&r"
-    - "&0Discord: &a&n%discord%&r"
-    - ""
-    - "&0Este plugin foi feito"
-    - "&0para criação de outros"
-    - "&0plugins do XG7."
-    - "&0Seu objetivo é gerenciar"
-    - "&0tarefas, incluir bibliotecas"
-    - "&0(como menus, placares,"
-    - "&0etc.) e facilitar"
-    - "&0a criação de plugins."
-    - "&0Também possui um sistema"
-    - "&0de idiomas para facilitar"
-    - "&0a inclusão de novas línguas."
-    - ""
-    - "&oDesenvolvido por DaviXG7"
+  about: |
+    &rSobre &9XG7Plugins<br>
+    <br>
+    &rVersão: &a%version%&r<br>
+    &rSite: &a&n%website%&r<br>
+    &rGitHub: &a&n%github%&r<br>
+    &rDiscord: &a&n%discord%&r
+    <endp>
+    &rEste plugin foi criado para desenvolver outros plugins para a XG7.<br>
+    &rSeu objetivo é gerenciar tarefas, incluir bibliotecas (como menus, scores, etc.)
+    e facilitar<br> a criação de plugins.<br>
+    &rEle também possui um sistema de idiomas para inclusão de novos idiomas.
+    <endp>
+    &5&oDesenvolvido por DaviXG7
 
   command-help:
     title: "Comandos do &e%plugin_name%"
@@ -170,7 +170,7 @@ help-in-chat:
 
   title: "&7Bem-vindo à página de ajuda do &6XG7Plugins&7!"
 
-  content: "&eO XG7Plugins é um plugin que facilita a criação de outros plugins do XG7. Clique para ver mais informações."
+  content: "&eXG7Plugins é um plugin que tem como objetivo facilitar a criação de outros plugins para a XG7Plugins. Clique para ver mais informações."
 
   back: "&aClique para voltar à ajuda"
 
@@ -179,3 +179,138 @@ help-in-chat:
   commands: "&aComandos&f: &1clique aqui para ver os comandos"
 
   commands-title: "&7Comandos do &6XG7Plugins &8(&7%page%&8/&7%max_page%&8)"
+
+config-files:
+  title: "&rArquivos de configuração do %plugin%"
+
+  form-content: "Clique em um arquivo de configuração para editá-lo!"
+
+  config-item:
+    name: "&b%config_name%"
+    lore: "&7Caminho: &e%config_path%"
+
+  config-reloaded: "%prefix% &aConfig &b%file_name% &arecarregada!"
+  config-saved: "%prefix% &aConfig &b%file_name% &asalva!"
+
+config-editor:
+  title: "&0Editando: %path%"
+
+  close: "Fechar"
+  config-saved: "&fConfig salva: &b%saved%"
+  save: "Salvar"
+  back-to-previous-section: "Voltar para a seção anterior"
+
+  insert-value: "&aInsira um valor do tipo &e%type%&a. Digite \"cancel\" para cancelar a ação"
+  value-error: "&bNão foi possível converter o valor para %type%"
+
+  list-editor: "&aVocê está no editor de listas! Digite \"cancel\" para cancelar a edição, \"exit\" para finalizar e \"remove\" para remover o último item."
+  list-state: "&fEstado da lista: &e%list%"
+  list-remove: "&aVocê removeu %line% da lista"
+  list-empty: "&cA lista está vazia"
+
+  saved: "&aConfig salva!"
+
+  key:
+    value: "&fValor: &b%value%"
+    type: "&fTipo: &b%type%"
+
+    click-to-see: "&aClique para ver a seção"
+    click-to-edit: "&aClique para editar"
+    click-to-toggle: "&aClique para ativar/desativar"
+    click-to-delete: "&cClique direito para deletar esta linha"
+
+  add:
+    item: "&aAdicionar valor"
+
+    insert-key: "&aInsira uma chave válida. Digite \"cancel\" para cancelar a ação"
+    insert-value-type: "&aInsira o tipo do valor. Digite \"cancel\" para cancelar a ação. &bTipos disponíveis: <&e%types%"
+
+    invalid-key: "&cA chave não pode estar vazia, conter símbolos (exceto \"-\") ou começar com número"
+    invalid-type: "&cEste tipo de valor é inválido!"
+    key-exists: "&cEsta chave já existe!"
+
+    dialog-title: "Inserir um novo valor na seção"
+
+    dialog-insert-key: "Insira uma chave válida."
+    dialog-insert-value-type: "Insira o tipo do valor"
+
+    dialog-confirm: "&aConfirmar"
+    dialog-confirm-hover: "O valor será adicionado"
+    dialog-cancel: "&cCancelar"
+    dialog-cancel-hover: "Voltar para o editor de config"
+
+  confirm:
+    close-title: "&cConfirmação de fechamento"
+    confirm: "&aSim"
+    sure-to-close: "Tem certeza que deseja fechar sem salvar?"
+    back: "&cNão"
+
+  confirm-delete:
+    title: "&cConfirmação de exclusão"
+    confirm: "&aSim"
+    sure-to-delete: "Tem certeza que deseja excluir esta linha?"
+    back: "&cNão"
+
+  #+1.21.6
+  dialog:
+    title: "&fEditando: %path%"
+
+    confirm-edit: "&aConfirmar alterações"
+    confirm-hover: "O valor inserido será aplicado"
+
+    back: "&cVoltar"
+    back-hover: "Voltar para o editor de configuração"
+
+    description: "Edite %path% inserindo um valor do tipo &b%type%&r"
+    input-label: "Valor:"
+
+    list-description: "Editar lista: %path%. Deixe em branco para remover a linha"
+    list-label: "Linha %index%"
+
+config-form-editor:
+  title: "&0Editando: %path%"
+
+  content: "Escolha uma ação para continuar"
+
+  add: "&aAdicionar valor"
+  save: "&aSalvar"
+  back: "&rVoltar para a seção anterior"
+  delete: "&6Excluir"
+  close: "&cFechar. &aSalvo = &b%saved%"
+
+  close-confirmation:
+    title: "&cConfirmação de fechamento"
+    confirm: "&aSim"
+    sure-to-close: "Tem certeza que deseja fechar sem salvar?"
+    back: "&cNão"
+
+  delete-form:
+    title: "Excluir de %path%"
+    content: "Escolha uma seção para excluir"
+
+  delete-confirmation:
+    title: "&cConfirmação de exclusão"
+    confirm: "&aSim"
+    sure-to-delete: "Tem certeza que deseja excluir esta linha?"
+    back: "&cNão"
+
+  value-editor:
+    title: "&0Editando: %path%"
+    list-title: "&0Editando lista em: %path%"
+
+    value-toggle: "Ativar/Desativar"
+    value-placeholder: "Insira aqui..."
+    value-input: "Insira um valor do tipo %type%"
+
+    list-label: "Linha %index%"
+    list-placeholder: "Deixe em branco para remover esta linha"
+    new-line-label: "Nova linha"
+    new-line-placeholder: "Deixe em branco para não fazer nada"
+
+  add-form:
+    title: "&rInsira uma chave e valor válidos"
+
+    key-label: "Chave:"
+    key-placeholder: "Não pode estar vazia e deve corresponder a \"^[a-zA-Z][a-zA-Z0-9-]*$\""
+
+    type-label: "Tipo:"

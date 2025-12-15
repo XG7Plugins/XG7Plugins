@@ -65,7 +65,7 @@ public class ConfigIndexMenu extends PagedMenu {
 
         return Arrays.asList(
                 ChangePageItem.previousPageItem(Slot.of(6, 1))
-                        .name("lang:[config-editor.previous-page]"),
+                        .name("lang:[go-back-item]"),
 
                 Item.from(XMaterial.IRON_AXE)
                         .name("lang:[config-editor.back-to-previous-section]")
@@ -86,7 +86,7 @@ public class ConfigIndexMenu extends PagedMenu {
                         })),
 
                 ChangePageItem.nextPageItem(Slot.of(6, 9))
-                        .name("lang:[config-editor.next-page]")
+                        .name("lang:[go-next-item]")
         );
     }
 
@@ -154,8 +154,8 @@ public class ConfigIndexMenu extends PagedMenu {
 
     @Override
     public void onRepeatingUpdate(BasicMenuHolder holder) {
-        holder.getInventoryUpdater().setItem(Item.from(XMaterial.BARRIER)
-                .name("lang:[config-editor.close]")
+        holder.getInventoryUpdater().setItem(Item.from(XMaterial.matchXMaterial("BARRIER").orElse(XMaterial.OAK_DOOR))
+                .name("lang:[close-item]")
                 .lore("lang:[config-editor.config-saved]")
                 .setBuildPlaceholders(Collections.singletonList(Pair.of("saved", editor.isSaved() + "")))
                 .toClickableInventoryItem(Slot.of(6, 5), (actionEvent -> {
