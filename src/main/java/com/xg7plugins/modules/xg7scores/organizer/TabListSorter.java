@@ -169,4 +169,11 @@ public class TabListSorter {
 
         });
     }
+
+    public void deleteAllTeamsForPlayer(Player player) {
+        teams.values().forEach(team -> {
+            team.setTeamMode(WrapperPlayServerTeams.TeamMode.REMOVE);
+            PacketEvents.getAPI().getPlayerManager().sendPacket(player, team);
+        });
+    }
 }

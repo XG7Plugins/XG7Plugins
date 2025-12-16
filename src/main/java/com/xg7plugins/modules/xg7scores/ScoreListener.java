@@ -11,15 +11,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class ScoreListener implements Listener {
 
     @EventHandler
-    public void onLeave(PlayerQuitEvent event) {
-        XG7Plugins.getAPI().scores().removePlayer(event.getPlayer());
-
-        if (!ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("organize-tablist", true)) return;
-
-        XG7Plugins.getAPI().scores().getOrganizer().removePlayer(event.getPlayer());
-        XG7Plugins.getAPI().scores().getOrganizer().removeFromUpdateList(event.getPlayer().getUniqueId());
-    }
-    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         XG7Plugins.getAPI().scores().addPlayer(event.getPlayer());
 
@@ -32,6 +23,18 @@ public class ScoreListener implements Listener {
         sorter.addToUpdateList(event.getPlayer().getUniqueId());
     }
 
+    @EventHandler
+    public void onLeave(PlayerQuitEvent event) {
+        XG7Plugins.getAPI().scores().removePlayer(event.getPlayer());
+
+        if (!ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("organize-tablist", true)) return;
+
+        TabListSorter sorter = XG7Plugins.getAPI().scores().getOrganizer();
+
+        sorter.removePlayer(event.getPlayer());
+        sorter.deleteAllTeamsForPlayer(event.getPlayer());
+        sorter.removeFromUpdateList(event.getPlayer().getUniqueId());
+    }
 
     @Override
     public boolean isEnabled() {
