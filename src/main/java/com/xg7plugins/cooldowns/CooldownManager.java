@@ -108,7 +108,7 @@ public class CooldownManager {
             });
         });
 
-        cooldowns.clear(); // Limpa todos os dados após cancelar
+        cooldowns.clear();
     }
 
 

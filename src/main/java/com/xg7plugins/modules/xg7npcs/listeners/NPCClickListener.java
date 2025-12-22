@@ -32,13 +32,9 @@ public class NPCClickListener implements PacketListener {
 
         WrapperPlayClientInteractEntity packet = new WrapperPlayClientInteractEntity(event);
 
-        System.out.println("Recebendo evento de click interact entity");
-
         boolean isSneaking = ((Player) event.getPlayer()).isSneaking();
 
         int entityId = packet.getEntityId();
-
-        System.out.println("Entity ID: " + entityId);
 
         WrapperPlayClientInteractEntity.InteractAction action = packet.getAction();
 

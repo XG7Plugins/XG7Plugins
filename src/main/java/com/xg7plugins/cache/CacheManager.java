@@ -7,6 +7,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
 
+import com.xg7plugins.utils.PluginKey;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -42,7 +43,7 @@ public class CacheManager {
     /**
      * Local cache storage using Caffeine cache implementation
      */
-    private final HashMap<String, Cache<@NotNull Object, Object>> caches;
+    private final HashMap<PluginKey, Cache<@NotNull Object, Object>> caches;
 
     public CacheManager(XG7Plugins plugin) {
 
@@ -90,7 +91,7 @@ public class CacheManager {
                 else cacheBuilder.expireAfterAccess(cache.getExpireTime(), TimeUnit.MILLISECONDS);
             }
 
-            caches.put(cache.getPlugin().getName() + ":" + cache.getName(), cacheBuilder.build());
+            caches.put(PluginKey.of(cache.getPlugin(), cache.getName()), cacheBuilder.build());
         }
     }
 
@@ -98,9 +99,7 @@ public class CacheManager {
      * Closes the Redis connection pool and performs cleanup
      */
     public void shutdown() {
-        if (pool != null) {
-            pool.close();
-        }
+        if (pool != null) pool.close();
     }
 
     /**
@@ -121,7 +120,7 @@ public class CacheManager {
 
             }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
         }
-        caches.get(cache.getPlugin().getName() + ":" + cache.getName()).put(key, value);
+        caches.get(PluginKey.of(cache.getPlugin(), cache.getName())).put(key, value);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -146,7 +145,7 @@ public class CacheManager {
 
         }
 
-        return CompletableFuture.completedFuture((T) caches.get(cache.getPlugin().getName() + ":" + cache.getName()).getIfPresent(key));
+        return CompletableFuture.completedFuture((T) caches.get(PluginKey.of(cache.getPlugin(), cache.getName())).getIfPresent(key));
     }
 
     /**
@@ -166,7 +165,7 @@ public class CacheManager {
             }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
         }
 
-        caches.get(cache.getPlugin().getName() + ":" + cache.getName()).invalidate(key);
+        caches.get(PluginKey.of(cache.getPlugin(), cache.getName())).invalidate(key);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -185,7 +184,7 @@ public class CacheManager {
             }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
         }
 
-        caches.get(cache.getPlugin().getName() + ":" + cache.getName()).invalidateAll();
+        caches.get(PluginKey.of(cache.getPlugin(), cache.getName())).invalidateAll();
         return CompletableFuture.completedFuture(null);
     }
 
@@ -208,7 +207,7 @@ public class CacheManager {
             }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
         }
 
-        return CompletableFuture.completedFuture(caches.get(cache.getPlugin().getName() + ":" + cache.getName()).getIfPresent(key) != null);
+        return CompletableFuture.completedFuture(caches.get(PluginKey.of(cache.getPlugin(), cache.getName())).getIfPresent(key) != null);
     }
 
     /**
@@ -237,7 +236,7 @@ public class CacheManager {
             }, XG7Plugins.getAPI().taskManager().getExecutor("cache"));
         }
 
-        return CompletableFuture.completedFuture((Map<K, V>) caches.get(cache.getPlugin().getName() + ":" + cache.getName()).asMap());
+        return CompletableFuture.completedFuture((Map<K, V>) caches.get(PluginKey.of(cache.getPlugin(), cache.getName())).asMap());
     }
 
 

@@ -30,12 +30,22 @@ public class SkinRequest {
             Skin.class
     );
 
+    /**
+     * Requests the skin of a player by their UUID.
+     * @param uuid The UUID of the player whose skin is being requested.
+     * @return A CompletableFuture that will complete with the Skin object.
+     */
     public static CompletableFuture<Skin> requestSkinByUUID(UUID uuid) {
         if (cachedSkins.containsKey(uuid).join()) return CompletableFuture.completedFuture(cachedSkins.get(uuid).join());
 
         return CompletableFuture.supplyAsync(() -> cacheAndGet(uuid, new Skin(MojangAPIUtil.requestPlayerTextureProperties(uuid))));
     }
 
+    /**
+     * Requests the skin of a player by their Player object.
+     * @param player The Player whose skin is being requested.
+     * @return A CompletableFuture that will complete with the Skin object.
+     */
     public static CompletableFuture<Skin> requestSkinByPlayer(Player player) {
         if (cachedSkins.containsKey(player.getUniqueId()).join()) return cachedSkins.get(player.getUniqueId());
 
@@ -50,6 +60,11 @@ public class SkinRequest {
         return CompletableFuture.completedFuture(cacheAndGet(player.getUniqueId(), new Skin(properties)));
     }
 
+    /**
+     * Requests the skin of a player by their username.
+     * @param username The username of the player whose skin is being requested.
+     * @return A CompletableFuture that will complete with the Skin object.
+     */
     public static CompletableFuture<Skin> requestSkinByPlayerName(String username) {
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -68,6 +83,11 @@ public class SkinRequest {
         });
     }
 
+    /**
+     * Requests a skin from an image URL.
+     * @param url The URL of the image to create the skin from.
+     * @return A CompletableFuture that will complete with the Skin object.
+     */
     public static CompletableFuture<Skin> requestSkinByImageURL(String url) {
 
         if (cachedSkins.containsKey(UUID.fromString(url)).join()) return cachedSkins.get(UUID.fromString(url));
@@ -81,6 +101,12 @@ public class SkinRequest {
         });
     }
 
+    /**
+     * Creates a Skin object from an InputStream of an image.
+     * @param stream The InputStream of the image.
+     * @return The Skin object created from the image.
+     * @throws IOException If there is an error reading the InputStream.
+     */
     public static Skin getSkinByImage(InputStream stream) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
@@ -108,9 +134,17 @@ public class SkinRequest {
         return new Skin(value, "");
     }
 
+    /**
+     * Clears the cached skin for a specific UUID.
+     * @param uuid The UUID of the player whose cached skin should be cleared.
+     */
     public static void clear(UUID uuid) {
         cachedSkins.remove(uuid).join();
     }
+
+    /**
+     * Clears all cached skins.
+     */
     public static void clearCache() {
         cachedSkins.clear();
     }

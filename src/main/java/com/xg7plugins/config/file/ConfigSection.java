@@ -142,13 +142,36 @@ public class ConfigSection {
         return true;
     }
 
+    /**
+     * Gets a value from the configuration with type conversion and a default value.
+     * @param path The path to the configuration value
+     * @param defaultValue The default value to return if the path does not exist
+     * @param optionalTypeArgs Optional arguments for type conversion
+     * @return The value at the specified path, or the default value if not found
+     * @param <T> The expected return type
+     */
     public <T> T get(String path, T defaultValue, Object... optionalTypeArgs) {
         return get(path, (Class<T>) defaultValue.getClass(), defaultValue, true, optionalTypeArgs);
     }
 
+    /**
+     * Gets a value from the configuration with type conversion.
+     * @param path The path to the configuration value
+     * @param optionalTypeArgs Optional arguments for type conversion
+     * @return The value at the specified path, or the default value if not found
+     * @param <T> The expected return type
+
+     */
     public <T> T get(String path, Class<T> type, Object... optionalTypeArgs) {
         return get(path, type, null, true, optionalTypeArgs);
     }
+
+    /**
+     * Gets a value from the configuration without type conversion.
+     * @param path The path to the configuration value
+     * @return The value at the specified path
+     * @param <T> The expected return type
+     */
     public <T> T get(String path) {
         return (T) get(path, Object.class);
     }
@@ -178,8 +201,14 @@ public class ConfigSection {
         return null;
     }
 
+    /**
+     * Gets the type of the value associated with the given key in the configuration.
+     *
+     * @param key The key to check the type for
+     * @return The Class representing the type of the value
+     */
     public Class<?> getType(String key) {
-        Object object = data.get(key);
+        Object object = getByPath(key);
         String objectAsString = object.toString();
 
         if (TimeParser.isTime(objectAsString)) {
@@ -194,6 +223,15 @@ public class ConfigSection {
         return object.getClass();
     }
 
+    /**
+     * Gets a value from the configuration with type conversion using a type adapter.
+     *
+     * @param path The path to the configuration value
+     * @param type The expected class type
+     * @param optionalTypeArgs Optional arguments for type conversion
+     * @return The value at the specified path, converted to the expected type
+     * @param <T> The expected return type
+     */
     public <T> T getAs(String path, Class<T> type, Object... optionalTypeArgs) {
 
         ConfigTypeAdapter<T> adapter = (ConfigTypeAdapter<T>) XG7Plugins.getAPI().configManager(file.getPlugin()).getAdapters().get(type);
@@ -253,15 +291,22 @@ public class ConfigSection {
         return getList(path,type, true);
     }
 
-
+    /**
+     * Gets the current path of this configuration section.
+     * @return The current path as a string
+     */
     public String getPath() {
         return currentPath;
     }
 
-    //Return the last path -> config.section -> section
+    /**
+     * @return the last path -> config.section -> section
+     * @deprecated use #getPath() instead
+     */
+    @Deprecated
     public String getName() {
         String path = getPath();
-        if (path.isEmpty()) return ""; // raiz
+        if (path.isEmpty()) return ""; // root
         int lastDot = path.lastIndexOf(".");
         return lastDot == -1 ? path : path.substring(lastDot + 1);
     }
@@ -290,19 +335,44 @@ public class ConfigSection {
         return milliseconds == 0 ? defaultTime : Time.of(milliseconds);
     }
 
+    /**
+     * Gets a time duration value from the configuration.
+     * Converts a string time format to milliseconds.
+     *
+     * @param path Path to the time value
+     * @param defaultTime The default time to return if the path does not exist
+     * @return The time value at the specified path, or the default time if not found
+     */
     @NotNull
     public Time getTimeOrDefault(String path, Time defaultTime) {
         return getTimeOrDefault(path, defaultTime, true);
     }
-    
+
+    /**
+     * Gets a time duration value from the configuration.
+     * @param path Path to the time value
+     * @return The time value at the specified path
+     */
+    @NotNull
     public Time getTime(String path) {
         return getTimeOrDefault(path,Time.of(0));
     }
 
+    /**
+     * Gets a time duration value from the configuration in milliseconds.
+     * @param path The path to the time value
+     * @param defaultValue The default value in milliseconds if the path does not exist
+     * @return The time value at the specified path in milliseconds, or the default value if not found
+     */
     public Long getTimeInMilliseconds(String path, Long defaultValue) {
         return getTimeOrDefault(path, Time.of(defaultValue)).toMilliseconds();
     }
 
+    /**
+     * Gets a time duration value from the configuration in milliseconds.
+     * @param path The path to the time value
+     * @return The time value at the specified path in milliseconds
+     */
     public Long getTimeInMilliseconds(String path) {
         return getTime(path).toMilliseconds();
     }
@@ -325,10 +395,20 @@ public class ConfigSection {
         data.put(path, value);
     }
 
+    /**
+     * Removes a value from the configuration at the specified path.
+     * @param path The path of the value to remove
+     */
     public void remove(String path) {
         data.remove(path);
     }
 
+    /**
+     * Gets all keys in the configuration section.
+     *
+     * @param deep Whether to include keys from nested sections
+     * @return A set of all keys in the configuration section
+     */
     @SuppressWarnings("unchecked")
     public Set<String> getKeys(boolean deep) {
         Set<String> keys = new LinkedHashSet<>();
@@ -345,7 +425,11 @@ public class ConfigSection {
         return keys;
     }
 
-
+    /**
+     * Checks if the configuration contains a value at the specified path.
+     * @param path The path to check
+     * @return true if the path exists, false otherwise
+     */
     public boolean contains(String path) {
         if (path == null || path.isEmpty()) return false;
 
@@ -384,13 +468,27 @@ public class ConfigSection {
         return data.get(path) != null && type.isAssignableFrom(data.get(path).getClass());
     }
 
+    /**
+     * Checks if the configuration section exists.
+     * @return true if the section exists, false otherwise
+     */
     public boolean exists() {
         return file.exists() && data != null;
     }
 
+    /**
+     * Gets the parent configuration section.
+     * @return The parent configuration section
+     */
     public ConfigSection parent() {
         return currentPath.contains(".") ? file.section(currentPath.substring(0, currentPath.lastIndexOf("."))) : file.root();
     }
+
+    /**
+     * Gets a child configuration section at the specified path.
+     * @param path The path to the child section
+     * @return The child configuration section
+     */
     public ConfigSection child(String path) {
         return currentPath.isEmpty() ? file.section(path) : file.section(this.currentPath + "." + path);
     }

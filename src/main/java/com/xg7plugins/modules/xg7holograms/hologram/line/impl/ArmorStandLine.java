@@ -60,7 +60,6 @@ public class ArmorStandLine implements HologramLine {
                         0, 0, null
                 );
 
-        System.out.println("Spawning " + packet);
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(livingHologram.getPlayer(), packet);
 

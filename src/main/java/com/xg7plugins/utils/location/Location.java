@@ -88,6 +88,16 @@ public class Location implements Cloneable {
         this.z += z;
         return this;
     }
+
+    /**
+     * Adds the given coordinates and rotation to this location
+     * @param x X coordinate to add
+     * @param y Y coordinate to add
+     * @param z Z coordinate to add
+     * @param yaw Yaw rotation to add
+     * @param pitch Pitch rotation to add
+     * @return This location object
+     */
     public Location add(double x, double y, double z,float yaw, float pitch) {
         this.x += x;
         this.y += y;
@@ -96,6 +106,12 @@ public class Location implements Cloneable {
         this.pitch += pitch;
         return this;
     }
+    /**
+     * Adds the given location's coordinates and rotation to this location
+     *
+     * @param locationToAdd Location to add
+     * @return This location object
+     */
     public Location add(Location locationToAdd) {
         this.x += locationToAdd.getX();
         this.y += locationToAdd.getY();
@@ -104,18 +120,44 @@ public class Location implements Cloneable {
         this.pitch += locationToAdd.getPitch();
         return this;
     }
+
+    /**
+     * Adds the given vector's coordinates to this location
+     *
+     * @param vector Vector to add
+     * @return This location object
+     */
     public Location add(Vector vector) {
         this.x += vector.getX();
         this.y += vector.getY();
         this.z += vector.getZ();
         return this;
     }
+
+    /**
+     * Subtracts the given coordinates from this location
+     *
+     * @param x X coordinate to subtract
+     * @param y Y coordinate to subtract
+     * @param z Z coordinate to subtract
+     * @return This location object
+     */
     public Location subtract(double x, double y, double z) {
         this.x -= x;
         this.y -= y;
         this.z -= z;
         return this;
     }
+
+    /**
+     * Subtracts the given coordinates and rotation from this location
+     * @param x X coordinate to subtract
+     * @param y Y coordinate to subtract
+     * @param z Z coordinate to subtract
+     * @param yaw Yaw rotation to subtract
+     * @param pitch Pitch rotation to subtract
+     * @return This location object
+     */
     public Location subtract(double x, double y, double z,float yaw, float pitch) {
         this.x -= x;
         this.y -= y;
@@ -124,6 +166,13 @@ public class Location implements Cloneable {
         this.pitch -= pitch;
         return this;
     }
+
+    /**
+     * Subtracts the given location's coordinates and rotation from this location
+     *
+     * @param locationToAdd Location to subtract
+     * @return This location object
+     */
     public Location subtract(Location locationToAdd) {
         this.x -= locationToAdd.getX();
         this.y -= locationToAdd.getY();
@@ -132,6 +181,13 @@ public class Location implements Cloneable {
         this.pitch -= locationToAdd.getPitch();
         return this;
     }
+
+    /**
+     * Subtracts the given vector's coordinates from this location
+     *
+     * @param vector Vector to subtract
+     * @return This location object
+     */
     public Location subtract(Vector vector) {
         this.x -= vector.getX();
         this.y -= vector.getY();
@@ -139,9 +195,21 @@ public class Location implements Cloneable {
         return this;
     }
 
+    /**
+     * Converts this location's coordinates to a Bukkit's Vector object
+     *
+     * @return A Vector representing this location's coordinates
+     */
     public Vector toVector() {
         return new Vector(x,y,z);
     }
+
+    /**
+     * Converts this location's coordinates to a Vector3d object
+     * for PacketEvents systems
+     *
+     * @return A Vector3d representing this location's coordinates
+     */
     public Vector3d toVector3d() {
         return new Vector3d(x,y,z);
     }
@@ -174,6 +242,12 @@ public class Location implements Cloneable {
         return Math.abs(location.getX() - x) <= distance && Math.abs(location.getY() - y) <= distance && Math.abs(location.getZ() - z) <= distance;
     }
 
+    /**
+     * Calculates the Euclidean distance to another location
+     *
+     * @param location Location to measure distance to
+     * @return Distance to the location, or Double.MAX_VALUE if in different worlds
+     */
     public double distance(Location location) {
         if (location == null) return Double.MAX_VALUE;
         if (!location.getWorld().getUID().equals(getWorld().getUID())) return Double.MAX_VALUE;
@@ -205,26 +279,58 @@ public class Location implements Cloneable {
     public static Location fromBukkit(org.bukkit.Location location) {
         return new Location(location.getWorld().getName(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
     }
+
+    /**
+     * Converts a Player's location to this location type
+     * @param player Player whose location to convert
+     * @return New Location object
+     */
     public static Location fromPlayer(Player player) {
         return fromBukkit(player.getLocation());
     }
+
+
+    /**
+     * Converts this location to a Bukkit Location object
+     * @return Bukkit Location
+     */
     public org.bukkit.Location getBukkitLocation() {
         return new org.bukkit.Location(getWorld(), x, y, z, yaw, pitch);
     }
+
+    /**
+     * Converts this location to a PacketEvents Location object
+     * @return PacketEvents Location
+     */
     public com.github.retrooper.packetevents.protocol.world.Location getProtocolLocation() {
         return new com.github.retrooper.packetevents.protocol.world.Location(x,y,z,yaw,pitch);
     }
 
+    /**
+     * Teleports an entity to this location
+     * @param entity Entity to teleport
+     */
     public void teleport(Entity entity) {
         entity.teleport(getBukkitLocation());
     }
 
+    /**
+     * Spawns an entity of the given type at this location
+     * @param type Entity type to spawn
+     * @return The spawned entity, or null if the world is not found
+     */
     public Entity spawnEntity(EntityType type) {
         World world = getWorld();
         if (world == null) return null;
         return world.spawnEntity(getBukkitLocation(), type);
     }
 
+    /**
+     * Plays a sound at this location
+     * @param sound Sound to play
+     * @param volume The volume of the sound
+     * @param pitch The pitch of the sound
+     */
     public void playSound(Sound sound, float volume, float pitch) {
         World world = getWorld();
         if (world == null) return;

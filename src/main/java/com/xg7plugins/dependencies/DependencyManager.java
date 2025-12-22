@@ -33,6 +33,12 @@ public class DependencyManager {
         return loadedDependencies.containsKey(name) || Bukkit.getPluginManager().isPluginEnabled(name);
     }
 
+    /**
+     * Checks if a dependency exists either in the loaded dependencies or in the plugin manager.
+     *
+     * @param name The name of the dependency to check
+     * @return true if the dependency exists, false otherwise
+     */
     public boolean exists(String name) {
         return isLoaded(name) || Bukkit.getPluginManager().getPlugin(name) != null;
     }

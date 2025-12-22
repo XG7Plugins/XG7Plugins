@@ -127,9 +127,4 @@ public class HTTP {
         return makeRequest(url, HTTPMethod.DELETE, headers, null).send();
     }
 
-
-
-
-
-
 }

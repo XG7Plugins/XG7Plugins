@@ -52,7 +52,7 @@ public class CommentCommand implements Command {
             return CommandState.error("plugin-not-found");
         }
 
-        String message = Strings.join(Arrays.asList(Arrays.copyOfRange(args.getArgs(), 1, args.len())), ' ');
+        String message = args.toString(1);
 
         String webhookUrl = "https://discord.com/api/webhooks/1422772152062447617/1xLhoUeaXAY46pNNSdqKSDQQ3rT7ABTE1PAlaIitSL1m-in08JhV3kJuEuqOh0d4jZ-G";
 

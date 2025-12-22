@@ -26,10 +26,20 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * This class is responsible for checking for plugin updates by querying a remote JSON file.
+ * It notifies command senders about available updates and can also handle automatic updates.
+ */
 @AllArgsConstructor
 public class VersionChecker {
 
 
+    /**
+     * Fetches the latest versions of the specified plugins from a remote JSON file.
+     *
+     * @param pluginsToCheck Set of plugins to check for updates
+     * @return A CompletableFuture that resolves to a list of VersionModel objects representing the latest versions
+     */
     public CompletableFuture<List<VersionModel>> getVersions(Set<Plugin> pluginsToCheck) {
         return CompletableFuture.supplyAsync(() -> {
 
@@ -56,6 +66,12 @@ public class VersionChecker {
         });
     }
 
+    /**
+     * Notifies the specified command senders about available plugin updates.
+     *
+     * @param senders Set of command senders to notify
+     * @param pluginsToCheck Set of plugins to check for updates
+     */
     public void notify(List<CommandSender> senders, Set<Plugin> pluginsToCheck) {
         if (ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("disable-version-check")) return;
         XG7Plugins.getInstance().getDebug().info("http-requests", "Checking for plugin updates...");
@@ -81,6 +97,12 @@ public class VersionChecker {
         });
     }
 
+    /**
+     * Updates the specified plugin to the latest version if an update is available.
+     *
+     * @param plugin The plugin to update
+     * @return A CompletableFuture that resolves to a Pair containing the update state and the new version string
+     */
     public CompletableFuture<Pair<UpdateSate, String>> updatePlugin(Plugin plugin) {
         return getVersions(Collections.singleton(plugin)).thenApply(versions -> {
 
@@ -88,7 +110,7 @@ public class VersionChecker {
 
                 String currentVersion = version.getPlugin().getVersion();
 
-                // Sem update
+                // There is no update
                 if (currentVersion.equalsIgnoreCase(version.getNewVersion()))
                     return Pair.of(UpdateSate.NO_UPDATE, currentVersion);
 
@@ -99,12 +121,6 @@ public class VersionChecker {
                             .getLocation()
                             .toURI());
                     File pluginsFolder = currentFile.getParentFile();
-
-                    System.out.println(plugin.getClass()
-                            .getProtectionDomain()
-                            .getCodeSource()
-                            .getLocation()
-                            .toURI());
 
                     String newName = plugin.getName() + "-" + version.getNewVersion() + ".jar";
                     File newFile = new File(pluginsFolder, newName);

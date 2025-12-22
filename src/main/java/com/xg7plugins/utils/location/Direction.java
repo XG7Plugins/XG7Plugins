@@ -3,6 +3,9 @@ package com.xg7plugins.utils.location;
 import lombok.Getter;
 import org.bukkit.entity.Entity;
 
+/**
+ * Enum representing cardinal and intercardinal directions with associated yaw values.
+ */
 @Getter
 public enum Direction {
 
@@ -22,6 +25,12 @@ public enum Direction {
         this.yaw = yaw;
     }
 
+    /**
+     * Determines the closest Direction based on a given yaw angle.
+     *
+     * @param yaw The yaw angle in degrees.
+     * @return The closest Direction.
+     */
     public static Direction fromYaw(float yaw) {
         yaw = (yaw % 360 + 360) % 360;
 
@@ -41,6 +50,12 @@ public enum Direction {
         return closest;
     }
 
+    /**
+     * Determines the Direction of a given entity based on its yaw.
+     *
+     * @param entity The entity whose direction is to be determined.
+     * @return The Direction the entity is facing.
+     */
     public static Direction fromEntity(Entity entity) {
         return fromYaw(entity.getLocation().getYaw());
     }

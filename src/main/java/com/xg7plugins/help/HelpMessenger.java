@@ -15,6 +15,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.geysermc.floodgate.api.FloodgateApi;
 
+/**
+ * Help framework messenger class
+ */
 @AllArgsConstructor
 @Getter
 public class HelpMessenger {

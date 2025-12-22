@@ -8,16 +8,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation used to mark classes that handle packet events in the plugin system.
- * This annotation configures the priority and type of packets that the handler will process.
+ * Annotation used to mark classes that sets the priority for packet event handlers.
  * <p>
  * Example usage:
  * </p>
  * <pre>
  * <code>
- * {@literal @}PacketEventHandler(priority = PacketListenerPriority.HIGH, packet = PacketEventType.ALL)
- * public class MyPacketHandler {
+ * {@literal @}PacketEventHandler(priority = PacketListenerPriority.HIGH)
+ * public class MyPacketHandler implements PacketListener {
  *     // Handler implementation
+ *
+ *     Set<PacketTypeCommon> getHandledEvents();
  * }
  * </code>
  * </pre>

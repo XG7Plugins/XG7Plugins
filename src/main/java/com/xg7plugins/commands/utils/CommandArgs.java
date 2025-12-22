@@ -12,7 +12,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Utility class for handling and parsing command arguments.
@@ -68,6 +71,16 @@ public class CommandArgs {
         if (type == Byte.class || type == byte.class) return Parser.BYTE.convert(args[index]);
         if (type == Character.class || type == char.class) return Parser.CHAR.convert(args[index]);
 
+        if (type.isEnum()) {
+            @SuppressWarnings("unchecked")
+            T[] constants = type.getEnumConstants();
+            for (T constant : constants) {
+                if (constant.toString().equalsIgnoreCase(args[index])) {
+                    return constant;
+                }
+            }
+        }
+
         return null;
     }
 
@@ -81,6 +94,20 @@ public class CommandArgs {
         return String.join(" ", args);
     }
 
+    /**
+     * Converts arguments starting from the specified index to a single space-separated string.
+     *
+     * @param index The starting index for joining arguments
+     * @return A string containing arguments from the specified index joined with spaces
+     */
+    public String toString(int index) {
+        return Arrays.stream(args).skip(index).collect(Collectors.joining(" "));
+    }
+
+    /**
+     * Applies the given consumer function to each argument in the array.
+     * @param consumer The consumer function to apply to each argument
+     */
     public void forEach(Consumer<String> consumer) {
         for (String arg : args) {
             consumer.accept(arg);

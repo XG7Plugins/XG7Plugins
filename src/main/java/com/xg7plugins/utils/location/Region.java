@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Entity;
 
-@Getter
 /**
  * Represents a 3D rectangular region in a Minecraft world defined by two corner points.
  * This class provides functionality to check if locations are within the region and
  * calculate various geometric properties.
  */
+@Getter
 public class Region implements Cloneable {
 
     private Location startPoint;
@@ -29,6 +29,16 @@ public class Region implements Cloneable {
         setPoints(location1, location2);
     }
 
+    /**
+     * Sets the corner points of the region.
+     * The points are automatically sorted so that startPoint contains the minimum coordinates
+     * and endPoint contains the maximum coordinates.
+     *
+     * @param location1 The first corner point of the region
+     * @param location2 The second corner point of the region
+     * @return The updated Region instance
+     * @throws IllegalArgumentException if the points are not in the same world
+     */
     public Region setPoints(Location location1, Location location2) {
         if (!location1.getWorldName().equals(location2.getWorldName())) {
             throw new IllegalArgumentException("Both locations must be in the same world");
@@ -96,6 +106,12 @@ public class Region implements Cloneable {
         }
     }
 
+    /**
+     * Calculates the area of the specified side of the region.
+     *
+     * @param side The side for which to calculate the area
+     * @return The area in square blocks
+     */
     public double getArea(Side side) {
         double dx = Math.abs(endPoint.getX() - startPoint.getX());
         double dy = Math.abs(endPoint.getY() - startPoint.getY());

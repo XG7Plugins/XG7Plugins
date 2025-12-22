@@ -62,6 +62,7 @@ import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Metrics;
 import com.xg7plugins.loader.VersionChecker;
+import com.xg7plugins.utils.PluginKey;
 import com.xg7plugins.utils.XG7PluginsPlaceholderExpansion;
 import com.xg7plugins.modules.xg7dialogs.listener.DialogListener;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
@@ -81,6 +82,10 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+/**
+ * Main class for the XG7Plugins framework.
+ * Manages loading, enabling, disabling, and reloading of plugins and their components.
+ */
 @Getter(AccessLevel.PUBLIC)
 @PluginSetup(
         prefix = "§bXG§37P§9lu§1gins§r",
@@ -267,8 +272,7 @@ public class XG7Plugins extends Plugin {
 
     @Override
     public List<Command> loadCommands() {
-        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new CommentCommand(), new UpdateCommand(),
-        new Test(), new ConfigCommand());
+        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new CommentCommand(), new UpdateCommand(), new ConfigCommand());
     }
 
     @Override
@@ -327,6 +331,10 @@ public class XG7Plugins extends Plugin {
         return new HelpMessenger(this, helpCommandGUI, helpCommandForm, helpInChat);
     }
 
+    /**
+     * Loads the specified plugin, initializing its components and dependencies.
+     * @param plugin The plugin to load
+     */
     public void loadPlugin(Plugin plugin) {
         long msLoading = System.currentTimeMillis();
 
@@ -360,6 +368,10 @@ public class XG7Plugins extends Plugin {
 
     }
 
+    /**
+     * Enables the specified plugin, activating its features and registering its components.
+     * @param plugin The plugin to enable
+     */
     public void enablePlugin(Plugin plugin) {
         long msEnabling = System.currentTimeMillis();
 
@@ -457,6 +469,10 @@ public class XG7Plugins extends Plugin {
         plugin.getDebug().log(plugin.getName() + " enabled in §b" + (System.currentTimeMillis() - msEnabling) + "ms§r.");
     }
 
+    /**
+     * Disables the specified plugin, deactivating its features and unregistering its components.
+     * @param plugin The plugin to disable
+     */
     public void disablePlugin(Plugin plugin) {
         debug.log("Disabling " + plugin.getName() + "...");
 
@@ -476,18 +492,45 @@ public class XG7Plugins extends Plugin {
         plugin.getExtensionManager().disableExtensions();
     }
 
+    /**
+     * Registers the specified plugin in the framework's plugin registry.
+     * @param plugin The plugin to register
+     */
     public void registerPlugin(Plugin plugin) {
         this.plugins.put(plugin.getJavaPlugin(), plugin);
     }
+
+    /**
+     * Unregisters the specified plugin from the framework's plugin registry.
+     * @param plugin The plugin to unregister
+     */
     public void unregisterPlugin(Plugin plugin) {
         this.plugins.remove(plugin.getJavaPlugin());
     }
 
+    /**
+     * Retrieves the singleton instance of the XG7Plugins framework.
+     * @return The XG7Plugins instance
+     */
     public static XG7Plugins getInstance() {
         return (XG7Plugins) XG7PluginsLoader.getCore();
     }
+
+    /**
+     * Retrieves the API instance for interacting with the XG7Plugins framework.
+     * @return The XG7PluginsAPI instance
+     */
     public static XG7PluginsAPI getAPI() {
         return (XG7PluginsAPI) XG7Plugins.getInstance().getApi();
+    }
+
+    /**
+     * Creates a PluginKey for the specified plugin ID.
+     * @param id The plugin ID
+     * @return The PluginKey instance
+     */
+    public static PluginKey getPluginID(String id) {
+        return PluginKey.of(XG7Plugins.getInstance(), id);
     }
 
 

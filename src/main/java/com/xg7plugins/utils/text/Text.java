@@ -104,53 +104,113 @@ public class Text {
         return this;
     }
 
+    /**
+     * Replaces a single placeholder in the text with color translation
+     * @param placeholder Placeholder to replace (without % symbols)
+     * @param replacement Replacement text
+     * @return This Text instance for chaining
+     */
     public Text replace(String placeholder, String replacement) {
         return replace(placeholder, replacement, true);
     }
 
+    /**
+     * Replaces a literal string in the text without adding % symbols
+     *
+     * @param s           The string to replace
+     * @param replacement The replacement text
+     * @return This Text instance for chaining
+     */
     public Text replaceLiteral(String s, String replacement) {
         this.text = this.text.replace(s, replacement);
         return this;
     }
 
+    /**
+     * Replaces multiple placeholders in the text
+     *
+     * @param replacements Array of Pair<placeholder, replacement>
+     * @return This Text instance for chaining
+     */
     @SafeVarargs
     public final Text replaceAll(Pair<String, String>... replacements) {
         if (replacements == null) return this;
         Arrays.stream(replacements).forEach(replacement -> this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond()));
         return this;
     }
+
+    /**
+     * Replaces multiple placeholders in the text
+     *
+     * @param replacements List of Pair<placeholder, replacement>
+     * @return This Text instance for chaining
+     */
     public final Text replaceAll(List<Pair<String,String>> replacements) {
         if (replacements == null) return this;
         replacements.forEach(replacement -> this.text = this.text.replace("%" + replacement.getFirst() + "%", replacement.getSecond()));
         return this;
     }
+
+    /**
+     * Centralizes the text based on the specified pixel size context
+     *
+     * @param size The PixelsSize context for centralization
+     * @return A new Text instance with centralized text
+     */
     public final Text centralize(Text.PixelsSize size) {
         this.text = "[CENTER:" + size.name() + "]";
         return Text.format(text);
     }
+
+    /**
+     * Centralizes the text based on a custom pixel size
+     *
+     * @param size The pixel width for centralization
+     * @return A new Text instance with centralized text
+     */
     public final Text centralize(int size) {
         this.text = "[CENTER:" + size + "]";
         return Text.format(text);
     }
 
+    /**
+     *  Appends text to the start or end of the current text
+     */
     public final Text appendStart(String s) {
         this.text = s + this.text;
         return this;
     }
+
+    /**
+     *  Appends text to the end of the current text
+     */
     public final Text append(String s) {
         this.text = this.text + s;
         return this;
     }
 
+    /**
+     *  Appends text to the start or end of the current text
+     */
     public final Text appendStart(Text text) {
         this.text = text.getText() + this.text;
         return this;
     }
+
+    /**
+     *  Appends text to the end of the current text
+     */
     public final Text append(Text text) {
         this.text = this.text + text.getText();
         return this;
     }
 
+    /**
+     * Splits the text into multiple Text instances based on the given regex
+     *
+     * @param regex The regex to split the text
+     * @return List of Text instances after splitting
+     */
     public List<Text> split(String regex) {
 
         List<Text> texts = new ArrayList<>();
@@ -160,8 +220,6 @@ public class Text {
         for (String s : split) {
             texts.add(new Text(s));
         }
-
-        System.out.println("Texts: " + texts);
 
         return texts;
     }
@@ -220,6 +278,11 @@ public class Text {
         return TagResolver.deserialize(TimeParser.remainingTimeForValue(getTextRaw()));
     }
 
+    /**
+     * Converts the text to an Adventure Component
+     *
+     * @return The text as an Adventure Component
+     */
     public Component toAdventureComponent() {
         return LegacyComponentSerializer.legacySection().deserialize(getText());
     }
@@ -261,9 +324,27 @@ public class Text {
 
     }
 
+    /**
+     * Detects and processes language placeholders in the text with textForSender defaulting to true
+     *
+     * @param sender  The command sender
+     * @param plugin  The plugin instance
+     * @param rawText The text to process
+     * @return CompletableFuture containing the processed Text
+     */
     public static Text detectLangs(CommandSender sender, Plugin plugin, String rawText) {
         return detectLangs(sender, plugin, rawText, true);
     }
+
+    /**
+     * Creates a new Text instance from a language path
+     *
+     * @param sender        The command sender
+     * @param plugin        The plugin instance
+     * @param path          The language path to retrieve text from
+     * @param textForSender Whether to process the text specifically for the sender
+     * @return A new Text instance with the language text
+     */
     public static Text fromLang(CommandSender sender, Plugin plugin, @NotNull String path, boolean textForSender) {
 
         Lang lang = Lang.of(plugin, !(sender instanceof Player) ? null : (Player) sender).getSecond();
@@ -280,19 +361,60 @@ public class Text {
         return objectText;
     }
 
+    /**
+     * Creates a new Text instance from a language path with textForSender defaulting to true
+     *
+     * @param sender  The command sender
+     * @param plugin  The plugin instance
+     * @param path    The language path to retrieve text from
+     * @return A new Text instance with the language text
+     */
     public static Text fromLang(CommandSender sender, Plugin plugin, String path) {
         return fromLang(sender, plugin, path, true);
     }
+
+    /**
+     * Sends text from a language path to a command sender
+     *
+     * @param sender The command sender
+     * @param plugin The plugin instance
+     * @param path   The language path to retrieve text from
+     */
     public static void sendTextFromLang(CommandSender sender, Plugin plugin, String path) {
         fromLang(sender, plugin, path).send(sender);
     }
+
+    /**
+     * Sends text from a language path to a command sender with replacements
+     *
+     * @param sender       The command sender
+     * @param plugin       The plugin instance
+     * @param path         The language path to retrieve text from
+     * @param replacements Array of Pair<placeholder, replacement>
+     */
     @SafeVarargs
     public static void sendTextFromLang(CommandSender sender, Plugin plugin, String path, Pair<String, String>... replacements) {
         fromLang(sender, plugin, path).replaceAll(replacements).send(sender);
     }
+    /**
+     * Detects and processes language placeholders in the text and sends it to the command sender
+     *
+     * @param sender  The command sender
+     * @param plugin  The plugin instance
+     * @param rawText The text to process
+     */
     public static void detectLangsAndSend(CommandSender sender, Plugin plugin, String rawText) {
         detectLangs(sender, plugin, rawText).send(sender);
     }
+
+    /**
+     * Detects and processes language placeholders in the text with replacements and sends it to the command sender
+     *
+     * @param sender       The command sender
+     * @param plugin       The plugin instance
+     * @param rawText      The text to process
+     * @param replacements Array of Pair<placeholder, replacement>
+     */
     @SafeVarargs
     public static void detectLangsAndSend(CommandSender sender, Plugin plugin, String rawText, Pair<String, String>... replacements) {
         detectLangs(sender, plugin, rawText).replaceAll(replacements).send(sender);
@@ -308,6 +430,12 @@ public class Text {
         return new Text(text);
     }
 
+    /**
+     * Creates a new Text instance from BaseComponents
+     *
+     * @param text The BaseComponents to convert
+     * @return A new Text instance
+     */
     public static Text format(BaseComponent[] text) {
         return new Text(text);
     }
@@ -322,8 +450,8 @@ public class Text {
         CHAT(157), // Chat message width
         MOTD(127), // Server MOTD width
         INV(75),   // Inventory name width
-        BOOK_LINE(114);
-
+        BOOK_LINE(114) // Book line width
+        ;
         final int pixels;
 
         PixelsSize(int pixels) {

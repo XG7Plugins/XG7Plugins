@@ -44,8 +44,6 @@ public class ConfigFileForm extends SimpleForm {
 
         this.configFileConsumer = (player, yaml) -> {
 
-            System.out.println("O YMl: " + yaml);
-
             ConfigFile configFile = new ConfigFile(filesPlugin,  yaml);
 
             ConfigSection mainConfig = ConfigFile.mainConfigOf(XG7Plugins.getInstance()).section("config-editor");

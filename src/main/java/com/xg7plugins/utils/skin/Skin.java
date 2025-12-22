@@ -18,6 +18,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Represents a Minecraft skin with texture properties.
+ * Provides methods to convert to user profiles and handle server version differences.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
@@ -38,6 +42,12 @@ public class Skin {
         this.signature = properties.get(0).getSignature();
     }
 
+    /**
+     * Converts the skin to a UserProfile with the given UUID and name.
+     * @param uuid The UUID of the user
+     * @param name The name of the user
+     * @return The UserProfile with the skin applied
+     */
     public UserProfile toProfile(UUID uuid, String name) {
         UserProfile profile = new UserProfile(uuid, name);
 
@@ -48,18 +58,36 @@ public class Skin {
         return profile;
     }
 
+    /**
+     * Converts the skin to a UserProfile with a random UUID and the given name.
+     * @param name The name of the user
+     * @return The UserProfile with the skin applied
+     */
     public UserProfile toBaseProfile(String name) {
         return toProfile(UUID.randomUUID(), name);
     }
 
+    /**
+     * Converts the skin to a UserProfile with a random UUID and a dummy name.
+     * @return The UserProfile with the skin applied
+     */
     public UserProfile toBaseProfile() {
         return toBaseProfile("dummy");
     }
 
+    /**
+     * Gets the appropriate profile object based on server software and version.
+     * @return The profile object
+     */
     public ReflectionObject getProfileBySoftwareAndVersion() {
         return getProfileBySoftwareAndVersion(this);
     }
 
+    /**
+     * Gets the appropriate profile object based on server software and version.
+     * @param skin The skin to convert
+     * @return The profile object
+     */
     public static ReflectionObject getProfileBySoftwareAndVersion(Skin skin) {
 
         if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) return ReflectionObject.of(skin.toBaseProfile());

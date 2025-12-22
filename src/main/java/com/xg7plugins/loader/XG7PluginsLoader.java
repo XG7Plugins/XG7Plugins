@@ -5,6 +5,11 @@ import com.xg7plugins.XG7Plugins;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Main loader class for the XG7Plugins framework.
+ * This class extends the classical JavaPlugin and
+ * manages the lifecycle of the core plugin.
+ */
 public final class XG7PluginsLoader extends JavaPlugin {
 
     @Getter

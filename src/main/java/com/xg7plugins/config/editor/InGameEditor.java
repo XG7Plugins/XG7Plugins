@@ -8,6 +8,9 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
 
+/**
+ * Abstract class representing an in-game configuration editor.
+ */
 @Data
 @RequiredArgsConstructor
 public abstract class InGameEditor {

@@ -14,6 +14,7 @@ import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.TaskState;
 import com.xg7plugins.tasks.tasks.AsyncTask;
 import com.xg7plugins.tasks.tasks.TimerTask;
+import com.xg7plugins.utils.PluginKey;
 import com.xg7plugins.utils.text.Text;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,6 +22,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @CommandSetup(
         name = "tasks",
@@ -60,7 +62,7 @@ public class TaskCommand implements Command {
 
         return checkAndGet(id, sender)
                 .map(task -> {
-                    taskManager.deleteRepeatingTask(id);
+                    taskManager.deleteRepeatingTask(task);
 
                     XG7Plugins.getInstance().getDebug().warn("tasks", "Task " + id + " was deleted by " + sender.getName());
                     XG7Plugins.getInstance().getDebug().warn("tasks", "To back up the task, you need to restart the plugin of the task!");
@@ -160,14 +162,14 @@ public class TaskCommand implements Command {
         return checkAndGet(id, sender)
                 .map(task -> {
 
-                    TaskState state = taskManager.getTimerTask(id).getTaskState();
+                    TaskState state = task.getTaskState();
 
                     if (state == TaskState.IDLE) {
                         Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.already-stopped");
                         return CommandState.ERROR;
                     }
 
-                    taskManager.cancelRepeatingTask(id);
+                    taskManager.cancelRepeatingTask(task);
 
                     XG7Plugins.getInstance().getDebug().warn("tasks", "Task " + id + " was stopped by " + sender.getName());
                     XG7Plugins.getInstance().getDebug().warn("tasks", "It can cause errors in the plugin of the task!");
@@ -190,17 +192,17 @@ public class TaskCommand implements Command {
         }
 
         if (args.len() == 2) {
-            suggestions.addAll(taskManager.getTimerTaskMap().keySet());
+            suggestions.addAll(taskManager.getTimerTaskMap().keySet().stream().map(PluginKey::toString).collect(Collectors.toList()));
         }
         return suggestions;
     }
 
     private Optional<TimerTask> checkAndGet(String id, CommandSender sender) {
-        if (!taskManager.containsTimerTask(id)) {
+        if (!taskManager.containsTimerTask(PluginKey.of(id))) {
             Text.sendTextFromLang(sender, XG7Plugins.getInstance(), "task-command.not-found");
             return Optional.empty();
         }
-        TimerTask task = taskManager.getTimerTask(id);
+        TimerTask task = taskManager.getTimerTask(PluginKey.of(id));
         return Optional.ofNullable(task);
     }
 

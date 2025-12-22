@@ -85,6 +85,13 @@ public class ConfigFile {
         this.data = data;
     }
 
+    /**
+     * Creates a new Config instance from an existing file.
+     *
+     * @param plugin     The plugin instance
+     * @param configFile The configuration file
+     * @throws IOException If the file does not exist or cannot be read
+     */
     public ConfigFile(Plugin plugin, File configFile) throws IOException {
         this.configFile = configFile;
         this.plugin = plugin;
@@ -112,6 +119,14 @@ public class ConfigFile {
         return new ConfigFile(plugin, name);
     }
 
+    /**
+     * Factory method to create a Config instance from an existing file.
+     *
+     * @param file   The configuration file
+     * @param plugin The plugin instance
+     * @return The Config instance
+     * @throws IOException If the file does not exist or cannot be read
+     */
     public static ConfigFile of(File file, Plugin plugin) throws IOException {
         return new ConfigFile(plugin, file);
     }
@@ -126,6 +141,13 @@ public class ConfigFile {
         return ConfigFile.of("config", plugin);
     }
 
+    /**
+     * Converts the root of the configuration data to an instance of the specified type.
+     *
+     * @param type The class type to convert the root data to
+     * @param <T>  The type parameter
+     * @return An instance of the specified type representing the root data
+     */
     public <T> T getFromRoot(Class<T> type) {
         Yaml yaml = new Yaml(new Constructor(type, new LoaderOptions()));
 
@@ -169,14 +191,27 @@ public class ConfigFile {
         plugin.getDebug().info("load", "Reloaded");
     }
 
+    /**
+     * Checks if the configuration file exists.
+     * @return True if the file exists, false otherwise
+     */
     public boolean exists() {
         return configFile.exists();
     }
 
+    /**
+     * Gets a configuration section at the specified path.
+     * @param path The path to the configuration section
+     * @return The ConfigSection instance at the specified path
+     */
     public ConfigSection section(String path) {
         return new ConfigSection(this, path, data);
     }
 
+    /**
+     * Gets the root configuration section.
+     * @return The root ConfigSection instance
+     */
     public ConfigSection root() {
         return section("");
     }

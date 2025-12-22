@@ -39,7 +39,7 @@ public class XG7Scores implements Module {
     public void onDisable() {
         XG7Plugins.getInstance().getDebug().info("scores", "Disabling XG7Scores");
         scores.values().forEach(Score::removeAllPlayers);
-        XG7Plugins.getAPI().taskManager().cancelRepeatingTask(XG7Plugins.getInstance(), "score-task");
+        XG7Plugins.getAPI().taskManager().cancelRepeatingTask(XG7Plugins.getPluginID("score-task"));
         XG7Plugins.getInstance().getDebug().info("scores", "XG7Scores disabled");
     }
 

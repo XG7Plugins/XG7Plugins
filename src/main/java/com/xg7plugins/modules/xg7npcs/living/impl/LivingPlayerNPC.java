@@ -96,8 +96,6 @@ public class LivingPlayerNPC implements LivingNPC {
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, addInfo);
 
-        System.out.println("Pacote de info: " + addInfo);
-
         teams.setTeamName("npc_hidden_name_" + spawnedEntityID);
         teams.setTeamMode(WrapperPlayServerTeams.TeamMode.CREATE);
 

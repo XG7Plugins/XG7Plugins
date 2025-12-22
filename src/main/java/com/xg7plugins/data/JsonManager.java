@@ -85,13 +85,14 @@ public class JsonManager {
     }
 
     /**
-     * Adiciona ou atualiza apenas uma entrada em um JSON de Map<String, T>.
+     * Asynchronously saves a single entry (key-value pair) to a JSON file.
      *
-     * @param path O caminho do arquivo JSON
-     * @param key  A chave a ser adicionada/atualizada
-     * @param value O valor a ser salvo
-     * @param <T>  Tipo do valor
-     * @return CompletableFuture que completa quando o registro for salvo
+     * @param plugin The plugin instance
+     * @param path   The file path where to save the JSON
+     * @param key The key to associate with the value
+     * @param value The value to serialize and save
+     * @return A CompletableFuture that completes when the save operation is finished
+     * @param <T> The type of object being saved
      */
     public <T> CompletableFuture<Void> saveEntry(Plugin plugin, String path, String key, T value) {
         return CompletableFuture.runAsync(() -> {
@@ -180,6 +181,16 @@ public class JsonManager {
         }, XG7Plugins.getAPI().taskManager().getExecutor("files"));
     }
 
+    /**
+     * Asynchronously loads a single entry (key-value pair) from a JSON file.
+     *
+     * @param plugin The plugin instance
+     * @param path   The file path where the JSON is stored
+     * @param key    The key to retrieve the value for
+     * @param clazz  The class type to deserialize into
+     * @param <T>    The type of object being loaded
+     * @return A CompletableFuture containing the deserialized object
+     */
     public <T> CompletableFuture<T> loadEntry(Plugin plugin, String path, String key, Class<T> clazz) {
         return CompletableFuture.supplyAsync(() -> {
             File file = new File(plugin.getJavaPlugin().getDataFolder(), path);

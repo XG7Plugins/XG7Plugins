@@ -45,6 +45,13 @@ public enum Parser {
         return (T) converter.apply(value);
     }
 
+    /**
+     * Retrieves the Parser enum constant corresponding to the specified class type.
+     *
+     * @param <T>  The target type
+     * @param type The class type to get the parser for
+     * @return The corresponding Parser enum constant, or null if not found
+     */
     public static <T> Parser getParserOf(Class<T> type) {
 
         try {

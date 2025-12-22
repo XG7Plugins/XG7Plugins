@@ -76,7 +76,6 @@ public class ItemLine extends InvisibleArmorStandLine {
                     new int[]{ entityID }
                 );
 
-        System.out.println("PACOTE DE " + mount);
         PacketEvents.getAPI().getPlayerManager().sendPacket(livingHologram.getPlayer(), mount);
 
 

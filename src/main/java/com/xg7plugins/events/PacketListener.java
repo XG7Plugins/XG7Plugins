@@ -12,6 +12,7 @@ import java.util.Set;
  */
 public interface PacketListener extends Listener {
 
+    // Returns the set of packet types this listener handles.
     Set<PacketTypeCommon> getHandledEvents();
 
     /**

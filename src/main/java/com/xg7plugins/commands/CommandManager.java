@@ -212,10 +212,20 @@ public class CommandManager {
     }
 
 
+    /**
+     * Retrieves a registered command by its name.
+     * @param name The name of the command to retrieve
+     * @return The Command instance if found, null otherwise
+     */
     public Command getCommand(String name) {
         return commandList.stream().filter(c -> c.getCommandSetup().name().equals(name)).findFirst().orElse(null);
     }
 
+    /**
+     * Retrieves the root CommandNode for a given command name.
+     * @param name The name of the command
+     * @return The root CommandNode associated with the command name, or null if not found
+     */
     public CommandNode getRootCommandNode(String name) {
         return commandNodeMap.get(name);
     }

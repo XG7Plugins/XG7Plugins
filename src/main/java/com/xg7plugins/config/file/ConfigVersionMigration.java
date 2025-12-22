@@ -2,6 +2,11 @@ package com.xg7plugins.config.file;
 
 import java.util.Map;
 
+/**
+ * Utility class for migrating configuration data from an old version to a new version.
+ * It recursively updates the new configuration map with values from the old configuration map
+ * while preserving the structure defined in the new configuration.
+ */
 public class ConfigVersionMigration {
 
     @SuppressWarnings("unchecked")

@@ -27,6 +27,10 @@ public interface Module {
      */
     void onDisable();
 
+    /**
+     * Called when the module is being reloaded.
+     * Use this method to refresh configurations or reset states as needed.
+     */
     void onReload();
 
     /**
@@ -66,8 +70,26 @@ public interface Module {
      */
     String getName();
 
+    /**
+     * Checks if the module is currently enabled.
+     *
+     * @return true if the module is enabled, false otherwise
+     */
     boolean isEnabled();
+
+    /**
+     * Checks if the module can be enabled.
+     * By default, returns true.
+     *
+     * @return true if the module can be enabled, false otherwise
+     */
     default boolean canBeEnabled() { return true; };
+
+    /**
+     * Sets the enabled state of the module.
+     *
+     * @param enabled true to enable the module, false to disable it
+     */
     void setEnabled(boolean enabled);
 
 }

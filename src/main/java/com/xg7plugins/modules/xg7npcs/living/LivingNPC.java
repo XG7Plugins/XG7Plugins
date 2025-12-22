@@ -60,7 +60,6 @@ public interface LivingNPC {
     default void defaultSpawn(UUID uuid, List<EntityData<?>> dataList) {
 
         int entityID = SpigotReflectionUtil.generateEntityId();
-        System.out.println("✓ Entity ID gerado: " + entityID);
 
         PacketWrapper<?> spawnEntity = PacketEvents.getAPI().getServerManager().getVersion().isOlderThan(ServerVersion.V_1_17) ?
                 getNPC().getEntityType().equals(EntityTypes.PLAYER) ?
@@ -90,14 +89,9 @@ public interface LivingNPC {
                         Vector3d.zero()
                 );
 
-        System.out.println("PACOTE DE SPAWN: " + spawnEntity);
-
-        System.out.println("→ Enviando SpawnEntity packet");
         PacketEvents.getAPI().getPlayerManager().sendPacket(getPlayer(), spawnEntity);
 
         setSpawnedEntityID(entityID);
-
-        System.out.println("✓ spawnedEntityID setado: " + this.getSpawnedEntityID());
 
         WrapperPlayServerEntityHeadLook headLook = new WrapperPlayServerEntityHeadLook(
                 entityID,
@@ -110,14 +104,13 @@ public interface LivingNPC {
                 entityID,
                 dataList
         );
-        System.out.println("→ Enviando Metadata packet");
+
         PacketEvents.getAPI().getPlayerManager().sendPacket(getPlayer(), metadata);
 
         if (getNPC().getEquipments() != null || !getNPC().getEquipments().isEmpty()) {
             getNPC().getEquipments().forEach(this::equip);
         }
 
-        System.out.println("→ Spawnando hologram");
         getNPC().getHologram().setLocation(getCurrentLocation().clone());
         setSpawnedHologram(getNPC().getHologram().spawn(getPlayer()));
     }

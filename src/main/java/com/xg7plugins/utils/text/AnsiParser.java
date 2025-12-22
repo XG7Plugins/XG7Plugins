@@ -1,7 +1,17 @@
 package com.xg7plugins.utils.text;
 
+/**
+ * Utility class for parsing custom color and formatting codes into ANSI escape codes.
+ */
 public class AnsiParser {
 
+    /**
+     * Parses a message containing custom color and formatting codes (prefixed with '§')
+     * and converts them into ANSI escape codes for terminal display.
+     *
+     * @param message The input message with custom codes.
+     * @return The message with ANSI escape codes.
+     */
     public static String parse(String message) {
         if (message == null) return "";
 

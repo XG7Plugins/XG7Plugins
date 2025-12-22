@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Manages the loading, enabling, disabling, and reloading of extensions for a plugin.
+ * It handles the registration of commands, listeners, and timer tasks associated with each extension.
+ */
 @Data
 public class ExtensionManager {
 
@@ -25,6 +29,10 @@ public class ExtensionManager {
     private final Map<String, Extension> extensions = new HashMap<>();
     private final Map<String, ExtensionAPI> extensionAPIs = new HashMap<>();
 
+    /**
+     * Loads extensions from the "extensions" folder within the plugin's data directory.
+     * It scans for JAR files, loads the Extension classes, and initializes them.
+     */
     public void loadExtensions() {
         File extensionsFolder = new File(plugin.getJavaPlugin().getDataFolder(), "extensions");
 
@@ -69,6 +77,10 @@ public class ExtensionManager {
         }
     }
 
+    /**
+     * Enables all loaded extensions by calling their onEnable method,
+     * loading their tasks, listeners, and commands, and storing their APIs.
+     */
     public void enableExtensions() {
         for (Extension extension : extensions.values()) {
             try {
@@ -94,7 +106,7 @@ public class ExtensionManager {
                 XG7Plugins.getAPI().eventManager().unregisterListeners(plugin);
                 XG7Plugins.getAPI().packetEventManager().unregisterListeners(plugin);
 
-                extension.getTimerTasks().forEach(task -> XG7Plugins.getAPI().taskManager().deleteRepeatingTask(XG7Plugins.getInstance(), task.getId()));
+                extension.getTimerTasks().forEach(task -> XG7Plugins.getAPI().taskManager().deleteRepeatingTask(task));
                 loadTasks(extension);
 
                 loadListeners(extension);
@@ -112,7 +124,7 @@ public class ExtensionManager {
             try {
                 extension.onDisable();
 
-                extension.getTimerTasks().forEach(task -> XG7Plugins.getAPI().taskManager().deleteRepeatingTask(XG7Plugins.getInstance(), task.getId()));
+                extension.getTimerTasks().forEach(task -> XG7Plugins.getAPI().taskManager().deleteRepeatingTask(task));
 
                 plugin.getDebug().info("extension", "Disabled extension: " + extension.getName());
             } catch (Exception e) {

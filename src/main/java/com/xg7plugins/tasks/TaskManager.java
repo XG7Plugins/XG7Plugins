@@ -7,6 +7,7 @@ import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.tasks.tasks.AsyncTask;
 import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.tasks.tasks.TimerTask;
+import com.xg7plugins.utils.PluginKey;
 import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -25,7 +26,7 @@ import java.util.concurrent.*;
 public class TaskManager {
 
 
-    private final Map<String, TimerTask> timerTaskMap = new ConcurrentHashMap<>();
+    private final Map<PluginKey, TimerTask> timerTaskMap = new ConcurrentHashMap<>();
     private final Map<String, ExecutorService> asyncExecutors = new HashMap<>();
     private ScheduledExecutorService mainScheduledAsyncExecutor;
 
@@ -33,6 +34,10 @@ public class TaskManager {
         load();
     }
 
+    /**
+     * Initializes the TaskManager by setting up the main scheduled async executor
+     * and registering default executor services.
+     */
     public void load() {
         mainScheduledAsyncExecutor = Executors.newScheduledThreadPool(ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("scheduled-tasks-threads", 1));
 
@@ -83,9 +88,7 @@ public class TaskManager {
                 return;
             }
 
-            String taskId = timerTask.getPlugin().getName() + ":" + timerTask.getId();
-            timerTaskMap.put(taskId, timerTask);
-
+            timerTaskMap.put(PluginKey.of(timerTask.getPlugin(), timerTask.getId()), timerTask);
         });
 
     }
@@ -243,24 +246,10 @@ public class TaskManager {
     /**
      * Cancels a repeating task for a plugin.
      *
-     * @param plugin The plugin that owns the task
-     * @param id     The task identifier
+     * @param taskId The task identifier
      */
-    public void cancelRepeatingTask(Plugin plugin, String id) {
-        TimerTask timerTask = timerTaskMap.get(plugin + ":" + id);
-
-        if (timerTask == null) return;
-
-        cancelRepeatingTask(timerTask);
-    }
-
-    /**
-     * Cancels a repeating task by its ID.
-     *
-     * @param id The task identifier
-     */
-    public void cancelRepeatingTask(@NotNull String id) {
-        TimerTask timerTask = timerTaskMap.get(id);
+    public void cancelRepeatingTask(PluginKey taskId) {
+        TimerTask timerTask = timerTaskMap.get(taskId);
 
         if (timerTask == null) return;
 
@@ -285,7 +274,7 @@ public class TaskManager {
      */
     public void cancelAllRegisteredTasks(Plugin plugin) {
         timerTaskMap.keySet().stream()
-                .filter(s -> s.startsWith(plugin.getName() + ":"))
+                .filter(k -> k.isSamePlugin(plugin))
                 .map(timerTaskMap::get)
                 .forEach(this::cancelRepeatingTask);
     }
@@ -298,31 +287,16 @@ public class TaskManager {
     public void deleteRepeatingTask(TimerTask timerTask) {
         cancelRepeatingTask(timerTask);
 
-        timerTaskMap.remove(timerTask.getPlugin().getName() + ":" + timerTask.getId());
+        timerTaskMap.remove(PluginKey.of(timerTask.getPlugin(), timerTask.getId()));
     }
 
     /**
      * Deletes a repeating task for a plugin.
      *
-     * @param plugin The plugin that owns the task
-     * @param id     The task identifier
+     * @param key The task identifier
      */
-    public void deleteRepeatingTask(Plugin plugin, String id) {
-        TimerTask timerTask = timerTaskMap.get(plugin.getName() + ":" + id);
-
-        if (timerTask == null) return;
-
-        deleteRepeatingTask(timerTask);
-
-    }
-
-    /**
-     * Deletes a repeating task by its ID.
-     *
-     * @param id The task identifier
-     */
-    public void deleteRepeatingTask(String id) {
-        TimerTask timerTask = timerTaskMap.get(id);
+    public void deleteRepeatingTask(PluginKey key) {
+        TimerTask timerTask = timerTaskMap.get(key);
 
         if (timerTask == null) return;
 
@@ -337,7 +311,7 @@ public class TaskManager {
      */
     public void deleteAllRepeatingTasks(Plugin plugin) {
         timerTaskMap.keySet().stream()
-                .filter(s -> s.startsWith(plugin.getName() + ":"))
+                .filter(k -> k.isSamePlugin(plugin))
                 .map(timerTaskMap::get)
                 .forEach(this::deleteRepeatingTask);
     }
@@ -350,8 +324,7 @@ public class TaskManager {
     public void runTimerTask(TimerTask timerTask) {
         if (timerTask == null) return;
 
-        String taskId = timerTask.getPlugin().getName() + ":" + timerTask.getId();
-        timerTaskMap.put(taskId, timerTask);
+        timerTaskMap.put(PluginKey.of(timerTask.getPlugin(), timerTask.getId()), timerTask);
 
         if (timerTask.getTaskState() == TaskState.RUNNING) return;
 
@@ -398,24 +371,21 @@ public class TaskManager {
     /**
      * Retrieves a task by its identifier.
      *
-     * @param id The task identifier
-     * @return The task if found, null otherwise
+     * @param key The task identifier
+     * @return The TimerTask if found, null otherwise
      */
-    public TimerTask getTimerTask(String id) {
-        return timerTaskMap.get(id);
-    }
-    public TimerTask getTimerTask(Plugin plugin, String id) {
-        return getTimerTask(plugin.getName() + ":" + id);
+    public TimerTask getTimerTask(PluginKey key) {
+        return timerTaskMap.get(key);
     }
 
     /**
      * Checks if a task with the given ID exists.
      *
-     * @param id The task identifier to check
-     * @return true if the task exists, false otherwise
+     * @param key The task identifier
+     * @return True if the task exists, false otherwise
      */
-    public boolean containsTimerTask(String id) {
-        return timerTaskMap.containsKey(id);
+    public boolean containsTimerTask(PluginKey key) {
+        return timerTaskMap.containsKey(key);
     }
 
 }

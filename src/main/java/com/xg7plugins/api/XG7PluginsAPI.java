@@ -32,6 +32,7 @@ import com.xg7plugins.server.ServerInfo;
 import com.xg7plugins.cooldowns.CooldownManager;
 import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.tasks.TimerTask;
+import com.xg7plugins.utils.PluginKey;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -55,6 +56,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class XG7PluginsAPI implements API<XG7Plugins> {
 
+    //XG7Plugins instance
     private XG7Plugins plugin;
 
     /**
@@ -79,6 +81,12 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
         return (T) plugin.getPlugins().values().stream().filter(plugin -> name.equalsIgnoreCase(plugin.getName())).findFirst().orElse(null);
     }
 
+    /**
+     * Gets the XG7 plugin instance associated with a specific JavaPlugin.
+     * @param plugin The JavaPlugin to get the XG7 plugin for
+     * @return The XG7 plugin instance, or null if not found
+     * @param <T> The type of the XG7 plugin
+     */
     public <T extends Plugin> T getXG7Plugin(JavaPlugin plugin) {
         return (T) this.plugin.getPlugins().get(plugin);
     }
@@ -94,6 +102,7 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
 
     /**
      * Gets a set containing the names of all registered XG7 plugins.
+     * It's utils for tab completion and similar features.
      *
      * @return A set with all XG7 plugin names
      */
@@ -110,11 +119,14 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
         return plugin.getTaskManager();
     }
 
-    public TimerTask getTimerTask(String id) {
-        return taskManager().getTimerTask(id);
-    }
-    public TimerTask getTimerTask(Plugin plugin, String id) {
-        return taskManager().getTimerTask(plugin, id);
+    /**
+     * Gets a registered TimerTask for a specific plugin by its ID.
+     *
+     * @param key The PluginKey representing the plugin and task ID
+     * @return The TimerTask instance, or null if not found
+     */
+    public TimerTask getTimerTask(PluginKey key) {
+        return taskManager().getTimerTask(key);
     }
 
     /**
@@ -180,26 +192,56 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
         return plugin.getModuleManager();
     }
 
+    /**
+     * Gets the XG7Menus module.
+     *
+     * @return The XG7Menus instance
+     */
     public XG7Menus menus() {
         return moduleManager().getModule(XG7Menus.class);
     }
 
+    /**
+     * Gets the XG7Scores module.
+     *
+     * @return The XG7Scores instance
+     */
     public XG7Scores scores() {
         return moduleManager().getModule(XG7Scores.class);
     }
 
+    /**
+     * Gets the XG7GeyserForms module.
+     *
+     * @return The XG7GeyserForms instance
+     */
     public XG7GeyserForms geyserForms() {
         return moduleManager().getModule(XG7GeyserForms.class);
     }
 
+    /**
+     * Gets the XG7Holograms module.
+     *
+     * @return The XG7Holograms instance
+     */
     public XG7Holograms holograms() {
         return moduleManager().getModule(XG7Holograms.class);
     }
 
+    /**
+     * Gets the XG7NPCs module.
+     *
+     * @return The XG7NPCs instance
+     */
     public XG7NPCs npcs() {
         return moduleManager().getModule(XG7NPCs.class);
     }
 
+    /**
+     * Gets the XG7Dialogs module.
+     *
+     * @return The XG7Dialogs instance
+     */
     public XG7Dialogs dialogs() {
         return moduleManager().getModule(XG7Dialogs.class);
     }
@@ -224,6 +266,12 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
         return plugin.getCommandManager();
     }
 
+    /**
+     * Gets the extension manager for a specific plugin.
+     *
+     * @param plugin The plugin to get the extension manager for
+     * @return The ExtensionManager associated with the specified plugin
+     */
     public ExtensionManager extensionManager(Plugin plugin) {
         return plugin.getExtensionManager();
     }
@@ -297,8 +345,6 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
      * @return true if Geyser forms support is enabled, false otherwise
      */
     public boolean isGeyserFormsEnabled() {
-        System.out.println("Floodgate loaded: " + dependencyManager().exists("floodgate"));
-        System.out.println("XG7GeyserForms enabled: " + moduleManager().isModuleEnabled("XG7GeyserForms"));
         return dependencyManager().exists("floodgate") && moduleManager().isModuleEnabled("XG7GeyserForms");
     }
 
@@ -462,6 +508,11 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
         return XG7Plugins.getInstance().getServerInfo();
     }
 
+    /**
+     * Gets the version checker for update management.
+     *
+     * @return The VersionChecker instance
+     */
     public VersionChecker getVersionChecker() {
         return plugin.getVersionChecker();
     }

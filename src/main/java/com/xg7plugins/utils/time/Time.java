@@ -182,6 +182,7 @@ public class Time {
         return new Timestamp(milliseconds);
     }
 
+    // Conversion methods
     public long toMilliseconds() {
         return milliseconds;
     }

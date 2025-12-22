@@ -55,21 +55,45 @@ public class Conversation {
         return new Conversation(plugin);
     }
 
+    /**
+     * Sets a word that will cause the current prompt to loop until the word is entered.
+     *
+     * @param word The word that will trigger the loop
+     * @return This conversation instance for method chaining
+     */
     public Conversation exitLoopWord(String word) {
         this.loopPromptUntil = word;
         return this;
     }
 
+    /**
+     * Sets a callback for each loop iteration of the prompt.
+     *
+     * @param onLoop The consumer to handle each loop iteration
+     * @return This conversation instance for method chaining
+     */
     public Conversation onLoop(Consumer<Object> onLoop) {
         this.onLoop = onLoop;
         return this;
     }
 
+    /**
+     * Sets a callback for handling errors during input parsing.
+     *
+     * @param onError The consumer to handle exceptions
+     * @return This conversation instance for method chaining
+     */
     public Conversation onError(Consumer<Exception> onError) {
         this.onError = onError;
         return this;
     }
 
+    /**
+     * Adds a list of placeholders to be replaced in prompt texts.
+     *
+     * @param list List of key-value pairs representing placeholders and their replacements
+     * @return This conversation instance for method chaining
+     */
     public Conversation addBuildPlaceholders(List<Pair<String, String>> list) {
         this.listPlaceholders = list;
         return this;

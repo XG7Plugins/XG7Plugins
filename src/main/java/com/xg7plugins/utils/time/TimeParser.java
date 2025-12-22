@@ -63,6 +63,11 @@ public class TimeParser {
         return milliseconds;
     }
 
+    /**
+     * Replaces time placeholders in the format @TIME_FORMAT:milli@ within the input string
+     * @param str the input string containing time placeholders
+     * @return the string with time placeholders replaced by formatted time
+     */
     public static String remainingTimeForValue(String str) {
         Matcher matcher = REMAINING_TIME_PATTERN.matcher(str);
 

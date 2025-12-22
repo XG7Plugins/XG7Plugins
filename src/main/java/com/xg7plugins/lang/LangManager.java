@@ -23,7 +23,9 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-
+/**
+ * Manages language files and provides methods to load and retrieve language configurations.
+ */
 @Getter
 public class LangManager {
 
@@ -55,6 +57,11 @@ public class LangManager {
         plugin.getDebug().info("langs", "Loaded!");
     }
 
+    /**
+     * Loads language files for a given plugin asynchronously.
+     * @param plugin The plugin for which to load language files
+     * @return A CompletableFuture that completes when the language files are loaded
+     */
     public CompletableFuture<Void> loadLangsFrom(Plugin plugin) {
         return CompletableFuture.runAsync(() -> {
             if (!langEnabled) {
@@ -68,6 +75,11 @@ public class LangManager {
         }, XG7Plugins.getAPI().taskManager().getExecutor("files"));
     }
 
+    /**
+     * Loads a specific language file for a given plugin.
+     * @param plugin The plugin for which to load the language file
+     * @param lang The language identifier to load
+     */
     public void loadLang(Plugin plugin, String lang) {
             if (langs.containsKey(plugin.getName() + ":" + lang).join()) return;
 
@@ -78,6 +90,12 @@ public class LangManager {
             langs.put(plugin.getName() + ":" + lang, new Lang(plugin, ConfigFile.of("langs/" + lang, plugin), lang));
     }
 
+    /**
+     * Retrieves the language configuration for a given plugin and language identifier.
+     * @param plugin The plugin for which to retrieve the language configuration
+     * @param lang The language identifier
+     * @return The Lang object representing the language configuration
+     */
     public Lang getLang(Plugin plugin, String lang) {
 
         String finalLang;
@@ -94,6 +112,12 @@ public class LangManager {
         return langs.get(plugin.getName() + ":" + finalLang).join();
     }
 
+    /**
+     * Retrieves the language configuration for a given player.
+     * @param plugin The plugin for which to retrieve the language configuration
+     * @param player The player whose language preference is to be retrieved
+     * @return A Pair containing a boolean indicating if the language was found and the Lang object
+     */
     public Pair<Boolean, Lang> getLangByPlayer(Plugin plugin, Player player) {
         if (!langEnabled || player == null)
             return new Pair<>(false, getLang(plugin, mainLang));
@@ -107,10 +131,21 @@ public class LangManager {
         return getLangByPlayerData(plugin, playerData);
     }
 
+    /**
+     * Retrieves the language configuration based on player data.
+     * @param plugin The plugin for which to retrieve the language configuration
+     * @param playerData The player data containing language preference
+     * @return A Pair containing a boolean indicating if the language was found and the Lang object
+     */
     private Pair<Boolean, Lang> getLangByPlayerData(Plugin plugin, PlayerData playerData) {
         return new Pair<>(true, getLang(plugin, playerData == null || playerData.getLangId() == null ? mainLang : playerData.getLangId()));
     }
 
+    /**
+     * Determines the appropriate language for a player based on their locale.
+     * @param player The player whose language preference is to be determined
+     * @return The language identifier for the player
+     */
     public String getNewLangFor(@NotNull Player player) {
         Objects.requireNonNull(player, "Player cannot be null!");
 
@@ -127,10 +162,18 @@ public class LangManager {
         return langs.stream().filter(lang -> lang.get("locale").equalsIgnoreCase(locale)).findFirst().map(lang -> lang.getLangConfigFile().getName().replace("langs/", "")).orElse(mainLang);
     }
 
+    /**
+     * Clears the language cache.
+     */
     public void clearCache() {
         langs.clear().join();
     }
 
+    /**
+     * Checks if a specific language is loaded.
+     * @param lang The language identifier to check
+     * @return True if the language is loaded, false otherwise
+     */
     public boolean hasLang(String lang) {
         return langs.containsKey(lang).join();
     }

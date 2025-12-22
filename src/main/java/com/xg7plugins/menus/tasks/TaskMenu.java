@@ -67,7 +67,7 @@ public class TaskMenu extends PagedMenu {
                         .setBuildPlaceholders(
                                 Pair.of("tasks", String.valueOf(XG7Plugins.getAPI().taskManager().getTimerTaskMap().size())),
                                 Pair.of("ram", (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024 + " / " + Runtime.getRuntime().totalMemory() / 1024 / 1024),
-                                Pair.of("tps", String.format("%.2f", ((TPSCalculator) XG7Plugins.getAPI().taskManager().getTimerTask(XG7Plugins.getInstance(), "tps-calculator")).getTPS()))
+                                Pair.of("tps", String.format("%.2f", ((TPSCalculator) XG7Plugins.getAPI().taskManager().getTimerTask(XG7Plugins.getPluginID("tps-calculator"))).getTPS()))
                         ));
     }
 }

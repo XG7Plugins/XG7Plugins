@@ -8,6 +8,10 @@ import lombok.Getter;
 
 import java.util.Objects;
 
+/**
+ * A class representing a unique key associated with a specific plugin.
+ * Combines a Plugin instance with a string key to create a distinct identifier.
+ */
 @AllArgsConstructor
 @Getter
 public class PluginKey {
@@ -30,6 +34,10 @@ public class PluginKey {
         return this.plugin.getName().equals(other.plugin.getName()) && this.key.equals(other.key);
     }
 
+    public boolean isSamePlugin(Plugin other) {
+        return this.plugin.getName().equals(other.getName());
+    }
+
     @Override
     public String toString() {
         return (plugin.getName() + ":" + key).toLowerCase();
@@ -46,18 +54,18 @@ public class PluginKey {
 
     public static PluginKey of(String pluginKey) {
         if (!pluginKey.toLowerCase().equals(pluginKey)) {
-            throw new IllegalArgumentException("This is not a valid plugin key");
+            throw new IllegalArgumentException(pluginKey + " is not a valid plugin key");
         }
 
         String[] split = pluginKey.split(":");
         if (split.length != 2) {
-            throw new IllegalArgumentException("This is not a valid plugin key");
+            throw new IllegalArgumentException(pluginKey + " is not a valid plugin key");
         }
 
         Plugin plugin = XG7Plugins.getAPI().getXG7Plugin(split[0]);
 
         if (plugin == null) {
-            throw new IllegalArgumentException("This is not a valid plugin in that key");
+            throw new IllegalArgumentException(pluginKey + " is not a valid plugin in that key, the plugin doesn't exist");
         }
 
         String key = split[1];

@@ -22,13 +22,16 @@ import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
+import com.xg7plugins.utils.PluginKey;
 import lombok.*;
 import org.apache.commons.lang.IllegalClassException;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.util.*;
+
 /**
  * Abstract base class for XG7 plugins that extends Bukkit's JavaPlugin.
  * Provides a structured framework for plugin development with support for
@@ -55,13 +58,16 @@ public abstract class Plugin {
 
     protected Debug debug;
 
-
     protected API<?> api;
 
     @Setter
     private boolean enabled = false;
 
 
+    /**
+     * Constructor for the Plugin class.
+     * @param plugin The JavaPlugin instance representing the plugin
+     */
     public Plugin(JavaPlugin plugin) {
         this.javaPlugin = plugin;
         pluginSetup = getClass().getAnnotation(PluginSetup.class);
@@ -75,10 +81,19 @@ public abstract class Plugin {
 
     }
 
+    /**
+     * On load logic
+     */
     public abstract void onLoad();
 
+    /**
+     * On enable logic
+     */
     public abstract void onEnable();
 
+    /**
+     * On disable logic
+     */
     public abstract void onDisable();
 
     /**
@@ -94,11 +109,12 @@ public abstract class Plugin {
      * - ReloadCause.DATABASE: Reestablishes database connections <p>
      * - ReloadCause.LANGS: Clears language cache and reloads language files <p>
      * - ReloadCause.TASKS: Cancels all running tasks and restarts them <p>
-     * - ReloadCause.Custom: You can create a cause to handle another type of reload <p>
+     * - ReloadCause.EXTENSIONS: Reloads all plugin extensions <p>
+     * - Custom: You can create a cause to handle another type of reload <p>
      * <p>
 
      * @param cause The reload cause that determines which components will be reloaded
-     *              Default causes include: CONFIG, EVENTS, DATABASE, LANGS, TASKS
+     *              Default causes include: CONFIG, EVENTS, DATABASE, LANGS, TASKS, EXTENSIONS
      * <p>
      */
     public void onReload(ReloadCause cause) {
@@ -137,92 +153,37 @@ public abstract class Plugin {
     }
 
     /**
-     * Loads the plugin's database entities table.
-     *
-     * @return An array of classes extending Entity, used for database table creation
+     * Plugin loader methods
      */
+
     public Class<? extends Entity<?,?>>[] loadDBEntities() {
         return null;
     }
-
-    /**
-     * Loads the plugin's database entity repositories.
-     *
-     * @return An array of Repositories
-     */
     public List<Repository<?,?>> loadRepositories() {
         return null;
     }
-
-    /**
-     * Loads the plugin's commands that will be automatically registered.
-     *
-     * @return A list of commands to be registered by the command system
-     */
     public List<Command> loadCommands() {
         return null;
     }
-
-    /**
-     * Loads the Bukkit event listeners for this plugin.
-     *
-     * @return A list of listeners to be registered by the event manager
-     */
     public List<Listener> loadEvents() {
         return null;
     }
-
-    /**
-     * Loads the network packet listeners for this plugin.
-     *
-     * @return A list of packet listeners to be registered
-     */
     public List<PacketListener> loadPacketEvents() {
         return null;
     }
-
-    /**
-     * Loads the repeating tasks (schedulers) for the plugin.
-     *
-     * @return A list of tasks to be executed periodically
-     */
     public List<TimerTask> loadRepeatingTasks() {
         return null;
     }
-
-    /**
-     * Sets up the plugin's help system.
-     * This method must be implemented to register help messages.
-     */
     public abstract HelpMessenger loadHelp();
-
-    /**
-     * Loads the plugin's optional dependencies.
-     *
-     * @return A list of dependencies that the plugin can use
-     */
     public List<Dependency> loadDependencies() {
         return null;
     }
-
-    /**
-     * Loads the plugin's required dependencies.
-     *
-     * @return A list of dependencies that are necessary for the plugin to function
-     */
     public List<Dependency> loadRequiredDependencies() {
         return null;
     }
-
-    /**
-     * Loads the plugin's placeholder expansions, handled by PlaceholderAPI plugin.
-     *
-     * @return The plugin's PlaceholderAPI expansion
-     */
     public Object loadPlaceholderExpansion() {
         return null;
     }
-
     public List<BasicMenu> loadMenus() {
         return null;
     }
@@ -239,7 +200,9 @@ public abstract class Plugin {
         return null;
     }
 
-
+    /**
+     * Plugin info getter methods
+     */
 
     public String getPrefix() {
         return ChatColor.translateAlternateColorCodes('&', pluginSetup.prefix());
@@ -259,4 +222,5 @@ public abstract class Plugin {
     public String getVersion() {
         return javaPlugin.getDescription().getVersion();
     }
+
 }

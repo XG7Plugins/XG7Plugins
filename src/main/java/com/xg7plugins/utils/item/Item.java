@@ -44,6 +44,9 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+/**
+ * A utility class for creating and manipulating ItemStack objects with various properties and metadata.
+ */
 @Getter
 public class Item implements Cloneable {
 
@@ -62,6 +65,11 @@ public class Item implements Cloneable {
         registerParser(new SpawnerParser());
     }
 
+    /**
+     * Get the parser for the given material
+     * @param material The material to get the parser for
+     * @return The parser for the given material, or null if none found
+     */
     public static ItemParser<?> getParser(XMaterial material) {
         return parsers.stream().filter(p -> p.getMaterials().contains(material)).findFirst().orElse(null);
     }
@@ -70,17 +78,34 @@ public class Item implements Cloneable {
 
     protected List<Pair<String,String>> buildPlaceholders = new ArrayList<>();
 
-
     public Item(ItemStack itemStack) {
         this.itemStack = itemStack;
     }
 
+    /**
+     * Create an Item from an ItemStack
+     * @param itemStack The ItemStack to create the Item from
+     * @return The created Item
+     */
     public static Item from(ItemStack itemStack) {
         return new Item(itemStack);
     }
+
+    /**
+     * Create an Item from an XMaterial
+     * @param material The XMaterial to create the Item from
+     * @return The created Item
+     */
     public static Item from(XMaterial material) {
         return new Item(material.parseItem());
     }
+
+    /**
+     * Create an Item from a string representation
+     * @param material The string representation of the Item
+     * @return The created Item
+     * @param <T> The type of the Item
+     */
     public static <T extends Item> T from(String material) {
 
         if (material == null) return (T) Item.from(Material.STONE);
@@ -108,30 +133,82 @@ public class Item implements Cloneable {
 
         return (T) Item.from(xMaterial);
     }
+
+    /**
+     *  Create an Item from an ItemsAdder's CustomStack
+     * @param stack The CustomStack to create the Item from
+     * @return The created Item
+     */
     public static Item from(CustomStack stack) {
         return Item.from(stack.getItemStack());
     }
+
+    /**
+     * Create an Item from a Material
+     * @param material The Material to create the Item from
+     * @return The created Item
+     */
     public static Item from(Material material) {
         return new Item(new ItemStack(material));
     }
+
+    /**
+     * Create an Item from a Material and amount
+     * @param material The Material to create the Item from
+     * @param amount The amount of the Item
+     * @return The created Item
+     */
     public static Item from(Material material, int amount) {
         return new Item(new ItemStack(material, amount));
     }
+
+    /**
+     * Create an Item from an XMaterial and amount
+     * @param material The XMaterial to create the Item from
+     * @param amount The amount of the Item
+     * @return The created Item
+     */
     public static Item from(XMaterial material, int amount) {
         ItemStack stack = material.parseItem();
         stack.setAmount(amount);
         return new Item(stack);
     }
+
+    /**
+     * Create an Item from MaterialData
+     * @param data The MaterialData to create the Item from
+     * @return The created Item
+     */
     public static Item from(MaterialData data) {
         return new Item(data.toItemStack());
     }
+
+    /**
+     * Create an Item from MaterialData and amount
+     * @param data The MaterialData to create the Item from
+     * @param amount The amount of the Item
+     * @return The created Item
+     */
     public static Item from(MaterialData data, int amount) {
         return new Item(data.toItemStack(amount));
     }
+
+    /**
+     * Create a null Item (AIR)
+     * @return The created Item
+     */
     public static Item air() {
         return new Item(new ItemStack(Material.AIR));
     }
 
+    /**
+     * Create a command icon Item for a given command
+     * for command menus.
+     *
+     * @param material Material of the command icon
+     * @param command The command node
+     * @return The created command icon Item
+     */
     public static Item commandIcon(XMaterial material, CommandNode command) {
         Item item = new Item(material.parseItem());
 
@@ -155,56 +232,131 @@ public class Item implements Cloneable {
         return item;
     }
 
+    /**
+     * Convert this Item to an InventoryItem for a given slot
+     * @param slot The slot to create the InventoryItem for
+     * @return The created InventoryItem
+     */
     public InventoryItem toInventoryItem(Slot slot) {
         return (InventoryItem) new InventoryItem(itemStack, slot).setBuildPlaceholders(buildPlaceholders);
     }
+
+    /**
+     * Convert this Item to an InventoryItem for a given slot index
+     * @param slot The slot index to create the InventoryItem for
+     * @return The created InventoryItem
+     */
     public InventoryItem toInventoryItem(int slot) {
         return (InventoryItem) new InventoryItem(itemStack, Slot.fromSlot(slot)).setBuildPlaceholders(buildPlaceholders);
     }
+
+    /**
+     * Convert this Item to an InventoryItem for a given slot index
+     * @param slot The slot index to create the InventoryItem for
+     * @param ignoreBounds Whether to ignore bounds checking for the slot
+     * @return The created InventoryItem
+     */
     public InventoryItem toInventoryItem(int slot, boolean ignoreBounds) {
         return (InventoryItem) new InventoryItem(itemStack, Slot.fromSlot(slot, ignoreBounds)).setBuildPlaceholders(buildPlaceholders);
     }
 
+    /**
+     * Convert this Item to a ClickableItem for a given slot and click event
+     * @param slot The slot to create the ClickableItem for
+     * @param clickEvent The click event to assign to the ClickableItem
+     * @return The created ClickableItem
+     */
     public ClickableItem toClickableInventoryItem(Slot slot, Consumer<ActionEvent> clickEvent) {
         return toInventoryItem(slot).clickable(clickEvent);
     }
+
+    /**
+     * Convert this Item to a ClickableItem for a given slot index and click event
+     * @param slot The slot index to create the ClickableItem for
+     * @param clickEvent The click event to assign to the ClickableItem
+     * @return The created ClickableItem
+     */
     public ClickableItem toClickableInventoryItem(int slot, Consumer<ActionEvent> clickEvent) {
         return toInventoryItem(slot).clickable(clickEvent);
     }
+
+    /**
+     * Convert this Item to a ClickableItem for a given slot index, ignoring bounds, and click event
+     * @param slot The slot index to create the ClickableItem for
+     * @param ignoreBounds Whether to ignore bounds checking for the slot
+     * @param clickEvent The click event to assign to the ClickableItem
+     * @return The created ClickableItem
+     */
     public ClickableItem toClickableInventoryItem(int slot, boolean ignoreBounds, Consumer<ActionEvent> clickEvent) {
         return toInventoryItem(slot, true).clickable(clickEvent);
     }
 
+    /**
+     * Set build placeholders for this Item
+     * @param placeholders The placeholders to set
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I setBuildPlaceholders(Pair<String,String>... placeholders) {
         this.buildPlaceholders = Arrays.asList(placeholders);
         return (I) this;
     }
 
+    /**
+     * Set build placeholders for this Item
+     * @param placeholders The placeholders to set
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I setBuildPlaceholders(List<Pair<String,String>> placeholders) {
         this.buildPlaceholders = placeholders;
         return (I) this;
     }
 
+    /**
+     * Set the amount of this Item
+     * @param amount The amount to set
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I amount(int amount) {
         this.itemStack.setAmount(amount);
         return (I) this;
     }
 
+    /**
+     * Set the MaterialData of this Item
+     * @param data The MaterialData to set
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I data(MaterialData data) {
         this.itemStack.setData(data);
         return (I) this;
     }
 
+    /**
+     * Set the ItemMeta of this Item
+     * @param meta The ItemMeta to set
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I meta(ItemMeta meta) {
         this.itemStack.setItemMeta(meta);
         return (I) this;
     }
 
+    /**
+     * Set the name of this Item
+     * @param name The name to set
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I name(String name) {
         ItemMeta meta = this.itemStack.getItemMeta();
@@ -213,6 +365,12 @@ public class Item implements Cloneable {
         return (I) this;
     }
 
+    /**
+     * Set the lore of this Item
+     * @param lore The lore to set
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I lore(String... lore) {
         ItemMeta meta = this.itemStack.getItemMeta();
@@ -221,6 +379,12 @@ public class Item implements Cloneable {
         return (I) this;
     }
 
+    /**
+     * Set the lore of this Item
+     * @param lore The lore to set
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I lore(String lore) {
         ItemMeta meta = this.itemStack.getItemMeta();
@@ -229,6 +393,12 @@ public class Item implements Cloneable {
         return (I) this;
     }
 
+    /**
+     * Set the lore of this Item
+     * @param lore The lore to set
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I lore(List<String> lore) {
         ItemMeta meta = this.itemStack.getItemMeta();
@@ -237,18 +407,37 @@ public class Item implements Cloneable {
         return (I) this;
     }
 
+    /**
+     * Add multiple enchantments to this Item
+     * @param enchants The enchantments to add
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I enchants(Map<Enchantment, Integer> enchants) {
         this.itemStack.addUnsafeEnchantments(enchants);
         return (I) this;
     }
 
+    /**
+     * Add a single enchantment to this Item
+     * @param enchant The enchantment to add
+     * @param level The level of the enchantment
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I enchant(Enchantment enchant, int level) {
         this.itemStack.addUnsafeEnchantment(enchant, level);
         return (I) this;
     }
 
+    /**
+     * Add item flags to this Item
+     * @param flags The item flags to add
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I flags(ItemFlag... flags) {
         ItemMeta meta = this.itemStack.getItemMeta();
@@ -257,6 +446,12 @@ public class Item implements Cloneable {
         return (I) this;
     }
 
+    /**
+     * Set the custom model data of this Item
+     * @param data The custom model data to set
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I customModelData(int data) {
         ItemMeta meta = this.itemStack.getItemMeta();
@@ -265,6 +460,12 @@ public class Item implements Cloneable {
         return (I) this;
     }
 
+    /**
+     * Set whether this Item is unbreakable
+     * @param unbreakable Whether the Item is unbreakable
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I unbreakable(boolean unbreakable) {
         ItemMeta meta = this.itemStack.getItemMeta();
@@ -273,6 +474,13 @@ public class Item implements Cloneable {
         return (I) this;
     }
 
+    /**
+     * Set a custom NBT tag on this Item
+     * @param key The key of the NBT tag
+     * @param value The value of the NBT tag
+     * @return The Item instance
+     * @param <I> The type of the Item
+     */
     @SuppressWarnings("unchecked")
     public <I extends Item> I setNBTTag(String key, Object value) {
         Gson gson = new Gson();
@@ -306,6 +514,14 @@ public class Item implements Cloneable {
         return (I) this;
     }
 
+    /**
+     * Get a custom NBT tag from an ItemStack
+     * @param key The key of the NBT tag
+     * @param item The ItemStack to get the NBT tag from
+     * @param clazz The class of the NBT tag value
+     * @return An Optional containing the NBT tag value, or empty if not found
+     * @param <T> The type of the NBT tag value
+     */
     public static <T> Optional<T> getTag(String key, ItemStack item, Class<T> clazz) {
         Gson gson = new Gson();
 
@@ -355,6 +571,11 @@ public class Item implements Cloneable {
         return toString(this.itemStack);
     }
 
+    /**
+     * Convert an ItemStack to a string representation
+     * @param stack The ItemStack to convert
+     * @return The string representation of the ItemStack
+     */
     public static String toString(ItemStack stack) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         YamlConfiguration config = new YamlConfiguration();
@@ -367,6 +588,12 @@ public class Item implements Cloneable {
         return gson.toJson(inventoryItem);
     }
 
+    /**
+     * Get the ItemStack for a given player, applying placeholders
+     * @param player The player to get the ItemStack for
+     * @param plugin The plugin instance
+     * @return The ItemStack for the player
+     */
     public ItemStack getItemFor(CommandSender player, Plugin plugin) {
         if (this.itemStack.getType().equals(Material.AIR)) return this.itemStack;
 
@@ -395,18 +622,31 @@ public class Item implements Cloneable {
 
     }
 
+    /**
+     * Convert this Item to a PacketEvents protocol ItemStack
+     * @return The protocol ItemStack
+     */
     public com.github.retrooper.packetevents.protocol.item.ItemStack toProtocolItemStack() {
         return SpigotConversionUtil.fromBukkitItemStack(this.itemStack);
     }
 
+    /**
+     * Convert this Item to a PacketEvents protocol ItemStack for a given player
+     * @param player The player to get the ItemStack for
+     * @param plugin The plugin instance
+     * @return The protocol ItemStack for the player
+     */
     public com.github.retrooper.packetevents.protocol.item.ItemStack toProtocolItemStack(CommandSender player, Plugin plugin) {
         return SpigotConversionUtil.fromBukkitItemStack(getItemFor(player, plugin));
     }
 
+    /**
+     * Check if this Item is AIR
+     * @return True if the Item is AIR, false otherwise
+     */
     public boolean isAir() {
         return this.itemStack == null || this.itemStack.getType().equals(Material.AIR);
     }
-
 
     @Override
     public Item clone() throws CloneNotSupportedException {

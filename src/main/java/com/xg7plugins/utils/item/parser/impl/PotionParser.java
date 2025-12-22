@@ -26,8 +26,6 @@ public class PotionParser implements ItemParser<PotionConsumableItem> {
             return PotionConsumableItem.from(Item.from(material).getItemStack()).type(PotionType.WATER);
         }
 
-        
-
         PotionConsumableItem item = PotionConsumableItem.from(Item.from(material).getItemStack());
 
         String potion = args[0];

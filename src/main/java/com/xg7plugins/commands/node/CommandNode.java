@@ -9,6 +9,10 @@ import org.bukkit.command.CommandSender;
 
 import java.util.*;
 
+/**
+ * Represents a node in the command hierarchy.
+ * Each node corresponds to a specific command or subcommand.
+ */
 @Data
 public class CommandNode {
 
