@@ -16,6 +16,11 @@ permissions:
     description: Gives access to all XG7Plugins commands
     default: op
 
+    children:
+      xg7plugins.command: true
+      xg7plugins.comment: true
+      xg7plugins.config-edit: true
+
   xg7plugins.command:
     description: Gives access to all XG7Plugins commands
     default: op

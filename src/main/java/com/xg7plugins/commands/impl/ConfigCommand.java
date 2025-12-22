@@ -42,7 +42,7 @@ import java.util.stream.Stream;
         name = "configs",
         description = "Base command for configuration management.",
         syntax = "/configs <plugin> [<file> [<edit|reload|save>]]",
-        permission = "xg7plugins.command.config",
+        permission = "xg7plugins.config-edit",
 
         pluginClass = XG7Plugins.class
 )
