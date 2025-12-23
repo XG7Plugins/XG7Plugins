@@ -250,7 +250,7 @@ public class XG7Plugins extends Plugin {
             XG7Plugins.getAPI().moduleManager().getModules().values().stream().filter(Module::isEnabled).forEach(XG7Plugins.getAPI().moduleManager()::reloadModule);
         }
 
-        this.loadHelp();
+        this.helpMessenger = this.loadHelp();
 
         List<CommandSender> commandSenders = Bukkit.getOnlinePlayers().stream().filter(ServerOperator::isOp).collect(Collectors.toList());
         commandSenders.add(Bukkit.getConsoleSender());

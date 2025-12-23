@@ -9,14 +9,13 @@ import com.xg7plugins.commands.utils.CommandArgs;
 import com.xg7plugins.commands.setup.CommandSetup;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.Secrets;
 import com.xg7plugins.utils.http.HTTP;
 import com.xg7plugins.utils.text.Text;
-import org.apache.logging.log4j.util.Strings;
 import org.bukkit.command.CommandSender;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -54,9 +53,8 @@ public class CommentCommand implements Command {
 
         String message = args.toString(1);
 
-        String webhookUrl = "https://discord.com/api/webhooks/1422772152062447617/1xLhoUeaXAY46pNNSdqKSDQQ3rT7ABTE1PAlaIitSL1m-in08JhV3kJuEuqOh0d4jZ-G";
+        String webhookUrl = Secrets.DISCORD_WEBHOOK_URL;
 
-        // JSON no mesmo formato do fetch
         String jsonBody = "{\n" +
                 "  \"content\": \"Uma mensagem do nosso maravilhoso %name% chegou! \uD83C\uDF1F\",\n" +
                 "  \"embeds\": [\n" +

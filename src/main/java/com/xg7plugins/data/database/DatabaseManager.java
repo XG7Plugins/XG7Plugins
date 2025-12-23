@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * Manages database connections and operations for plugins.
@@ -158,6 +159,15 @@ public class DatabaseManager {
                 e.printStackTrace();
             }
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Entity> CompletableFuture<List<T>> getAllCachedEntities(Class<T> entityClass) {
+        return CompletableFuture.supplyAsync(() ->
+                (List<T>) cachedEntities.asMap().join().values().stream()
+                    .filter(entity -> entityClass.isAssignableFrom(entity.getClass()))
+                    .collect(Collectors.toList())
+        );
     }
 
     /**
