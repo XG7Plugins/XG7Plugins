@@ -105,7 +105,8 @@ import java.util.stream.Collectors;
         collaborators = {
                 @Collaborator(uuid = "45766b7f-9789-40e1-bd0b-46fa0d032bde", name = "&aDaviXG7", role = "&bCreator of all plugin"),
                 @Collaborator(uuid = "3b57c818-7cc7-4553-bb58-cf01a09b2dd1", name = "&aAceitou", role = "&bVideo editor"),
-        }
+        },
+        metricsId = 24626
 )
 public class XG7Plugins extends Plugin {
 
@@ -157,10 +158,6 @@ public class XG7Plugins extends Plugin {
     public void onEnable() {
         debug.info("load", "Enabling XG7Plugins...");
         PacketEvents.getAPI().init();
-
-        debug.info("load","Loading metrics...");
-
-        Metrics.getMetrics(this.javaPlugin, 24626);
 
         debug.info("load","Loading plugin configurations...");
 
@@ -341,8 +338,12 @@ public class XG7Plugins extends Plugin {
         registerPlugin(plugin);
 
         plugin.getDebug().setupDebugMode();
+
         plugin.getDebug().log("Loading " + plugin.getCustomPrefix() + "...");
         plugin.onLoad();
+
+        debug.info("load","Loading metrics...");
+        Metrics.loadMetrics(plugin.getJavaPlugin(), plugin.getPluginSetup().metricsId());
 
         debug.log("Checking plugin dependencies...");
         XG7Plugins.getAPI().dependencyManager().loadDependencies(plugin);

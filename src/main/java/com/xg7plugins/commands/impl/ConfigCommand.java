@@ -1,10 +1,8 @@
 package com.xg7plugins.commands.impl;
 
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
-import com.github.retrooper.packetevents.protocol.dialog.Dialog;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
-import com.xg7plugins.commands.impl.reload.ReloadCause;
 import com.xg7plugins.commands.node.CommandConfig;
 import com.xg7plugins.commands.setup.Command;
 import com.xg7plugins.commands.setup.CommandSetup;

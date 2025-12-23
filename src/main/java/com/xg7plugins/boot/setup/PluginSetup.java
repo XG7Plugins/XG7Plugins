@@ -42,5 +42,7 @@ public @interface PluginSetup {
 
     Collaborator[] collaborators() default {@Collaborator(uuid = "45766b7f-9789-40e1-bd0b-46fa0d032bde", name = "&aDaviXG7", role = "&bCreator of all plugin")};
 
+    int metricsId() default -1;
+
 
 }

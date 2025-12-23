@@ -41,7 +41,7 @@ public class Metrics {
     private final Plugin plugin;
     private final Metrics.MetricsBase metricsBase;
 
-    public static Metrics getMetrics(JavaPlugin pl, int serviceId) {
+    public static Metrics loadMetrics(JavaPlugin pl, int serviceId) {
         return new Metrics(pl, serviceId);
     }
 
