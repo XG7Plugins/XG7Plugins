@@ -1,7 +1,7 @@
 config-version: 5
 
 locale: en_US
-formated-name: "English"
+formatted-name: "English"
 icon: "PLAYER_HEAD:eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2QxNWQ1NjYyMDJhYzBlNzZjZDg5Nzc1OWRmNWQwMWMxMWY5OTFiZDQ2YzVjOWEwNDM1N2VhODllZTc1In19fQ=="
 bedrock-icon: "URL, https://cdn.britannica.com/33/4833-050-F6E415FE/Flag-United-States-of-America.jpg"
 
@@ -84,6 +84,8 @@ tasks-menu:
     - "&fTask id: &b%id%"
     - "&fTask plugin: &e%plugin%"
     - "&fTask state: &9%state%"
+    - "&fBukkit task: &6%is_bukkit_task%"
+    - "&fAsync task: &6%is_async_task%"
     - " "
     - "&fLeft click -> &aCopy id"
     - "?IF: %task_is_running%?&fRight click -> &cStop Task"
@@ -93,7 +95,7 @@ tasks-menu:
 
   notes:
     - "&fServer RAM usage: &9%ram%MB"
-    - "&fServer TPS: &9%tps%"
+    - "&fServer TPS (1s): &9%tps%"
     - "&fTasks running: &9%tasks%"
 
 task-command:

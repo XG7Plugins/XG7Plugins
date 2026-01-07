@@ -36,6 +36,7 @@ public class LivingHologram {
         for (HologramLine line : lines) {
 
             int entityID = line.spawn(this, location.add(0, lastSpacing, 0));
+            line.getEquipment().forEach((slot, item) -> line.equip(this, entityID, slot, item));
 
             lastSpacing = line.getSpacing();
 

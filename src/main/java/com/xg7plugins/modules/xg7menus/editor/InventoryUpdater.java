@@ -5,6 +5,7 @@ import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.menus.MenuUpdateActions;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.BasicMenuHolder;
 import com.xg7plugins.utils.item.Item;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,9 +51,10 @@ public class InventoryUpdater implements InventoryEditor {
     @Override
     public void addItem(Item item) {
         if (item == null) return;
-        holder.getInventory().addItem(item.getItemFor(holder.getPlayer(), holder.getMenu().getMenuConfigs().getPlugin()));
 
-        items.put(Slot.fromSlot(items.size()),  item instanceof InventoryItem ? (InventoryItem) item : item.toInventoryItem(items.size()));
+        int slot = holder.getInventory().addItem(item.getItemFor(holder.getPlayer(), holder.getMenu().getMenuConfigs().getPlugin())).keySet().iterator().next();
+
+        items.put(Slot.fromSlot(slot), item.toInventoryItem(slot));
         holder.getMenu().onUpdate(holder, MenuUpdateActions.ITEM_CHANGED);
 
     }
@@ -63,8 +65,9 @@ public class InventoryUpdater implements InventoryEditor {
 
 
     @Override
+    @NotNull
     public InventoryItem getItem(Slot slot) {
-        return items.get(slot) == null ? InventoryItem.air().toInventoryItem(slot) : items.get(slot);
+        return items.get(slot) == null ? Item.air().toInventoryItem(slot) : items.get(slot);
     }
 
     @Override

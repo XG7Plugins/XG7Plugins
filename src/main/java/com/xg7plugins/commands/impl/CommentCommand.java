@@ -51,7 +51,7 @@ public class CommentCommand implements Command {
             return CommandState.error("plugin-not-found");
         }
 
-        String message = args.toString(1);
+        String message = args.join(1);
 
         String webhookUrl = Secrets.DISCORD_WEBHOOK_URL;
 

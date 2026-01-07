@@ -82,7 +82,6 @@ public interface Repository<ID, T extends Entity<?, ?>> {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /**

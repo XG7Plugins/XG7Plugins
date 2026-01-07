@@ -80,7 +80,7 @@ public class FileUtil {
      * @param replace whether to replace the file if it already exists
      * @return the created or existing file
      */
-    public static File createOrSaveResource(Plugin plugin, String path, boolean replace) {
+    public static File getOrSaveResource(Plugin plugin, String path, boolean replace) {
         File file = new File(plugin.getJavaPlugin().getDataFolder(), path);
 
         if (!file.exists() || replace) {
@@ -101,8 +101,8 @@ public class FileUtil {
      * @param path   the relative path of the resource to create or save
      * @return the created or existing file
      */
-    public static File createOrSaveResource(Plugin plugin, String path) {
-        return createOrSaveResource(plugin, path, false);
+    public static File getOrSaveResource(Plugin plugin, String path) {
+        return getOrSaveResource(plugin, path, false);
     }
 
     /**
@@ -185,7 +185,19 @@ public class FileUtil {
      * @throws IOException if an I/O error occurs writing to the file
      */
     public static void writeFile(File parent, String path, String content) throws IOException {
-        Files.write(Paths.get(path), content.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        File file = new File(parent, path);
+
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+
+        Files.write(
+                file.toPath(),
+                content.getBytes(StandardCharsets.UTF_8),
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING
+        );
     }
 
     /**

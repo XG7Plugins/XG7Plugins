@@ -58,7 +58,7 @@ public class ConfigSection {
     public <T> T get(String path, Class<T> type, T defaultValue, boolean ignoreNonexistent, Object... optionalTypeArgs) {
 
         if (path.isEmpty()) {
-            T value = getAs(path, type, optionalTypeArgs);
+            T value = getAs("", type, optionalTypeArgs);
 
             return value != null ? value : defaultValue;
         }
@@ -68,11 +68,36 @@ public class ConfigSection {
         Object object = getByPath(path);
 
         if (
-                type == Object.class || type == String.class || type == Integer.class || type == int.class ||
-                type == Boolean.class || type == boolean.class || type == Double.class || type == double.class ||
-                type == Long.class || type == long.class || type == Float.class || type == float.class ||
-                type == Short.class || type == short.class
+                type == Object.class || type == String.class ||
+                type == Boolean.class || type == boolean.class ||
+                type == Map.class
+
         ) {
+            return (T) object;
+        }
+
+        if (
+                type == Integer.class || type == int.class ||
+                        type == Double.class || type == double.class ||
+                        type == Long.class || type == long.class ||
+                        type == Float.class || type == float.class ||
+                        type == Short.class || type == short.class
+        ) {
+
+            if (object instanceof Integer && !(type == Integer.class || type == int.class)) {
+                Number number = (Integer) object;
+                if (type == Double.class || type == double.class) {
+                    return (T) (Double) number.doubleValue();
+                }
+                if (type == Long.class || type == long.class) {
+                    return (T) (Long) number.longValue();
+                }
+                if (type == Float.class || type == float.class) {
+                    return (T) (Float) number.floatValue();
+                }
+                return (T) (Short) number.shortValue();
+            }
+
             return (T) object;
         }
 
@@ -178,7 +203,7 @@ public class ConfigSection {
 
     @SuppressWarnings("unchecked")
     private  <T> T getByPath(String path) {
-        if (path == null || path.isEmpty()) return null;
+        if (path == null || path.isEmpty() || !exists()) return null;
 
         String[] parts = path.split("\\.");
         Map<String, Object> current = data;
@@ -265,7 +290,7 @@ public class ConfigSection {
                 type == Object.class || type == String.class || type == Integer.class || type == int.class ||
                         type == Boolean.class || type == boolean.class || type == Double.class || type == double.class ||
                         type == Long.class || type == long.class || type == Float.class || type == float.class ||
-                        type == Short.class || type == short.class
+                        type == Short.class || type == short.class || type == Map.class
         ) {
             return Optional.of((List<T>) list);
         }
@@ -321,7 +346,7 @@ public class ConfigSection {
      */
     @NotNull
     public Time getTimeOrDefault(String path, Time defaultTime, boolean ignoreNonexistent) {
-        String time = data.get(path).toString();
+        String time = data.get(path) != null ? data.get(path).toString() : null;
         if (time == null) {
             if (!ignoreNonexistent) file.getPlugin().getDebug().warn("config", this.currentPath + path + " not found in " + file.getName() + ".yml");
             return defaultTime;
@@ -411,6 +436,8 @@ public class ConfigSection {
      */
     @SuppressWarnings("unchecked")
     public Set<String> getKeys(boolean deep) {
+        if (!exists()) return Collections.emptySet();
+
         Set<String> keys = new LinkedHashSet<>();
 
         for (Map.Entry<String, Object> entry : data.entrySet()) {
@@ -431,7 +458,7 @@ public class ConfigSection {
      * @return true if the path exists, false otherwise
      */
     public boolean contains(String path) {
-        if (path == null || path.isEmpty()) return false;
+        if (path == null || path.isEmpty() || !exists()) return false;
 
         String[] parts = path.split("\\.");
         Map<String, Object> current = data;
@@ -449,6 +476,7 @@ public class ConfigSection {
             }
 
             current = (Map<String, Object>) value;
+
         }
 
         return true;
@@ -473,7 +501,7 @@ public class ConfigSection {
      * @return true if the section exists, false otherwise
      */
     public boolean exists() {
-        return file.exists() && data != null;
+        return data != null && file.exists();
     }
 
     /**

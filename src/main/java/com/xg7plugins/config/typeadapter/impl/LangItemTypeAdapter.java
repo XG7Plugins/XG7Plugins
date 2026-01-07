@@ -20,7 +20,7 @@ public class LangItemTypeAdapter implements ConfigTypeAdapter<InventoryItem> {
 
         LangItem langItem = new LangItem(Item.from(config.get("icon", "STONE")));
 
-        String name = config.get("formated-name", "LANG NOT NAMED");
+        String name = config.get("formatted-name", "LANG NOT NAMED");
 
         langItem.name(selected ? "&a" + name : "&7" + name);
         langItem.lore(config.getList("lang-menu.item-click", String.class).orElse(new ArrayList<>()));

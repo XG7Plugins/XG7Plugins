@@ -1,4 +1,4 @@
-package com.xg7plugins.data;
+package com.xg7plugins.data.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -9,6 +9,7 @@ import com.xg7plugins.config.file.ConfigFile;
 
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.utils.FileUtil;
+import com.xg7plugins.utils.item.Item;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -23,7 +24,10 @@ import java.util.concurrent.CompletableFuture;
  */
 public class JsonManager {
 
-    private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(Item.class, new DefaultItemTypeAdapter())
+            .create();
 
     private final ObjectCache<String, Object> cache;
     public JsonManager(XG7Plugins plugin) {
@@ -35,6 +39,8 @@ public class JsonManager {
                 false,
                 String.class,
                 Object.class);
+
+
     }
 
     /**
@@ -68,8 +74,6 @@ public class JsonManager {
     public <T> CompletableFuture<Void> saveJson(Plugin plugin, String path, T object) {
         return CompletableFuture.runAsync(() -> {
             plugin.getDebug().info("json", "Saving " + path + "...");
-
-            File file = FileUtil.createFile(plugin, path);
 
             try {
                 FileUtil.writeFile(plugin, path, gson.toJson(object));
@@ -140,7 +144,7 @@ public class JsonManager {
             if (cache.containsKey(path).join()) {
                 return cache.get(path).join();
             }
-            File file = FileUtil.createOrSaveResource(plugin, path);
+            File file = FileUtil.getOrSaveResource(plugin, path);
 
             T t;
             try {
@@ -169,7 +173,7 @@ public class JsonManager {
             if (cache.containsKey(path).join()) {
                 return cache.get(path).join();
             }
-            File file = FileUtil.createOrSaveResource(plugin, path);
+            File file = FileUtil.getOrSaveResource(plugin, path);
             T t;
             try {
                 t = gson.fromJson(new FileReader(file), type.getType());

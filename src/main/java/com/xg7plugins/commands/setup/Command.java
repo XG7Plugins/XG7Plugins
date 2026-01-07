@@ -28,7 +28,7 @@ public interface Command {
      */
     default List<String> onTabComplete(CommandSender sender, CommandArgs args) {
 
-        CommandManager manager = XG7Plugins.getAPI().commandManager(XG7Plugins.getInstance());
+        CommandManager manager = XG7Plugins.getAPI().commandManager(getPlugin());
 
         CommandNode chosen = manager.getRootCommandNode(getPlugin().getPluginSetup().mainCommandName() + getCommandSetup().name());
 

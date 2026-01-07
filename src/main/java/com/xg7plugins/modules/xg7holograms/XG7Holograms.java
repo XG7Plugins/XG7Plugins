@@ -59,6 +59,9 @@ public class XG7Holograms implements Module {
         if (hologram == null) return;
         this.registeredHolograms.put(hologram.getId(), hologram);
     }
+    public void unregisterHologram(String hologramId) {
+        this.registeredHolograms.remove(hologramId);
+    }
 
     public List<LivingHologram> getAllLivingHolograms() {
         List<LivingHologram> livingHolograms = new ArrayList<>();

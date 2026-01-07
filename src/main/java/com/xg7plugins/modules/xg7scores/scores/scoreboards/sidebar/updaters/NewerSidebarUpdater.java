@@ -27,7 +27,7 @@ public class NewerSidebarUpdater implements SidebarUpdater {
 
         ClientVersion clientVersion = user.getClientVersion();
 
-        return clientVersion.isNewerThanOrEquals(ClientVersion.V_1_13) && MinecraftServerVersion.isOlderThan(ServerVersion.V_1_13);
+        return clientVersion.isNewerThanOrEquals(ClientVersion.V_1_13) && MinecraftServerVersion.isNewerOrEqual(ServerVersion.V_1_13);
     }
 
     @Override

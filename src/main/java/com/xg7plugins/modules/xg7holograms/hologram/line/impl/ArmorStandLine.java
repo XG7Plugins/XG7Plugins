@@ -16,12 +16,14 @@ import com.xg7plugins.modules.xg7holograms.event.HologramClickEvent;
 import com.xg7plugins.modules.xg7holograms.hologram.HologramMetadataProvider;
 import com.xg7plugins.modules.xg7holograms.hologram.LivingHologram;
 import com.xg7plugins.modules.xg7holograms.hologram.line.HologramLine;
+import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.location.Location;
 import com.xg7plugins.utils.text.Text;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 @Data
@@ -30,10 +32,16 @@ public class ArmorStandLine implements HologramLine {
     private final String line;
     private final float spacing;
     private final boolean levitate;
+    private final HashMap<EquipmentSlot, Item> equipment;
 
     @Override
     public boolean levitate() {
         return levitate;
+    }
+
+    @Override
+    public HashMap<EquipmentSlot, Item> getEquipment() {
+        return equipment;
     }
 
     @Override

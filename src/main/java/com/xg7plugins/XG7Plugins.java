@@ -16,7 +16,7 @@ import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.typeadapter.impl.LangItemTypeAdapter;
 import com.xg7plugins.config.typeadapter.impl.SoundTypeAdapter;
 import com.xg7plugins.cooldowns.CooldownManager;
-import com.xg7plugins.data.JsonManager;
+import com.xg7plugins.data.json.JsonManager;
 import com.xg7plugins.data.database.ConnectionType;
 import com.xg7plugins.data.database.DatabaseManager;
 import com.xg7plugins.data.database.connector.Connector;
@@ -269,7 +269,7 @@ public class XG7Plugins extends Plugin {
 
     @Override
     public List<Command> loadCommands() {
-        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new CommentCommand(), new UpdateCommand(), new ConfigCommand());
+        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new CommentCommand(), new UpdateCommand(), new ConfigCommand(), new Test());
     }
 
     @Override
@@ -439,7 +439,7 @@ public class XG7Plugins extends Plugin {
         }
 
         plugin.getDebug().info("load","Loading help...");
-        plugin.setHelpMessenger(loadHelp());
+        plugin.setHelpMessenger(plugin.loadHelp());
 
         if (XG7Plugins.getAPI().dependencyManager().exists("PlaceholderAPI")) {
 

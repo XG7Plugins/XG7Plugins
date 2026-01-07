@@ -86,7 +86,7 @@ public class LangManager {
             File langFolder = new File(plugin.getJavaPlugin().getDataFolder(), "langs");
             if (!langFolder.exists()) langFolder.mkdirs();
 
-            FileUtil.createOrSaveResource(plugin, "langs/" +  lang + ".yml");
+            FileUtil.getOrSaveResource(plugin, "langs/" +  lang + ".yml");
             langs.put(plugin.getName() + ":" + lang, new Lang(plugin, ConfigFile.of("langs/" + lang, plugin), lang));
     }
 

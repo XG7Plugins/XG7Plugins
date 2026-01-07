@@ -30,6 +30,11 @@ public class ScoreTimerTask extends TimerTask {
 
     @Override
     public void run() {
+
+        if (counter.get() % 5000 == 0) {
+            XG7Plugins.getInstance().getDebug().info("scores", "Running score task cycle. Current registered scores: " + scores.getScores());
+        }
+
         scores.getScores().values().forEach(score -> {
 
             new ArrayList<>(scores.getPlayers()).forEach(uuid -> {

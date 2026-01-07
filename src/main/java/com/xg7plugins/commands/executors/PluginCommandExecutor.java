@@ -87,6 +87,11 @@ public class PluginCommandExecutor implements CommandExecutor, TabCompleter {
             depth = i;
         }
 
+        if (chosen.getCommandMethod() == null) {
+            CommandState.syntaxError(commandConfig.syntax()).send(sender);
+            return true;
+        }
+
         String[] remaining = depth + 1 >= args.length ? new String[0] : Arrays.copyOfRange(args, depth + 1, args.length);
         CommandArgs commandArgs = new CommandArgs(remaining);
 

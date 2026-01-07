@@ -41,6 +41,7 @@ public class Sidebar extends Score {
 
         for (UUID id : super.getPlayers()) {
             Player player = Bukkit.getPlayer(id);
+
             if (player == null) continue;
 
             WrapperPlayServerScoreboardObjective objective = new WrapperPlayServerScoreboardObjective(

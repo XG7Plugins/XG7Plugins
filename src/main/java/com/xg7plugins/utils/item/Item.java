@@ -125,7 +125,7 @@ public class Item implements Cloneable {
         String realMaterial = splitMaterial[0];
 
 
-        XMaterial xMaterial = XMaterial.matchXMaterial(realMaterial).orElse(XMaterial.STONE);
+        XMaterial xMaterial = XMaterial.matchXMaterial(realMaterial.toUpperCase()).orElse(XMaterial.STONE);
 
         ItemParser<?> parser = getParser(xMaterial);
 
@@ -247,7 +247,7 @@ public class Item implements Cloneable {
      * @return The created InventoryItem
      */
     public InventoryItem toInventoryItem(int slot) {
-        return (InventoryItem) new InventoryItem(itemStack, Slot.fromSlot(slot)).setBuildPlaceholders(buildPlaceholders);
+        return new InventoryItem(itemStack, Slot.fromSlot(slot)).setBuildPlaceholders(buildPlaceholders);
     }
 
     /**
@@ -257,7 +257,7 @@ public class Item implements Cloneable {
      * @return The created InventoryItem
      */
     public InventoryItem toInventoryItem(int slot, boolean ignoreBounds) {
-        return (InventoryItem) new InventoryItem(itemStack, Slot.fromSlot(slot, ignoreBounds)).setBuildPlaceholders(buildPlaceholders);
+        return new InventoryItem(itemStack, Slot.fromSlot(slot, ignoreBounds)).setBuildPlaceholders(buildPlaceholders);
     }
 
     /**

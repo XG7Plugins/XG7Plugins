@@ -70,7 +70,7 @@ public class MenuConfigsImpl implements MenuConfigurations {
     }
 
     @Override
-    public long repeatingUpdateMills() {
+    public long repeatingUpdateMillis() {
         return repeatingUpdateDelay;
     }
 

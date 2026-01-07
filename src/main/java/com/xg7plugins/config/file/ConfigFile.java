@@ -60,21 +60,22 @@ public class ConfigFile {
         if (plugin.getJavaPlugin().getResource(name + ".yml") != null) {
 
             Map<String, Object> resourceData = yaml.load(FileUtil.fromResource(plugin, name + ".yml"));
-            if (!resourceData.get("config-version").equals(data.get("config-version"))) {
 
-                FileUtil.renameFile(configFile,name + "-old.yml");
+            if (resourceData.get("config-version") != null && data.get("config-version") != null && !resourceData.get("config-version").equals(data.get("config-version"))) {
 
-                FileUtil.saveResource(plugin, name + ".yml");
+                    FileUtil.renameFile(configFile,name + "-old.yml");
 
-                this.configFile = new File(plugin.getJavaPlugin().getDataFolder(), name + ".yml");
+                    FileUtil.saveResource(plugin, name + ".yml");
 
-                this.data =  ConfigVersionMigration.migrate(data, resourceData);
+                    this.configFile = new File(plugin.getJavaPlugin().getDataFolder(), name + ".yml");
 
-                save();
+                    this.data =  ConfigVersionMigration.migrate(data, resourceData);
 
-                plugin.getJavaPlugin().getLogger().info("Loaded!");
+                    save();
 
-                return;
+                    plugin.getJavaPlugin().getLogger().info("Loaded!");
+
+                    return;
             }
 
         }

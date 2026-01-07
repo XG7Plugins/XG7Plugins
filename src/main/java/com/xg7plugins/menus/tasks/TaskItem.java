@@ -14,6 +14,8 @@ import com.xg7plugins.modules.xg7menus.menus.interfaces.gui.menusimpl.PagedMenu;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.MenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.PagedMenuHolder;
 import com.xg7plugins.tasks.TaskState;
+import com.xg7plugins.tasks.tasks.AsyncTask;
+import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Pair;
 import com.xg7plugins.utils.item.Item;
@@ -40,6 +42,8 @@ public class TaskItem extends ClickableItem {
                 Pair.of("plugin", task.getPlugin().getName()),
                 Pair.of("id", task.getPlugin().getName() + ":" + task.getId()),
                 Pair.of("state", task.getTaskState().name()),
+                Pair.of("is_bukkit_task", String.valueOf(task.getTask() instanceof BukkitTask)),
+                Pair.of("is_async_task", String.valueOf(task.getTask() instanceof AsyncTask || (task.getTask() instanceof BukkitTask && ((BukkitTask) task.getTask()).isAsync()))),
                 Pair.of("task_is_running", String.valueOf(task.getTaskState() == TaskState.RUNNING)),
                 Pair.of("task_is_not_running", String.valueOf(task.getTaskState() == TaskState.IDLE))
         );
