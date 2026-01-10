@@ -1,6 +1,7 @@
 package com.xg7plugins.modules.xg7holograms.task;
 
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.modules.xg7holograms.XG7Holograms;
 import com.xg7plugins.modules.xg7holograms.hologram.LivingHologram;
 import com.xg7plugins.tasks.TaskState;
@@ -17,7 +18,7 @@ public class HologramTask extends TimerTask {
                 XG7Plugins.getInstance(),
                 "holograms-task",
                 0,
-                1,
+                ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().getTimeInMilliseconds("holograms-update-delay", 100L),
                 TaskState.IDLE,
                 null
         );

@@ -28,7 +28,7 @@ public interface Command {
      */
     default List<String> onTabComplete(CommandSender sender, CommandArgs args) {
 
-        CommandManager manager = XG7Plugins.getAPI().commandManager(XG7Plugins.getInstance());
+        CommandManager manager = XG7Plugins.getAPI().commandManager(getPlugin());
 
         CommandNode chosen = manager.getRootCommandNode(getPlugin().getPluginSetup().mainCommandName() + getCommandSetup().name());
 
@@ -43,6 +43,19 @@ public interface Command {
 
         return chosen.getMappedChildren().entrySet().stream()
                 .filter(c -> sender.hasPermission(c.getValue().getCommandMethod().getAnnotation(CommandConfig.class).permission()) || sender.hasPermission("xg7plugins.command.anti-tab-bypass"))
+                .sorted((a, b) -> {
+                    String input = args.len() > 0 ? args.get(args.len() - 1, String.class) : "";
+                    boolean aStarts = a.getKey().toLowerCase().startsWith(input.toLowerCase());
+                    boolean bStarts = b.getKey().toLowerCase().startsWith(input.toLowerCase());
+
+                    if (aStarts && !bStarts) {
+                        return -1;
+                    } else if (!aStarts && bStarts) {
+                        return 1;
+                    } else {
+                        return a.getKey().compareToIgnoreCase(b.getKey());
+                    }
+                })
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }

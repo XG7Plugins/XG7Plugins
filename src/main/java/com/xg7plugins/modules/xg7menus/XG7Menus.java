@@ -11,6 +11,7 @@ import com.xg7plugins.modules.xg7menus.menus.menuholders.MenuHolder;
 import com.xg7plugins.modules.xg7menus.menus.menuholders.PlayerMenuHolder;
 import com.xg7plugins.modules.xg7menus.task.MenuUpdaterTimerTask;
 import com.xg7plugins.tasks.tasks.TimerTask;
+import com.xg7plugins.utils.PluginKey;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ public class XG7Menus implements Module {
     private final HashMap<UUID, PlayerMenuHolder> playerMenusMap = new HashMap<>();
     private final HashMap<UUID, MenuHolder> menuHolders = new HashMap<>();
 
-    private final HashMap<String, BasicMenu> registeredMenus = new HashMap<>();
+    private final HashMap<PluginKey, BasicMenu> registeredMenus = new HashMap<>();
 
     @Override
     public void onInit() {
@@ -51,6 +52,7 @@ public class XG7Menus implements Module {
         player.closeInventory();
         if (XG7Menus.hasPlayerMenuHolder(player.getUniqueId())) {
             PlayerMenuHolder holder = XG7Menus.getPlayerMenuHolder(player.getUniqueId());
+            System.out.println("Closing player menu for " + player.getName());
             holder.getMenu().close(holder);
         }
     }
@@ -70,24 +72,33 @@ public class XG7Menus implements Module {
         for (BasicMenu menu : menus) {
             if (!menu.getMenuConfigs().isEnabled()) continue;
             XG7Plugins.getInstance().getDebug().info("menus", "Registering menu " + menu.getMenuConfigs().getId());
-            registeredMenus.put(menu.getMenuConfigs().getPlugin().getName() + ":" + menu.getMenuConfigs().getId(), menu);
+            registeredMenus.put(PluginKey.of(menu.getMenuConfigs().getPlugin(), menu.getMenuConfigs().getId()), menu);
         }
     }
     public <T extends BasicMenu> T getMenu(Plugin plugin, String id) {
-        return (T) registeredMenus.get(plugin.getName() + ":" + id);
+        return getMenu(PluginKey.of(plugin, id));
     }
 
+    public <T extends BasicMenu> T getMenu(PluginKey key) {
+        return (T) registeredMenus.get(key);
+    }
+
+    public void unregisterMenu(PluginKey key) {
+        registeredMenus.remove(key);
+    }
     public void unregisterMenu(Plugin plugin, String id) {
-        registeredMenus.remove(plugin.getName() + ":" + id);
+        registeredMenus.remove(PluginKey.of(plugin, id));
     }
 
     public static void registerPlayerMenuHolder(PlayerMenuHolder holder) {
         XG7Plugins.getInstance().getDebug().info("menus", "Registering player menu holder for " + holder.getPlayer().getUniqueId());
+        System.out.println("Registering PlayerMenuHolder: " + holder);
         XG7Plugins.getAPI().menus().getPlayerMenusMap().put(holder.getPlayer().getUniqueId(), holder);
     }
 
     public static void removePlayerMenuHolder(UUID playerId) {
         XG7Plugins.getInstance().getDebug().info("menus", "Removing player menu holder for " + playerId);
+        System.out.println("Removing PlayerMenuHolder for playerId: " + playerId);
         XG7Plugins.getAPI().menus().getPlayerMenusMap().remove(playerId);
     }
 

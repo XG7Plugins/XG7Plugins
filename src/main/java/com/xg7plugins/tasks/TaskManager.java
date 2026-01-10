@@ -220,7 +220,7 @@ public class TaskManager {
         asyncTask.setTaskFuture(taskExecutor.scheduleWithFixedDelay(() -> {
             try {
                 asyncTask.run();
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }

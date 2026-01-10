@@ -62,12 +62,12 @@ public class CommandNode {
     @Override
     public String toString() {
         return "CommandNode{" +
-                "command=" + command +
-                ", name='" + name + '\'' +
-                ", parent=" + (parent == null ? "" : parent.getName()) +
-                ", children=" + children +
-                ", commandMethod=" + (command.getClass() + " -> " + commandMethod.getMethod().getName() + "()") +
-                '}';
+                "\ncommand=" + command +
+                ", \nname='" + name + '\'' +
+                ", \nparent=" + (parent == null ? "" : parent.getName()) +
+                ", \nchildren=" + children +
+                ", \ncommandMethod=" + (command.getClass() + " -> " + commandMethod.getMethod().getName() + "()") +
+                "\n}\n";
     }
 
     @Override

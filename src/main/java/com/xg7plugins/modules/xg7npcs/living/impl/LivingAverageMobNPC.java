@@ -3,6 +3,7 @@ package com.xg7plugins.modules.xg7npcs.living.impl;
 import com.xg7plugins.modules.xg7holograms.hologram.LivingHologram;
 import com.xg7plugins.modules.xg7npcs.living.LivingNPC;
 import com.xg7plugins.modules.xg7npcs.npc.NPC;
+import com.xg7plugins.modules.xg7npcs.npc.impl.MobNPC;
 import com.xg7plugins.utils.location.Location;
 import lombok.Data;
 import org.bukkit.entity.Player;
@@ -11,7 +12,7 @@ import org.bukkit.entity.Player;
 public class LivingAverageMobNPC implements LivingNPC {
 
     private final Player player;
-    private final NPC npc;
+    private final MobNPC npc;
 
     private LivingHologram spawnedHologram = null;
 
@@ -19,7 +20,7 @@ public class LivingAverageMobNPC implements LivingNPC {
 
     private boolean moving = false;
 
-    private int spawnedEntityID = -1;
+    private int[] spawnedEntitiesID = null;
 
     @Override
     public NPC getNPC() {

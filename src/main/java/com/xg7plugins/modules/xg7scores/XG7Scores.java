@@ -54,6 +54,7 @@ public class XG7Scores implements Module {
 
     @Override
     public List<TimerTask> loadTasks() {
+        System.out.println("Loading XG7Scores tasks...");
         return Arrays.asList(new ScoreTimerTask(this), new TabListSorterTask(this));
     }
 

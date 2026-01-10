@@ -5,8 +5,10 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
 import com.xg7plugins.modules.xg7scores.organizer.TabListSorter;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class ScoreListener implements Listener {
 
@@ -34,6 +36,16 @@ public class ScoreListener implements Listener {
         sorter.removePlayer(event.getPlayer());
         sorter.deleteAllTeamsForPlayer(event.getPlayer());
         sorter.removeFromUpdateList(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event) {
+        XG7Plugins.getAPI().scores().removePlayer(event.getEntity());
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        XG7Plugins.getAPI().scores().addPlayer(event.getPlayer());
     }
 
     @Override

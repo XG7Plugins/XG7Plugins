@@ -38,7 +38,7 @@ public class LivingPlayerNPC implements LivingNPC {
 
     private boolean moving = false;
 
-    private int spawnedEntityID = -1;
+    private int[] spawnedEntitiesID = null;
 
     private final WrapperPlayServerTeams teams = new WrapperPlayServerTeams(
                 "npc_hidden_name",
@@ -68,7 +68,7 @@ public class LivingPlayerNPC implements LivingNPC {
     @Override
     public void spawn() {
 
-        if (spawnedEntityID >= 0) return;
+        if (spawnedEntitiesID != null) return;
 
         if (currentSkin == null) currentSkin = playerNPC.getSkin();
 
@@ -96,7 +96,7 @@ public class LivingPlayerNPC implements LivingNPC {
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, addInfo);
 
-        teams.setTeamName("npc_hidden_name_" + spawnedEntityID);
+        teams.setTeamName("npc_hidden_name");
         teams.setTeamMode(WrapperPlayServerTeams.TeamMode.CREATE);
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, teams);
@@ -122,7 +122,7 @@ public class LivingPlayerNPC implements LivingNPC {
     }
 
     public void changeSkin(Skin skin) {
-        if (spawnedEntityID < 0) return;
+        if (spawnedEntitiesID == null) return;
 
         currentSkin = skin;
 
@@ -133,11 +133,11 @@ public class LivingPlayerNPC implements LivingNPC {
 
     @Override
     public void kill() {
-        if (getSpawnedEntityID() < 0) return;
+        if (spawnedEntitiesID == null) return;
 
         LivingNPC.super.kill();
 
-        teams.setTeamName("npc_hidden_name_" + spawnedEntityID);
+        teams.setTeamName("npc_hidden_name");
         teams.setTeamMode(WrapperPlayServerTeams.TeamMode.REMOVE);
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, teams);

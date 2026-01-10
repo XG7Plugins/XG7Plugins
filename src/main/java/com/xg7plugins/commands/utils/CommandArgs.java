@@ -13,7 +13,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -56,10 +56,13 @@ public class CommandArgs {
             throw new IllegalArgumentException("Index " + index + " is out of bounds!");
         }
 
+        if (type == Object.class) return type.cast(args[index]);
+
         if (OfflinePlayer.class.isAssignableFrom(type)) return type.cast(Bukkit.getOfflinePlayer(args[index]));
         if (World.class.isAssignableFrom(type)) return type.cast(Bukkit.getWorld(args[index]));
         if (Plugin.class.isAssignableFrom(type)) return type.cast(XG7Plugins.getAPI().getXG7Plugin(args[index]));
         if (Time.class.isAssignableFrom(type)) return type.cast(Time.of(TimeParser.convertToMilliseconds(args[index])));
+        if (UUID.class.isAssignableFrom(type)) return type.cast(UUID.fromString(args[index]));
 
         if (type == Integer.class || type == int.class) return Parser.INTEGER.convert(args[index]);
         if (type == String.class) return Parser.STRING.convert(args[index]);
@@ -100,8 +103,12 @@ public class CommandArgs {
      * @param index The starting index for joining arguments
      * @return A string containing arguments from the specified index joined with spaces
      */
-    public String toString(int index) {
-        return Arrays.stream(args).skip(index).collect(Collectors.joining(" "));
+    public String join(int index) {
+        return join(index, " ");
+    }
+
+    public String join(int index, String separator) {
+        return Arrays.stream(args).skip(index).collect(Collectors.joining(separator));
     }
 
     /**

@@ -81,13 +81,17 @@ public class LangManager {
      * @param lang The language identifier to load
      */
     public void loadLang(Plugin plugin, String lang) {
-            if (langs.containsKey(plugin.getName() + ":" + lang).join()) return;
 
-            File langFolder = new File(plugin.getJavaPlugin().getDataFolder(), "langs");
-            if (!langFolder.exists()) langFolder.mkdirs();
+        System.out.println("CALLED BY: " + Arrays.toString(Thread.currentThread().getStackTrace()) + " | Loading lang: " + lang + " for plugin: " + plugin.getName());
+        System.out.println("Langs currently loaded: " + langs.asMap().join().keySet());
 
-            FileUtil.createOrSaveResource(plugin, "langs/" +  lang + ".yml");
-            langs.put(plugin.getName() + ":" + lang, new Lang(plugin, ConfigFile.of("langs/" + lang, plugin), lang));
+        if (langs.containsKey(plugin.getName() + ":" + lang).join()) return;
+
+        File langFolder = new File(plugin.getJavaPlugin().getDataFolder(), "langs");
+        if (!langFolder.exists()) langFolder.mkdirs();
+
+        FileUtil.getOrSaveResource(plugin, "langs/" + lang + ".yml");
+        langs.put(plugin.getName() + ":" + lang, new Lang(plugin, ConfigFile.of("langs/" + lang, plugin), lang));
     }
 
     /**
@@ -98,10 +102,7 @@ public class LangManager {
      */
     public Lang getLang(Plugin plugin, String lang) {
 
-        String finalLang;
-
-        if (!langEnabled) finalLang = mainLang;
-        else finalLang = lang;
+        String finalLang = langEnabled ? lang : mainLang;
 
         if (langs.containsKey(plugin.getName() + ":" + finalLang).join()) {
             return langs.get(plugin.getName() + ":" + finalLang).join();

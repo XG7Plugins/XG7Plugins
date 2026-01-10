@@ -5,6 +5,7 @@ import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityType;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
@@ -14,11 +15,13 @@ import com.xg7plugins.modules.xg7holograms.event.HologramClickEvent;
 import com.xg7plugins.modules.xg7holograms.hologram.HologramMetadataProvider;
 import com.xg7plugins.modules.xg7holograms.hologram.LivingHologram;
 import com.xg7plugins.modules.xg7holograms.hologram.line.HologramLine;
+import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.location.Location;
 import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import lombok.Data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -28,6 +31,7 @@ public class EntityLine implements HologramLine {
     private final EntityType entityType;
     private final float spacing;
     private final boolean levitate;
+    private final HashMap<EquipmentSlot, Item> equipment;
 
     @Override
     public boolean levitate() {
@@ -35,7 +39,12 @@ public class EntityLine implements HologramLine {
     }
 
     @Override
-    public int spawn(LivingHologram livingHologram, Location location) {
+    public HashMap<EquipmentSlot, Item> getEquipment() {
+        return equipment;
+    }
+
+    @Override
+    public int[] spawn(LivingHologram livingHologram, Location location) {
 
         int entityID = SpigotReflectionUtil.generateEntityId();
 
@@ -59,7 +68,7 @@ public class EntityLine implements HologramLine {
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(livingHologram.getPlayer(), packet);
 
-        return entityID;
+        return new int[]{entityID};
     }
 
     @Override

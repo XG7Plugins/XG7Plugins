@@ -19,6 +19,7 @@ import com.xg7plugins.modules.xg7dialogs.dialogs.Dialog;
 import com.xg7plugins.modules.xg7geyserforms.forms.Form;
 import com.xg7plugins.modules.xg7holograms.hologram.Hologram;
 import com.xg7plugins.modules.xg7menus.menus.BasicMenu;
+import com.xg7plugins.modules.xg7npcs.npc.NPC;
 import com.xg7plugins.modules.xg7scores.Score;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.Debug;
@@ -194,6 +195,9 @@ public abstract class Plugin {
         return null;
     }
     public List<Hologram> loadHolograms() {
+        return null;
+    }
+    public List<NPC> loadNPCs() {
         return null;
     }
     public List<Dialog> loadDialogs() {

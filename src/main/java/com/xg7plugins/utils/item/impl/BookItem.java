@@ -64,7 +64,7 @@ public class BookItem extends Item {
     @SneakyThrows
     public void openBook(Player player) {
 
-        if (MinecraftServerVersion.isNewerThan(ServerVersion.V_1_13)) {
+        if (MinecraftServerVersion.isNewerOrEqual(ServerVersion.V_1_13)) {
             player.openBook(this.itemStack);
             return;
         }

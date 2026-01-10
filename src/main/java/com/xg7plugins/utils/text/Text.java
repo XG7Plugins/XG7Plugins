@@ -224,6 +224,15 @@ public class Text {
         return texts;
     }
 
+    public boolean isEmpty() {
+        return this.text == null || this.text.isEmpty();
+    }
+
+    public Text remove(String placeholder) {
+        this.text = this.text.replace(placeholder, "");
+        return this;
+    }
+
     /**
      * Sends the text to a command sender using the text's TextSender
      *
@@ -232,6 +241,10 @@ public class Text {
      */
     public static void send(Text text, CommandSender sender) {
         text.getTextSender().send(sender, text);
+    }
+
+    public static void send(String rawText, CommandSender sender) {
+        send(new Text(rawText), sender);
     }
 
     public void send(CommandSender sender) {
@@ -266,7 +279,12 @@ public class Text {
      */
     public String getText() {
         if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) return TagResolver.removeTags(this.text);
-        return new TextComponent(getComponent()).toLegacyText();
+        String legacyText = new TextComponent(getComponent()).toLegacyText();
+
+        if (legacyText.startsWith("§f§f")) {
+            legacyText = legacyText.replaceFirst("§f§f", "");
+        }
+        return legacyText;
     }
 
     /**

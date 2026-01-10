@@ -29,7 +29,7 @@ public class PlayerMenuConfigsImpl implements PlayerMenuConfigurations {
     private final long repeatingUpdateDelay;
 
     @Override
-    public long repeatingUpdateMills() {
+    public long repeatingUpdateMillis() {
         return repeatingUpdateDelay;
     }
 

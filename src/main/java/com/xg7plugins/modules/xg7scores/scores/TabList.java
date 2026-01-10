@@ -43,8 +43,15 @@ public class TabList extends Score {
             if (player == null) continue;
 
             player.setPlayerListName(Text.detectLangs(player, plugin,playerPrefix).getText() + player.getName() + Text.detectLangs(player, plugin,playerSuffix).getText());
-            String headerl = header.get(headerIndex.getAndIncrement());
-            String footerl = footer.get(footerIndex.getAndIncrement());
+
+            String headerl = "";
+
+            if (headerIndex.get() < header.size())
+                headerl = header.get(headerIndex.getAndIncrement());
+
+            String footerl = "";
+            if (footerIndex.get() < footer.size())
+                footerl = footer.get(footerIndex.getAndIncrement());
 
             if (headerIndex.get() >= header.size()) headerIndex.set(0);
             if (footerIndex.get() >= footer.size()) footerIndex.set(0);
@@ -59,7 +66,7 @@ public class TabList extends Score {
         if (header == null) header = "";
         if (footer == null) footer = "";
 
-        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_13)) {
+        if (MinecraftServerVersion.isNewerOrEqual(ServerVersion.V_1_13)) {
             player.setPlayerListHeader(header);
             player.setPlayerListFooter(footer);
             return;

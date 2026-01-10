@@ -196,6 +196,17 @@ public class Location implements Cloneable {
     }
 
     /**
+     * Resets this location's rotation to default values (0,0)
+     *
+     * @return This location object
+     */
+    public Location resetRotation() {
+        this.yaw = 0;
+        this.pitch = 0;
+        return this;
+    }
+
+    /**
      * Converts this location's coordinates to a Bukkit's Vector object
      *
      * @return A Vector representing this location's coordinates

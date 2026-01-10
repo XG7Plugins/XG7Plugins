@@ -48,7 +48,7 @@ public class NPCClickListener implements PacketListener {
 
         for (LivingNPC livingNPC : XG7Plugins.getAPI().npcs().getAllLivingNPCs()) {
 
-            if (livingNPC.getSpawnedEntityID() != entityId) continue;
+            if (!livingNPC.checkEntityId(entityId)) continue;
 
             NPCClickEvent clickEvent = new NPCClickEvent(livingNPC.getPlayer(), livingNPC, clickAction);
 

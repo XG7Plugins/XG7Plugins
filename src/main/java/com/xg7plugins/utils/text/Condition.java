@@ -58,7 +58,25 @@ public enum Condition {
      * Example: "?NO_PERMISSION: vip.access? You are not VIP"
      * Example: "?NO_PERMISSION: admin.access? You are not an admin"
      */
-    NO_PERMISSION((conditionPack) -> !conditionPack.getPlayer().hasPermission(conditionPack.getConditionValue()));
+    NO_PERMISSION((conditionPack) -> !conditionPack.getPlayer().hasPermission(conditionPack.getConditionValue())),
+    /**
+     * Checks if two strings are equal.
+     * Example: "?EQUALS: value1 = value2? Values are equal -> false"
+     */
+    EQUALS((conditionPack) -> {
+        String[] parts = conditionPack.getConditionValue().split("=");
+        if (parts.length != 2) return false;
+        return parts[0].trim().equals(parts[1].trim());
+    }),
+    /**
+     * Checks if two strings are not equal.
+     * Example: "?NOT_EQUALS: value1 != value2? Values are not equal -> true"
+     */
+    NOT_EQUALS((conditionPack) -> {
+        String[] parts = conditionPack.getConditionValue().split("!=");
+        if (parts.length != 2) return false;
+        return !parts[0].trim().equals(parts[1].trim());
+    });
 
     private final Function<ConditionPack, Boolean> condition;
 

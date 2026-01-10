@@ -70,19 +70,19 @@ public class HologramMetadataProvider {
     public static List<EntityData<?>> textDisplayData(LivingHologram textDisplayHologram, TextDisplayLine line) {
         List<EntityData<?>> data = new ArrayList<>();
 
-        data.add(new EntityData<>(12, EntityDataTypes.VECTOR3F, line.getScale()));
+        data.add(new EntityData<>(12, EntityDataTypes.VECTOR3F, line.getDisplayOptions().getScale()));
 
         data.add(new EntityData<>(23, EntityDataTypes.ADV_COMPONENT,
                 Text.detectLangs(textDisplayHologram.getPlayer(),
                         textDisplayHologram.getHologram().getPlugin(),
                         line.getLine()).toAdventureComponent()));
 
-        data.add(new EntityData<>(15, EntityDataTypes.BYTE, (byte) line.getBillboard().ordinal()));
+        data.add(new EntityData<>(15, EntityDataTypes.BYTE, (byte) line.getDisplayOptions().getBillboard().ordinal()));
 
         byte flags = 0;
-        if (line.isShadow()) flags |= 0x01;
-        if (line.isSeeThrough()) flags |= 0x02;
-        switch (line.getAlignment()) {
+        if (line.getDisplayOptions().isShadow()) flags |= 0x01;
+        if (line.getDisplayOptions().isSeeThrough()) flags |= 0x02;
+        switch (line.getDisplayOptions().getAlignment()) {
             case LEFT:
                 flags |= 0x08;
                 break;
@@ -93,11 +93,11 @@ public class HologramMetadataProvider {
 
         data.add(new EntityData<>(27, EntityDataTypes.BYTE, flags));
 
-        if (line.isBackground()) {
-            int argb = (line.getBackgroundColor().getAlpha() << 24)
-                    | (line.getBackgroundColor().getRed() << 16)
-                    | (line.getBackgroundColor().getGreen() << 8)
-                    | (line.getBackgroundColor().getBlue());
+        if (line.getDisplayOptions().isBackground()) {
+            int argb = (line.getDisplayOptions().getBackgroundColor().getAlpha() << 24)
+                    | (line.getDisplayOptions().getBackgroundColor().getRed() << 16)
+                    | (line.getDisplayOptions().getBackgroundColor().getGreen() << 8)
+                    | (line.getDisplayOptions().getBackgroundColor().getBlue());
 
             data.add(new EntityData<>(25, EntityDataTypes.INT, argb));
         } else {
@@ -111,6 +111,14 @@ public class HologramMetadataProvider {
         List<EntityData<?>> data = new ArrayList<>();
 
         data.add(new EntityData<>(23, EntityDataTypes.ADV_COMPONENT, line.toAdventureComponent()));
+
+        return data;
+    }
+
+    public static List<EntityData<?>> interactionData() {
+        List<EntityData<?>> data = new ArrayList<>();
+
+        data.add(new EntityData<>(10, EntityDataTypes.BOOLEAN, true));
 
         return data;
     }

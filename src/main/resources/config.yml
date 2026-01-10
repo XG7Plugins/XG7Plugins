@@ -67,6 +67,10 @@ disable-version-check: false
 #Cache expires of menus
 menu-cache-expires: 10m
 
+#Holograms update settings
+holograms-levitating-interval: 100ms
+holograms-update-delay: 500ms
+
 ############################################################
 #                        MODULES                           #
 ############################################################
@@ -188,8 +192,6 @@ debug:
 ############################################################
 #                        OTHERS                            #
 ############################################################
-
-holograms-levitating-interval: 100ms
 
 #Delay sending a message or
 #make an action while is in cooldown

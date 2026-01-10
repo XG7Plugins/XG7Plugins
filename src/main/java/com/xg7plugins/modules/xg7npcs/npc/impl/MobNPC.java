@@ -20,8 +20,8 @@ public class MobNPC extends NPC {
 
     private final Consumer<NPCClickEvent> npcClickEventConsumer;
 
-    public MobNPC(Plugin plugin, String id, Hologram hologram, EntityType entityType, Location spawnLocation, Map<EquipmentSlot, Item> equipments, boolean lookAtPlayer, Consumer<NPCClickEvent> npcClickEvent) {
-        super(plugin, id, hologram, entityType, spawnLocation, equipments, lookAtPlayer);
+    public MobNPC(Plugin plugin, String id, Hologram hologram, EntityType entityType, Location spawnLocation, Map<EquipmentSlot, Item> equipments, boolean lookAtPlayer, boolean glow, Consumer<NPCClickEvent> npcClickEvent) {
+        super(plugin, id, hologram, entityType, spawnLocation, equipments, lookAtPlayer, glow);
         this.npcClickEventConsumer = npcClickEvent;
     }
 

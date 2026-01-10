@@ -25,6 +25,7 @@ public abstract class NPC {
 
     private final Map<EquipmentSlot, Item> equipments;
     private final boolean lookAtPlayer;
+    private final boolean glow;
 
     public abstract LivingNPC spawn(Player player);
     public abstract void onClick(NPCClickEvent event);

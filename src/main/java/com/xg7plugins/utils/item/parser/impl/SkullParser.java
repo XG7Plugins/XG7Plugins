@@ -15,16 +15,12 @@ public class SkullParser implements ItemParser<SkullItem> {
 
     @Override
     public SkullItem parse(XMaterial material, String... args) {
-
-        if (args.length != 1) {
-            return SkullItem.newSkull();
-        }
+        if (args.length != 1) return SkullItem.newSkull();
 
         String value = args[0];
 
-        if (value.startsWith("eyJ0")) return SkullItem.newSkull().setValue(value);
         if (value.equals("THIS_PLAYER")) return SkullItem.newSkull().renderPlayerSkull(true);
 
-        return null;
+        return SkullItem.newSkull().setValue(value);
     }
 }

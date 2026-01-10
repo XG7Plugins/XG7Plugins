@@ -70,7 +70,13 @@ public class XG7NPCs implements Module {
     public void unregisterLivingNPC(UUID playerUUID, String NPCId) {
         if (!this.livingNPCs.containsKey(playerUUID)) return;
 
-        this.livingNPCs.get(playerUUID).removeIf(lnpc -> lnpc.getNPC().getId().equals(NPCId));
+        this.livingNPCs.get(playerUUID).removeIf(lnpc -> {
+            if (lnpc.getNPC().getId().equals(NPCId)) {
+                lnpc.kill();
+                return true;
+            }
+            return false;
+        });
     }
 
     public @NotNull List<LivingNPC> getLivingNPCsByUUID(UUID uuid) {
@@ -89,6 +95,10 @@ public class XG7NPCs implements Module {
         this.livingNPCs.get(uuid).forEach(LivingNPC::kill);
 
         this.livingNPCs.remove(uuid);
+    }
+
+    public void unregisterNPC(String id) {
+        this.registeredNPCs.remove(id);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class LangForm extends SimpleForm {
 
             String[] icon = map.getValue().getLangConfiguration().get("bedrock-icon", "").split(", ");
 
-            String formattedName = map.getValue().get("formated-name") != null ? selected ? "&a" + map.getValue().get("formated-name") : "&8" + map.getValue().get("formated-name") : selected ? "&a" + map.getKey() : "&8" + map.getKey();
+            String formattedName = map.getValue().get("formatted-name") != null ? selected ? "&a" + map.getValue().get("formatted-name") : "&8" + map.getValue().get("formatted-name") : selected ? "&a" + map.getKey() : "&8" + map.getKey();
 
             if (icon.length == 1) {
                 components.add(ButtonComponent.of(formattedName));

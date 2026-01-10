@@ -12,8 +12,10 @@ import lombok.Data;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class LivingHologram {
@@ -33,15 +35,21 @@ public class LivingHologram {
 
         float lastSpacing = 0;
 
+        List<Integer> entitiesToAddLast = new ArrayList<>();
+
         for (HologramLine line : lines) {
 
-            int entityID = line.spawn(this, location.add(0, lastSpacing, 0));
+            int[] entityIDs = line.spawn(this, location.add(0, lastSpacing, 0));
+
+            int mainEntityID = entityIDs[0];
+            line.getEquipment().forEach((slot, item) -> line.equip(this, mainEntityID, slot, item));
 
             lastSpacing = line.getSpacing();
 
-            spawnedEntitiesID.add(entityID);
+            Arrays.stream(entityIDs).forEach(spawnedEntitiesID::add);
         }
 
+        spawnedEntitiesID.addAll(entitiesToAddLast);
     }
 
     public void update() {

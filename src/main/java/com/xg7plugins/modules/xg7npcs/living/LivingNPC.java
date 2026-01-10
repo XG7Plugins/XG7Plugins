@@ -22,10 +22,7 @@ import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public interface LivingNPC {
@@ -39,15 +36,16 @@ public interface LivingNPC {
     Location getCurrentLocation();
     void setCurrentLocation(Location location);
 
-    int getSpawnedEntityID();
-    void setSpawnedEntityID(int id);
+    // It's an array for Interaction entities (like hitboxes)
+    int[] getSpawnedEntitiesID();
+    void setSpawnedEntitiesID(int[] ids);
 
     boolean isMoving();
     void setMoving(boolean moving);
 
     default void spawn() {
 
-        if (getSpawnedEntityID() >= 0) return;
+        if (getSpawnedEntitiesID() != null) return;
 
         setCurrentLocation(getNPC().getSpawnLocation());
         defaultSpawn(UUID.randomUUID(), new ArrayList<>());
@@ -91,7 +89,7 @@ public interface LivingNPC {
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(getPlayer(), spawnEntity);
 
-        setSpawnedEntityID(entityID);
+        setSpawnedEntitiesID(new int[]{entityID});
 
         WrapperPlayServerEntityHeadLook headLook = new WrapperPlayServerEntityHeadLook(
                 entityID,
@@ -99,6 +97,10 @@ public interface LivingNPC {
         );
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(getPlayer(), headLook);
+
+        if (getNPC().isGlow()) {
+            dataList.add(new EntityData<>(0, EntityDataTypes.BYTE, (byte) 0x40));
+        }
 
         WrapperPlayServerEntityMetadata metadata = new WrapperPlayServerEntityMetadata(
                 entityID,
@@ -116,23 +118,25 @@ public interface LivingNPC {
     }
 
     default void kill() {
-        if (getSpawnedEntityID() < 0) return;
+        if (getSpawnedEntitiesID() == null) return;
 
-        WrapperPlayServerDestroyEntities entities = new WrapperPlayServerDestroyEntities(getSpawnedEntityID());
+        WrapperPlayServerDestroyEntities entities = new WrapperPlayServerDestroyEntities(getSpawnedEntitiesID());
 
         getNPC().getHologram().kill(getPlayer());
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(getPlayer(), entities);
 
-        setSpawnedEntityID(-1);
+        setSpawnedEntitiesID(null);
         setCurrentLocation(null);
     }
     default void equip(EquipmentSlot slot, Item item) {
-        if (getSpawnedEntityID() < 0) return;
+        if (getSpawnedEntitiesID() == null) return;
+
+        int mainEntityId = getSpawnedEntitiesID()[0];
 
         WrapperPlayServerEntityEquipment packet =
                 new WrapperPlayServerEntityEquipment(
-                        getSpawnedEntityID(),
+                        mainEntityId,
                         Collections.singletonList(new Equipment(slot, item.toProtocolItemStack(getPlayer(), getNPC().getPlugin())))
                 );
 
@@ -140,13 +144,12 @@ public interface LivingNPC {
         PacketEvents.getAPI().getPlayerManager().sendPacket(getPlayer(), packet);
     }
     default void lookAt(Location location) {
-        if (getSpawnedEntityID() < 0 || getCurrentLocation() == null) return;
+        if (getSpawnedEntitiesID() == null || getCurrentLocation() == null) return;
         if (isMoving()) return;
 
         Location currentLocation = getCurrentLocation();
         Player player = getPlayer();
-        int spawnedEntityID = getSpawnedEntityID();
-
+        int mainEntityId = getSpawnedEntitiesID()[0];
 
         double deltaX = location.getX() - currentLocation.getX();
         double deltaY = location.getY() - currentLocation.getY();
@@ -160,7 +163,7 @@ public interface LivingNPC {
         // --- CORPO ---
         WrapperPlayServerEntityRotation body =
                 new WrapperPlayServerEntityRotation(
-                        spawnedEntityID,
+                        mainEntityId,
                         yaw,
                         pitch,
                         false
@@ -168,7 +171,7 @@ public interface LivingNPC {
 
         WrapperPlayServerEntityHeadLook head =
                 new WrapperPlayServerEntityHeadLook(
-                        spawnedEntityID,
+                        mainEntityId,
                         yaw
                 );
 
@@ -179,7 +182,7 @@ public interface LivingNPC {
         setMoving(true);
         Location currentLocation = getCurrentLocation();
         Player player = getPlayer();
-        int spawnedEntityID = getSpawnedEntityID();
+        int mainEntityId = getSpawnedEntitiesID()[0];
         LivingHologram spawnedHologram = getSpawnedHologram();
         NPC npc = getNPC();
 
@@ -200,14 +203,14 @@ public interface LivingNPC {
         Vector step = direction.clone().multiply(1.0 / totalTicks);
 
         List<Integer> entitiesToMove = new ArrayList<>();
-        entitiesToMove.add(spawnedEntityID);
+        entitiesToMove.add(mainEntityId);
         entitiesToMove.addAll(spawnedHologram.getSpawnedEntitiesID());
 
         AtomicInteger tick = new AtomicInteger();
 
         WrapperPlayServerEntityRotation body =
                 new WrapperPlayServerEntityRotation(
-                        spawnedEntityID,
+                        mainEntityId,
                         location.getYaw(),
                         location.getPitch(),
                         false
@@ -215,7 +218,7 @@ public interface LivingNPC {
 
         WrapperPlayServerEntityHeadLook head =
                 new WrapperPlayServerEntityHeadLook(
-                        spawnedEntityID,
+                        mainEntityId,
                         location.getYaw()
                 );
 
@@ -254,7 +257,7 @@ public interface LivingNPC {
     default void teleport(Location location) {
         Location currentLocation = getCurrentLocation();
         Player player = getPlayer();
-        int spawnedEntityID = getSpawnedEntityID();
+        int mainEntityId = getSpawnedEntitiesID()[0];
 
         NPC npc = getNPC();
 
@@ -268,7 +271,7 @@ public interface LivingNPC {
 
         WrapperPlayServerEntityTeleport packet =
                 new WrapperPlayServerEntityTeleport(
-                        spawnedEntityID,
+                        mainEntityId,
                         location.getProtocolLocation(),
                         false
                 );
@@ -281,7 +284,7 @@ public interface LivingNPC {
         XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of(() -> {
             WrapperPlayServerEntityRotation body =
                     new WrapperPlayServerEntityRotation(
-                            spawnedEntityID,
+                            mainEntityId,
                             location.getYaw(),
                             location.getPitch(),
                             false
@@ -289,7 +292,7 @@ public interface LivingNPC {
 
             WrapperPlayServerEntityHeadLook head =
                     new WrapperPlayServerEntityHeadLook(
-                            spawnedEntityID,
+                            mainEntityId,
                             location.getYaw()
                     );
 
@@ -301,6 +304,14 @@ public interface LivingNPC {
         }), 300L);
 
         setCurrentLocation(location.clone());
+    }
+
+    default boolean checkEntityId(int entityID) {
+        if (getSpawnedEntitiesID() == null) return false;
+        for (int id : getSpawnedEntitiesID()) {
+            if (id == entityID) return true;
+        }
+        return false;
     }
 
 }
