@@ -206,6 +206,8 @@ public class CommandManager {
         commandNodeMap.putIfAbsent(rootName, root);
         for (String alias : aliases)
             commandNodeMap.putIfAbsent(alias, root);
+
+        System.out.println("Node Map: " + commandNodeMap);
     }
 
 
