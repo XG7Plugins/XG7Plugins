@@ -82,8 +82,8 @@ public class LangManager {
      */
     public void loadLang(Plugin plugin, String lang) {
 
-        System.out.println("CALLED BY: " + Arrays.toString(Thread.currentThread().getStackTrace()) + " | Loading lang: " + lang + " for plugin: " + plugin.getName());
-        System.out.println("Langs currently loaded: " + langs.asMap().join().keySet());
+
+
 
         if (langs.containsKey(plugin.getName() + ":" + lang).join()) return;
 

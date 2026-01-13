@@ -215,7 +215,7 @@ public class Text {
 
         List<Text> texts = new ArrayList<>();
 
-        String[] split = getTextRaw().split(regex);
+        String[] split = this.text.split(regex);
 
         for (String s : split) {
             texts.add(new Text(s));

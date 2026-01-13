@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.geysermc.cumulus.component.ButtonComponent;
 import org.geysermc.cumulus.response.SimpleFormResponse;
 import org.geysermc.cumulus.response.result.InvalidFormResponseResult;
+import org.geysermc.cumulus.util.FormImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,8 +51,17 @@ public class CommandForm extends SimpleForm {
     @Override
     public List<ButtonComponent> buttons(Player player) {
 
+        Text.sendTextFromLang(player, XG7Plugins.getInstance(), "commands-form.generating-list");
+
         List<ButtonComponent> buttons = commands.values().stream().filter(cmd -> !(cmd.getCommand() instanceof MainCommand)).map(
-                command -> ButtonComponent.of(command.getName())
+                command -> ButtonComponent.of(
+                        command.getName(),
+                        FormImage.of(FormImage.Type.URL, Item.requestItemIcon(
+                                command.getParent() == null ?
+                                command.getCommand().getCommandSetup().iconMaterial().get() :
+                                command.getCommandMethod().getAnnotation(CommandConfig.class).iconMaterial().get()
+                        ).join())
+                )
         ).collect(Collectors.toList());
 
         buttons.add(ButtonComponent.of(Text.fromLang(player, plugin,"commands-form.back").getText()));

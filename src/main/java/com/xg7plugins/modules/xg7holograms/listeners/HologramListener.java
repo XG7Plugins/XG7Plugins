@@ -3,6 +3,7 @@ package com.xg7plugins.modules.xg7holograms.listeners;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
+import com.xg7plugins.tasks.tasks.BukkitTask;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -45,7 +46,7 @@ public class HologramListener implements Listener {
             return;
         }
         killFor(player);
-        spawnFor(player);
+        XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of(() -> spawnFor(player)), 1);
     }
 
     private void spawnFor(Player player) {

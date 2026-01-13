@@ -164,25 +164,6 @@ public class QueryResult {
 
             Object value = result.get(tableName + "." + fieldName);
 
-            if (UUID.class.isAssignableFrom(field.getType()) && value != null) {
-                field.set(instance, UUID.fromString(value.toString()));
-                continue;
-            }
-
-            if ((Boolean.class.isAssignableFrom(field.getType()) || boolean.class.isAssignableFrom(field.getType())) && value != null) {
-                field.set(instance, value instanceof Integer ?  (Integer) value == 1 : value);
-                continue;
-            }
-
-            if ((Float.class.isAssignableFrom(field.getType()) || float.class.isAssignableFrom(field.getType())) && value != null) {
-                field.set(instance, ((Number) value).floatValue());
-                continue;
-            }
-            if ((Time.class.isAssignableFrom(field.getType())) && value != null) {
-                field.set(instance, new Time(((Number) value).longValue()));
-                continue;
-            }
-
             if (TableCreator.getSQLType(field.getType(), 0) == null) {
                 Constructor<?> constructorOfO = field.getType().getDeclaredConstructor();
                 constructorOfO.setAccessible(true);
@@ -195,19 +176,18 @@ public class QueryResult {
                             ? nestedField.getAnnotation(Column.class).name()
                             : nestedField.getName();
 
-                    Object nestedValue = result.get(tableName + "." + nestedFieldName);
 
-                    if (nestedValue != null) {
-                        if (UUID.class.isAssignableFrom(nestedField.getType())) nestedField.set(nestedInstance, UUID.fromString(nestedValue.toString()));
-                        else if ((Float.class == nestedField.getType() || float.class == nestedField.getType())) nestedField.set(nestedInstance, ((Number) nestedValue).floatValue());
-                        else nestedField.set(nestedInstance, nestedValue);
-                    }
+
+
+                    Object nestedValue = result.get(tableName + "." + nestedFieldName);
+                    setField(nestedField, nestedInstance, nestedValue);
                 }
+
                 field.set(instance, nestedInstance);
                 continue;
             }
 
-            field.set(instance, value);
+            setField(field, instance, value);
         }
 
         if (cache && id != null) {
@@ -217,6 +197,48 @@ public class QueryResult {
         return instance;
     }
 
+    private void setField(Field field, Object instance, Object value) throws IllegalAccessException {
+        if (value == null) {
+            field.set(instance, null);
+            return;
+        }
+
+        if (UUID.class.isAssignableFrom(field.getType())) {
+            field.set(instance, UUID.fromString(value.toString()));
+            return;
+        }
+
+        if ((Boolean.class.isAssignableFrom(field.getType()) || boolean.class.isAssignableFrom(field.getType()))) {
+            field.set(instance, value instanceof Integer ?  (Integer) value == 1 : value);
+            return;
+        }
+
+        if ((Float.class.isAssignableFrom(field.getType()) || float.class.isAssignableFrom(field.getType()))) {
+            field.set(instance, ((Number) value).floatValue());
+            return;
+        }
+
+        if (Time.class.isAssignableFrom(field.getType())) {
+            field.set(instance, Time.of(((Number) value).longValue()));
+            return;
+        }
+
+        if (field.getType().isEnum()) {
+            @SuppressWarnings("unchecked")
+            Object[] constants = field.getType().getEnumConstants();
+            for (Object constant : constants) {
+                if (constant.toString().equalsIgnoreCase(value.toString())) {
+                    field.set(instance, constant);
+                    return;
+                }
+            }
+            field.set(instance, null);
+            return;
+        }
+
+        field.set(instance, value);
+
+    }
 
 
 

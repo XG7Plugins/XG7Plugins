@@ -31,8 +31,8 @@ public abstract class PlayerMenu implements BasicMenu {
 
         Player player = playerMenuHolder.getPlayer();
 
-        System.out.println("Closing player menu for " + player.getName());
-        System.out.println("OLD ITEMS: " + playerMenuHolder.getOldItems());
+
+
 
         player.getInventory().clear();
         playerMenuHolder.getOldItems().forEach((slot, item) -> player.getInventory().setItem(slot, item));

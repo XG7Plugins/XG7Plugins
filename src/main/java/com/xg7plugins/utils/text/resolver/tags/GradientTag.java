@@ -40,8 +40,8 @@ public class GradientTag implements Tag {
         double[] green = multiColorLinear(colors, Color::getGreen, content.length());
         double[] blue = multiColorLinear(colors, Color::getBlue, content.length());
 
-        component.setText("");
-        component.getExtra().clear();
+        StringBuilder rebuilt = new StringBuilder();
+
 
         for (int i = 0; i < content.length(); i++) {
             char c = content.charAt(i);
@@ -51,11 +51,10 @@ public class GradientTag implements Tag {
                     (int) Math.round(blue[i])
             );
 
-            TextComponent part = new TextComponent(String.valueOf(c));
-            part.setColor(net.md_5.bungee.api.ChatColor.of(color));
-
-            component.addExtra(part);
+            rebuilt.append(ChatColor.of(color).toString()).append(c);
         }
+
+        component.setText(rebuilt.toString());
     }
 
     private double[] multiColorLinear(Color[] colors, ToIntFunction<Color> componentExtractor, int steps) {

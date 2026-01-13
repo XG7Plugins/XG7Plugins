@@ -333,7 +333,14 @@ public class XG7Plugins extends Plugin {
      * Loads the specified plugin, initializing its components and dependencies.
      * @param plugin The plugin to load
      */
-    public void loadPlugin(Plugin plugin) {
+    public void loadPlugin(Object pluginObj) {
+
+        if (!(pluginObj instanceof Plugin)) {
+            throw new IllegalArgumentException(pluginObj.getClass().getName() + " is not a Plugin!");
+        }
+
+        Plugin plugin = (Plugin) pluginObj;
+
         long msLoading = System.currentTimeMillis();
 
         registerPlugin(plugin);
@@ -374,7 +381,14 @@ public class XG7Plugins extends Plugin {
      * Enables the specified plugin, activating its features and registering its components.
      * @param plugin The plugin to enable
      */
-    public void enablePlugin(Plugin plugin) {
+    public void enablePlugin(Object pluginObj) {
+
+        if (!(pluginObj instanceof Plugin)) {
+            throw new IllegalArgumentException(pluginObj.getClass().getName() + " is not a Plugin!");
+        }
+
+        Plugin plugin = (Plugin) pluginObj;
+
         long msEnabling = System.currentTimeMillis();
 
         plugin.getDebug().log("Enabling " + plugin.getCustomPrefix() + "...");
@@ -480,7 +494,13 @@ public class XG7Plugins extends Plugin {
      * Disables the specified plugin, deactivating its features and unregistering its components.
      * @param plugin The plugin to disable
      */
-    public void disablePlugin(Plugin plugin) {
+    public void disablePlugin(Object pluginObj) {
+
+        if (!(pluginObj instanceof Plugin)) {
+            throw new IllegalArgumentException(pluginObj.getClass().getName() + " is not a Plugin!");
+        }
+
+        Plugin plugin = (Plugin) pluginObj;
         debug.log("Disabling " + plugin.getName() + "...");
 
         plugin.onDisable();

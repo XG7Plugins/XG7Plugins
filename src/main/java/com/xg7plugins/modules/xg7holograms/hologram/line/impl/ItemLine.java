@@ -51,7 +51,7 @@ public class ItemLine extends InvisibleArmorStandLine {
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(livingHologram.getPlayer(), packet);
 
-        System.out.println("SPAWNING ITEM: " + item.toProtocolItemStack(livingHologram.getPlayer(), livingHologram.getHologram().getPlugin()));
+
 
         WrapperPlayServerEntityMetadata metadataPacket = new WrapperPlayServerEntityMetadata(
                 entityID,

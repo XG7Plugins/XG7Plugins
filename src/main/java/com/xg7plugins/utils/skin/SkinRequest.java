@@ -128,7 +128,7 @@ public class SkinRequest {
                         )
                 );
 
-                System.out.println("MESSAGE: " + response.getStatusMessage());
+
 
                 JsonObject result = response.getJson();
 

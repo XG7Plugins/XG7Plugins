@@ -44,18 +44,24 @@ public class CommandHelp implements HelpChatPage {
         for (CommandNode command : commands) {
             Item commandIcon = Item.commandIcon(command.getCommand().getCommandSetup().iconMaterial(), command);
 
-            ItemStack itemStack = commandIcon.getItemFor(sender, plugin);
+            ItemStack itemStack = commandIcon.getItemFor(sender, XG7Plugins.getInstance());
 
-            components.add(TextComponentBuilder.of(
-                            itemStack.getItemMeta().getDisplayName() + "\n" +
-                                    itemStack.getItemMeta().getLore().get(0) + "\n" +
-                                    itemStack.getItemMeta().getLore().get(1) + "\n" +
-                                    itemStack.getItemMeta().getLore().get(2) + "\n" +
-                                    itemStack.getItemMeta().getLore().get(3)
-                    ).clickEvent(
-                            ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, command.getCommand().getCommandSetup().syntax())
-                    ).build()
+            components.add(Text.format("&m-&9&m-&6&m---------&e*&6&m---------&9&m-&f&m-"));
+
+            ClickEvent clickEvent = ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, command.getCommand().getCommandSetup().syntax());
+
+            components.add(
+                    TextComponentBuilder.of(itemStack.getItemMeta().getDisplayName()).clickEvent(clickEvent).append("<br>")
+                            .append(itemStack.getItemMeta().getLore().get(0)).clickEvent(clickEvent).append("<br>")
+                            .append(itemStack.getItemMeta().getLore().get(1)).clickEvent(clickEvent).append("<br>")
+                            .append(itemStack.getItemMeta().getLore().get(2)).clickEvent(clickEvent).append("<br>")
+                            .append(itemStack.getItemMeta().getLore().get(3)).clickEvent(clickEvent).append("<br>")
+                            .append("Subcommands: " + !command.getChildren().isEmpty()).clickEvent(clickEvent)
+                            .build()
             );
+
+            components.add(Text.format("&m-&9&m-&6&m---------&e*&6&m---------&9&m-&f&m-"));
+            components.add(Text.format(""));
         }
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"));

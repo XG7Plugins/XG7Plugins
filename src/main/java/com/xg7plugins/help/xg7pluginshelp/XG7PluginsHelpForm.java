@@ -33,6 +33,8 @@ public class XG7PluginsHelpForm extends SimpleForm {
                 .replace("website", "xg7plugins.com")
                 .replace("version", XG7Plugins.getInstance().getVersion())
                 .getText();
+
+
     }
 
     @Override

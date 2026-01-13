@@ -52,7 +52,7 @@ public class XG7Menus implements Module {
         player.closeInventory();
         if (XG7Menus.hasPlayerMenuHolder(player.getUniqueId())) {
             PlayerMenuHolder holder = XG7Menus.getPlayerMenuHolder(player.getUniqueId());
-            System.out.println("Closing player menu for " + player.getName());
+
             holder.getMenu().close(holder);
         }
     }
@@ -92,13 +92,13 @@ public class XG7Menus implements Module {
 
     public static void registerPlayerMenuHolder(PlayerMenuHolder holder) {
         XG7Plugins.getInstance().getDebug().info("menus", "Registering player menu holder for " + holder.getPlayer().getUniqueId());
-        System.out.println("Registering PlayerMenuHolder: " + holder);
+
         XG7Plugins.getAPI().menus().getPlayerMenusMap().put(holder.getPlayer().getUniqueId(), holder);
     }
 
     public static void removePlayerMenuHolder(UUID playerId) {
         XG7Plugins.getInstance().getDebug().info("menus", "Removing player menu holder for " + playerId);
-        System.out.println("Removing PlayerMenuHolder for playerId: " + playerId);
+
         XG7Plugins.getAPI().menus().getPlayerMenusMap().remove(playerId);
     }
 

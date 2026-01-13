@@ -153,12 +153,12 @@ public class Transaction {
 
                     for (Entity object : objectList) {
 
-                        boolean exists = databaseList.stream().anyMatch(dbObject -> object.equals(dbObject));
+                        boolean exists = databaseList.stream().anyMatch(object::equals);
 
                         if (exists) entitiesToUpdate.add(new Pair<>(Type.UPDATE, object));
                         else entitiesToUpdate.add(new Pair<>(Type.INSERT, object));
 
-                        if (!databaseList.isEmpty()) databaseList.removeIf(dbObject -> dbObject.equals(object));
+                        if (!databaseList.isEmpty()) databaseList.removeIf(object::equals);
                     }
 
                     for (Entity object : databaseList) {

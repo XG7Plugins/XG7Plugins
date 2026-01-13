@@ -19,11 +19,6 @@ public class PlayerMenuHolder extends BasicMenuHolder {
     public PlayerMenuHolder(PlayerMenu menu, Player player) {
         super(menu, player);
 
-        System.out.println("STACK TRACE FOR OPENING PLAYER MENU ");
-        Thread.dumpStack();
-
-        System.out.println("Oppening player menu for " + player.getName());
-
         for (int i = 0; i < player.getInventory().getSize(); i++) {
             ItemStack item = player.getInventory().getItem(i);
             if (item != null) oldItems.put(i, item);
@@ -33,7 +28,7 @@ public class PlayerMenuHolder extends BasicMenuHolder {
 
         this.inventoryUpdater = new InventoryUpdater(this);
 
-        System.out.println("OLD ITEMS: " + oldItems);
+
     }
 
     @Override

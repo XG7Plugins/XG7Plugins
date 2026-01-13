@@ -2,9 +2,11 @@ package com.xg7plugins.modules.xg7npcs.living;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.protocol.player.UserProfile;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
@@ -27,15 +29,26 @@ public class NPCMetaProvider {
 
         List<EntityData<?>> data = new ArrayList<>();
 
-        int skinLayersIndex = version.isNewerThanOrEquals(ServerVersion.V_1_17) ? 17 :
-                        version.isNewerThanOrEquals(ServerVersion.V_1_13) ? 16 :
-                                version.isNewerThanOrEquals(ServerVersion.V_1_9) ? 13 : 10;
+        int skinLayersIndex = version.isNewerThanOrEquals(ServerVersion.V_1_21_9) ? 16 :
+                              version.isNewerThanOrEquals(ServerVersion.V_1_17) ? 17 :
+                              version.isNewerThanOrEquals(ServerVersion.V_1_13) ? 16 :
+                              version.isNewerThanOrEquals(ServerVersion.V_1_9) ? 13 : 10;
 
         data.add(new EntityData<>(
                 skinLayersIndex,
                 EntityDataTypes.BYTE,
                 (byte) 0x7F
         ));
+
+        return data;
+    }
+
+    public static List<EntityData<?>> getMannequinData(ItemProfile profile) {
+
+        List<EntityData<?>> data = new ArrayList<>();
+
+        data.add(new EntityData<>(16, EntityDataTypes.BYTE, (byte) 0x7F));
+        data.add(new EntityData<>(17, EntityDataTypes.RESOLVABLE_PROFILE, profile));
 
         return data;
     }

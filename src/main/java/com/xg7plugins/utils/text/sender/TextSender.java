@@ -32,6 +32,7 @@ public interface TextSender {
         if (text == null || text.getText() == null || text.getText().isEmpty()) return;
 
         text.split("<br>").forEach(line -> {
+            System.out.println("SENDING: " + line.getText());
             if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) {
                 sender.sendMessage(line.getText());
                 return;

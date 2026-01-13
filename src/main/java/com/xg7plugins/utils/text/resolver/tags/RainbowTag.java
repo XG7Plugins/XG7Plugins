@@ -19,11 +19,9 @@ public class RainbowTag implements Tag {
 
         String content = ChatColor.stripColor(component.toPlainText());
 
-        component.setText("");
-        component.getExtra().clear();
+        StringBuilder rebuilt = new StringBuilder();
 
         if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_16)) {
-            // Cores padrões de arco-íris (limitadas ao ChatColor)
             ChatColor[] rainbowColors = new ChatColor[]{
                     ChatColor.RED,
                     ChatColor.GOLD,
@@ -38,9 +36,7 @@ public class RainbowTag implements Tag {
                 char c = content.charAt(i);
                 ChatColor color = rainbowColors[i % rainbowColors.length];
 
-                TextComponent part = new TextComponent(String.valueOf(c));
-                part.setColor(color);
-                component.addExtra(part);
+                rebuilt.append(color.toString()).append(c);
             }
 
             return;
@@ -54,9 +50,9 @@ public class RainbowTag implements Tag {
             float hue = (float) i / content.length();
             java.awt.Color color = java.awt.Color.getHSBColor(hue, saturation, brightness);
 
-            TextComponent part = new TextComponent(String.valueOf(c));
-            part.setColor(net.md_5.bungee.api.ChatColor.of(color));
-            component.addExtra(part);
+            rebuilt.append(net.md_5.bungee.api.ChatColor.of(color).toString()).append(c);
         }
+
+        component.setText(rebuilt.toString());
     }
 }

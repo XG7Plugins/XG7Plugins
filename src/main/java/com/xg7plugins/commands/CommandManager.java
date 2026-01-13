@@ -155,9 +155,9 @@ public class CommandManager {
                     CommandConfig exec = method.getAnnotation(CommandConfig.class);
                     String nodeName = exec.name();
 
-                    System.out.println("Trying to register " + exec.name() + " with parent " + exec.parent());
-                    System.out.println("Method: " + method.getMethod().getName() + "()");
-                    System.out.println("LOOP " + depthCounter.incrementAndGet());
+
+
+
 
                     if (nodeName.equals("root")) {
                         root.setCommandMethod(method);
@@ -193,7 +193,7 @@ public class CommandManager {
                             plugin.getDebug().warn("load", "Subcommand " + nodeName + " of " + setup.name() + " not found in commands.yml - skipping registration");
                             return;
                         }
-                        System.out.println("Adding child: " + child.getName() + " to root: " + root.getName());
+
                         root.addChild(child);
                         List<String> childAliases = cfg
                                 .getList(setup.name() + "_" + nodeName, String.class)
@@ -207,43 +207,39 @@ public class CommandManager {
         for (String alias : aliases)
             commandNodeMap.putIfAbsent(alias, root);
 
-        System.out.println("Node Map: " + commandNodeMap);
+
     }
 
 
     private Pair<String, CommandNode> findNodePathByNameAndDepth(
             CommandNode current, String name, int depth, int currentDepth, String path) {
 
-        System.out.println("[DEBUG] enter findNodePathByNameAndDepth: name=" + name
-                + ", depth=" + depth + ", currentDepth=" + currentDepth
-                + ", path=" + path + ", current=" + (current != null ? current.getName() : "null"));
-
         String currentPath = path.isEmpty() ? current.getName() : path + "_" + current.getName();
-        System.out.println("[DEBUG] currentPath = " + currentPath);
+
 
         if (current.getName().equalsIgnoreCase(name) && currentDepth == depth) {
-            System.out.println("[DEBUG] matched current node at depth: " + currentPath);
+
             return Pair.of(currentPath, current);
         }
 
         for (CommandNode child : current.getChildren()) {
-            System.out.println("[DEBUG] inspecting child: " + child.getName() + " of parent: " + current.getName());
+
 
             if (child.getName().equalsIgnoreCase(name)) {
                 String foundPath = currentPath + "_" + child.getName();
-                System.out.println("[DEBUG] matched direct child: " + foundPath);
+
                 return Pair.of(foundPath, child);
             }
 
-            System.out.println("[DEBUG] recursing into child: " + child.getName() + " (nextDepth=" + (currentDepth + 1) + ")");
+
             Pair<String, CommandNode> found = findNodePathByNameAndDepth(child, name, depth, currentDepth + 1, currentPath);
             if (found != null) {
-                System.out.println("[DEBUG] found in recursion: " + found.getFirst());
+
                 return found;
             }
         }
 
-        System.out.println("[DEBUG] not found under: " + current.getName() + " for name=" + name + " depth=" + depth);
+
         return null;
     }
 

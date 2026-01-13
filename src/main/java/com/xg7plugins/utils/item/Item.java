@@ -4,12 +4,10 @@ import com.cryptomorin.xseries.XMaterial;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTString;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
+import com.xg7plugins.cache.ObjectCache;
 import com.xg7plugins.commands.node.CommandConfig;
 import com.xg7plugins.commands.node.CommandNode;
 import com.xg7plugins.commands.setup.CommandSetup;
@@ -19,6 +17,8 @@ import com.xg7plugins.modules.xg7menus.item.InventoryItem;
 import com.xg7plugins.modules.xg7menus.item.clickable.ClickableItem;
 import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.http.HTTP;
+import com.xg7plugins.utils.http.HTTPResponse;
 import com.xg7plugins.utils.item.parser.ItemParser;
 import com.xg7plugins.utils.item.parser.impl.*;
 import com.xg7plugins.utils.text.Text;
@@ -40,7 +40,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -64,6 +68,17 @@ public class Item implements Cloneable {
         registerParser(new SimpleFireworkParser());
         registerParser(new SpawnerParser());
     }
+
+    private static final ObjectCache<Material, String> imageCache = new ObjectCache<>(
+            XG7Plugins.getInstance(),
+            15 * 60 * 1000L,
+            true,
+            "item-image-cache",
+            false,
+            Material.class,
+            String.class
+    );
+
 
     /**
      * Get the parser for the given material
@@ -209,12 +224,15 @@ public class Item implements Cloneable {
      * @return The created command icon Item
      */
     public static Item commandIcon(XMaterial material, CommandNode command) {
+
         Item item = new Item(material.parseItem());
 
-        CommandSetup commandConfig = command.getCommand().getCommandSetup();
-        CommandConfig methodConfig = command.getCommandMethod() != null ? command.getCommandMethod().getAnnotation(CommandConfig.class) : null;
+        CommandSetup setup = command.getCommand().getCommandSetup();
+        CommandConfig methodConfig = command.getCommandMethod().getAnnotation(CommandConfig.class);
 
-        item.name("&b/&f" + commandConfig.name());
+        boolean isRoot = command.getParent() == null;
+
+        item.name("&f" + (isRoot ? setup.name() : methodConfig.name()));
         item.lore(
                 "lang:[commands-display.command-item.usage]",
                 "lang:[commands-display.command-item.desc]",
@@ -223,13 +241,27 @@ public class Item implements Cloneable {
                 command.getChildren().isEmpty() ? "" : "lang:[commands-display.if-subcommand]"
         );
         item.setBuildPlaceholders(
-                Pair.of("syntax", methodConfig != null ? methodConfig.syntax() : commandConfig.syntax()),
-                Pair.of("description", methodConfig != null ? methodConfig.description() : commandConfig.description()),
-                Pair.of("permission", methodConfig != null ? methodConfig.syntax() :commandConfig.permission()),
-                Pair.of("player_only", String.valueOf(methodConfig != null && methodConfig.isPlayerOnly()))
+                Pair.of("syntax", isRoot ? setup.syntax() : methodConfig.syntax()),
+                Pair.of("description", isRoot ? setup.description() : methodConfig.description()),
+                Pair.of("permission", isRoot ? setup.permission() : methodConfig.permission()),
+                Pair.of("player_only", String.valueOf(methodConfig.isPlayerOnly()))
         );
         return item;
     }
+
+    public Item type(XMaterial material) {
+
+        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_13)) this.itemStack.setData(new MaterialData(material.get(), material.getData()));
+        else this.itemStack.setType(material.get());
+
+        return this;
+    }
+
+    public Item type(Material material) {
+        this.itemStack.setType(material);
+        return this;
+    }
+
 
     /**
      * Convert this Item to an InventoryItem for a given slot
@@ -647,8 +679,100 @@ public class Item implements Cloneable {
         return this.itemStack == null || this.itemStack.getType().equals(Material.AIR);
     }
 
+    private static String toTitleCase(String input) {
+        StringBuilder titleCase = new StringBuilder();
+        boolean nextTitleCase = true;
+
+        for (char c : input.toCharArray()) {
+            if (Character.isSpaceChar(c)) {
+                nextTitleCase = true;
+            } else if (nextTitleCase) {
+                c = Character.toTitleCase(c);
+                nextTitleCase = false;
+            }
+            titleCase.append(c);
+        }
+
+        return titleCase.toString();
+    }
+
+    public static CompletableFuture<String> requestItemIcon(Material material) {
+        if (material != null && imageCache.containsKey(material).join()) {
+            return imageCache.get(material);
+        }
+
+        return CompletableFuture.supplyAsync(() -> {
+
+            String nameBukkit = material == null ? "air" : material.name().toLowerCase().replace("_", " ");
+            String name = Character.toUpperCase(nameBukkit.charAt(0)) + nameBukkit.substring(1);
+
+            List<String> variants = Arrays.asList(
+                    name,
+                    toTitleCase(name),
+                    name.toLowerCase(),
+                    name.replace(" ", "_"),
+                    name.toLowerCase().replace(" ", "_")
+            );
+
+
+
+            JsonObject root = null;
+
+            for (String variant : variants) {
+                try {
+
+                    String encodedTitle = URLEncoder.encode("File:" + variant + ".png", "UTF-8");
+
+                    root = HTTP.get(
+                            "https://minecraft.wiki/api.php?" +
+                                    "action=query&" +
+                                    "prop=imageinfo&" +
+                                    "iiprop=url&" +
+                                    "format=json&" +
+                                    "redirects=1&" +
+                                    "titles=" + encodedTitle,
+                            Collections.singletonList(Pair.of("Accept", "application/json"))
+                    ).getJson();
+
+                    JsonObject query = root.getAsJsonObject("query");
+                    JsonObject pages = query.getAsJsonObject("pages");
+                    Map.Entry<String, JsonElement> pageEntry = pages.entrySet().iterator().next();
+                    JsonObject page = pageEntry.getValue().getAsJsonObject();
+                    JsonArray imageInfo = page.getAsJsonArray("imageinfo");
+
+                    if (imageInfo == null) continue;
+
+                    String url = imageInfo
+                            .get(0)
+                            .getAsJsonObject()
+                            .get("url")
+                            .getAsString();
+
+                    if (material != null) {
+                        imageCache.put(material, url);
+                    }
+
+                    return url;
+                } catch (Exception ignored) {
+                }
+            }
+
+
+            if (root == null) {
+                throw new RuntimeException("Failed to load image for " + name);
+            }
+
+            return "";
+        });
+    }
+
+    public CompletableFuture<String> requestItemIcon() {
+        return requestItemIcon(this.itemStack == null ? null : this.itemStack.getType());
+    }
+
     @Override
     public Item clone() throws CloneNotSupportedException {
-        return (Item) super.clone();
+        Item item = (Item) super.clone();
+        return new Item(this.itemStack.clone());
     }
 }

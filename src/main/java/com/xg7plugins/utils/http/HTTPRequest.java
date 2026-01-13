@@ -72,12 +72,8 @@ public class HTTPRequest {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod(method.name());
 
-        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36");
+        conn.setRequestProperty("User-Agent", "XG7Plugins/1.4 (https://github.com/DaviXG7)");
         conn.setRequestProperty("Accept", "*/*");
-        conn.setRequestProperty("Accept-Language", "en-US,en;q=0.9");
-        conn.setRequestProperty("Connection", "keep-alive");
-        conn.setRequestProperty("Cache-Control", "no-cache");
-        conn.setRequestProperty("Pragma", "no-cache");
 
         conn.setConnectTimeout((int) ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().get("http-requests-timeout", Time.of(5)).toMilliseconds());
 

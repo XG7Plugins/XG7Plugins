@@ -1,5 +1,6 @@
 package com.xg7plugins.commands.impl;
 
+import com.cryptomorin.xseries.XMaterial;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
@@ -41,8 +42,8 @@ import java.util.stream.Stream;
         description = "Base command for configuration management.",
         syntax = "/configs <plugin> [<file> [<edit|reload|save>]]",
         permission = "xg7plugins.config-edit",
-
-        pluginClass = XG7Plugins.class
+        pluginClass = XG7Plugins.class,
+        iconMaterial = XMaterial.REPEATER
 )
 public class ConfigCommand implements Command {
 

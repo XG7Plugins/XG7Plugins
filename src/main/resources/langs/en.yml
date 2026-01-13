@@ -120,6 +120,9 @@ commands-display:
     player-only: "&fOnly players can use: &b%player_only%"
 
 commands-form:
+
+  generating-list: "[TITLE] &aGenerating commands list..."
+
   content: "Click on an option to see its description and usage!"
   subcommands-label: "Click to see the subcommands!"
   no-subcommands: "There are no subcommands for this command!"

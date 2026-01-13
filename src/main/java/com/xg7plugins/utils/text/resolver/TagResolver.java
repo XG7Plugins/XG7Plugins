@@ -27,15 +27,15 @@ public class TagResolver {
         tags.put("rainbow", new RainbowTag());
     }
 
-    public static BaseComponent[] deserialize(String text) {
+    public static TextComponent[] deserialize(String text) {
         try {
-            Matcher test = TAG_PATTERN.matcher(text);
 
-            if (!test.find()) {
-                return new ComponentBuilder(text).create();
+            if (!text.matches(TAG_PATTERN.pattern())) {
+                return new TextComponent[]{new TextComponent(text)};
             }
 
-            List<BaseComponent> components = new ArrayList<>();
+            TextComponent root = new TextComponent("");
+
             int lastIndex = 0;
             Matcher matcher = TAG_PATTERN.matcher(text);
 
@@ -47,50 +47,47 @@ public class TagResolver {
                     String startText = text.substring(lastIndex, matcher.start());
                     lastColors = ChatColor.getLastColors(startText);
 
-                    TextComponent before = new TextComponent(startText);
-                    components.add(before);
+                    root.addExtra(startText);
                 }
 
                 String tagName = matcher.group(1);
                 String[] openArgs = matcher.group(2) != null ? matcher.group(2).split(":") : new String[0];
                 String content = lastColors + matcher.group(3);
 
-                TextComponent innerComponent = new TextComponent(deserialize(content));
+                TextComponent innerComponent = deserialize(content)[0];
 
                 Tag tag = tags.get(tagName);
                 if (tag == null) throw new IllegalArgumentException("Unknown tag: " + tagName);
 
                 tag.resolve(innerComponent, Arrays.asList(openArgs));
 
-                lastColors = getLastColorsOf(innerComponent.getExtra());
+                lastColors = getLastColorsOf(innerComponent);
 
                 lastIndex = matcher.end();
-                components.add(innerComponent);
+                root.addExtra(innerComponent);
             }
 
             if (lastIndex < text.length()) {
                 String remaining = text.substring(lastIndex);
                 TextComponent remainingComponent = new TextComponent(lastColors + remaining);
-                components.add(remainingComponent);
+                root.addExtra(remainingComponent);
             }
 
-            return components.toArray(new BaseComponent[0]);
+            return new TextComponent[]{root};
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new ComponentBuilder(text).create();
+            return new TextComponent[]{new TextComponent(text)};
         }
     }
 
-    public static String getLastColorsOf(List<BaseComponent> components) {
+
+
+    public static String getLastColorsOf(TextComponent textComponent) {
         StringBuilder builder = new StringBuilder();
 
-        for (BaseComponent c : components) {
-            if (c instanceof TextComponent) {
-                String legacy = ((TextComponent) c).toLegacyText();
-                builder.append(ChatColor.getLastColors(legacy));
-            }
-        }
+        String legacy = textComponent.toLegacyText();
+        builder.append(ChatColor.getLastColors(legacy));
 
         return builder.toString();
     }
@@ -115,10 +112,15 @@ public class TagResolver {
             builder.append(serializeComponent(component));
         }
 
+        System.out.println("RESULT SERIALIZE: " + builder.toString());
+
         return builder.toString();
     }
 
     private static String serializeComponent(BaseComponent component) {
+
+        System.out.println("Serializing: " + component);
+
         StringBuilder result = new StringBuilder();
 
         String text = component.toPlainText();

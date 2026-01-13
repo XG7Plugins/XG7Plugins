@@ -2,6 +2,7 @@ package com.xg7plugins.modules.xg7npcs.living.impl;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemProfile;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.GameMode;
 import com.github.retrooper.packetevents.protocol.player.UserProfile;
@@ -23,7 +24,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.UUID;
 
 @Data
 public class LivingPlayerNPC implements LivingNPC {
@@ -40,7 +43,7 @@ public class LivingPlayerNPC implements LivingNPC {
 
     private int[] spawnedEntitiesID = null;
 
-    private final WrapperPlayServerTeams teams = new WrapperPlayServerTeams(
+    public static final WrapperPlayServerTeams teams = new WrapperPlayServerTeams(
                 "npc_hidden_name",
                 WrapperPlayServerTeams.TeamMode.CREATE,
                 new WrapperPlayServerTeams.ScoreBoardTeamInfo(
@@ -74,12 +77,15 @@ public class LivingPlayerNPC implements LivingNPC {
 
         if (currentLocation == null) currentLocation = playerNPC.getSpawnLocation().clone();
 
+        if (PlayerNPC.USE_MANNEQUIN) spawnMannequin();
+        else spawnPlayer();
+
+    }
+
+    private void spawnPlayer() {
         UserProfile profile = currentSkin.toBaseProfile();
 
-        if (playerNPC.isUsePlayerSkin()) {
-            UserProfile playerProfile = PacketEvents.getAPI().getPlayerManager().getUser(player).getProfile();
-            profile.setTextureProperties(playerProfile.getTextureProperties());
-        }
+        if (playerNPC.isUsePlayerSkin()) profile = Skin.ofPlayer(player).toBaseProfile();
 
         ServerVersion version = PacketEvents.getAPI().getServerManager().getVersion();
 
@@ -96,11 +102,6 @@ public class LivingPlayerNPC implements LivingNPC {
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, addInfo);
 
-        teams.setTeamName("npc_hidden_name");
-        teams.setTeamMode(WrapperPlayServerTeams.TeamMode.CREATE);
-
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, teams);
-
         WrapperPlayServerTeams addNpcToTeam = new WrapperPlayServerTeams(
                 teams.getTeamName(),
                 WrapperPlayServerTeams.TeamMode.ADD_ENTITIES,
@@ -112,13 +113,23 @@ public class LivingPlayerNPC implements LivingNPC {
 
         defaultSpawn(profile.getUUID(), NPCMetaProvider.getPlayerNPCData());
 
+        UserProfile finalProfile = profile;
         XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of(() -> {
             PacketWrapper<?> remove = version.isOlderThan(ServerVersion.V_1_19_3) ? new WrapperPlayServerPlayerInfo(
                     WrapperPlayServerPlayerInfo.Action.REMOVE_PLAYER,
-                    new WrapperPlayServerPlayerInfo.PlayerData(Component.text(" "), profile, GameMode.SURVIVAL, 0)
-            ) : new WrapperPlayServerPlayerInfoRemove(profile.getUUID());
+                    new WrapperPlayServerPlayerInfo.PlayerData(Component.text(" "), finalProfile, GameMode.SURVIVAL, 0)
+            ) : new WrapperPlayServerPlayerInfoRemove(finalProfile.getUUID());
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, remove);
         }), 1000L);
+
+    }
+
+    private void spawnMannequin() {
+        ItemProfile profile = currentSkin.toItemProfile();
+
+        if (playerNPC.isUsePlayerSkin()) profile = Skin.ofPlayer(player).toItemProfile();
+
+        defaultSpawn(UUID.randomUUID(), NPCMetaProvider.getMannequinData(profile));
     }
 
     public void changeSkin(Skin skin) {
@@ -136,10 +147,5 @@ public class LivingPlayerNPC implements LivingNPC {
         if (spawnedEntitiesID == null) return;
 
         LivingNPC.super.kill();
-
-        teams.setTeamName("npc_hidden_name");
-        teams.setTeamMode(WrapperPlayServerTeams.TeamMode.REMOVE);
-
-        PacketEvents.getAPI().getPlayerManager().sendPacket(player, teams);
     }
 }

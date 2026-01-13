@@ -44,15 +44,10 @@ public interface LivingNPC {
     void setMoving(boolean moving);
 
     default void spawn() {
-
         if (getSpawnedEntitiesID() != null) return;
 
         setCurrentLocation(getNPC().getSpawnLocation());
         defaultSpawn(UUID.randomUUID(), new ArrayList<>());
-
-        if (getNPC().getEquipments() != null) {
-            getNPC().getEquipments().forEach(this::equip);
-        }
     }
 
     default void defaultSpawn(UUID uuid, List<EntityData<?>> dataList) {
@@ -60,7 +55,7 @@ public interface LivingNPC {
         int entityID = SpigotReflectionUtil.generateEntityId();
 
         PacketWrapper<?> spawnEntity = PacketEvents.getAPI().getServerManager().getVersion().isOlderThan(ServerVersion.V_1_17) ?
-                getNPC().getEntityType().equals(EntityTypes.PLAYER) ?
+                getNPC().getEntityType().equals(EntityTypes.PLAYER) || getNPC().getEntityType().equals(EntityTypes.MANNEQUIN) ?
                 new WrapperPlayServerSpawnPlayer(
                         entityID,
                         uuid,

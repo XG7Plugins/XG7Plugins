@@ -54,7 +54,11 @@ public class CommandFormDescription extends ModalForm {
 
             CommandForm commandMenu = new CommandForm(command.getChildren(), "Subcommands of: " + command.getName(), origin, guiOrigin);
             commandMenu.send(player);
-        } origin.send(player);
+
+            return;
+        }
+
+        origin.send(player);
 
     }
 

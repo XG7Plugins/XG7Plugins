@@ -71,7 +71,7 @@ public class LivingDisplayNPC implements LivingNPC {
 
         setSpawnedEntitiesID(new int[]{getSpawnedEntitiesID()[0], armorStandID});
 
-        System.out.println("IDS " + Arrays.toString(getSpawnedEntitiesID()));
+
 
     }
 }

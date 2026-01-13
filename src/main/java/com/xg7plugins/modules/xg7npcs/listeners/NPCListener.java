@@ -1,9 +1,15 @@
 package com.xg7plugins.modules.xg7npcs.listeners;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerTeams;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.events.Listener;
 import com.xg7plugins.events.bukkitevents.EventHandler;
+import com.xg7plugins.modules.xg7npcs.living.impl.LivingPlayerNPC;
+import com.xg7plugins.modules.xg7npcs.npc.impl.PlayerNPC;
 import com.xg7plugins.tasks.tasks.BukkitTask;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -20,6 +26,9 @@ public class NPCListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         killFor(event.getPlayer());
+        if (PlayerNPC.USE_MANNEQUIN) return;
+        LivingPlayerNPC.teams.setTeamMode(WrapperPlayServerTeams.TeamMode.REMOVE);
+        PacketEvents.getAPI().getPlayerManager().sendPacket(event.getPlayer(), LivingPlayerNPC.teams);
     }
 
     @EventHandler
@@ -29,6 +38,12 @@ public class NPCListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+
+        if (!PlayerNPC.USE_MANNEQUIN) {
+            LivingPlayerNPC.teams.setTeamMode(WrapperPlayServerTeams.TeamMode.CREATE);
+            PacketEvents.getAPI().getPlayerManager().sendPacket(event.getPlayer(), LivingPlayerNPC.teams);
+        }
+
         XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of(() -> spawnFor(event.getPlayer())), 50L);
     }
     @EventHandler
@@ -46,14 +61,14 @@ public class NPCListener implements Listener {
             return;
         }
         killFor(player);
-        spawnFor(player);
+        XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of(() -> spawnFor(player)), 1);
     }
 
     private void spawnFor(Player player) {
         XG7Plugins.getAPI().npcs().getRegisteredNPCs().values()
                 .stream().filter(npc -> npc.getSpawnLocation().getWorld().getUID() == player.getWorld().getUID())
                 .forEach(npc -> {
-                    System.out.println("Spawning NPC " + npc.getId() + " for " + player.getName());
+
                     npc.spawn(player);
                 });
     }

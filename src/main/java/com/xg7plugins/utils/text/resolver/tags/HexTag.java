@@ -34,8 +34,6 @@ public class HexTag implements Tag {
 
         ChatColor hexColor = ChatColor.of("#" + hex);
 
-        component.getExtra().clear();
-
         component.setColor(hexColor);
         component.setText(content);
     }
