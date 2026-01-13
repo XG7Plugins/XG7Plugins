@@ -33,6 +33,11 @@ public class ReflectionObject {
         this.objectClass = object.getClass();
     }
 
+    public ReflectionObject(Object object, Class<?> objectClass) {
+        this.object = object;
+        this.objectClass = objectClass;
+    }
+
     /**
      * Static factory method to create a ReflectionObject instance.
      *
@@ -41,6 +46,10 @@ public class ReflectionObject {
      */
     public static ReflectionObject of(Object object) {
         return new ReflectionObject(object);
+    }
+
+    public static ReflectionObject of(Object object, Class<?> objectClass) {
+        return new ReflectionObject(object, objectClass);
     }
 
     /**

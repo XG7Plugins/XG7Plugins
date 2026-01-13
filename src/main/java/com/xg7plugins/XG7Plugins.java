@@ -70,6 +70,7 @@ import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder
 import lombok.AccessLevel;
 import lombok.Getter;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -114,6 +115,8 @@ public class XG7Plugins extends Plugin {
     private ServerInfo serverInfo;
     private VersionChecker versionChecker;
 
+    private BukkitAudiences adventure;
+
     private DependencyManager dependencyManager;
     private CacheManager cacheManager;
     private TaskManager taskManager;
@@ -157,6 +160,7 @@ public class XG7Plugins extends Plugin {
 
     @Override
     public void onEnable() {
+        this.adventure = BukkitAudiences.create(this.getJavaPlugin());
         debug.info("load", "Enabling XG7Plugins...");
         PacketEvents.getAPI().init();
 
@@ -230,6 +234,9 @@ public class XG7Plugins extends Plugin {
 
         debug.info("load","Stopping PacketEvents...");
         PacketEvents.getAPI().terminate();
+
+        this.adventure.close();
+        this.adventure = null;
 
         debug.info("load","Stopping database...");
         try {

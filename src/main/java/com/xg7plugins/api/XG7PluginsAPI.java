@@ -33,6 +33,7 @@ import com.xg7plugins.tasks.TaskManager;
 import com.xg7plugins.tasks.tasks.TimerTask;
 import com.xg7plugins.utils.PluginKey;
 import lombok.AllArgsConstructor;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -514,6 +515,10 @@ public class XG7PluginsAPI implements API<XG7Plugins> {
      */
     public VersionChecker getVersionChecker() {
         return plugin.getVersionChecker();
+    }
+
+    public BukkitAudiences getAdventure() {
+        return plugin.getAdventure();
     }
 
     @Override
