@@ -2,6 +2,7 @@ package com.xg7plugins.utils.text.sender;
 
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.modules.xg7scores.scores.ActionBar;
 import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.tasks.tasks.BukkitTask;
@@ -9,8 +10,10 @@ import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.text.Text;
 import net.md_5.bungee.api.ChatMessageType;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class ActionBarSender implements TextSender {
     @Override
@@ -23,7 +26,7 @@ public class ActionBarSender implements TextSender {
 
         Player player = (Player) sender;
 
-        ActionBar.addToBlacklist(player);
+
 
         if (MinecraftServerVersion.isNewerThan(ServerVersion.V_1_8_8)) {
             player.spigot().sendMessage(ChatMessageType.ACTION_BAR, text.getComponent());

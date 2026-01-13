@@ -4,6 +4,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.textattempt.sender.CenterSender;
 import com.xg7plugins.utils.textattempt.sender.TextSender;
 import com.xg7plugins.utils.textattempt.sender.deserializer.TextSenderDeserializer;
 import lombok.Getter;

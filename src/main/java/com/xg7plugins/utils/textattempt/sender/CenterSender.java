@@ -26,6 +26,6 @@ public class CenterSender implements TextSender {
 
         String spaces = TextCentralizer.getSpacesCentralized(pixels,text.getText());
 
-        text.setText(spaces + text.getText());
+        text.setText(spaces + text.getTextRaw());
     }
 }

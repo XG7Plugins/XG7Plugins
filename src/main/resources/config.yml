@@ -203,6 +203,8 @@ organize-tablist: true
 #commands based on player permissions
 anti-tab: true
 
+cooldown-for-showing-action-messages: 3500ms
+
 #+1.21.6
 #Time for unregister a waiting response
 #for a dialog
