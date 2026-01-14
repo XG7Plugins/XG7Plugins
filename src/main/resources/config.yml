@@ -16,7 +16,7 @@
 #https://discord.gg/2wzmnyu7S3
 
 #Plugin prefix used on messages
-prefix: "§bXG§37P§9lu§1gins §8>>§r"
+prefix: "&bXG&37P&9lu&1gins &8>>&r"
 
 #Must be the same as in BungeeCord config!
 server:

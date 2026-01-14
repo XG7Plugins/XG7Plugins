@@ -16,6 +16,7 @@ public class ColorParser {
         if (message == null || message.isEmpty()) return "";
 
         return message
+                .replace("&", "§") // Allow & as an alternative prefix
                 .replace("§0", "\u001B[30m") //black
                 .replace("§1", "\u001B[34m") // dark blue
                 .replace("§2", "\u001B[32m") // dark green

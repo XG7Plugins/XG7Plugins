@@ -36,6 +36,10 @@ permissions:
       xg7plugins.command.tasks: true
       xg7plugins.command.update: true
       xg7plugins.command.anti-tab-bypass: true
+      xg7plugins.command.comment: true
+      xg7plugins.command.configs: true
+      xg7plugins.command.variable: true
+      xg7plugins.command.update_check: true
 
   xg7plugins.command.tasks:
     description: Allows the player to view the plugin's tasks
@@ -53,3 +57,25 @@ permissions:
 
     children:
         xg7plugins.command.lang.other: true
+
+  xg7plugins.command.comment:
+    description: Allows using the comment command
+    default: op
+
+  xg7plugins.command.configs:
+    description: Allows managing plugin configs via command
+    default: op
+
+  xg7plugins.command.variable:
+    description: Allows using the variable command and its subcommands
+    default: op
+    children:
+      xg7plugins.command.variable.set: true
+      xg7plugins.command.variable.get: true
+      xg7plugins.command.variable.delete: true
+      xg7plugins.command.variable.clear: true
+      xg7plugins.command.variable.list: true
+
+  xg7plugins.command.update_check:
+    description: Allows running update check command
+    default: op
