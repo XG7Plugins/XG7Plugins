@@ -35,7 +35,7 @@ public class ItemMessageElement implements DialogBodyElement<ItemDialogBody> {
                 new PlainMessage(
                         Text.detectLangs(player, dialog.getPlugin(), description)
                                 .replaceAll(dialog.getBuildPlaceholders())
-                                .toAdventureComponent()
+                                .getComponent()
                         , textWidth
                 ),
                 showDecorations,

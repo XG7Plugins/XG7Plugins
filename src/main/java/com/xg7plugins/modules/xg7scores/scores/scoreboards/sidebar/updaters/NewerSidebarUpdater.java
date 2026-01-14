@@ -37,7 +37,7 @@ public class NewerSidebarUpdater implements SidebarUpdater {
                 WrapperPlayServerUpdateScore.Action.CREATE_OR_UPDATE_ITEM,
                 "sb-" + sidebar.getId(),
                 score,
-                Text.detectLangs(player, sidebar.getPlugin(), text).toAdventureComponent(),
+                Text.detectLangs(player, sidebar.getPlugin(), text).getComponent(),
                 ScoreFormat.blankScore()
         );
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, updateScore);

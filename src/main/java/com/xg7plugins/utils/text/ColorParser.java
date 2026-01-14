@@ -3,7 +3,7 @@ package com.xg7plugins.utils.text;
 /**
  * Utility class for parsing custom color and formatting codes into ANSI escape codes.
  */
-public class AnsiParser {
+public class ColorParser {
 
     /**
      * Parses a message containing custom color and formatting codes (prefixed with '§')
@@ -12,8 +12,8 @@ public class AnsiParser {
      * @param message The input message with custom codes.
      * @return The message with ANSI escape codes.
      */
-    public static String parse(String message) {
-        if (message == null) return "";
+    public static String parseAnsi(String message) {
+        if (message == null || message.isEmpty()) return "";
 
         return message
                 .replace("§0", "\u001B[30m") //black
@@ -39,5 +39,36 @@ public class AnsiParser {
                 .replace("§m", "\u001B[9m")  // strikethrough
                 .replace("§r", "\u001B[0m"); // reset
     }
+
+    public static String parseAdventure(String message) {
+        if (message == null || message.isEmpty()) return "";
+
+        return message
+                .replace("§0", "<black>") //black
+                .replace("§1", "<dark_blue>") // dark blue
+                .replace("§2", "<dark_green>") // dark green
+                .replace("§3", "<dark_aqua>") // dark aqua
+                .replace("§4", "<dark_red>") // dark red
+                .replace("§5", "<dark_purple>") // dark purple
+                .replace("§6", "<gold>") // gold
+                .replace("§7", "<gray>") // gray
+                .replace("§8", "<dark_gray>") // dark gray
+                .replace("§9", "<blue>") // blue
+                .replace("§a", "<green>") // green
+                .replace("§b", "<aqua>") // aqua
+                .replace("§c", "<red>") // red
+                .replace("§d", "<light_purple>") // light purple
+                .replace("§e", "<yellow>") // yellow
+                .replace("§f", "<white>") // white
+
+                .replace("§k", "<obfuscated>")  // obfuscated
+                .replace("§l", "<bold>")  // bold
+                .replace("§n", "<underlined>")  // underline
+                .replace("§o", "<italic>")  // italic
+                .replace("§m", "<strikethrough>")  // strikethrough
+                .replace("§r", "<reset>"); // reset
+    }
+
+
 
 }

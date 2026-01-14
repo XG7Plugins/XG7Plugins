@@ -32,7 +32,7 @@ public class DialogTextInput extends DialogInput {
     public InputControl buildControl(Dialog dialog, Player player) {
         return new TextInputControl(
                 width,
-                Text.detectLangs(player, dialog.getPlugin(), this.label).replaceAll(dialog.getBuildPlaceholders()).toAdventureComponent(),
+                Text.detectLangs(player, dialog.getPlugin(), this.label).replaceAll(dialog.getBuildPlaceholders()).getComponent(),
                 labelVisible,
                 initialValue,
                 maxLength,

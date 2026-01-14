@@ -5,15 +5,14 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.modules.xg7scores.scores.ActionBar;
 import com.xg7plugins.server.MinecraftServerVersion;
-import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.reflection.ReflectionClass;
 import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.text.Text;
 import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class ActionBarSender implements TextSender {
     @Override
@@ -26,11 +25,18 @@ public class ActionBarSender implements TextSender {
 
         Player player = (Player) sender;
 
-
+        ActionBar.addToBlacklist(
+                player,
+                Bukkit.getScheduler().runTaskLater(
+                                XG7Plugins.getInstance().getJavaPlugin(),
+                                () -> ActionBar.removeFromBlacklist(player.getUniqueId()),
+                                ConfigFile.mainConfigOf(XG7Plugins.getInstance()).root().getTimeInTicks("cooldown-for-showing-action-messages")
+                        )
+                        .getTaskId()
+        );
 
         if (MinecraftServerVersion.isNewerThan(ServerVersion.V_1_8_8)) {
-            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, text.getComponent());
-            XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of( () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 3000L);
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(text.getText()));
             return;
         }
 
@@ -50,8 +56,6 @@ public class ActionBarSender implements TextSender {
                 .getFieldRObject("playerConnection")
                 .getMethod("sendPacket", ReflectionClass.of("net.minecraft.server." + MinecraftServerVersion.getPackageName() + ".Packet").getAClass())
                 .invoke(packet.getObject());
-
-        XG7Plugins.getAPI().taskManager().scheduleSync(BukkitTask.of( () -> ActionBar.removeFromBlacklist(player.getUniqueId())), 3000L);
 
     }
 

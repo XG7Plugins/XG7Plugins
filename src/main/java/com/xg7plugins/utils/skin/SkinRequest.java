@@ -66,7 +66,7 @@ public class SkinRequest {
             return requestSkinByPlayerName(player.getName());
         }
 
-        User user = PacketEvents.getAPI().getPlayerManager().getUser(player.getUniqueId());
+        User user = PacketEvents.getAPI().getPlayerManager().getUser(player);
 
         List<TextureProperty> properties = user.getProfile().getTextureProperties();
 

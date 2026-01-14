@@ -1,10 +1,14 @@
 package com.xg7plugins.utils.text.sender;
 
-import com.github.retrooper.packetevents.manager.server.ServerVersion;
-import com.xg7plugins.server.MinecraftServerVersion;
+import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.utils.reflection.ReflectionObject;
 import com.xg7plugins.utils.text.Text;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
 
 /**
  * Interface for sending text messages to command senders.
@@ -31,24 +35,21 @@ public interface TextSender {
     default void defaultSend(CommandSender sender, Text text) {
         if (text == null || text.getText() == null || text.getText().isEmpty()) return;
 
-        text.split("<br>").forEach(line -> {
-            System.out.println("SENDING: " + line.getText());
-            if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) {
-                sender.sendMessage(line.getText());
-                return;
-            }
+        try {
+            ReflectionObject.of(sender, CommandSender.class).getMethod("sendRichMessage", String.class).invoke(text.getTextRaw());
+            return;
+        } catch (Exception ignored) {
 
-            if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_9) && !(sender instanceof Player)) {
-                sender.sendMessage(line.getText());
-                return;
-            }
-            if (!(sender instanceof Player)) {
-                sender.spigot().sendMessage(line.getComponent());
-                return;
-            }
+        }
 
-            ((Player) sender).spigot().sendMessage(line.getComponent());
-        });
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
+            System.out.println("TRANSLATED: " + Arrays.toString(BungeeComponentSerializer.get().serialize(text.getComponent())));
+            player.spigot().sendMessage(BungeeComponentSerializer.get().serialize(text.getComponent()));
+            return;
+        }
+
+        sender.sendMessage(text.getText());
     }
 
     /**

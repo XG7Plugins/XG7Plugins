@@ -22,8 +22,8 @@ public class DialogButton {
     public ActionButton build(Dialog dialog, Player player) {
         return new ActionButton(
                 new CommonButtonData(
-                        Text.detectLangs(player, dialog.getPlugin(), label).replaceAll(dialog.getBuildPlaceholders()).toAdventureComponent(),
-                        hoverText == null ? Component.text("") : Text.detectLangs(player, dialog.getPlugin(), hoverText).replaceAll(dialog.getBuildPlaceholders()).toAdventureComponent(),
+                        Text.detectLangs(player, dialog.getPlugin(), label).replaceAll(dialog.getBuildPlaceholders()).getComponent(),
+                        hoverText == null ? Component.text("") : Text.detectLangs(player, dialog.getPlugin(), hoverText).replaceAll(dialog.getBuildPlaceholders()).getComponent(),
                         width
                 ),
                 action == null? null : action.build(dialog, player)

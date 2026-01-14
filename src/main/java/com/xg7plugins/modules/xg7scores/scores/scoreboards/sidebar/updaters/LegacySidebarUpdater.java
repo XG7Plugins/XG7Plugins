@@ -94,8 +94,8 @@ public class LegacySidebarUpdater implements SidebarUpdater {
 
         WrapperPlayServerTeams.ScoreBoardTeamInfo teamInfo = new WrapperPlayServerTeams.ScoreBoardTeamInfo(
                 Component.text(teamName),
-                Text.format(prefix).toAdventureComponent(),
-                Text.format(suffix).toAdventureComponent(),
+                Text.format(prefix).getComponent(),
+                Text.format(suffix).getComponent(),
                 WrapperPlayServerTeams.NameTagVisibility.ALWAYS,
                 WrapperPlayServerTeams.CollisionRule.ALWAYS,
                 NamedTextColor.WHITE,

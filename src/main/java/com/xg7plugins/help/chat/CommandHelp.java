@@ -4,10 +4,11 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.commands.node.CommandNode;
 import com.xg7plugins.utils.item.Item;
+import com.xg7plugins.utils.text.ColorParser;
 import com.xg7plugins.utils.text.Text;
-import com.xg7plugins.utils.text.component.ClickEvent;
-import com.xg7plugins.utils.text.component.TextComponentBuilder;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
@@ -46,22 +47,23 @@ public class CommandHelp implements HelpChatPage {
 
             ItemStack itemStack = commandIcon.getItemFor(sender, XG7Plugins.getInstance());
 
-            components.add(Text.format("&m-&9&m-&6&m---------&e*&6&m---------&9&m-&f&m-"));
+            components.add(Text.format(" "));
 
-            ClickEvent clickEvent = ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, command.getCommand().getCommandSetup().syntax());
+            components.add(Text.format("&8- &b/&r" + itemStack.getItemMeta().getDisplayName()));
 
-            components.add(
-                    TextComponentBuilder.of(itemStack.getItemMeta().getDisplayName()).clickEvent(clickEvent).append("<br>")
-                            .append(itemStack.getItemMeta().getLore().get(0)).clickEvent(clickEvent).append("<br>")
-                            .append(itemStack.getItemMeta().getLore().get(1)).clickEvent(clickEvent).append("<br>")
-                            .append(itemStack.getItemMeta().getLore().get(2)).clickEvent(clickEvent).append("<br>")
-                            .append(itemStack.getItemMeta().getLore().get(3)).clickEvent(clickEvent).append("<br>")
-                            .append("Subcommands: " + !command.getChildren().isEmpty()).clickEvent(clickEvent)
-                            .build()
-            );
-
-            components.add(Text.format("&m-&9&m-&6&m---------&e*&6&m---------&9&m-&f&m-"));
-            components.add(Text.format(""));
+            components.add(Text.format(
+                    Component.text(
+                            ColorParser.parseAdventure(
+                                    itemStack.getItemMeta().getLore().get(0) + "\n" +
+                                            itemStack.getItemMeta().getLore().get(1) + "\n" +
+                                            itemStack.getItemMeta().getLore().get(2) + "\n" +
+                                            itemStack.getItemMeta().getLore().get(3) + "\n" +
+                                            "Subcommands: " + !command.getChildren().isEmpty()
+                            )
+                            ).clickEvent(
+                                    ClickEvent.suggestCommand(command.getCommand().getCommandSetup().syntax())
+                            )
+            ));
         }
 
         components.add(Text.format("&m-&9&m-&6&m------------------&e*&6&m------------------&9&m-&f&m-"));

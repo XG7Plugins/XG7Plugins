@@ -38,8 +38,8 @@ public abstract class Dialog {
 
     public CommonDialogData buildCommonData(Player player) {
         return new CommonDialogData(
-                Text.detectLangs(player, plugin, title).replaceAll(buildPlaceholders).toAdventureComponent(),
-                Text.detectLangs(player, plugin, title).replaceAll(buildPlaceholders).toAdventureComponent(),
+                Text.detectLangs(player, plugin, title).replaceAll(buildPlaceholders).getComponent(),
+                Text.detectLangs(player, plugin, title).replaceAll(buildPlaceholders).getComponent(),
                 canCloseWithEscape,
                 false,
                 afterResponse,

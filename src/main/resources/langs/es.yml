@@ -8,39 +8,42 @@ bedrock-icon: "URL, data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANUAAACgCAMAAA
 plugin-update-available: "&a¡Una nueva versión de &e%plugin% &aestá disponible! Nueva versión: &7%version%&r"
 
 command-errors:
-  internal-error: "&c¡Ocurrió un error interno al ejecutar este comando!"
+  internal-error: "&c¡Ocurrió un error interno al ejecutar este comando! ¡Consulte la consola para más información!"
   syntax-error: "&c¡Estás usando el comando incorrectamente! La forma correcta es &7%syntax%"
-  player-not-found: "&c¡Este jugador no fue encontrado o nunca ha jugado antes!"
+  player-not-found: "&c¡Este jugador no ha sido encontrado o nunca ha jugado antes!"
   no-permission: "&c¡No tienes permiso para hacer esto!"
   disabled-world: "&c¡No puedes ejecutar este comando en un mundo deshabilitado!"
-  not-a-player: "&c¡No puedes ejecutar este comando desde la consola!"
+  not-a-player: "&c¡No puedes ejecutar este comando en la consola!"
   is-a-player: "&c¡No puedes ejecutar este comando siendo un jugador!"
   not-online: "&c¡Este jugador no está en línea!"
   command-not-found: "&c¡Comando no encontrado!"
-  illegal-type: "&cEl valor ingresado no es del tipo %type%"
+  illegal-type: "&cEl valor ingresado no es un(a) %type%"
 
   plugin-not-found: "%prefix% &c¡Plugin no encontrado!"
   unknown-reload-cause: "%prefix% &c¡Causa de recarga desconocida para este plugin!"
+  file-not-found: "%prefix% &c¡Archivo no encontrado!"
+
+
 
 reload-message:
-  all-plugins: "%prefix% &a¡Todos los plugins fueron recargados!"
+  all-plugins: "%prefix% &a¡Todos los plugins han sido recargados!"
   without-cause: "%prefix% %plugin% &a¡recargado!"
-  with-cause: "%prefix% %cause% &a¡recargado en el plugin &r%plugin%"
+  with-cause: "%prefix% %cause% &arecargado en el plugin &r%plugin%"
 
-# Plugin defaults
+#Plugin defaults
 
-comment-message-sent: "[TITLE] &a¡Tu mensaje fue enviado al creador!"
-comment-cooldown: "%prefix% &a¡Estás en cooldown para enviar comentarios! Espera @MINUTES_SECONDS:%time%@ para enviar otro comentario."
+comment-message-sent: "[TITLE] &a¡Tu mensaje ha sido enviado al creador!"
+comment-cooldown: "%prefix% &a¡Estás en cooldown para enviar un comentario! Espera @MINUTES_SECONDS:%time%@ para enviar otro comentario!"
 
 plugin-checking-updates: "%prefix% &eComprobando actualizaciones para el plugin &b%plugin%..."
 plugin-checking-updates-all: "%prefix% &eComprobando actualizaciones para todos los plugins..."
 
-plugin-no-updates: "%prefix% &a¡Ningún plugin necesita actualización!"
+plugin-no-updates: "%prefix% &a¡No hay plugins que necesiten ser actualizados!"
 
-plugin-update-success: "%prefix% &a¡Plugin actualizado correctamente a la versión &b%version%&a! Por favor, <click:RUN_COMMAND:/stop><hover:SHOW_TEXT:Reinicia el servidor>&e&nreinicia el servidor para aplicar la actualización</hover></click>&a!"
-plugin-update-failed: "%prefix% &c¡La actualización del plugin falló! Revisa la consola para más información."
+plugin-update-success: "%prefix% &a¡Plugin actualizado con éxito a la versión &b%version%&a! Por favor, <click:RUN_COMMAND:/stop><hover:SHOW_TEXT:Reiniciar el servidor>&e&nreinicia el servidor para aplicar la actualización</hover></click>&a!"
+plugin-update-failed: "%prefix% &c¡Fallo en la actualización del plugin! Consulta la consola para más información."
 
-go-back-item: "Volver"
+go-back-item: "Atrás"
 go-next-item: "Siguiente"
 close-item: "&cCerrar"
 refresh-item: "&9Actualizar página"
@@ -56,13 +59,14 @@ collaborators-menu:
     name: "&bColaboradores"
     lore: "Haz clic aquí para ver los colaboradores"
 
+
 lang-not-found: "%prefix% &c¡Idioma no encontrado!"
 
 lang-other: "%prefix% &a¡Has cambiado el idioma de %target% a &b%lang%&a!"
 lang-changed-by-other: "%prefix% &a¡Tu idioma ha sido cambiado a &b%lang%&a por %target%!"
 
 lang-menu:
-  title: "&rIdiomas"
+  title: "[CENTER:INV] &rIdiomas"
 
   content: "¡Elige un idioma!"
 
@@ -73,23 +77,23 @@ lang-menu:
 
   toggle-success: "%prefix% &a¡Has cambiado el idioma a &bespañol!"
 
-  cooldown-to-toggle: "%prefix% &cDebes esperar &b@SECONDS:%time%@ &cpara cambiar el idioma nuevamente"
+  cooldown-to-toggle: "%prefix% &cNecesitas esperar &b@SECONDS:%time%@ &cpara cambiar el idioma nuevamente"
 
 tasks-menu:
-  title: "&rTareas"
+  title: "[CENTER:INV] &rTareas"
 
   task-item:
     - "&fID de la tarea: &b%id%"
     - "&fPlugin de la tarea: &e%plugin%"
     - "&fEstado de la tarea: &9%state%"
-    - "&fTarea bukkit: &6%is_bukkit_task%"
-    - "&fTarea async: &6%is_async_task%"
+    - "&fTarea Bukkit: &6%is_bukkit_task%"
+    - "&fTarea asíncrona: &6%is_async_task%"
     - " "
     - "&fClic izquierdo -> &aCopiar ID"
     - "?IF: %task_is_running%?&fClic derecho -> &cDetener tarea"
     - "?IF: %task_is_not_running%?&fClic derecho -> &aIniciar tarea"
 
-  copy-to-clipboard: "%prefix% &7Haz clic <click:suggest_command:%id%><hover:show_text:%id%>&baquí&r</hover></click> &7para copiar el ID de la tarea!"
+  copy-to-clipboard: "%prefix% &7¡Haz clic <click:suggest_command:%id%><hover:show_text:%id%>&baquí&r</hover></click> &7para copiar el ID de la tarea!"
 
   notes:
     - "&fUso de RAM del servidor: &9%ram%MB"
@@ -113,9 +117,12 @@ commands-display:
     usage: "&fUso: &a%syntax%"
     desc: "&fDescripción: &e%description%"
     perm: "&fPermiso: &c%permission%"
-    player-only: "&fSolo jugadores pueden usarlo: &b%player_only%"
+    player-only: "&fSolo jugadores pueden usar: &b%player_only%"
 
 commands-form:
+
+  generating-list: "[TITLE] &aGenerando lista de comandos..."
+
   content: "¡Haz clic en una opción para ver su descripción y uso!"
   subcommands-label: "¡Haz clic para ver los subcomandos!"
   no-subcommands: "¡No hay subcomandos para este comando!"
@@ -127,7 +134,7 @@ help-menu:
 
   index:
 
-    title: "&rAyuda de <rainbow>XG7Plugins</rainbow>"
+    title: "[CENTER:INV] &rAyuda de <rainbow>XG7Plugins</rainbow>"
 
     see-in-chat: "Haz clic aquí para ver la ayuda en el chat"
 
@@ -155,12 +162,13 @@ help-menu:
     &rGitHub: &a&n%github%&r<br>
     &rDiscord: &a&n%discord%&r
     <endp>
-    &rEste plugin fue creado para desarrollar otros plugins para XG7.<br>
-    &rSu objetivo es gestionar tareas, incluir bibliotecas (como menús, scores, etc.)
+    &rEste plugin fue hecho para crear otros plugins para XG7.<br>
+    &rSu objetivo es gestionar tareas, incluir bibliotecas (como menús, marcadores, etc.) 
     y facilitar<br> la creación de plugins.<br>
-    &rTambién cuenta con un sistema de idiomas para la inclusión de nuevos idiomas.
+    &rTambién tiene un sistema de idiomas para la inclusión de nuevos idiomas.
     <endp>
     &5&oDesarrollado por DaviXG7
+  
 
   command-help:
     title: "Comandos de &e%plugin_name%"
@@ -172,7 +180,7 @@ help-in-chat:
 
   title: "&7¡Bienvenido a la página de ayuda de &6XG7Plugins&7!"
 
-  content: "&eXG7Plugins es un plugin que tiene como objetivo facilitar la creación de otros plugins para XG7Plugins. Haz clic para ver más información."
+  content: "&eXG7Plugins es un plugin que tiene como objetivo facilitar la creación de otros plugins para otros XG7Plugins. Haz clic para ver más información."
 
   back: "&aHaz clic para volver a la ayuda"
 
@@ -183,7 +191,7 @@ help-in-chat:
   commands-title: "&7Comandos de &6XG7Plugins &8(&7%page%&8/&7%max_page%&8)"
 
 config-files:
-  title: "&rArchivos de configuración de %plugin%"
+  title: "[CENTER:INV] &rArchivos de configuración de %plugin%"
 
   form-content: "¡Haz clic en un archivo de configuración para editarlo!"
 
@@ -194,7 +202,6 @@ config-files:
   config-reloaded: "%prefix% &a¡Configuración &b%file_name% &arecargada!"
   config-saved: "%prefix% &a¡Configuración &b%file_name% &aguardada!"
 
-
 config-editor:
   title: "&0Editando: %path%"
 
@@ -203,10 +210,10 @@ config-editor:
   save: "Guardar"
   back-to-previous-section: "Volver a la sección anterior"
 
-  insert-value: "&aInserta un valor de tipo &e%type%&a. Escribe \"cancel\" para cancelar la acción"
-  value-error: "&bNo se puede convertir el valor al tipo %type%"
+  insert-value: "&aInserta un valor &e%type%&a. Escribe \"cancel\" para cancelar la acción"
+  value-error: "&bNo se puede convertir el valor a %type%"
 
-  list-editor: "&a¡Estás en el editor de listas! Escribe \"cancel\" para cancelar la edición, \"exit\" para finalizarla y \"remove\" para eliminar el último elemento."
+  list-editor: "&a¡Estás en el editor de listas! Escribe \"cancel\" para cancelar la edición, \"exit\" para finalizar la edición y \"remove\" para eliminar el último elemento."
   list-state: "&fEstado de la lista: &e%list%"
   list-remove: "&aHas eliminado %line% de la lista"
   list-empty: "&cLa lista está vacía"
@@ -223,13 +230,13 @@ config-editor:
     click-to-delete: "&cClic derecho para eliminar esta línea"
 
   add:
-    item: "&aAgregar valor"
+    item: "&aAñadir valor"
 
     insert-key: "&aInserta una clave válida. Escribe \"cancel\" para cancelar la acción"
     insert-value-type: "&aInserta el tipo de valor. Escribe \"cancel\" para cancelar la acción. &bTipos disponibles: &e%types%"
 
-    invalid-key: "&cLa clave no puede estar vacía, contener símbolos (excepto \"-\") ni comenzar con un número"
-    invalid-type: "&c¡Este tipo de valor no es válido!"
+    invalid-key: "&cLa clave no puede estar vacía, tener símbolos (excepto \"-\") y comenzar con un número"
+    invalid-type: "&c¡Este tipo de valor es inválido!"
     key-exists: "&c¡Esta clave ya existe!"
 
     dialog-title: "Insertar un nuevo valor en la sección"
@@ -238,7 +245,7 @@ config-editor:
     dialog-insert-value-type: "Inserta el tipo de valor"
 
     dialog-confirm: "&aConfirmar"
-    dialog-confirm-hover: "El valor será agregado"
+    dialog-confirm-hover: "El valor será añadido"
     dialog-cancel: "&cCancelar"
     dialog-cancel-hover: "Volver al editor de configuración"
 
@@ -262,9 +269,9 @@ config-editor:
     confirm-hover: "El valor ingresado será aplicado"
 
     back: "&cVolver"
-    back-hover: "Volver al editor de configuración"
+    back-hover: "Volver a la interfaz del editor de configuración"
 
-    description: "Edita %path% insertando un valor de tipo &b%type%&r"
+    description: "Editar %path% insertando un valor &b%type%&r"
     input-label: "Valor:"
 
     list-description: "Editar lista: %path%. Deja en blanco para eliminar la línea"
@@ -275,7 +282,7 @@ config-form-editor:
 
   content: "Elige una acción para continuar"
 
-  add: "&aAgregar valor"
+  add: "&aAñadir valor"
   save: "&aGuardar"
   back: "&rVolver a la sección anterior"
   delete: "&6Eliminar"
@@ -303,7 +310,7 @@ config-form-editor:
 
     value-toggle: "Activar/Desactivar"
     value-placeholder: "Inserta aquí..."
-    value-input: "Inserta un valor de tipo %type%"
+    value-input: "Inserta un valor %type%"
 
     list-label: "Línea %index%"
     list-placeholder: "Deja en blanco para eliminar esta línea"
@@ -311,7 +318,7 @@ config-form-editor:
     new-line-placeholder: "Deja en blanco para no hacer nada"
 
   add-form:
-    title: "&rInserta una clave y un valor válidos"
+    title: "&rInserta una clave y valor válidos"
 
     key-label: "Clave:"
     key-placeholder: "No puede estar vacía y debe coincidir con \"^[a-zA-Z][a-zA-Z0-9-]*$\""

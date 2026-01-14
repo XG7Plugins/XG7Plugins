@@ -1,7 +1,6 @@
 package com.xg7plugins.utils.text.sender.deserializer.tag;
 
 import com.xg7plugins.utils.text.Text;
-import com.xg7plugins.utils.text.TextCentralizer;
 import com.xg7plugins.utils.text.sender.CenterSender;
 import com.xg7plugins.utils.text.sender.TextSender;
 

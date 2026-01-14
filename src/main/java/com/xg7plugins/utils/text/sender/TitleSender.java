@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
+
 @AllArgsConstructor
 public class TitleSender implements TextSender {
 
@@ -27,21 +29,19 @@ public class TitleSender implements TextSender {
 
         Player player = (Player) sender;
 
-        String[] textSplit = textString.split(" <br> ");
+        String[] textSplit = textString.split(" <subtitle> ");
 
         String title = textSplit[0];
         String subTitle = "";
 
-        if (textSplit.length > 1) {
-            subTitle = textSplit[1];
-        }
+        if (textSplit.length > 1) subTitle = textSplit[1];
 
         if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_13)) {
             player.sendTitle(title, subTitle);
             return;
         }
 
-        player.sendTitle(title, subTitle, fade, fadeOut, fadeIn);
+        player.sendTitle(title, subTitle, fadeIn, fade, fadeOut);
 
     }
 

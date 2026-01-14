@@ -1,8 +1,5 @@
 package com.xg7plugins.utils.text;
 
-import lombok.Getter;
-import org.bukkit.ChatColor;
-
 /**
  * Utility class for centralizing text in various Minecraft contexts by calculating
  * pixel-based character widths and adding appropriate padding.

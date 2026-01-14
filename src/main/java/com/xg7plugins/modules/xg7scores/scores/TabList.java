@@ -72,7 +72,7 @@ public class TabList extends Score {
             return;
         }
 
-        WrapperPlayServerPlayerListHeaderAndFooter headerComponent = new WrapperPlayServerPlayerListHeaderAndFooter(Text.format(header).toAdventureComponent(), Text.format(footer).toAdventureComponent());
+        WrapperPlayServerPlayerListHeaderAndFooter headerComponent = new WrapperPlayServerPlayerListHeaderAndFooter(Text.format(header).getComponent(), Text.format(footer).getComponent());
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player, headerComponent);
     }

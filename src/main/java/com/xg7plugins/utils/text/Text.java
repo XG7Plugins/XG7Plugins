@@ -1,23 +1,18 @@
 package com.xg7plugins.utils.text;
 
-import com.github.retrooper.packetevents.manager.server.ServerVersion;
-import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.XG7Plugins;
+import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
-import com.xg7plugins.server.MinecraftServerVersion;
 import com.xg7plugins.utils.Pair;
-
-import com.xg7plugins.utils.text.resolver.TagResolver;
 import com.xg7plugins.utils.text.sender.TextSender;
 import com.xg7plugins.utils.text.sender.deserializer.TextSenderDeserializer;
-import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
 import lombok.Setter;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +36,7 @@ import java.util.regex.Pattern;
 public class Text {
 
     private static final Pattern LANG_PATTERN = Pattern.compile("lang:\\[([A-Za-z0-9\\.-]*)\\]");
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 
     private TextSender textSender;
     @Setter
@@ -57,11 +52,12 @@ public class Text {
         Pair<TextSender, String> extracted = TextSenderDeserializer.extractSender(text);
 
         this.textSender = extracted.getFirst();
-        this.text = ChatColor.translateAlternateColorCodes('&', extracted.getSecond());
+        this.text = ColorParser.parseAdventure(ChatColor.translateAlternateColorCodes('&', extracted.getSecond()));
+
     }
 
-    public Text(BaseComponent[] components) {
-        this(TagResolver.serialize(components));
+    public Text(Component component) {
+        this(miniMessage.serialize(component));
     }
 
     /**
@@ -157,7 +153,7 @@ public class Text {
      * @param size The PixelsSize context for centralization
      * @return A new Text instance with centralized text
      */
-    public final Text centralize(Text.PixelsSize size) {
+    public final Text centralize(PixelsSize size) {
         this.text = "[CENTER:" + size.name() + "]";
         return Text.format(text);
     }
@@ -266,7 +262,7 @@ public class Text {
      * @return Plain text without colors or formatting
      */
     public String getPlainText() {
-        return net.md_5.bungee.api.ChatColor.stripColor(TagResolver.removeTags(this.text));
+        return PlainTextComponentSerializer.plainText().serialize(getComponent());
     }
 
     /**
@@ -278,13 +274,7 @@ public class Text {
      * @return Text formatted for the current MC version
      */
     public String getText() {
-        if (MinecraftServerVersion.isOlderThan(ServerVersion.V_1_8)) return TagResolver.removeTags(this.text);
-        String legacyText = new TextComponent(getComponent()).toLegacyText();
-
-        if (legacyText.startsWith("§f§f")) {
-            legacyText = legacyText.replaceFirst("§f§f", "");
-        }
-        return legacyText;
+        return BukkitComponentSerializer.legacy().serialize(getComponent());
     }
 
     /**
@@ -292,17 +282,8 @@ public class Text {
      *
      * @return Array of BaseComponents representing the text
      */
-    public BaseComponent[] getComponent() {
-        return TagResolver.deserialize(TimeParser.remainingTimeForValue(getTextRaw()));
-    }
-
-    /**
-     * Converts the text to an Adventure Component
-     *
-     * @return The text as an Adventure Component
-     */
-    public Component toAdventureComponent() {
-        return LegacyComponentSerializer.legacySection().deserialize(getText());
+    public Component getComponent() {
+        return miniMessage.deserialize(this.text);
     }
 
     /**
@@ -448,14 +429,8 @@ public class Text {
         return new Text(text);
     }
 
-    /**
-     * Creates a new Text instance from BaseComponents
-     *
-     * @param text The BaseComponents to convert
-     * @return A new Text instance
-     */
-    public static Text format(BaseComponent[] text) {
-        return new Text(text);
+    public static Text format(Component component) {
+        return new Text(component);
     }
 
     /**

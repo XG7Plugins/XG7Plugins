@@ -5,7 +5,7 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.config.file.ConfigFile;
 import com.xg7plugins.config.file.ConfigSection;
-import com.xg7plugins.utils.text.AnsiParser;
+import com.xg7plugins.utils.text.ColorParser;
 import org.bukkit.Bukkit;
 
 /**
@@ -95,7 +95,7 @@ public class Debug {
 
 
     private void sendConsole(String msg) {
-        Bukkit.getConsoleSender().sendMessage(AnsiParser.parse(msg + "§r"));
+        Bukkit.getConsoleSender().sendMessage(ColorParser.parseAnsi(msg + "§r"));
     }
 
 }

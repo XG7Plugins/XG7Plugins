@@ -14,11 +14,8 @@ public class CenterSender implements TextSender {
 
     @Override
     public void send(CommandSender sender, Text text) {
-
-        text.split("<br>").forEach(line -> {
-            apply(sender, line);
-            defaultSend(sender, line);
-        });
+        apply(sender, text);
+        defaultSend(sender, text);
     }
 
     @Override
@@ -26,6 +23,6 @@ public class CenterSender implements TextSender {
 
         String spaces = TextCentralizer.getSpacesCentralized(pixels,text.getText());
 
-        text.setText(spaces + text.getText());
+        text.setText(spaces + text.getTextRaw());
     }
 }

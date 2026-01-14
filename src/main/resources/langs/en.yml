@@ -66,7 +66,7 @@ lang-other: "%prefix% &aYou changed the language of %target% to &b%lang%&a!"
 lang-changed-by-other: "%prefix% &aYour language has been changed to &b%lang%&a by %target%!"
 
 lang-menu:
-  title: "&rLanguages"
+  title: "[CENTER:INV] &rLanguages"
 
   content: "Choose a language!"
 
@@ -80,7 +80,7 @@ lang-menu:
   cooldown-to-toggle: "%prefix% &cYou need to wait &b@SECONDS:%time%@ &cto toggle the language again"
 
 tasks-menu:
-  title: "&rTasks"
+  title: "[CENTER:INV] &rTasks"
 
   task-item:
     - "&fTask id: &b%id%"
@@ -134,7 +134,7 @@ help-menu:
 
   index:
 
-    title: "&rHelp of <rainbow>XG7Plugins</rainbow>"
+    title: "[CENTER:INV] &rHelp of <rainbow>XG7Plugins</rainbow>"
 
     see-in-chat: "Click here to see the help in chat"
 
@@ -191,7 +191,7 @@ help-in-chat:
   commands-title: "&7Commands of &6XG7Plugins &8(&7%page%&8/&7%max_page%&8)"
 
 config-files:
-  title: "&rConfig files of %plugin%"
+  title: "[CENTER:INV] &rConfig files of %plugin%"
 
   form-content: "Click on a config file to edit it!"
 

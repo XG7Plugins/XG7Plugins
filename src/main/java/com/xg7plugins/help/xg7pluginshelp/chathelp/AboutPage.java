@@ -1,17 +1,14 @@
 package com.xg7plugins.help.xg7pluginshelp.chathelp;
 
-import com.xg7plugins.config.file.ConfigSection;
 import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.help.chat.HelpChatPage;
 import com.xg7plugins.utils.text.Text;
-import com.xg7plugins.utils.text.component.ClickEvent;
-import com.xg7plugins.utils.text.component.TextComponentBuilder;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AboutPage implements HelpChatPage {
 
@@ -34,11 +31,11 @@ public class AboutPage implements HelpChatPage {
 
 
         components.add(
-                TextComponentBuilder.of(
-                        Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.back")
-                                .replace("command", "/xg7plugins help").getText()
-                ).clickEvent(ClickEvent.of(ClickEvent.Action.SUGGEST_COMMAND, "/xg7plugins help"))
-                        .build()
+                Text.format(Component.text(Text.fromLang(sender, XG7Plugins.getInstance(), "help-in-chat.back")
+                                .replace("command", "/xg7plugins help").getText())
+                                .clickEvent(ClickEvent.suggestCommand( "/xg7plugins help"))
+                )
+
         );
         components.add(Text.format(" "));
 

@@ -24,7 +24,7 @@ public class PlainMessageElement implements DialogBodyElement<PlainMessageDialog
         return new PlainMessageDialogBody(new PlainMessage(
                 Text.detectLangs(player, dialog.getPlugin(), message)
                         .replaceAll(dialog.getBuildPlaceholders())
-                        .toAdventureComponent(),
+                        .getComponent(),
                 width
         ));
     }

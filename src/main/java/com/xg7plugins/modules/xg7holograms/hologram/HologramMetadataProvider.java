@@ -55,7 +55,7 @@ public class HologramMetadataProvider {
         if (version.isOlderThan(ServerVersion.V_1_13)) {
             data.add(new EntityData<>(2, EntityDataTypes.STRING, text.getText()));
         } else {
-            data.add(new EntityData<>(2, EntityDataTypes.OPTIONAL_ADV_COMPONENT, Optional.of(text.toAdventureComponent())));
+            data.add(new EntityData<>(2, EntityDataTypes.OPTIONAL_ADV_COMPONENT, Optional.of(text.getComponent())));
         }
 
         if (version.isNewerThanOrEquals(ServerVersion.V_1_9)) {
@@ -75,7 +75,7 @@ public class HologramMetadataProvider {
         data.add(new EntityData<>(23, EntityDataTypes.ADV_COMPONENT,
                 Text.detectLangs(textDisplayHologram.getPlayer(),
                         textDisplayHologram.getHologram().getPlugin(),
-                        line.getLine()).toAdventureComponent()));
+                        line.getLine()).getComponent()));
 
         data.add(new EntityData<>(15, EntityDataTypes.BYTE, (byte) line.getDisplayOptions().getBillboard().ordinal()));
 
@@ -110,7 +110,7 @@ public class HologramMetadataProvider {
     public static List<EntityData<?>> textDisplayUpdateData(Text line) {
         List<EntityData<?>> data = new ArrayList<>();
 
-        data.add(new EntityData<>(23, EntityDataTypes.ADV_COMPONENT, line.toAdventureComponent()));
+        data.add(new EntityData<>(23, EntityDataTypes.ADV_COMPONENT, line.getComponent()));
 
         return data;
     }
