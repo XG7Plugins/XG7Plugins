@@ -72,7 +72,7 @@ public class EntityLine implements HologramLine {
     }
 
     @Override
-    public void update(LivingHologram livingHologram, int entityID) {
+    public void update(LivingHologram livingHologram, LivingHologram.LivingLine livingLine) {
         // No metadata to update for generic entity line
     }
 

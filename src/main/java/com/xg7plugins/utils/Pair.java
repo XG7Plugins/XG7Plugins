@@ -6,6 +6,7 @@ import lombok.ToString;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,14 @@ public class Pair<F, S> {
      */
     public static <F, S> Pair<F, S> of(F first, S second) {
         return new Pair<>(first, second);
+    }
+
+    public static <F, S> Pair<F, S> fromEntry(Map.Entry<F, S> entry) {
+        return new Pair<>(entry.getKey(), entry.getValue());
+    }
+
+    public static <F, S> List<Pair<F, S>> getListFromEntrySet(Set<? extends Map.Entry<F, S>> entries) {
+        return entries.stream().map(Pair::fromEntry).collect(Collectors.toList());
     }
 
     /**

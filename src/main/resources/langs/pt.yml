@@ -8,7 +8,7 @@ bedrock-icon: "URL, https://rondonia.ro.gov.br/wp-content/uploads/2020/09/Bandei
 plugin-update-available: "&aUma nova versão do &e%plugin% &aestá disponível! Nova versão: &7%version%&r"
 
 command-errors:
-  internal-error: "&cOcorreu um erro interno ao executar este comando! Veja o console para mais informações!"
+  internal-error: "&cOcorreu um erro interno ao executar este comando! Veja o console para mais informações! &eVocê digitou um valor inválido?"
   syntax-error: "&cVocê está usando o comando incorretamente! A forma correta é &7%syntax%"
   player-not-found: "&cEste jogador não foi encontrado ou nunca jogou antes!"
   no-permission: "&cVocê não tem permissão para fazer isso!"
@@ -23,14 +23,13 @@ command-errors:
   unknown-reload-cause: "%prefix% &cCausa de recarga desconhecida para este plugin!"
   file-not-found: "%prefix% &cArquivo não encontrado!"
 
-
+#Plugin defaults
 
 reload-message:
   all-plugins: "%prefix% &aTodos os plugins foram recarregados!"
   without-cause: "%prefix% %plugin% &arecarregado!"
   with-cause: "%prefix% %cause% &arecarregado no plugin &r%plugin%"
 
-#Plugin defaults
 
 comment-message-sent: "[TITLE] &aSua mensagem foi enviada ao criador!"
 comment-cooldown: "%prefix% &aVocê está em cooldown para enviar um comentário! Aguarde @MINUTES_SECONDS:%time%@ para enviar outro comentário!"
@@ -59,6 +58,14 @@ collaborators-menu:
     name: "&bColaboradores"
     lore: "Clique aqui para ver os colaboradores"
 
+variables:
+  set: "%prefix% &aVocê definiu a variável &b%var% &apara &b%value%&a!"
+  set-player: "%prefix% &aVocê definiu a variável &b%var% &apara o jogador &b%target% &apara &b%value%&a!"
+  remove: "%prefix% &aVocê removeu a variável &b%var%&a!"
+  remove-player: "%prefix% &aVocê removeu a variável &b%var% &apara o jogador &b%target%&a!"
+  clear: "%prefix% &aVocê limpou todas as variáveis globais!"
+  clear-player: "%prefix% &aVocê limpou todas as variáveis para o jogador &b%target&a!"
+  clear-all: "%prefix% &aVocê limpou todas as variáveis (globais e de jogadores)!"
 
 lang-not-found: "%prefix% &cIdioma não encontrado!"
 

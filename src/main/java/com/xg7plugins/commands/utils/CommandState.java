@@ -18,7 +18,7 @@ public class CommandState {
     // Predefined CommandState instances for common scenarios
 
     public static final CommandState FINE = new CommandState(false, XG7Plugins.getInstance(), "fine", null);
-    public static final CommandState ERROR = new CommandState(false, XG7Plugins.getInstance(), "internal-error", null);
+    public static final CommandState ERROR = new CommandState(true, XG7Plugins.getInstance(), "internal-error", null);
 
     public static final CommandState SYNTAX_ERROR = new CommandState(false, XG7Plugins.getInstance(), "generic-syntax-error", null);
 

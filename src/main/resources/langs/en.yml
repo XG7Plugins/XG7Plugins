@@ -8,7 +8,7 @@ bedrock-icon: "URL, https://cdn.britannica.com/33/4833-050-F6E415FE/Flag-United-
 plugin-update-available: "&aA new version of &e%plugin% &ais available! New version: &7%version%&r"
 
 command-errors:
-  internal-error: "&cAn internal error was occurred while executing this command! See console for more information!"
+  internal-error: "&6An internal error was occurred while executing this command! See console for more information! &eDid you enter an invalid value?"
   syntax-error: "&cYou are using the command incorrectly! The right way is &7%syntax%"
   player-not-found: "&cThis player hasn't found or never played before!"
   no-permission: "&cYou don't have permission to perform this!"
@@ -23,14 +23,12 @@ command-errors:
   unknown-reload-cause: "%prefix% &cUnknow reload cause for this plugin!"
   file-not-found: "%prefix% &cFile not found!"
 
-
+#Plugin defaults
 
 reload-message:
   all-plugins: "%prefix% &aAll plugins reloaded!"
   without-cause: "%prefix% %plugin% &areloaded!"
   with-cause: "%prefix% %cause% &areloaded in plugin &r%plugin%"
-
-#Plugin defaults
 
 comment-message-sent: "[TITLE] &aYour message has been sent to the creator!"
 comment-cooldown: "%prefix% &aYou are in cooldown to send a comment! Wait @MINUTES_SECONDS:%time%@ to send another comment!"
@@ -59,6 +57,14 @@ collaborators-menu:
     name: "&bCollaborators"
     lore: "Click here to see the collaborators"
 
+variables:
+  set: "%prefix% &aYou set the variable &b%var% &ato &b%value%&a!"
+  set-player: "%prefix% &aYou set the variable &b%var% &afor player &b%target% &ato &b%value%&a!"
+  remove: "%prefix% &aYou removed the variable &b%var%&a!"
+  remove-player: "%prefix% &aYou removed the variable &b%var% &afor player &b%target%&a!"
+  clear: "%prefix% &aYou cleared all global variables!"
+  clear-player: "%prefix% &aYou cleared all variables for player &b%target&a!"
+  clear-all: "%prefix% &aYou cleared all variables (global and players)!"
 
 lang-not-found: "%prefix% &cLanguage not found!"
 

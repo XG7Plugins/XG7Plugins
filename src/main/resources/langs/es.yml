@@ -8,7 +8,7 @@ bedrock-icon: "URL, data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANUAAACgCAMAAA
 plugin-update-available: "&a¡Una nueva versión de &e%plugin% &aestá disponible! Nueva versión: &7%version%&r"
 
 command-errors:
-  internal-error: "&c¡Ocurrió un error interno al ejecutar este comando! ¡Consulte la consola para más información!"
+  internal-error: "&c¡Ocurrió un error interno al ejecutar este comando! ¡Consulte la consola para más información! &e¿Ha introducido un valor no válido?"
   syntax-error: "&c¡Estás usando el comando incorrectamente! La forma correcta es &7%syntax%"
   player-not-found: "&c¡Este jugador no ha sido encontrado o nunca ha jugado antes!"
   no-permission: "&c¡No tienes permiso para hacer esto!"
@@ -23,14 +23,13 @@ command-errors:
   unknown-reload-cause: "%prefix% &c¡Causa de recarga desconocida para este plugin!"
   file-not-found: "%prefix% &c¡Archivo no encontrado!"
 
-
+#Plugin defaults
 
 reload-message:
   all-plugins: "%prefix% &a¡Todos los plugins han sido recargados!"
   without-cause: "%prefix% %plugin% &a¡recargado!"
   with-cause: "%prefix% %cause% &arecargado en el plugin &r%plugin%"
 
-#Plugin defaults
 
 comment-message-sent: "[TITLE] &a¡Tu mensaje ha sido enviado al creador!"
 comment-cooldown: "%prefix% &a¡Estás en cooldown para enviar un comentario! Espera @MINUTES_SECONDS:%time%@ para enviar otro comentario!"
@@ -59,6 +58,14 @@ collaborators-menu:
     name: "&bColaboradores"
     lore: "Haz clic aquí para ver los colaboradores"
 
+variables:
+  set: "%prefix% &a¡Has establecido la variable &b%var% &aa &b%value%&a!"
+  set-player: "%prefix% &a¡Has establecido la variable &b%var% &apara el jugador &b%target% &aa &b%value%&a!"
+  remove: "%prefix% &a¡Has eliminado la variable &b%var%&a!"
+  remove-player: "%prefix% &a¡Has eliminado la variable &b%var% &apara el jugador &b%target%&a!"
+  clear: "%prefix% &a¡Has limpiado todas las variables globales!"
+  clear-player: "%prefix% &a¡Has limpiado todas las variables para el jugador &b%target&a!"
+  clear-all: "%prefix% &a¡Has limpiado todas las variables (globales y de jugadores)!"
 
 lang-not-found: "%prefix% &c¡Idioma no encontrado!"
 

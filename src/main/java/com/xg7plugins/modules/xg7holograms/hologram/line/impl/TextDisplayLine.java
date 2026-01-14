@@ -82,9 +82,9 @@ public class TextDisplayLine implements HologramLine {
     }
 
     @Override
-    public void update(LivingHologram livingHologram, int entityID) {
+    public void update(LivingHologram livingHologram, LivingHologram.LivingLine livingLine) {
         WrapperPlayServerEntityMetadata metadata = new WrapperPlayServerEntityMetadata(
-                entityID,
+                livingLine.getSpawnedEntities()[0],
                 HologramMetadataProvider.textDisplayUpdateData(Text.detectLangs(livingHologram.getPlayer(), livingHologram.getHologram().getPlugin(), this.line, true)));
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(livingHologram.getPlayer(), metadata);

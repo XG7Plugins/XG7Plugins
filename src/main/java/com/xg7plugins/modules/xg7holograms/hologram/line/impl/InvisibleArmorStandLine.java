@@ -76,7 +76,7 @@ public class InvisibleArmorStandLine implements HologramLine {
     }
 
     @Override
-    public void update(LivingHologram livingHologram, int entityID) {
+    public void update(LivingHologram livingHologram, LivingHologram.LivingLine livingLine) {
         // No update needed for invisible armor stand
     }
 

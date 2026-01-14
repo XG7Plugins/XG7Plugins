@@ -199,7 +199,7 @@ public interface LivingNPC {
 
         List<Integer> entitiesToMove = new ArrayList<>();
         entitiesToMove.add(mainEntityId);
-        entitiesToMove.addAll(spawnedHologram.getSpawnedEntitiesID());
+        entitiesToMove.addAll(spawnedHologram.getAllSpawnedEntitiesID());
 
         AtomicInteger tick = new AtomicInteger();
 

@@ -36,6 +36,10 @@ public class CommandArgs {
         return args.length;
     }
 
+    public boolean isEmpty() {
+        return args.length == 0;
+    }
+
     /**
      * Retrieves and converts an argument at the specified index to the requested type.
      * Supports conversion to various types including:

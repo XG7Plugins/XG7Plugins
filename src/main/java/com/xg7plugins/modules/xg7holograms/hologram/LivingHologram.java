@@ -3,19 +3,13 @@ package com.xg7plugins.modules.xg7holograms.hologram;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.player.EquipmentSlot;
 import com.github.retrooper.packetevents.wrapper.play.server.*;
-import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.modules.xg7holograms.hologram.line.HologramLine;
-import com.xg7plugins.tasks.tasks.BukkitTask;
 import com.xg7plugins.utils.item.Item;
 import com.xg7plugins.utils.location.Location;
 import lombok.Data;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Data
 public class LivingHologram {
@@ -23,8 +17,7 @@ public class LivingHologram {
     private final Player player;
     private final Hologram hologram;
 
-    private final List<Integer> spawnedEntitiesID = new ArrayList<>();
-
+    private final Map<Integer, LivingLine> currentLines = new LinkedHashMap<>();
 
     public void spawn() {
 
@@ -35,45 +28,52 @@ public class LivingHologram {
 
         float lastSpacing = 0;
 
-        List<Integer> entitiesToAddLast = new ArrayList<>();
+        for (int i = 0; i < lines.size(); i++) {
+            HologramLine line = lines.get(i);
 
-        for (HologramLine line : lines) {
-
-            int[] entityIDs = line.spawn(this, location.add(0, lastSpacing, 0));
-
-            int mainEntityID = entityIDs[0];
-            line.getEquipment().forEach((slot, item) -> line.equip(this, mainEntityID, slot, item));
+            int logicalIndex = hologram.getLines().size() - i - 1;
+            spawnLine(line, location.add(0, lastSpacing, 0).clone(), logicalIndex);
 
             lastSpacing = line.getSpacing();
 
-            Arrays.stream(entityIDs).forEach(spawnedEntitiesID::add);
         }
 
-        spawnedEntitiesID.addAll(entitiesToAddLast);
+    }
+
+    private void spawnLine(HologramLine line, Location location, int lineIndex) {
+        int[] entityIDs = line.spawn(this, location);
+        LivingLine livingLine = new LivingLine(line, location, entityIDs);
+
+        line.getEquipment().forEach((slot, item) -> line.equip(this, livingLine, slot, item));
+
+        currentLines.put(lineIndex, livingLine);
     }
 
     public void update() {
 
-        if (spawnedEntitiesID.isEmpty()) return;
+        if (currentLines.isEmpty()) return;
 
         for (int i = hologram.getLines().size() - 1; i >= 0; i--) {
-            int entityID = spawnedEntitiesID.get(hologram.getLines().size() - 1 - i);
-            HologramLine line = hologram.getLines().get(i);
+            LivingLine line = currentLines.get(i);
 
-            line.update(this, entityID);
+            if (line == null) continue;
+
+            line.getHologramLine().update(this, line);
         }
     }
 
     public void levitate(double offsetY) {
-        if (spawnedEntitiesID.isEmpty()) return;
+        if (currentLines.isEmpty()) return;
 
-
+        List<Integer> entitiesToLevitate = new ArrayList<>();
         for (int i = hologram.getLines().size() - 1; i >= 0; i--) {
-            int entityID = spawnedEntitiesID.get(hologram.getLines().size() - 1 - i);
-            HologramLine line = hologram.getLines().get(i);
+            LivingLine line = currentLines.get(i);
+            if (line == null) continue;
+            if (!line.getHologramLine().levitate()) continue;
+            Arrays.stream(line.getSpawnedEntities()).forEach(entitiesToLevitate::add);
+        }
 
-            if (!line.levitate()) continue;
-
+        for (int entityID : entitiesToLevitate) {
             WrapperPlayServerEntityRelativeMove packet =
                     new WrapperPlayServerEntityRelativeMove(
                             entityID,
@@ -89,28 +89,86 @@ public class LivingHologram {
 
 
     public void kill() {
-        List<Integer> spawnedEntitiesID = getSpawnedEntitiesID();
 
-        if (spawnedEntitiesID.isEmpty()) return;
+        if (currentLines.isEmpty()) return;
 
-        int[] ids = spawnedEntitiesID.stream().mapToInt(Integer::intValue).toArray();
-        WrapperPlayServerDestroyEntities entities = new WrapperPlayServerDestroyEntities(ids);
+        List<Integer> entitiesToDestroy = new ArrayList<>();
 
+        for (LivingLine line : currentLines.values()) {
+            for (int entityId : line.getSpawnedEntities()) {
+                entitiesToDestroy.add(entityId);
+            }
+        }
+
+        WrapperPlayServerDestroyEntities packet =
+                new WrapperPlayServerDestroyEntities(
+                        entitiesToDestroy.stream().mapToInt(i -> i).toArray()
+                );
+
+        PacketEvents.getAPI()
+                .getPlayerManager()
+                .sendPacket(player, packet);
+
+        currentLines.clear();
+    }
+
+    public void killLine(int lineIndex) {
+
+        if (lineIndex < 0 || lineIndex >= currentLines.size()) return;
+
+        LivingLine line = currentLines.get(lineIndex);
+        WrapperPlayServerDestroyEntities entities = new WrapperPlayServerDestroyEntities(line.getSpawnedEntities());
         PacketEvents.getAPI().getPlayerManager().sendPacket(getPlayer(), entities);
+
+        currentLines.remove(lineIndex);
     }
 
     public void equip(int lineIndex, EquipmentSlot slot, Item item) {
-        List<Integer> spawnedEntitiesID = getSpawnedEntitiesID();
 
-        if (lineIndex < 0 || lineIndex >= spawnedEntitiesID.size()) return;
+        if (lineIndex < 0 || lineIndex >= currentLines.size()) return;
 
-        int entityID = spawnedEntitiesID.get(hologram.getLines().size() - 1 - lineIndex);
-        HologramLine line = hologram.getLines().get(lineIndex);
+        LivingLine line = currentLines.get(lineIndex);
+        if (line == null) return;
+        line.getHologramLine().equip(this, line, slot, item);
+    }
 
-        line.equip(this, entityID, slot, item);
+    public void modifyLine(int lineIndex, HologramLine newHologramLine) {
+
+        if (lineIndex < 0 || lineIndex >= currentLines.size()) return;
+
+        LivingLine line = currentLines.get(lineIndex);
+
+        killLine(lineIndex);
+        spawnLine(newHologramLine, line.getLocation(), lineIndex);
+
     }
 
     public Hologram checkHologramByEntityID(int entityID) {
-        return getSpawnedEntitiesID().contains(entityID) ? getHologram() : null;
+        return currentLines.values()
+                .stream()
+                .anyMatch(l -> Arrays.stream(l.getSpawnedEntities())
+                        .anyMatch(i -> i == entityID)
+                ) ? getHologram() : null;
+    }
+
+    public List<Integer> getAllSpawnedEntitiesID() {
+        List<Integer> entitiesIdList = new ArrayList<>();
+
+        for (LivingLine line : currentLines.values()) {
+            for (int entityId : line.getSpawnedEntities()) {
+                entitiesIdList.add(entityId);
+            }
+        }
+
+        return entitiesIdList;
+    }
+
+    @Data
+    public static class LivingLine {
+
+        private final HologramLine hologramLine;
+        private final Location location;
+        private final int[] spawnedEntities;
+
     }
 }

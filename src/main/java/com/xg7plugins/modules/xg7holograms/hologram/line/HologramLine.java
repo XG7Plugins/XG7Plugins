@@ -18,12 +18,12 @@ public interface HologramLine {
     HashMap<EquipmentSlot, Item> getEquipment();
 
     int[] spawn(LivingHologram livingHologram, Location location);
-    void update(LivingHologram livingHologram, int entityID);
+    void update(LivingHologram livingHologram, LivingHologram.LivingLine line);
 
-    default void equip(LivingHologram livingHologram, int entityID, EquipmentSlot slot, Item item) {
+    default void equip(LivingHologram livingHologram, LivingHologram.LivingLine line, EquipmentSlot slot, Item item) {
         WrapperPlayServerEntityEquipment packet =
                 new WrapperPlayServerEntityEquipment(
-                        entityID,
+                        line.getSpawnedEntities()[0],
                         Collections.singletonList(new Equipment(slot, item.toProtocolItemStack(livingHologram.getPlayer(), livingHologram.getHologram().getPlugin())))
                 );
 

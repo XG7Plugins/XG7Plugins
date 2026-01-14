@@ -56,8 +56,8 @@ public enum Parser {
 
         try {
             return Parser.valueOf(type.getSimpleName().toUpperCase());
-        } catch (Exception ig) {
-            return null;
+        } catch (Exception parseException) {
+            throw new RuntimeException(parseException);
         }
     }
 

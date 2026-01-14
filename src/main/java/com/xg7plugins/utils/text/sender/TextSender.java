@@ -44,7 +44,7 @@ public interface TextSender {
 
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            System.out.println("TRANSLATED: " + Arrays.toString(BungeeComponentSerializer.get().serialize(text.getComponent())));
+
             player.spigot().sendMessage(BungeeComponentSerializer.get().serialize(text.getComponent()));
             return;
         }

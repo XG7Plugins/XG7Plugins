@@ -72,6 +72,16 @@ public class XG7PluginsPlaceholderExpansion extends PlaceholderExpansion {
             }
         }
 
+        if (identifier.startsWith("var_")) {
+            String varName = identifier.substring(4);
+            return Variables.getPlayer(player.getUniqueId(), varName, "null");
+        }
+
+        if (identifier.startsWith("globalvar_")) {
+            String varName = identifier.substring(10);
+            return Variables.getGlobal(varName, "null");
+        }
+
         return null;
     }
 }

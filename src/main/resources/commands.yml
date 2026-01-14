@@ -5,6 +5,7 @@ comment: [ "xg7plcomment", "plcomment", "comment", "7plcomment" ]
 tasks: ["xg7pltasks", "tasks", "7pltasks"]
 update: ["xg7plupdate", "7plupdate", "updatepl"]
 configs: ["xg7plconfigs", "plconfigs", "configs", "7plconfigs"]
+variable: ["variable", "xg7plvar", "7plvar", "var", "7plvariables", "variables"]
 
 update_check: ["verify"]
 
@@ -14,12 +15,10 @@ tasks_restart: []
 tasks_stop: []
 tasks_see: []
 
-
-test: ["test"]
-test_move: []
-test_teleport: ["tp"]
-test_skin: []
-test_equip: []
-test_look: []
+variable_set: ["put", "store"]
+variable_get: []
+variable_delete: ["del", "remove", "rem"]
+variable_clear: ["clr", "clearall"]
+variable_list: ["vars"]
 
 config-version: 3

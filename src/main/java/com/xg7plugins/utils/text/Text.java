@@ -4,8 +4,10 @@ import com.xg7plugins.XG7Plugins;
 import com.xg7plugins.boot.Plugin;
 import com.xg7plugins.lang.Lang;
 import com.xg7plugins.utils.Pair;
+import com.xg7plugins.utils.Variables;
 import com.xg7plugins.utils.text.sender.TextSender;
 import com.xg7plugins.utils.text.sender.deserializer.TextSenderDeserializer;
+import com.xg7plugins.utils.time.TimeParser;
 import lombok.Getter;
 import lombok.Setter;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -72,6 +74,7 @@ public class Text {
 
         if (XG7Plugins.getAPI().isDependencyEnabled("PlaceholderAPI")) this.text = ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, this.text));
 
+        this.text = Variables.replaceAllVariables(player.getUniqueId(), this.text);
         this.text = Condition.processConditions(this.text, player);
 
         return this;
@@ -283,7 +286,7 @@ public class Text {
      * @return Array of BaseComponents representing the text
      */
     public Component getComponent() {
-        return miniMessage.deserialize(this.text);
+        return miniMessage.deserialize(TimeParser.remainingTimeForValue(Variables.replaceGlobalVariables(this.text)));
     }
 
     /**

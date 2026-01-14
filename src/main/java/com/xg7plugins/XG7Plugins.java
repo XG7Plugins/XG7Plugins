@@ -277,7 +277,7 @@ public class XG7Plugins extends Plugin {
 
     @Override
     public List<Command> loadCommands() {
-        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new CommentCommand(), new UpdateCommand(), new ConfigCommand(), new Test());
+        return Arrays.asList(new LangCommand(), new ReloadCommand(), new TaskCommand(), new CommentCommand(), new UpdateCommand(), new ConfigCommand(), new VariableCommand());
     }
 
     @Override
@@ -338,7 +338,7 @@ public class XG7Plugins extends Plugin {
 
     /**
      * Loads the specified plugin, initializing its components and dependencies.
-     * @param plugin The plugin to load
+     * @param pluginObj The plugin to load
      */
     public void loadPlugin(Object pluginObj) {
 
@@ -386,7 +386,7 @@ public class XG7Plugins extends Plugin {
 
     /**
      * Enables the specified plugin, activating its features and registering its components.
-     * @param plugin The plugin to enable
+     * @param pluginObj The plugin to enable
      */
     public void enablePlugin(Object pluginObj) {
 
@@ -499,7 +499,7 @@ public class XG7Plugins extends Plugin {
 
     /**
      * Disables the specified plugin, deactivating its features and unregistering its components.
-     * @param plugin The plugin to disable
+     * @param pluginObj The plugin to disable
      */
     public void disablePlugin(Object pluginObj) {
 
