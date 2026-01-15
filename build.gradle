@@ -49,6 +49,7 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
 
     compileOnly 'dev.lone:api-itemsadder:4.0.10'
+    compileOnly 'me.clip:placeholderapi:2.11.7'
 
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
@@ -57,7 +58,6 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 
     compileOnly 'org.jetbrains:annotations:24.1.0'
-
     compileOnly 'org.geysermc.floodgate:api:2.2.4-SNAPSHOT'
 
 }
