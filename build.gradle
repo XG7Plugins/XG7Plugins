@@ -1,65 +1,74 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'com.gradleup.shadow' version '8.3.8'
 }
 
-version = '1.4'
+version = '2.5'
 group = 'com'
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+tasks.withType(JavaCompile).configureEach {
+    options.release = 8
+}
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
+    maven { url = 'https://jitpack.io' }
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url = 'https://oss.sonatype.org/content/groups/public/' }
     maven { url = 'https://libraries.minecraft.net/' }
     maven { url = 'https://repo.opencollab.dev/main/' }
     maven { url = 'https://maven.elmakers.com/repository/' }
     maven { url = 'https://repo.codemc.io/repository/maven-releases/' }
-    maven { url = 'https://jitpack.io' }
-    maven { url = 'https://maven.devs.beer/' }
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-    maven { url = "https://jitpack.io" }
 }
 
 dependencies {
 
-    implementation "com.github.cryptomorin:XSeries:13.6.0"
-    implementation "com.github.retrooper:packetevents-spigot:2.11.1"
-
+    compileOnly 'com.github.LoneDev6:api-itemsadder:4301b5d2ea'
+    compileOnly 'com.github.retrooper:packetevents-spigot:2.11.1'
+    compileOnly 'com.mojang:authlib:1.5.25'
     compileOnly 'com.mojang:datafixerupper:4.0.26'
     compileOnly 'io.netty:netty-all:4.1.111.Final'
+    compileOnly 'me.clip:placeholderapi:2.11.7'
     compileOnly 'net.luckperms:api:5.4'
-
-    implementation 'com.mojang:authlib:1.5.25'
-    implementation 'net.kyori:adventure-platform-bungeecord:4.3.2'
-    implementation "com.github.ben-manes.caffeine:caffeine:2.1.1"
-    implementation 'redis.clients:jedis:5.2.0'
-    implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.1'
-    implementation group: 'com.mysql', name: 'mysql-connector-j', version: '9.3.0'
-    implementation 'com.zaxxer:HikariCP:4.0.3'
-
-    implementation "org.yaml:snakeyaml:2.5"
-
-    implementation "net.kyori:adventure-api:4.26.1"
-    implementation "net.kyori:adventure-text-minimessage:4.26.1"
-    implementation "net.kyori:adventure-platform-bukkit:4.3.2"
-    implementation "net.kyori:adventure-text-serializer-plain:4.26.1"
-
+    compileOnly 'org.geysermc.floodgate:api:2.2.4-SNAPSHOT'
+    compileOnly 'org.jetbrains:annotations:24.1.0'
+    compileOnly 'org.projectlombok:lombok:1.18.34'
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
 
-    compileOnly 'dev.lone:api-itemsadder:4.0.10'
-    compileOnly 'me.clip:placeholderapi:2.11.7'
+    implementation 'com.github.ben-manes.caffeine:caffeine:2.9.3'
+    implementation 'com.github.cryptomorin:XSeries:13.6.0'
+    implementation 'com.mysql:mysql-connector-j:9.3.0'
+    implementation 'com.zaxxer:HikariCP:4.0.3'
+    implementation 'net.kyori:adventure-api:4.26.1'
+    implementation 'net.kyori:adventure-platform-bukkit:4.3.2'
+    implementation 'net.kyori:adventure-platform-bungeecord:4.3.2'
+    implementation 'net.kyori:adventure-text-minimessage:4.26.1'
+    implementation 'net.kyori:adventure-text-serializer-plain:4.26.1'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:3.4.3'
+    implementation 'redis.clients:jedis:5.2.0'
 
-    compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
 
     testCompileOnly 'org.projectlombok:lombok:1.18.34'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 
-    compileOnly 'org.jetbrains:annotations:24.1.0'
-    compileOnly 'org.geysermc.floodgate:api:2.2.4-SNAPSHOT'
+}
 
+processResources {
+    filesMatching('plugin.yml') {
+        expand(version: project.version)
+    }
 }
 
 publishing {
@@ -69,3 +78,52 @@ publishing {
         }
     }
 }
+
+tasks.named('shadowJar', ShadowJar) {
+    mergeServiceFiles()
+
+    // relocate to avoid version conflicts from shaded libs
+    relocate 'com.cryptomorin.xseries', 'com.xg7plugins.libs.xseries'
+    relocate 'com.github.benmanes.caffeine', 'com.xg7plugins.libs.caffeine'
+    relocate 'com.zaxxer.hikari', 'com.xg7plugins.libs.hikari'
+    relocate 'net.kyori', 'com.xg7plugins.libs.kyori'
+    relocate 'redis.clients', 'com.xg7plugins.libs.redis'
+
+    // exclude files shaded into the jar
+    exclude 'META-INF/maven/**'
+    exclude 'META-INF/proguard/**'
+    exclude 'META-INF/versions/**'
+    exclude 'META-INF/jandex.idx'
+
+    exclude 'META-INF/LICENSE'
+    exclude 'META-INF/LICENSE.txt'
+    exclude 'META-INF/NOTICE'
+    exclude 'META-INF/NOTICE.txt'
+    exclude 'META-INF/DEPENDENCIES'
+    exclude 'META-INF/AL2.0'
+    exclude 'META-INF/LGPL2.1'
+
+    exclude 'README'
+    exclude 'INFO_BIN'
+    exclude 'INFO_SRC'
+    exclude 'deprecated.properties'
+    exclude 'driver.properties'
+    exclude 'mariadb.properties'
+
+    from(project.file('THIRD-PARTY-LICENSES')) {
+        include '**/*.txt'
+        into 'META-INF/THIRD-PARTY-LICENSES'
+    }
+
+    from(project.projectDir) {
+        include 'LICENSE'
+    }
+
+    from(project.projectDir) {
+        include 'LICENSE'
+        into 'META-INF'
+    }
+
+    archiveClassifier.set('')
+}
+build.dependsOn shadowJar
