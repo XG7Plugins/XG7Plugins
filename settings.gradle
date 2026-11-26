@@ -1,0 +1,3 @@
+rootProject.name = 'XG7Core'
+
+include 'core-api'
