@@ -1,7 +1,10 @@
 name: XG7Plugins
 version: '${version}'
 main: com.xg7plugins.loader.XG7PluginsLoader
-api-version: '1.13'
+api-version: '1.16'
+depend:
+  - packetevents
+
 loadbefore:
   - XG7Lobby
   - XG7Kits
