@@ -11,6 +11,15 @@ allprojects {
 
     version = rootProject.version
 
+    dependencies {
+
+        compileOnly 'org.projectlombok:lombok:1.18.48'
+        annotationProcessor 'org.projectlombok:lombok:1.18.48'
+
+        testCompileOnly 'org.projectlombok:lombok:1.18.48'
+        testAnnotationProcessor 'org.projectlombok:lombok:1.18.48'
+    }
+
     java {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -26,10 +35,6 @@ allprojects {
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
         maven { url = 'https://oss.sonatype.org/content/groups/public/' }
     }
-}
-
-dependencies {
-    implementation project(':core-api')
 }
 
 publishing {
